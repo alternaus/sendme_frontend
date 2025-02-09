@@ -1,61 +1,36 @@
 <template>
-  <div class="container">
-    <div>
-      <h1>Enrollment</h1>
-      <epayco-checkout
-        :amount="150000"
-        name="Producto de Prueba"
-        description="Compra de producto demo 2"
-        customerEmail="cliente2@demo.com"
-        invoice="test1234101210000000011466"
-        planId="2"
-        type="enrollment"
-      />
-    </div>
-    <div>
-      <h1>Cambio de suscripcion</h1>
-      <epayco-checkout
-        :amount="100000"
-        name="Producto de Prueba"
-        description="Compra de producto demo 2"
-        customerEmail="cliente2@demo.com"
-        invoice="INV1234101210000000011000"
-        planId="3"
-        organizationId="1"
-        type="subscription"
-      />
-    </div>
-    <div>
-      <h1>Recarga</h1>
-      <epayco-checkout
-        :amount="50000"
-        name="Producto de Prueba"
-        description="Compra de producto demo 2"
-        customerEmail="cliente2@demo.com"
-        invoice="INV1234101210000000011583587"
-        organizationId="5"
-        type="recharge"
-      />
-    </div>
-  </div>
-  <router-view />
+  <main class="w-screen h-screen flex justify-center items-center transition-all">
+    <component :is="layout">
+      <router-view />
+    </component>
+  </main>
 </template>
 
 <script lang="ts">
-import EpaycoCheckout from '@/components/EpaycoCheckout.vue'
+import { computed, defineComponent } from 'vue'
+import { useRoute } from 'vue-router'
 
-export default {
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import { useDark } from '@vueuse/core'
+
+export default defineComponent({
   components: {
-    EpaycoCheckout,
+    DefaultLayout,
+    AuthLayout,
+    DashboardLayout,
   },
-}
-</script>
+  setup() {
+    const isDark = useDark({ selector: 'html' })
 
-<style scoped>
-.container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-</style>
+    const route = useRoute()
+    const layout = computed(() => {
+      const layoutName = (route.meta.layout as string) || 'DefaultLayout'
+      return layoutName
+    })
+
+    return { layout }
+  },
+})
+</script>
