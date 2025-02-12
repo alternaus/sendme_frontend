@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, type PropType, ref, watch } from 'vue'
+
 import DatePicker from 'primevue/datepicker'
 
 export default defineComponent({
@@ -9,8 +10,8 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: Date,
-      required: true,
+      type: [Date, null] as PropType<Date | null>,
+      default: null,
     },
     label: {
       type: String,
@@ -31,10 +32,18 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selectedTime = ref<Date | null>(props.modelValue ? new Date(props.modelValue) : null)
+    const selectedTime = ref<Date | null>(null)
+
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        selectedTime.value = newValue ? new Date(newValue) : null
+      },
+      { immediate: true },
+    )
 
     watch(selectedTime, (value) => {
-      emit('update:modelValue', value)
+      emit('update:modelValue', value ?? null)
     })
 
     return {

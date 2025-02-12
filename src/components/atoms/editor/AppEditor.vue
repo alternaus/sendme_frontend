@@ -1,6 +1,7 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
-import Editor from 'primevue/editor'
+import { computed, defineComponent, watchEffect } from 'vue'
+
+import Editor, { type EditorTextChangeEvent } from 'primevue/editor'
 
 export default defineComponent({
   name: 'AppEditor',
@@ -10,23 +11,43 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      default: '',
+      required: true,
     },
     errorMessage: {
       type: String,
       default: '',
     },
+    contentType: {
+      type: String,
+      default: 'text',
+      validator: (value: string) => ['html', 'text'].includes(value),
+    },
+    showErrorMessage: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const editorContent = ref(props.modelValue)
-
-    watch(editorContent, (value) => {
-      emit('update:modelValue', value)
+    const editorContent = computed({
+      get: () => props.modelValue,
+      set: (value) => emit('update:modelValue', value),
     })
+
+    watchEffect(() => {
+      if (props.modelValue !== editorContent.value) {
+        editorContent.value = props.modelValue
+      }
+    })
+
+    const handleTextChange = (event: EditorTextChangeEvent) => {
+      editorContent.value = props.contentType === 'html' ? event.htmlValue : event.textValue
+      emit('update:modelValue', props.contentType === 'html' ? event.htmlValue : event.textValue)
+    }
 
     return {
       editorContent,
+      handleTextChange,
     }
   },
 })
@@ -34,25 +55,55 @@ export default defineComponent({
 
 <template>
   <div class="w-full">
-    <!-- ✅ Editor de texto -->
     <Editor
       v-model="editorContent"
       editorStyle="height: 150px"
-      class="w-full !rounded-xl"
-      :class="{ 'p-invalid': errorMessage.length > 0 }"
+      class="w-full !rounded-xl transition-all duration-300"
+      :class="{
+        'p-invalid border-1 border-red-400  dark:border-red-300': errorMessage.length > 0,
+        'text-editor': contentType === 'text',
+      }"
+      @text-change="handleTextChange"
     >
-      <template v-slot:toolbar>
+      <template v-slot:toolbar v-if="contentType === 'html'">
         <span class="ql-formats">
           <button v-tooltip.bottom="'Bold'" class="ql-bold"></button>
           <button v-tooltip.bottom="'Italic'" class="ql-italic"></button>
           <button v-tooltip.bottom="'Underline'" class="ql-underline"></button>
         </span>
       </template>
+      <template v-slot:toolbar v-else>
+        <p></p>
+      </template>
     </Editor>
 
-    <!-- 🔴 Mensaje de error -->
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div
+      v-if="showErrorMessage && errorMessage.length"
+      class="text-red-400 dark:text-red-300 p-0 m-0"
+    >
       <small>{{ errorMessage }}</small>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+:deep(.ql-editor.ql-blank) {
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--p-select-border-color) !important;
+  background-color: var(--p-inputtext-background) !important;
+}
+
+:deep(.ql-editor) {
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--p-select-border-color) !important;
+  background-color: var(--p-inputtext-background) !important;
+}
+
+:deep(.ql-container) {
+  border-radius: var(--radius-xl);
+  border: none;
+}
+.text-editor:deep(.p-editor-toolbar) {
+  display: none;
+}
+</style>

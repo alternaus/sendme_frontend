@@ -1,8 +1,8 @@
 <script lang="ts">
+import { defineComponent } from 'vue'
+
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
-
-import { defineComponent } from 'vue'
 
 export default defineComponent({
   components: {

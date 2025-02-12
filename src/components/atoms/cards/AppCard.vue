@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+
 import Card from 'primevue/card'
 
 export default defineComponent({

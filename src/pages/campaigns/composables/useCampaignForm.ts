@@ -1,12 +1,12 @@
-import { useForm, useFieldArray, type FieldEntry } from 'vee-validate'
+import { type FieldEntry,useFieldArray, useForm } from 'vee-validate'
 import type { Ref } from 'vue'
 import * as yup from 'yup'
 
 export interface CampaignRule {
-  conditionType: string
-  value: Record<string, unknown> | string | number
-  customFieldId: number
-  campaignId?: number
+  conditionType: string | undefined
+  value: string | undefined
+  customFieldId: number | undefined
+  campaignId?: number | undefined
 }
 
 export interface CampaignForm {
@@ -52,7 +52,7 @@ const schema = yup.object<CampaignForm>({
   time: yup.string().required().label('Hora de Ejecución'),
   days: yup
     .array()
-    .of(yup.object().shape({ value: yup.string().required(), name: yup.string().required() }))
+    .of(yup.string())
     .min(1, 'Debes seleccionar al menos un día')
     .label('Días de Ejecución'),
   frequency: yup.string().oneOf(['DAILY', 'WEEKLY', 'MONTHLY']).required().label('Frecuencia'),
@@ -65,7 +65,7 @@ const schema = yup.object<CampaignForm>({
         .mixed()
         .test(
           'is-valid-type',
-          'El valor debe es obligatorio',
+          'El valor es obligatorio',
           (value) =>
             value &&
             (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'),
@@ -93,8 +93,9 @@ export const useFormCampaign = () => {
       frequency: 'DAILY',
       channelId: 0,
       organizationId: 0,
-      campaignRules: [{ conditionType: '', value: '', customFieldId: 0 }],
+      campaignRules: [{ conditionType: '1', value: '', customFieldId: 0 }],
     },
+    validateOnMount: false,
   })
 
   const [name] = defineField('name')
@@ -117,7 +118,7 @@ export const useFormCampaign = () => {
   } = useFieldArray<CampaignRule>('campaignRules')
 
   const addRule = () => {
-    addCampaignRule({ conditionType: '', value: '', customFieldId: 0 })
+    addCampaignRule({ conditionType: '1', value: '', customFieldId: 0 })
   }
 
   const removeRule = (index: number) => {

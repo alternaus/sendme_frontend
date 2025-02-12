@@ -1,8 +1,9 @@
 <script lang="ts">
-import AppCard from '@/components/atoms/cards/AppCard.vue'
 import { defineComponent } from 'vue'
+
 import AuthBackground from '@/assets/svg/auth_background.svg?component'
 import Logo from '@/assets/svg/logo.svg?component'
+import AppCard from '@/components/atoms/cards/AppCard.vue'
 
 export default defineComponent({
   components: {
@@ -19,7 +20,7 @@ export default defineComponent({
 <template>
   <div class="w-full h-full grid grid-cols-1 md:grid-cols-2 justify-center items-center">
     <article class="flex justify-center items-center">
-      <app-card class="min-w-[22rem] max-w-[22rem]">
+      <app-card class="min-w-[22rem] max-w-[22rem] !bg-white dark:!bg-neutral-800">
         <template #title>
           <div class="flex justify-center items-center">
             <logo class="w-32 h-32 dark:fill-[var(--p-primary-color)]" />

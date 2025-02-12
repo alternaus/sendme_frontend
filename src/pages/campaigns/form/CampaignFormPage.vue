@@ -1,19 +1,22 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import AppHeader from '@/components/molecules/app-header/AppHeader.vue'
+import { defineComponent, onMounted, ref } from 'vue'
+
+import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
+import ChannelIcon from '@/assets/svg/channel.svg?component'
+import DescriptionIcon from '@/assets/svg/description.svg?component'
+import StatusIcon from '@/assets/svg/status.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
-import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
-import CampaignChannelIcon from '@/assets/svg/campaign_channel.svg?component'
-import CampaignDescriptionIcon from '@/assets/svg/campaign_description.svg?component'
-import CampaignStatusIcon from '@/assets/svg/campaign_status.svg?component'
-import { useFormCampaign } from '../composables/useCampaignForm'
+import { type SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import AppHeader from '@/components/molecules/header/AppHeader.vue'
+import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useChannelService } from '@/services/channel/useChannelService'
 
-import { IconTypes } from '@/components/molecules/app-header/enums/icon-types.enum'
+import { type CampaignFormRef, useFormCampaign } from '../composables/useCampaignForm'
 import CampaignFormDetails from './CampaignFormDetails.vue'
-import CampaignFormTriggers from './CampaignFormTriggers.vue'
 import CampaignFormMessage from './CampaignFormMessage.vue'
+import CampaignFormTriggers from './CampaignFormTriggers.vue'
 
 export default defineComponent({
   components: {
@@ -25,12 +28,14 @@ export default defineComponent({
     CampaignFormTriggers,
     CampaignFormMessage,
     CampaignRouteIcon,
-    CampaignChannelIcon,
-    CampaignDescriptionIcon,
-    CampaignStatusIcon,
+    ChannelIcon,
+    DescriptionIcon,
+    StatusIcon,
   },
+
   setup() {
     const { form, handleSubmit, resetForm, errors, addRule, removeRule } = useFormCampaign()
+    const { getChannels } = useChannelService()
 
     const statusOptions = [
       { name: 'Activo', value: 'active' },
@@ -43,6 +48,32 @@ export default defineComponent({
       { name: 'Es igual a', value: 'is_equal' },
       { name: 'Es diferente de', value: 'is_not_equal' },
     ]
+
+    const channels = ref<SelectOption[]>([])
+
+    onMounted(async () => {
+      try {
+        const response = await getChannels()
+        channels.value = response.map((channel) => ({
+          name: channel.name,
+          value: channel.id,
+        }))
+      } catch (error) {
+        console.error('❌ Error al obtener canales:', error)
+      }
+    })
+
+    const updateFormContent = (newContent: Partial<CampaignFormRef>) => {
+      console.log('Updating form content with:', newContent)
+      console.log('Form:', form)
+      ;(Object.keys(newContent) as Array<keyof typeof form>).forEach((key) => {
+        if (form[key] && form[key].value !== undefined) {
+          if (newContent[key] !== undefined) {
+            form[key].value = newContent[key]!.value
+          }
+        }
+      })
+    }
 
     const onSubmitForm = handleSubmit(
       (values) => {
@@ -63,6 +94,8 @@ export default defineComponent({
       conditionOptions,
       addRule,
       removeRule,
+      channels,
+      updateFormContent,
     }
   },
 })
@@ -80,7 +113,7 @@ export default defineComponent({
         :error-message="errors.name"
       >
         <template #icon>
-          <CampaignRouteIcon class="dark:fill-white" />
+          <CampaignRouteIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppInput>
 
@@ -91,19 +124,19 @@ export default defineComponent({
         class="w-full border-gray-300 dark:border-gray-600 rounded-md"
       >
         <template #icon>
-          <CampaignDescriptionIcon class="dark:fill-white" />
+          <DescriptionIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppInput>
 
       <AppSelect
         v-model="form.channelId.value"
-        :options="statusOptions"
+        :options="channels"
         :error-message="errors.channelId"
         placeholder="Seleccione una opción"
         class="w-full"
       >
         <template #icon>
-          <CampaignChannelIcon class="dark:fill-white" />
+          <ChannelIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppSelect>
 
@@ -115,12 +148,12 @@ export default defineComponent({
         class="w-full"
       >
         <template #icon>
-          <CampaignStatusIcon class="dark:fill-white" />
+          <StatusIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppSelect>
     </div>
 
-    <CampaignFormDetails :form="form" :errors="errors" />
+    <CampaignFormDetails :form="form" :errors="errors" @update:form="updateFormContent" />
 
     <CampaignFormTriggers
       :form="form"
@@ -128,9 +161,10 @@ export default defineComponent({
       :conditionOptions="conditionOptions"
       :addRule="addRule"
       :removeRule="removeRule"
+      @update:form="updateFormContent"
     />
 
-    <CampaignFormMessage :form="form" :errors="errors" />
+    <CampaignFormMessage :form="form" :errors="errors" @update:form="updateFormContent" />
 
     <div class="flex flex-col lg:flex-row lg:justify-start gap-5 mt-7">
       <AppButton type="submit" severity="primary" class="w-full sm:w-auto" label="Guardar" />

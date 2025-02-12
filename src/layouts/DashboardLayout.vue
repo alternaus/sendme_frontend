@@ -12,7 +12,9 @@ export default defineComponent({
 })
 </script>
 <template>
-  <div class="h-screen w-screen grid grid-cols-1 sm:grid-cols-[140px_1fr]">
+  <div
+    class="h-screen w-screen grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center justify-center"
+  >
     <div class="hidden sm:block w-[140px] h-full">
       <app-sidebar />
     </div>

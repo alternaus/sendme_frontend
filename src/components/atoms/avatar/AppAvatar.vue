@@ -1,6 +1,7 @@
 <script lang="ts">
-import Avatar from 'primevue/avatar'
 import { defineComponent } from 'vue'
+
+import Avatar from 'primevue/avatar'
 
 export default defineComponent({
   name: 'AppAvatar',

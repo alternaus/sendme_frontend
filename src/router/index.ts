@@ -5,13 +5,12 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
-    meta: { layout: 'DashboardLayout' },
+    meta: { layout: 'DashboardLayout', requiresAuth: true },
   },
   {
     path: '/contacts',
     name: 'contacts',
-
-    meta: { layout: 'DashboardLayout' },
+    meta: { layout: 'DashboardLayout', requiresAuth: true },
     children: [
       {
         path: '',
@@ -33,7 +32,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/campaigns',
     name: 'campaigns',
-    meta: { layout: 'DashboardLayout' },
+    meta: { layout: 'DashboardLayout', requiresAuth: true },
     children: [
       {
         path: '',
@@ -55,7 +54,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/auth',
     name: 'auth',
-    meta: { layout: 'AuthLayout' },
+    meta: { layout: 'AuthLayout', requiresAuth: false },
     redirect: '/auth/sign-in',
     children: [
       {
@@ -74,13 +73,29 @@ const routes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
-    meta: { layout: 'DefaultLayout' },
+    meta: { layout: 'DefaultLayout', requiresAuth: false },
   },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !token) {
+    console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/sign-in')
+    return next('/auth/sign-in')
+  }
+
+  if (!to.meta.requiresAuth && token) {
+    console.info('🔄 Usuario autenticado intentando acceder a una ruta pública. Redirigiendo a /')
+    return next('/')
+  }
+
+  next()
 })
 
 export default router

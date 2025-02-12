@@ -1,12 +1,15 @@
 <script lang="ts">
-import { defineComponent, computed, type PropType } from 'vue'
+import { computed, defineComponent, onMounted, type PropType, ref } from 'vue'
+
+import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
-import type { CampaignFormRef, CampaignRule } from '../composables/useCampaignForm'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+
+import type { CampaignFormRef, CampaignRule } from '../composables/useCampaignForm'
 
 export default defineComponent({
   components: {
@@ -34,11 +37,24 @@ export default defineComponent({
       required: true,
     },
     errors: {
-      type: Object as PropType<Record<string, string>>,
+      type: Object as PropType<Partial<Record<string, string>>>,
       required: true,
     },
   },
   setup(props) {
+    const { getCustomFields } = useCustomFieldService()
+    const customFieldsOptions = ref<SelectOption[]>([])
+    onMounted(async () => {
+      try {
+        const response = await getCustomFields()
+        customFieldsOptions.value = response.map((customField) => ({
+          name: customField.fieldName,
+          value: customField.id,
+        }))
+      } catch (error) {
+        console.error('❌ Error al obtener campos personalizados:', error)
+      }
+    })
     const campaignRules = computed<CampaignRule[]>(() =>
       props.form.campaignRules.value.map((entry) => entry.value),
     )
@@ -50,6 +66,7 @@ export default defineComponent({
 
     return {
       campaignRules,
+      customFieldsOptions,
       getError,
     }
   },
@@ -84,8 +101,9 @@ export default defineComponent({
             <AppSelect
               class="w-full sm:col-span-1 md:col-span-1 lg:col-span-2"
               v-model="rule.customFieldId"
-              :options="[]"
+              :options="customFieldsOptions"
               :errorMessage="getError(index, 'customFieldId')"
+              :show-error-message="false"
               placeholder="Seleccione un campo"
             />
 
@@ -94,11 +112,13 @@ export default defineComponent({
               v-model="rule.conditionType"
               :options="conditionOptions"
               :errorMessage="getError(index, 'conditionType')"
+              :show-error-message="false"
               placeholder="Seleccione el tipo de condición"
             />
 
             <AppInput
               class="w-full sm:col-span-2 md:col-span-1 lg:col-span-2"
+              :show-error-message="false"
               v-model="rule.value"
               :errorMessage="getError(index, 'value')"
               placeholder="Valor"
@@ -106,7 +126,7 @@ export default defineComponent({
 
             <div class="w-8 h-8 mx-auto rounded-lg flex items-center justify-center">
               <DeleteIcon
-                class="w-8 h-8 fill-red-500 dark:fill-red-400 cursor-pointer"
+                class="w-8 h-8 fill-red-400 dark:fill-red-300 cursor-pointer"
                 @click="removeRule(index)"
               />
             </div>

@@ -1,12 +1,18 @@
 <script lang="ts">
-import { defineComponent, ref, watch, type PropType } from 'vue'
+import { defineComponent, type PropType, ref, watch } from 'vue'
+
+import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
 import MultiSelect, { type MultiSelectChangeEvent } from 'primevue/multiselect'
+
 import type { SelectOption } from './types/select-option.types'
 
 export default defineComponent({
   name: 'AppMultiselect',
   components: {
     MultiSelect,
+    InputGroup,
+    InputGroupAddon,
   },
   props: {
     modelValue: {
@@ -17,7 +23,15 @@ export default defineComponent({
       type: Array as PropType<SelectOption[]>,
       required: true,
     },
-    label: {
+    placeholder: {
+      type: String,
+      default: 'Seleccione...',
+    },
+    showClear: {
+      type: Boolean,
+      default: true,
+    },
+    customClass: {
       type: String,
       default: '',
     },
@@ -25,12 +39,23 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    showErrorMessage: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selectedValue = ref<string[]>(props.modelValue)
+    const selectedValues = ref<string[]>([])
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        selectedValues.value = newValue
+      },
+      { immediate: true },
+    )
 
-    watch(selectedValue, (value: string[]) => {
+    watch(selectedValues, (value) => {
       emit('update:modelValue', value)
     })
 
@@ -40,7 +65,7 @@ export default defineComponent({
     }
 
     return {
-      selectedValue,
+      selectedValues,
       handleChange,
     }
   },
@@ -48,26 +73,45 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="w-full">
-    <!-- ✅ Etiqueta -->
-    <label v-if="label" class="text-gray-700 dark:text-neutral-300">{{ label }}</label>
+  <div class="w-full min-w-0">
+    <InputGroup v-if="$slots.icon">
+      <InputGroupAddon class="!rounded-l-xl !border-r-0">
+        <slot name="icon"></slot>
+      </InputGroupAddon>
 
-    <!-- ✅ MultiSelect -->
+      <MultiSelect
+        v-model="selectedValues"
+        :options="options"
+        optionLabel="name"
+        optionValue="value"
+        :placeholder="placeholder"
+        :showClear="showClear"
+        class="w-full min-w-0 !rounded-r-xl !border-l-0"
+        size="small"
+        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+        @change="handleChange"
+      />
+    </InputGroup>
+
     <MultiSelect
-      v-model="selectedValue"
+      v-else
+      v-model="selectedValues"
       :options="options"
       optionLabel="name"
-      class="w-full rounded-md border-gray-300 dark:border-gray-600"
-      placeholder="Seleccione..."
-      :class="{ 'p-invalid': errorMessage.length > 0 }"
+      optionValue="value"
+      :placeholder="placeholder"
+      :showClear="showClear"
+      class="w-full min-w-0 !rounded-xl"
+      size="small"
+      :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       @change="handleChange"
     />
 
-    <!-- 🔴 Error Handling -->
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div
+      v-if="showErrorMessage && errorMessage.length"
+      class="text-red-400 dark:text-red-300 p-0 m-0"
+    >
       <small>{{ errorMessage }}</small>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

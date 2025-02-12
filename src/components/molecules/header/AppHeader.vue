@@ -1,19 +1,21 @@
 <script lang="ts">
-import AppProfile from '@/components/molecules/AppProfile.vue'
 import {
   defineComponent,
-  ref,
-  type PropType,
   type FunctionalComponent,
+  type PropType,
+  ref,
   type SVGAttributes,
 } from 'vue'
+
+import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
+import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
-import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
+import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
-import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
-import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
+import AppProfile from '@/components/molecules/profile/AppProfile.vue'
+
 import { ActionTypes } from './enums/action-types.enum'
 import { IconTypes } from './enums/icon-types.enum'
 
@@ -91,8 +93,8 @@ export default defineComponent({
     <div class="flex items-center gap-2 ml-auto mx-4">
       <button
         v-for="(action, index) in actions"
-        v-tooltip.bottom="action.label"
         :key="index"
+        v-tooltip.bottom="action.label"
         :disabled="action.needsId && !selectedId"
         @click="action.onClick(selectedId)"
         :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"

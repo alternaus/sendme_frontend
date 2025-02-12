@@ -1,6 +1,7 @@
 <script lang="ts">
-import Divider from 'primevue/divider'
 import { defineComponent } from 'vue'
+
+import Divider from 'primevue/divider'
 
 export default defineComponent({
   name: 'AppDivider',

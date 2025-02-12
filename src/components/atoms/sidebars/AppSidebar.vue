@@ -1,13 +1,14 @@
 <script lang="ts">
-import Logo from '@/assets/svg/sidebar/logo.svg?component'
+import { defineComponent } from 'vue'
+
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
 import Contacts from '@/assets/svg/sidebar/contacts.svg?component'
+import Logo from '@/assets/svg/sidebar/logo.svg?component'
 import Reports from '@/assets/svg/sidebar/reports.svg?component'
 import Send from '@/assets/svg/sidebar/send.svg?component'
 import Settings from '@/assets/svg/sidebar/settings.svg?component'
 import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
-import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'AppSidebar',

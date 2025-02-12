@@ -1,6 +1,7 @@
 <script lang="ts">
-import PrimeButton from 'primevue/button'
 import { defineComponent } from 'vue'
+
+import PrimeButton from 'primevue/button'
 
 export default defineComponent({
   name: 'AppButton',

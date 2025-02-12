@@ -1,8 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref, watch, type PropType } from 'vue'
-import PrimeSelect from 'primevue/select'
+import { defineComponent, type PropType, ref, watch } from 'vue'
+
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
+import PrimeSelect from 'primevue/select'
+
 import type { SelectOption } from './types/select-option.types'
 
 export default defineComponent({
@@ -14,7 +16,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: [String, Object, Number],
+      type: [String, Number, null],
       default: null,
     },
     options: {
@@ -37,10 +39,22 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    showErrorMessage: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selectedOption = ref(props.modelValue)
+    const selectedOption = ref()
+
+    watch(
+      () => props.modelValue,
+      (value) => {
+        selectedOption.value = value
+      },
+      { immediate: true },
+    )
 
     watch(selectedOption, (value) => {
       emit('update:modelValue', value)
@@ -54,7 +68,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="w-full">
+  <div class="w-full min-w-0">
     <InputGroup v-if="$slots.icon">
       <InputGroupAddon class="!rounded-l-xl !border-r-0">
         <slot name="icon"></slot>
@@ -64,9 +78,10 @@ export default defineComponent({
         v-model="selectedOption"
         :options="options"
         optionLabel="name"
+        optionValue="value"
         :placeholder="placeholder"
         :showClear="showClear"
-        class="!w-full !rounded-r-xl !border-l-0"
+        class="w-full min-w-0 !rounded-r-xl !border-l-0"
         size="small"
         :class="{ 'p-invalid': errorMessage.length > 0 }"
       />
@@ -77,14 +92,18 @@ export default defineComponent({
       v-model="selectedOption"
       :options="options"
       optionLabel="name"
+      optionValue="value"
       :placeholder="placeholder"
       :showClear="showClear"
-      class="!w-full !rounded-xl"
+      class="w-full min-w-0 !rounded-xl"
       size="small"
-      :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+      :class="{ 'p-invalid': errorMessage.length > 0 }"
     />
 
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div
+      v-if="showErrorMessage && errorMessage.length"
+      class="text-red-400 dark:text-red-300 p-0 m-0"
+    >
       <small>{{ errorMessage }}</small>
     </div>
   </div>

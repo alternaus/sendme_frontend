@@ -1,13 +1,37 @@
-import { useForm, useFieldArray } from 'vee-validate'
+import { type FieldEntry,useFieldArray, useForm } from 'vee-validate'
+import type { Ref } from 'vue'
 import * as yup from 'yup'
 
-yup.setLocale({
-  mixed: {
-    required: 'Este campo es obligatorio',
-  },
-})
+export interface CustomValue {
+  customFieldId: number | undefined
+  value: string | undefined
+}
 
-const schema = yup.object({
+export interface ContactForm {
+  name: string
+  lastName: string
+  email: string
+  phone: string
+  countryCode: string
+  status: 'active' | 'inactive'
+  birthDate: Date
+  organizationId: number
+  customValues: CustomValue[]
+}
+
+export interface ContactFormRef {
+  name: Ref<string>
+  lastName: Ref<string>
+  email: Ref<string>
+  phone: Ref<string>
+  countryCode: Ref<string>
+  status: Ref<'active' | 'inactive'>
+  birthDate: Ref<Date>
+  organizationId: Ref<number>
+  customValues: Ref<FieldEntry<CustomValue>[]>
+}
+
+const schema = yup.object<ContactForm>({
   name: yup.string().required().label('Nombre'),
   lastName: yup.string().required().label('Apellido'),
   email: yup.string().email().required().label('Correo Electrónico'),
@@ -16,8 +40,9 @@ const schema = yup.object({
   status: yup.string().oneOf(['active', 'inactive']).required().label('Estado'),
   birthDate: yup.date().required().label('Fecha de Nacimiento'),
   organizationId: yup.number().integer().required().label('ID de Organización'),
-  customValue: yup.array().of(
+  customValues: yup.array().of(
     yup.object().shape({
+      label: yup.string().required().label('Etiqueta del Campo'),
       customFieldId: yup.number().integer().required().label('ID de Campo Personalizado'),
       value: yup.string().required().label('Valor del Campo'),
     }),
@@ -25,7 +50,7 @@ const schema = yup.object({
 })
 
 export const useFormContact = () => {
-  const { defineField, handleSubmit, resetForm, errors, setValues } = useForm({
+  const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<ContactForm>({
     validationSchema: schema,
     initialValues: {
       name: '',
@@ -34,15 +59,11 @@ export const useFormContact = () => {
       phone: '',
       countryCode: '',
       status: 'active',
-      birthDate: new Date().toISOString().split('T')[0],
+      birthDate: new Date(),
       organizationId: 0,
-      customValue: [
-        {
-          customFieldId: 0,
-          value: '',
-        },
-      ],
+      customValues: [],
     },
+    validateOnMount: false,
   })
 
   const [name] = defineField('name')
@@ -58,13 +79,10 @@ export const useFormContact = () => {
     fields: customValues,
     push: addCustomValue,
     remove: removeCustomValue,
-  } = useFieldArray('customValue')
+  } = useFieldArray<CustomValue>('customValues')
 
-  const addCustomField = () => {
-    addCustomValue({
-      customFieldId: 0,
-      value: '',
-    })
+  const addCustomField = (field: { customFieldId: number; value: string | undefined }) => {
+    addCustomValue(field)
   }
 
   const removeCustomField = (index: number) => {

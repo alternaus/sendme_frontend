@@ -1,11 +1,11 @@
 <script lang="ts">
-import AppTable from '@/components/atoms/tables/AppTable.vue'
-import AppHeader from '@/components/molecules/app-header/AppHeader.vue'
-import { ActionTypes } from '@/components/molecules/app-header/enums/action-types.enum'
-import { IconTypes } from '@/components/molecules/app-header/enums/icon-types.enum'
-
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
+
+import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppHeader from '@/components/molecules/header/AppHeader.vue'
+import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
+import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 
 export default defineComponent({
   components: {

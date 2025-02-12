@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import InputText from 'primevue/inputtext'
+
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
+import InputText from 'primevue/inputtext'
 
 export default defineComponent({
   name: 'AppInput',
@@ -32,6 +33,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    showErrorMessage: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
 })
@@ -39,6 +44,7 @@ export default defineComponent({
 
 <template>
   <div class="w-full">
+    <!-- ✅ Input con icono -->
     <InputGroup v-if="$slots.icon">
       <InputGroupAddon class="!rounded-l-xl !border-r-0">
         <slot name="icon"></slot>
@@ -65,7 +71,10 @@ export default defineComponent({
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div
+      v-if="showErrorMessage && errorMessage.length"
+      class="text-red-400 dark:text-red-300 p-0 m-0"
+    >
       <small>{{ errorMessage }}</small>
     </div>
   </div>

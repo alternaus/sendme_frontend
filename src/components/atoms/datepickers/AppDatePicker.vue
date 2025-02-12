@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
+
 import DatePicker from 'primevue/datepicker'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -39,7 +40,15 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selectedDate = ref<Date | null>(props.modelValue ? new Date(props.modelValue) : null)
+    const selectedDate = ref<Date | null>(null)
+
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        selectedDate.value = newValue ? new Date(newValue) : null
+      },
+      { immediate: true },
+    )
 
     watch(selectedDate, (value) => {
       emit('update:modelValue', value)
@@ -54,7 +63,6 @@ export default defineComponent({
 
 <template>
   <div class="w-full">
-    <!-- ✅ Input con Icono -->
     <InputGroup v-if="$slots.icon">
       <InputGroupAddon class="!rounded-l-xl !border-r-0">
         <slot name="icon"></slot>
@@ -72,7 +80,6 @@ export default defineComponent({
       />
     </InputGroup>
 
-    <!-- ✅ Input sin Icono -->
     <DatePicker
       v-else
       v-model="selectedDate"
@@ -85,7 +92,6 @@ export default defineComponent({
       :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
     />
 
-    <!-- 🔴 Error Handling -->
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

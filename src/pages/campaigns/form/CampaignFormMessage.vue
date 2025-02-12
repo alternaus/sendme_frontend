@@ -24,10 +24,13 @@
               @update:modelValue="updateContent"
             />
           </div>
+
           <div class="flex flex-col items-center justify-center gap-2 col-span-12 lg:col-span-2">
             <p class="text-gray-700 dark:text-neutral-300 font-medium">Dato dinámico</p>
-            <AppSelect :options="[]" type="text" class="w-full text-center" />
-            <AppButton label="Insertar en el mensaje" />
+
+            <AppSelect v-model="selectedField" :options="availableFields" class="w-full" />
+
+            <AppButton label="Insertar en el mensaje" @click="insertPlaceholder" />
           </div>
         </div>
       </div>
@@ -36,14 +39,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, type PropType,ref } from 'vue'
+
+import SmsIcon from '@/assets/svg/sms.svg?component'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
-import SmsIcon from '@/assets/svg/sms.svg?component'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+
 import type { CampaignFormRef } from '../composables/useCampaignForm'
-import { error } from 'console'
 
 export default defineComponent({
   components: {
@@ -56,17 +62,60 @@ export default defineComponent({
   props: {
     form: {
       type: Object as PropType<CampaignFormRef>,
-      default: () => ({ content: { value: '' } }),
+      required: true,
     },
     errors: {
-      type: Object as PropType<Record<string, string>>,
-      default: () => ({}),
+      type: Object as PropType<Partial<Record<string, string>>>,
+      required: true,
     },
   },
-  methods: {
-    updateContent(value: string) {
-      this.$emit('update:form', { ...this.form, content: { value } })
-    },
+  emits: ['update:form'],
+  setup(props, { emit }) {
+    const { getCustomFields } = useCustomFieldService()
+
+    const availableFields = ref<SelectOption[]>([])
+    const selectedField = ref<string | null>(null)
+
+    const updateContent = (value: string) => {
+      emit('update:form', { content: { value } })
+    }
+
+    const insertPlaceholder = () => {
+      if (selectedField.value) {
+        const newValue = `${props.form.content.value} ${selectedField.value}`
+        updateContent(newValue)
+      }
+    }
+
+    getCustomFields()
+      .then((response) => {
+        const contactFields = [
+          { name: 'Nombre', value: '{name}' },
+          { name: 'Apellido', value: '{lastName}' },
+          { name: 'Correo', value: '{email}' },
+          { name: 'Teléfono', value: '{phone}' },
+          { name: 'Código País', value: '{countryCode}' },
+          { name: 'Fecha de Nacimiento', value: '{birthDate}' },
+          { name: 'Estado', value: '{status}' },
+        ]
+
+        const customFields = response.map((field) => ({
+          name: field.fieldName,
+          value: `{${field.fieldName}}`,
+        }))
+
+        availableFields.value = [...contactFields, ...customFields]
+      })
+      .catch((error) => {
+        console.error('❌ Error al obtener campos personalizados:', error)
+      })
+
+    return {
+      availableFields,
+      selectedField,
+      insertPlaceholder,
+      updateContent,
+    }
   },
 })
 </script>

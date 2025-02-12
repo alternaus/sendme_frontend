@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+
 import PrimeButton from 'primevue/button'
 import Drawer from 'primevue/drawer'
-import Logo from '@/assets/svg/sidebar/logo.svg?component'
+
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
 import Contacts from '@/assets/svg/sidebar/contacts.svg?component'
+import Logo from '@/assets/svg/sidebar/logo.svg?component'
 import Reports from '@/assets/svg/sidebar/reports.svg?component'
 import Send from '@/assets/svg/sidebar/send.svg?component'
 import Settings from '@/assets/svg/sidebar/settings.svg?component'

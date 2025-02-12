@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 
+import { Card } from 'primevue'
+import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Paginator from 'primevue/paginator'
-import Column from 'primevue/column'
-import { Card } from 'primevue'
+
 import type { TableHeader } from './types/table-header.type'
 
 export default defineComponent({

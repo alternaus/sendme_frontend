@@ -1,17 +1,22 @@
 import './assets/scss/main.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+
+import { Ripple, ToastService, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
+
+import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import { Ripple, Tooltip } from 'primevue'
 import { AppTheme } from './theme/app-theme'
 
+const pinia = createPinia()
 const app = createApp(App)
+app.use(ToastService)
 
-app.use(createPinia())
+app.use(pinia)
+
 app.use(router)
 
 app.use(PrimeVue, {

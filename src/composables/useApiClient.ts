@@ -1,8 +1,9 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { useAuthStore } from '@/stores/useAuthStore'
-import router from '@/router'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+import router from '@/router'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
 
 const publicApi: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -17,9 +18,14 @@ const privateApi: AxiosInstance = axios.create({
 privateApi.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
-    if (authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`
+    const token = authStore.token || localStorage.getItem('token')
+
+    console.log('🔑 Token:', token)
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
+
     return config
   },
   (error) => Promise.reject(error),
@@ -29,31 +35,14 @@ privateApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const authStore = useAuthStore()
-    const originalRequest = error.config
 
     if (error.response) {
       const { status } = error.response
 
       if (status === 401) {
-        console.warn('⚠️ Token expirado o inválido')
-
-        if (!originalRequest._retry && authStore.refreshToken) {
-          originalRequest._retry = true
-          try {
-            const newToken = await authStore.refreshAccessToken()
-            if (newToken) {
-              privateApi.defaults.headers.Authorization = `Bearer ${newToken}`
-              return privateApi(originalRequest)
-            }
-          } catch (refreshError) {
-            console.error('Error al refrescar el token:', refreshError)
-            authStore.logout()
-            router.push('/login')
-          }
-        } else {
-          authStore.logout()
-          router.push('/login')
-        }
+        console.warn('⚠️ Token expirado o inválido. Cerrando sesión...')
+        authStore.logout()
+        return router.push('/auth/sign-in')
       }
 
       if (status === 403) {

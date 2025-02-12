@@ -1,11 +1,13 @@
 <script lang="ts">
-import AppTable from '@/components/atoms/tables/AppTable.vue'
-import AppHeader from '@/components/molecules/app-header/AppHeader.vue'
-import { ActionTypes } from '@/components/molecules/app-header/enums/action-types.enum'
-import { IconTypes } from '@/components/molecules/app-header/enums/icon-types.enum'
-
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
+import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppHeader from '@/components/molecules/header/AppHeader.vue'
+import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
+import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import type { IContact } from '@/services/contacts/interfaces/contact.interface'
+import { useContactService } from '@/services/contacts/useContactService'
 
 export default defineComponent({
   components: {
@@ -14,8 +16,19 @@ export default defineComponent({
   },
   setup() {
     const { push } = useRouter()
+    const { getContacts } = useContactService()
+    const contacts = ref<IContact[]>([])
+
+    onMounted(async () => {
+      try {
+        contacts.value = await getContacts()
+      } catch (error) {
+        console.error('❌ Error al obtener los contactos:', error)
+      }
+    })
     return {
       push,
+      contacts,
       ActionTypes,
       IconTypes,
     }
@@ -62,10 +75,7 @@ export default defineComponent({
   />
   <AppTable
     class="w-full mt-8"
-    :data="[
-      { name: 'John Doe', email: '', phone: '' },
-      { name: 'John Doe', email: '', phone: '' },
-    ]"
+    :data="contacts"
     :headers="[
       { field: 'name', header: 'Name' },
       { field: 'email', header: 'Email' },

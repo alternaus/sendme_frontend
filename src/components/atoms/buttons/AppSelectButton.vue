@@ -1,6 +1,8 @@
 <script lang="ts">
-import { defineComponent, type PropType, computed } from 'vue'
+import { computed,defineComponent, type PropType } from 'vue'
+
 import SelectButton from 'primevue/selectbutton'
+
 import type { SelectButtonOption } from './types/select-button-options.type'
 
 export default defineComponent({
@@ -10,7 +12,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: Array as PropType<SelectButtonOption[]>,
+      type: Array as PropType<string[]>,
       required: true,
     },
     options: {
@@ -54,6 +56,7 @@ export default defineComponent({
       v-model="internalValue"
       :options="options"
       :optionLabel="optionLabel"
+      option-value="value"
       multiple
       class="w-full"
       :class="{ 'p-invalid': hasError }"
