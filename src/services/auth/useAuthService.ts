@@ -1,5 +1,6 @@
 import { useApiClient } from '@/composables/useApiClient'
 
+import type { IUser } from '../user/interfaces/user.interface'
 import type { IAuthResponse } from './interfaces/auth-response.interface'
 import type { ILogin } from './interfaces/login.interface'
 
@@ -15,13 +16,13 @@ export const useAuthService = () => {
     return publicApi.post<IAuthResponse>('/auth/refresh', { refreshToken })
   }
 
-  const logout = async () => {
-    return privateApi.post('/auth/logout')
+  const me = async () => {
+    return privateApi.get<IUser>('/auth/me')
   }
 
   return {
     login,
     refreshAuthToken,
-    logout,
+    me,
   }
 }

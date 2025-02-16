@@ -33,18 +33,33 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const selectedTime = ref<Date | null>(null)
+    let previousValue: Date | null = null
 
     watch(
       () => props.modelValue,
       (newValue) => {
-        selectedTime.value = newValue ? new Date(newValue) : null
+        if (newValue instanceof Date) {
+          selectedTime.value = newValue
+        } else {
+          selectedTime.value = null
+        }
       },
       { immediate: true },
     )
 
-    watch(selectedTime, (value) => {
-      emit('update:modelValue', value ?? null)
-    })
+    watch(
+      selectedTime,
+      (value) => {
+        if (
+          (value instanceof Date && previousValue?.getTime() !== value.getTime()) ||
+          (value === null && previousValue !== null)
+        ) {
+          previousValue = value
+          emit('update:modelValue', value)
+        }
+      },
+      { deep: true },
+    )
 
     return {
       selectedTime,

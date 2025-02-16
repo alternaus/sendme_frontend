@@ -1,7 +1,7 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, type PropType, ref } from 'vue'
 
-import { Card } from 'primevue'
+import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Paginator from 'primevue/paginator'
@@ -42,30 +42,17 @@ export default defineComponent({
       default: false,
     },
   },
-  setup() {
-    const onRowSelect = (event: { data: Record<string, unknown> }) => {
-      console.log('Row selected:', event.data)
-    }
+  emits: ['selection-change', 'page-change'],
+  setup(props, { emit }) {
+    const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[]>([])
 
-    const allSelected = () => {
-      console.log('All rows selected')
-    }
-
-    const allUnSelected = () => {
-      console.log('All rows unselected')
-    }
-
-    const handlePageChange = (event: { page: number }) => {
-      console.log('Page changed:', event.page)
+    const handleRowSelect = () => {
+      emit('selection-change', selectedRow.value)
     }
 
     return {
-      handlePageChange,
-      selectedRow: [],
-      rowSizes: [20, 50, 100, 500],
-      onRowSelect,
-      allSelected,
-      allUnSelected,
+      selectedRow,
+      handleRowSelect,
     }
   },
 })
@@ -81,10 +68,10 @@ export default defineComponent({
         :selectionMode="multipleSelection ? 'multiple' : 'single'"
         removableSort
         tableStyle="min-width: 50rem"
-        @row-select="onRowSelect"
-        @row-unselect="onRowSelect"
-        @row-select-all="allSelected"
-        @row-unselect-all="allUnSelected"
+        @row-select="handleRowSelect"
+        @row-unselect="handleRowSelect"
+        @row-select-all="handleRowSelect"
+        @row-unselect-all="handleRowSelect"
       >
         <Column
           selectionMode="multiple"
@@ -111,13 +98,13 @@ export default defineComponent({
           </template>
         </Column>
       </DataTable>
+
       <Paginator
         v-show="totalItems > 0"
         :rows="pageSize"
         :totalRecords="totalItems"
-        :rowsPerPageOptions="rowSizes"
-        @page="handlePageChange"
-      ></Paginator>
+        @page="(event) => $emit('page-change', event.page + 1)"
+      />
     </template>
   </Card>
 </template>

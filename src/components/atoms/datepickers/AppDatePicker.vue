@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, type PropType, ref, watch } from 'vue'
 
 import DatePicker from 'primevue/datepicker'
 import InputGroup from 'primevue/inputgroup'
@@ -14,7 +14,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: Date,
+      type: [Date, null] as PropType<Date | null>,
       default: null,
     },
     placeholder: {
@@ -42,17 +42,35 @@ export default defineComponent({
   setup(props, { emit }) {
     const selectedDate = ref<Date | null>(null)
 
+    // ✅ Actualiza el valor inicial correctamente
     watch(
       () => props.modelValue,
       (newValue) => {
-        selectedDate.value = newValue ? new Date(newValue) : null
+        if (newValue instanceof Date) {
+          selectedDate.value = newValue
+        } else {
+          selectedDate.value = null
+        }
       },
       { immediate: true },
     )
 
-    watch(selectedDate, (value) => {
-      emit('update:modelValue', value)
-    })
+    // ✅ Evita emitir valores innecesarios con debounce y comparación previa
+    let previousValue: Date | null = selectedDate.value
+
+    watch(
+      selectedDate,
+      (value) => {
+        if (
+          (value instanceof Date && previousValue?.getTime() !== value.getTime()) ||
+          (value === null && previousValue !== null)
+        ) {
+          previousValue = value
+          emit('update:modelValue', value)
+        }
+      },
+      { deep: true },
+    )
 
     return {
       selectedDate,
@@ -60,7 +78,6 @@ export default defineComponent({
   },
 })
 </script>
-
 <template>
   <div class="w-full">
     <InputGroup v-if="$slots.icon">

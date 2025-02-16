@@ -31,31 +31,31 @@ export default defineComponent({
         onClick: () => {
           push('/campaigns/create')
         },
-        needsId: false,
+
         type: ActionTypes.CREATE,
       },
       {
         label: 'Delete',
         onClick: () => {},
-        needsId: false,
+
         type: ActionTypes.DELETE,
       },
       {
         label: 'Edit',
         onClick: () => {},
-        needsId: false,
+
         type: ActionTypes.EDIT,
       },
       {
         label: 'Export',
         onClick: () => {},
-        needsId: false,
+
         type: ActionTypes.EXPORT,
       },
       {
         label: 'Import',
         onClick: () => {},
-        needsId: false,
+
         type: ActionTypes.IMPORT,
       },
     ]"

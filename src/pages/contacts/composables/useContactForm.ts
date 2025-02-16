@@ -1,10 +1,13 @@
-import { type FieldEntry,useFieldArray, useForm } from 'vee-validate'
+import { type FieldEntry, useFieldArray, useForm } from 'vee-validate'
 import type { Ref } from 'vue'
 import * as yup from 'yup'
 
+import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
+
 export interface CustomValue {
-  customFieldId: number | undefined
-  value: string | undefined
+  customFieldId?: number
+  value?: string
+  id?: number
 }
 
 export interface ContactForm {
@@ -13,9 +16,8 @@ export interface ContactForm {
   email: string
   phone: string
   countryCode: string
-  status: 'active' | 'inactive'
-  birthDate: Date
-  organizationId: number
+  status: ContactStatus
+  birthDate: Date | null
   customValues: CustomValue[]
 }
 
@@ -28,7 +30,7 @@ export interface ContactFormRef {
   status: Ref<'active' | 'inactive'>
   birthDate: Ref<Date>
   organizationId: Ref<number>
-  customValues: Ref<FieldEntry<CustomValue>[]>
+  customValue: Ref<FieldEntry<CustomValue>[]>
 }
 
 const schema = yup.object<ContactForm>({
@@ -39,12 +41,11 @@ const schema = yup.object<ContactForm>({
   countryCode: yup.string().required().label('Código de País'),
   status: yup.string().oneOf(['active', 'inactive']).required().label('Estado'),
   birthDate: yup.date().required().label('Fecha de Nacimiento'),
-  organizationId: yup.number().integer().required().label('ID de Organización'),
   customValues: yup.array().of(
     yup.object().shape({
-      label: yup.string().required().label('Etiqueta del Campo'),
       customFieldId: yup.number().integer().required().label('ID de Campo Personalizado'),
       value: yup.string().required().label('Valor del Campo'),
+      id: yup.number().integer().nullable().label('ID de Valor personalizado'),
     }),
   ),
 })
@@ -58,9 +59,8 @@ export const useFormContact = () => {
       email: '',
       phone: '',
       countryCode: '',
-      status: 'active',
+      status: ContactStatus.ACTIVE,
       birthDate: new Date(),
-      organizationId: 0,
       customValues: [],
     },
     validateOnMount: false,
@@ -73,7 +73,6 @@ export const useFormContact = () => {
   const [countryCode] = defineField('countryCode')
   const [status] = defineField('status')
   const [birthDate] = defineField('birthDate')
-  const [organizationId] = defineField('organizationId')
 
   const {
     fields: customValues,
@@ -81,7 +80,7 @@ export const useFormContact = () => {
     remove: removeCustomValue,
   } = useFieldArray<CustomValue>('customValues')
 
-  const addCustomField = (field: { customFieldId: number; value: string | undefined }) => {
+  const addCustomField = (field: { customFieldId: number; value?: string; id?: number }) => {
     addCustomValue(field)
   }
 
@@ -98,7 +97,6 @@ export const useFormContact = () => {
       countryCode,
       status,
       birthDate,
-      organizationId,
       customValues,
     },
     handleSubmit,

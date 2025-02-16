@@ -14,7 +14,7 @@ import Settings from '@/assets/svg/sidebar/settings.svg?component'
 import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
 
 export default defineComponent({
-  name: 'AppSidebarMobile',
+  name: 'AppSidebar',
   components: {
     PrimeButton,
     Drawer,
@@ -33,31 +33,25 @@ export default defineComponent({
       { path: '/settings', icon: Settings, title: 'Settings' },
     ]
 
-    const redirectToHome = () => {
-      window.location.href = '/'
-    }
-
     return {
       visible,
       routes,
-      redirectToHome,
     }
   },
 })
 </script>
+
 <template>
-  <div class="md:hidden">
-    <PrimeButton icon="pi pi-bars" text rounded @click="visible = true" />
-    <Drawer v-model:visible="visible" :modal="true" position="left" style="width: 12rem">
+  <div>
+    <PrimeButton icon="pi pi-bars" text rounded @click="visible = true" class="ml-2 mt-2" />
+
+    <Drawer v-model:visible="visible" :modal="true" position="left" style="width: 14rem">
       <template #container="{ closeCallback }">
         <div
           class="flex flex-col h-full bg-[var(--p-primary-color)] dark:bg-neutral-800 text-white"
         >
           <div class="flex justify-between items-center p-4">
-            <Logo
-              class="h-16 w-16 cursor-pointer m-auto dark:fill-white"
-              @click="(redirectToHome(), closeCallback())"
-            />
+            <Logo class="h-16 w-16 cursor-pointer" @click="closeCallback()" />
             <PrimeButton
               @click="closeCallback"
               icon="pi pi-times"
@@ -66,21 +60,45 @@ export default defineComponent({
               class="text-black dark:text-white"
             />
           </div>
+
           <div class="overflow-y-auto flex-1">
             <ul class="p-2 space-y-2">
               <li v-for="(route, index) in routes" :key="index">
                 <router-link
                   :to="route.path"
-                  active-class="bg-black dark:bg-[var(--p-primary-color)]"
-                  class="group flex items-center gap-2 p-3 rounded-lg transition-all duration-300 text-white hover:bg-gray-700"
+                  class="group flex items-center gap-3 p-3 rounded-lg transition-all duration-300"
+                  :class="{
+                    'bg-[var(--p-primary-color)] text-black': $route.path.startsWith(route.path),
+                    'hover:bg-gray-700': !$route.path.startsWith(route.path),
+                    'dark:bg-[var(--p-primary-color)] dark:text-black': $route.path.startsWith(
+                      route.path,
+                    ),
+                    'dark:text-[var(--p-primary-color)] dark:hover:text-black':
+                      !$route.path.startsWith(route.path),
+                  }"
                   v-tooltip.left="route.title"
                   @click="closeCallback()"
                 >
                   <component
                     :is="route.icon"
-                    class="w-6 h-6 transition-all duration-300 active:fill-white"
+                    class="w-6 h-6 transition-all duration-300"
+                    :class="{
+                      'fill-black': $route.path.startsWith(route.path),
+                      'fill-black dark:fill-[var(--p-primary-color)] dark:hover:fill-black':
+                        !$route.path.startsWith(route.path),
+                    }"
                   />
-                  <span class="text-sm">{{ route.title }}</span>
+
+                  <span
+                    class="text-sm transition-all duration-300"
+                    :class="{
+                      'text-black': $route.path.startsWith(route.path),
+                      'text-black dark:text-[var(--p-primary-color)] dark:hover:text-black':
+                        !$route.path.startsWith(route.path),
+                    }"
+                  >
+                    {{ route.title }}
+                  </span>
                 </router-link>
               </li>
             </ul>

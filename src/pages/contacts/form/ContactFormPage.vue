@@ -1,5 +1,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import { useToast } from 'primevue/usetoast'
 
 import BirthdayIcon from '@/assets/svg/birthday.svg?component'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
@@ -15,6 +18,7 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
 import { useFormContact } from '../composables/useContactForm'
@@ -35,8 +39,14 @@ export default defineComponent({
     InformationIcon,
   },
   setup() {
-    const { form, handleSubmit, resetForm, errors, addCustomField } = useFormContact()
+    const route = useRoute()
+    const router = useRouter()
+    const toast = useToast()
+
+    const contactId = String(route.params?.id || '')
+    const { form, handleSubmit, resetForm, errors, addCustomField, setValues } = useFormContact()
     const { getCustomFields } = useCustomFieldService()
+    const { getContact, createContact, updateContact } = useContactService()
 
     const customFields = ref<{ id: number; fieldName: string }[]>([])
 
@@ -49,10 +59,35 @@ export default defineComponent({
           addCustomField({
             customFieldId: field.id,
             value: '',
+            id: undefined,
           })
         })
+        if (contactId) {
+          const contact = await getContact(contactId)
+          console.log(contact.customValues)
+          setValues({
+            name: contact.name,
+            lastName: contact.lastName,
+            email: contact.email,
+            phone: contact.phone,
+            countryCode: contact.countryCode,
+            status: contact.status,
+            birthDate: contact.birthDate ? new Date(contact.birthDate) : undefined,
+            customValues: contact.customValues?.map((custom) => ({
+              customFieldId: custom.customFieldId,
+              value: custom.value,
+              id: custom.id,
+            })),
+          })
+        }
       } catch (error) {
         console.error('❌ Error al obtener campos personalizados:', error)
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los campos personalizados',
+          life: 3000,
+        })
       }
     })
 
@@ -62,17 +97,61 @@ export default defineComponent({
     ]
 
     const onSubmitForm = handleSubmit(
-      (values) => {
-        console.log('Formulario enviado con:', values)
+      async (values) => {
+        try {
+          const payload = {
+            ...values,
+            birthDate: values.birthDate ? values.birthDate : new Date(),
+            customValues: values.customValues
+              .filter((customValue) => customValue.customFieldId !== undefined)
+              .map((customValue) => ({
+                customFieldId: customValue.customFieldId as number,
+                value: customValue.value || '',
+                id: customValue.id,
+              })),
+          }
+
+          if (contactId) {
+            await updateContact(contactId, payload)
+            toast.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Contacto actualizado correctamente',
+              life: 3000,
+            })
+          } else {
+            await createContact(payload)
+            toast.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Contacto creado correctamente',
+              life: 3000,
+            })
+          }
+
+          router.push('/contacts')
+        } catch (error) {
+          console.error('❌ Error al guardar el contacto:', error)
+          toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Hubo un problema al guardar el contacto',
+            life: 3000,
+          })
+        }
       },
       (errors) => {
-        console.log('Errores en el formulario:', errors)
+        console.log('❌ Errores en el formulario:', errors)
       },
     )
 
     const getError = (index: number, field: string) => {
       const errorKey = `customValues[${index}].${field}`
       return (errors?.value as Record<string, string | undefined>)[errorKey] || ''
+    }
+
+    const goBack = () => {
+      router.push('/contacts')
     }
 
     return {
@@ -86,6 +165,8 @@ export default defineComponent({
       statusOptions,
       customFields,
       getError,
+      contactId,
+      goBack,
     }
   },
 })
@@ -99,54 +180,46 @@ export default defineComponent({
       <AppInput
         v-model="form.name.value"
         type="text"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full rounded-md"
         :error-message="errors.name"
       >
-        <template #icon>
-          <CredentialIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
 
       <AppInput
         v-model="form.lastName.value"
         type="text"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full rounded-md"
         :error-message="errors.lastName"
       >
-        <template #icon>
-          <CredentialIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
 
       <AppInput
         v-model="form.email.value"
         type="email"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full rounded-md"
         :error-message="errors.email"
       >
-        <template #icon> <EmailIcon class="dark:fill-white w-4 h-4" /> </template>
+        <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
 
       <AppInput
         v-model="form.phone.value"
         type="tel"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full rounded-md"
         :error-message="errors.phone"
       >
-        <template #icon>
-          <PhoneIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
 
       <AppInput
         v-model="form.countryCode.value"
         type="text"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full rounded-md"
         :error-message="errors.countryCode"
       >
-        <template #icon>
-          <CredentialIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
 
       <AppDatePicker
@@ -155,9 +228,7 @@ export default defineComponent({
         class="w-full"
         :error-message="errors.birthDate"
       >
-        <template #icon>
-          <BirthdayIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><BirthdayIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppDatePicker>
 
       <AppSelect
@@ -167,9 +238,7 @@ export default defineComponent({
         class="w-full"
         :error-message="errors.status"
       >
-        <template #icon>
-          <StatusIcon class="dark:fill-white w-4 h-4" />
-        </template>
+        <template #icon><StatusIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppSelect>
     </div>
 
@@ -177,9 +246,7 @@ export default defineComponent({
       <template #content>
         <div class="flex items-center justify-center gap-2 mb-4">
           <InformationIcon class="w-8 h-8 dark:fill-white" />
-          <h2 class="text-center text-xl font-semibold text-gray-800 dark:text-neutral-300">
-            Información Personalizada
-          </h2>
+          <h2 class="text-center text-xl font-semibold">Información Personalizada</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -188,13 +255,13 @@ export default defineComponent({
             :key="index"
             class="flex flex-col gap-1"
           >
-            <label class="text-gray-700 dark:text-neutral-300 text-sm">
-              {{ customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName }}
-            </label>
+            <label>{{
+              customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
+            }}</label>
             <AppInput
               v-model="custom.value.value"
               type="text"
-              class="w-full dark:border-gray-600 rounded-md"
+              class="w-full rounded-md"
               :error-message="getError(index, 'value')"
             />
           </div>
@@ -202,15 +269,9 @@ export default defineComponent({
       </template>
     </AppCard>
 
-    <!-- Botones de acción -->
-    <div class="flex flex-col lg:flex-row lg:justify-start gap-5 mt-7">
-      <AppButton type="submit" severity="primary" class="w-full sm:w-auto" label="Guardar" />
-      <AppButton
-        severity="secondary"
-        class="w-full sm:w-auto"
-        label="Cancelar"
-        @click="resetForm"
-      />
+    <div class="flex flex-col lg:flex-row gap-5 mt-7">
+      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" label="Guardar" />
+      <AppButton class="w-full sm:w-auto" severity="secondary" label="Cancelar" @click="goBack" />
     </div>
   </form>
 </template>

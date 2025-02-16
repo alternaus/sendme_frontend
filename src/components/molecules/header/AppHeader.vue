@@ -14,6 +14,7 @@ import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
+import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppProfile from '@/components/molecules/profile/AppProfile.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
@@ -38,7 +39,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
 }
 
 export default defineComponent({
-  components: { AppProfile },
+  components: { AppProfile, AppSearchInput },
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
@@ -54,7 +55,6 @@ export default defineComponent({
           type: ActionTypes
           label: string
           onClick: (id?: number) => void
-          needsId: boolean
         }>
       >,
       required: true,
@@ -91,11 +91,16 @@ export default defineComponent({
     />
 
     <div class="flex items-center gap-2 ml-auto mx-4">
+      <AppSearchInput
+        :search="searchQuery"
+        class="w-full"
+        @update:search="searchQuery = $event"
+        :placeholder="placeholder"
+      />
       <button
         v-for="(action, index) in actions"
         :key="index"
         v-tooltip.bottom="action.label"
-        :disabled="action.needsId && !selectedId"
         @click="action.onClick(selectedId)"
         :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
       >

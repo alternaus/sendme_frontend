@@ -1,4 +1,4 @@
-import { computed,ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useToast } from 'primevue/usetoast'
 
@@ -6,14 +6,16 @@ import { defineStore } from 'pinia'
 
 import router from '@/router'
 import { useAuthService } from '@/services/auth/useAuthService'
+import type { IUser } from '@/services/user/interfaces/user.interface'
 
 export const useAuthStore = defineStore('auth', () => {
   const authService = useAuthService()
   const toast = useToast()
 
   const token = ref<string | null>(localStorage.getItem('token') || null)
+
   const refreshToken = ref<string | null>(localStorage.getItem('refreshToken') || null)
-  const user = ref<Record<string, unknown> | null>(null)
+  const user = ref<IUser | null>(null)
   const loading = ref(false)
   const errorMessage = ref<string | null>(null)
 
@@ -35,8 +37,9 @@ export const useAuthStore = defineStore('auth', () => {
       errorMessage.value = null
 
       const response = await authService.login({ email, password })
-      console.log('✅ Login:', response)
+
       setAuthData(response.accessToken)
+      user.value = await authService.me()
 
       toast.add({
         severity: 'success',

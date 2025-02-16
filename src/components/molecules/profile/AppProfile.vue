@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 
 import PrimeButton from 'primevue/button'
 import PrimeDialog from 'primevue/dialog'
@@ -17,7 +17,8 @@ export default defineComponent({
     PrimeButton,
   },
   setup() {
-    const { logout } = useAuthStore()
+    const { logout, user } = useAuthStore()
+
     const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
     const target = ref<HTMLElement | null>(null)
     const showLogoutDialog = ref(false)
@@ -40,6 +41,8 @@ export default defineComponent({
       logout()
     }
 
+    const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
+
     return {
       items,
       menu,
@@ -47,6 +50,7 @@ export default defineComponent({
       openMenu,
       showLogoutDialog,
       confirmLogout,
+      firstLetter,
     }
   },
 })
@@ -54,7 +58,7 @@ export default defineComponent({
 
 <template>
   <div class="flex items-center space-x-2">
-    <AppAvatar ref="target" @click="openMenu" class="cursor-pointer" />
+    <AppAvatar ref="target" :label="firstLetter" @click="openMenu" class="cursor-pointer" />
     <PrimeMenu ref="menu" :model="items" popup />
 
     <PrimeDialog

@@ -1,13 +1,15 @@
+import type { ContactStatus } from '../enums/contact-status.enum'
+
 export interface IContact {
   id: number
   name: string
   email: string
   phone: string
   countryCode: string
-  status: string
+  status: ContactStatus
   lastName: string
   birthDate: Date
-  customValue: ICustomValue[]
+  customValues: ICustomValue[]
   organizationId: number
   createdAt: Date
   updatedAt: Date

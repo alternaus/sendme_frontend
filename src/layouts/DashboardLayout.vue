@@ -11,17 +11,18 @@ export default defineComponent({
   },
 })
 </script>
+
 <template>
-  <div
-    class="h-screen w-screen grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center justify-center"
-  >
-    <div class="hidden sm:block w-[140px] h-full">
-      <app-sidebar />
+  <div class="flex min-h-screen w-full">
+    <div class="hidden md:flex w-[140px] h-full">
+      <AppSidebar />
     </div>
 
-    <AppSidebarMobile class="sm:hidden" />
+    <div class="fixed z-50 md:hidden">
+      <AppSidebarMobile />
+    </div>
 
-    <div class="flex flex-col h-full p-4 items-start">
+    <div class="flex flex-col flex-1 h-full p-4 items-start w-full max-w-screen-2xl mx-auto">
       <slot />
     </div>
   </div>

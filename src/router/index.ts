@@ -27,6 +27,11 @@ const routes: RouteRecordRaw[] = [
         name: 'contacts.edit',
         component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
       },
+      {
+        path: 'import',
+        name: 'contacts.import',
+        component: () => import('@/pages/contacts/import/ContactImportPage.vue'),
+      },
     ],
   },
   {
