@@ -73,7 +73,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    modelValue: {
+      type: String,
+      default: '',
+    },
   },
+  emits: ['update:modelValue'],
   setup() {
     const searchQuery = ref('')
 

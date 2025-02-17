@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -34,6 +34,7 @@ export default defineComponent({
     const { getContacts, deleteContact, exportContacts } = useContactService()
     const page = ref(1)
     const limit = ref(10)
+    const search = ref('')
     const contacts = ref<IContact[]>([])
     const contactsMeta = ref<IPaginationMeta>({
       currentPage: 1,
@@ -49,7 +50,11 @@ export default defineComponent({
     const fetchContacts = async (newPage = 1) => {
       page.value = newPage
       try {
-        const response = await getContacts({ page: page.value, limit: limit.value })
+        const response = await getContacts({
+          page: page.value,
+          limit: limit.value,
+          name: search.value,
+        })
         contacts.value = response.data
         contactsMeta.value = response.meta
       } catch (error) {
@@ -64,6 +69,11 @@ export default defineComponent({
     }
 
     onMounted(() => fetchContacts())
+
+    watch(search, async () => {
+      console.log('🔍 Buscando:', search.value)
+      await fetchContacts(1)
+    })
 
     const handleSelectionChange = (selectedRow: IContact) => {
       selectedContact.value = selectedRow
@@ -92,6 +102,7 @@ export default defineComponent({
         })
       }
     }
+
     const headerActions = computed(() => [
       { label: 'Create', onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
       ...(selectedContact.value
@@ -154,13 +165,14 @@ export default defineComponent({
       IconTypes,
       contactsMeta,
       headerActions,
+      search,
     }
   },
 })
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" show-search :actions="headerActions" />
+  <AppHeader :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
 
   <AppTable
     class="w-full mt-4"
