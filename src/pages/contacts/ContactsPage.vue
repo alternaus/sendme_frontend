@@ -155,7 +155,14 @@ export default defineComponent({
     const headerActions = computed(() => [
       { label: 'Create', onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
       ...(selectedContact.value
-        ? [{ label: 'Delete', onClick: handleDelete, type: ActionTypes.DELETE }]
+        ? [
+            { label: 'Delete', onClick: handleDelete, type: ActionTypes.DELETE },
+            {
+              label: 'View',
+              onClick: () => push('/contacts/view/' + selectedContact.value?.id),
+              type: ActionTypes.VIEW,
+            },
+          ]
         : []),
       ...(selectedContact.value
         ? [

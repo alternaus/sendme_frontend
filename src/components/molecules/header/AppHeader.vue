@@ -7,6 +7,7 @@ import {
   type SVGAttributes,
 } from 'vue'
 
+import EyeIcon from '@/assets/svg/eye.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
@@ -26,6 +27,7 @@ export const ActionIcons: Record<ActionTypes, FunctionalComponent<SVGAttributes>
   [ActionTypes.DELETE]: DeleteIcon,
   [ActionTypes.EXPORT]: ExportIcon,
   [ActionTypes.IMPORT]: ImportIcon,
+  [ActionTypes.VIEW]: EyeIcon,
 }
 
 export const IconComponents: Record<IconTypes, FunctionalComponent> = {
@@ -63,6 +65,10 @@ export default defineComponent({
       type: Number,
       default: null,
     },
+    text: {
+      type: String,
+      default: null,
+    },
   },
   setup() {
     const searchQuery = ref('')
@@ -70,7 +76,7 @@ export default defineComponent({
     const getActionClass = (actionType: ActionTypes) => {
       return actionType === ActionTypes.DELETE
         ? 'bg-red-500 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-700'
-        : 'bg-[var(--p-primary-color)] hover:bg-primary-400 '
+        : 'bg-yellow-300 hover:bg-yellow-400 text-black'
     }
 
     return {
@@ -84,30 +90,34 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex items-center h-16 dark:border-gray-700 w-full">
-    <component
-      :is="IconComponents[icon]"
-      class="w-12 h-12 ml-4 dark:fill-[var(--p-primary-color)]"
-    />
+  <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
+    <div class="flex flex-col items-center md:flex-row md:gap-4">
+      <component :is="IconComponents[icon]" class="w-10 h-10 dark:fill-[var(--p-primary-color)]" />
+      <span class="text-lg font-semibold text-center md:text-left">
+        {{ text }}
+      </span>
+    </div>
 
-    <div class="flex items-center gap-2 ml-auto mx-4">
+    <div class="flex items-center gap-2 ml-auto">
       <AppSearchInput
         :search="searchQuery"
-        class="w-full"
+        class="w-full md:w-auto"
         @update:search="searchQuery = $event"
         :placeholder="placeholder"
       />
-      <button
-        v-for="(action, index) in actions"
-        :key="index"
-        v-tooltip.bottom="action.label"
-        @click="action.onClick(selectedId)"
-        :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
-      >
-        <component :is="ActionIcons[action.type]" class="w-6 h-6" />
-      </button>
+      <div class="flex gap-2 mx-2">
+        <button
+          v-for="(action, index) in actions"
+          :key="index"
+          v-tooltip.bottom="action.label"
+          @click="action.onClick(selectedId)"
+          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
+        >
+          <component :is="ActionIcons[action.type]" class="w-6 h-6" />
+        </button>
+      </div>
     </div>
 
-    <AppProfile />
+    <AppProfile class="hidden md:block" />
   </div>
 </template>

@@ -64,7 +64,7 @@ export default defineComponent({
         })
         if (contactId) {
           const contact = await getContact(contactId)
-          console.log(contact.customValues)
+
           setValues({
             name: contact.name,
             lastName: contact.lastName,
@@ -80,8 +80,7 @@ export default defineComponent({
             })),
           })
         }
-      } catch (error) {
-        console.error('❌ Error al obtener campos personalizados:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: 'Error',
@@ -130,8 +129,7 @@ export default defineComponent({
           }
 
           router.push('/contacts')
-        } catch (error) {
-          console.error('❌ Error al guardar el contacto:', error)
+        } catch {
           toast.add({
             severity: 'error',
             summary: 'Error',

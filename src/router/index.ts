@@ -32,6 +32,11 @@ const routes: RouteRecordRaw[] = [
         name: 'contacts.import',
         component: () => import('@/pages/contacts/import/ContactImportPage.vue'),
       },
+      {
+        path: 'view/:id',
+        name: 'contacts.view',
+        component: () => import('@/pages/contacts/view/ContactViewPage.vue'),
+      },
     ],
   },
   {

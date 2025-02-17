@@ -4,4 +4,5 @@ export enum ActionTypes {
   DELETE = 'DELETE',
   EXPORT = 'EXPORT',
   IMPORT = 'IMPORT',
+  VIEW = 'VIEW',
 }
