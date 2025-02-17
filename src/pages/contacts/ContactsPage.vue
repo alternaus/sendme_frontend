@@ -1,63 +1,3 @@
-<template>
-  <AppHeader :icon="IconTypes.CONTACTS" :actions="headerActions" />
-
-  <AppTable
-    class="w-full mt-8"
-    :data="contacts"
-    :headers="[
-      { field: 'name', header: 'Name' },
-      { field: 'phone', header: 'Phone' },
-      { field: 'email', header: 'Email' },
-      { field: 'createdAt', header: 'Created At' },
-      { field: 'origin', header: 'Origin' },
-      { field: 'status', header: 'Status' },
-    ]"
-    :pageSize="contactsMeta.limit"
-    :pageCurrent="contactsMeta.currentPage"
-    :totalItems="contactsMeta.totalRecords"
-    :multipleSelection="false"
-    @selection-change="handleSelectionChange"
-    @page-change="fetchContacts"
-  >
-    <template #header-name>
-      <div class="flex items-center">
-        <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Nombre</span>
-      </div>
-    </template>
-    <template #header-phone>
-      <div class="flex items-center">
-        <PhoneIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Telefono</span>
-      </div>
-    </template>
-    <template #header-email>
-      <div class="flex items-center">
-        <EmailIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Email</span>
-      </div>
-    </template>
-    <template #header-createdAt>
-      <div class="flex items-center">
-        <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Fecha</span>
-      </div>
-    </template>
-    <template #header-origin>
-      <div class="flex items-center">
-        <DataOriginIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Origen</span>
-      </div>
-    </template>
-    <template #header-status>
-      <div class="flex items-center">
-        <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Estado</span>
-      </div>
-    </template>
-  </AppTable>
-</template>
-
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -218,3 +158,63 @@ export default defineComponent({
   },
 })
 </script>
+
+<template>
+  <AppHeader :icon="IconTypes.CONTACTS" show-search :actions="headerActions" />
+
+  <AppTable
+    class="w-full mt-4"
+    :data="contacts"
+    :headers="[
+      { field: 'name', header: 'Name' },
+      { field: 'phone', header: 'Phone' },
+      { field: 'email', header: 'Email' },
+      { field: 'createdAt', header: 'Created At' },
+      { field: 'origin', header: 'Origin' },
+      { field: 'status', header: 'Status' },
+    ]"
+    :pageSize="contactsMeta.limit"
+    :pageCurrent="contactsMeta.currentPage"
+    :totalItems="contactsMeta.totalRecords"
+    :multipleSelection="false"
+    @selection-change="handleSelectionChange"
+    @page-change="fetchContacts"
+  >
+    <template #header-name>
+      <div class="flex items-center">
+        <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Nombre</span>
+      </div>
+    </template>
+    <template #header-phone>
+      <div class="flex items-center">
+        <PhoneIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Telefono</span>
+      </div>
+    </template>
+    <template #header-email>
+      <div class="flex items-center">
+        <EmailIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Email</span>
+      </div>
+    </template>
+    <template #header-createdAt>
+      <div class="flex items-center">
+        <DateIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Fecha</span>
+      </div>
+    </template>
+    <template #header-origin>
+      <div class="flex items-center">
+        <DataOriginIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Origen</span>
+      </div>
+    </template>
+    <template #header-status>
+      <div class="flex items-center">
+        <StatusIcon class="w-5 h-5 mr-2 fill-current" />
+        <span>Estado</span>
+      </div>
+    </template>
+  </AppTable>
+</template>

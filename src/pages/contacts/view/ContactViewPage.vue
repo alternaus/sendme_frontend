@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <AppCard class="w-full mt-8">
+  <AppCard class="w-full mt-4">
     <template #content>
       <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
         <div class="flex flex-col items-center gap-2">

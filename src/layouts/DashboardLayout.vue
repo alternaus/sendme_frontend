@@ -13,16 +13,18 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="flex min-h-screen w-full">
-    <div class="hidden md:flex w-[140px] h-full">
+  <div
+    class="grid grid-rows-[auto_1fr] lg:grid-cols-[140px_1fr] lg:grid-rows-1 min-h-screen w-full"
+  >
+    <div class="hidden lg:block h-full">
       <AppSidebar />
     </div>
 
-    <div class="fixed z-50 md:hidden">
+    <div class="lg:hidden w-full h-[56px] bg-white dark:bg-neutral-900 shadow-md z-50">
       <AppSidebarMobile />
     </div>
 
-    <div class="flex flex-col flex-1 h-full p-4 items-start w-full max-w-screen-2xl mx-auto">
+    <div class="p-4 w-full max-w-screen-2xl mx-auto overflow-auto">
       <slot />
     </div>
   </div>

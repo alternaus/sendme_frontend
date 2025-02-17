@@ -104,7 +104,7 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" class="hidden lg:flex" />
 
-  <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 mt-8">
+  <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 mt-4">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput
         v-model="form.name.value"

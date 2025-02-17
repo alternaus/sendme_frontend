@@ -25,6 +25,7 @@ export default defineComponent({
 <template>
   <AppHeader
     :icon="IconTypes.CAMPAIGNS"
+    show-search
     :actions="[
       {
         label: 'Create',
@@ -61,7 +62,7 @@ export default defineComponent({
     ]"
   />
   <AppTable
-    class="w-full mt-8"
+    class="w-full mt-4"
     :data="[
       { name: 'John Doe', email: '', phone: '' },
       { name: 'John Doe', email: '', phone: '' },

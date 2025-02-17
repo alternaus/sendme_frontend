@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, type PropType, ref } from 'vue'
+import { defineComponent, type PropType, ref, watchEffect } from 'vue'
 
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -45,6 +45,15 @@ export default defineComponent({
   emits: ['selection-change', 'page-change'],
   setup(props, { emit }) {
     const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[]>([])
+    const isMdScreen = ref(window.innerWidth < 1024)
+
+    watchEffect(() => {
+      const handleResize = () => {
+        isMdScreen.value = window.innerWidth < 1024
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    })
 
     const handleRowSelect = () => {
       emit('selection-change', selectedRow.value)
@@ -53,51 +62,73 @@ export default defineComponent({
     return {
       selectedRow,
       handleRowSelect,
+      isMdScreen,
     }
   },
 })
 </script>
 
 <template>
-  <Card>
+  <Card class="w-full">
     <template #content>
-      <DataTable
-        v-model:selection="selectedRow"
-        :value="data"
-        size="small"
-        :selectionMode="multipleSelection ? 'multiple' : 'single'"
-        removableSort
-        tableStyle="min-width: 50rem"
-        @row-select="handleRowSelect"
-        @row-unselect="handleRowSelect"
-        @row-select-all="handleRowSelect"
-        @row-unselect-all="handleRowSelect"
-      >
-        <Column
-          selectionMode="multiple"
-          headerStyle="width: 3rem"
-          v-if="multipleSelection"
-        ></Column>
-        <Column
-          class="!border-0"
-          v-for="col in headers"
-          :key="col.field"
-          :field="col.field"
-          :sortable="true"
+      <div class="max-h-[calc(100vh-300px)] overflow-auto">
+        <DataTable
+          v-if="!isMdScreen"
+          v-model:selection="selectedRow"
+          :value="data"
+          size="small"
+          :selectionMode="multipleSelection ? 'multiple' : 'single'"
+          removableSort
+          tableStyle="min-width: 50rem"
+          @row-select="handleRowSelect"
+          @row-unselect="handleRowSelect"
+          @row-select-all="handleRowSelect"
+          @row-unselect-all="handleRowSelect"
         >
-          <template #header>
-            <slot :name="`header-${col.field}`">
-              {{ col.header }}
-            </slot>
-          </template>
+          <Column
+            selectionMode="multiple"
+            headerStyle="width: 3rem"
+            v-if="multipleSelection"
+          ></Column>
+          <Column
+            class="!border-0"
+            v-for="col in headers"
+            :key="col.field"
+            :field="col.field"
+            :sortable="true"
+          >
+            <template #header>
+              <slot :name="`header-${col.field}`">
+                {{ col.header }}
+              </slot>
+            </template>
 
-          <template #body="{ data }">
-            <slot :name="`custom-${col.field}`" :data="data">
-              {{ data[col.field] }}
-            </slot>
-          </template>
-        </Column>
-      </DataTable>
+            <template #body="{ data }">
+              <slot :name="`custom-${col.field}`" :data="data">
+                {{ data[col.field] }}
+              </slot>
+            </template>
+          </Column>
+        </DataTable>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div
+            v-for="(item, index) in data"
+            :key="index"
+            class="bg-white dark:bg-neutral-800 shadow-lg rounded-lg p-4 flex flex-col"
+          >
+            <div v-for="col in headers" :key="col.field" class="flex items-center gap-2">
+              <strong class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                <slot :name="`header-${col.field}`">
+                  {{ col.header }}
+                </slot>
+                :</strong
+              >
+              <small>{{ item[col.field] }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Paginator
         v-show="totalItems > 0"

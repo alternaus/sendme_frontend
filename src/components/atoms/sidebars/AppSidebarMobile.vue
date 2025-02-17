@@ -14,7 +14,7 @@ import Settings from '@/assets/svg/sidebar/settings.svg?component'
 import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
 
 export default defineComponent({
-  name: 'AppSidebar',
+  name: 'AppSidebarMobile',
   components: {
     PrimeButton,
     Drawer,
@@ -42,8 +42,16 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
-    <PrimeButton icon="pi pi-bars" text rounded @click="visible = true" class="ml-2 mt-2" />
+  <div class="w-full flex flex-col">
+    <div class="w-full flex justify-start p-2 bg-[var(--p-card-background)]">
+      <PrimeButton
+        icon="pi pi-bars"
+        text
+        rounded
+        @click="visible = true"
+        class="w-auto !text-black dark:!text-[var(--p-primary-color)] px-4"
+      />
+    </div>
 
     <Drawer v-model:visible="visible" :modal="true" position="left" style="width: 14rem">
       <template #container="{ closeCallback }">
@@ -51,7 +59,10 @@ export default defineComponent({
           class="flex flex-col h-full bg-[var(--p-primary-color)] dark:bg-neutral-800 text-white"
         >
           <div class="flex justify-between items-center p-4">
-            <Logo class="h-16 w-16 cursor-pointer" @click="closeCallback()" />
+            <Logo
+              class="h-16 w-16 cursor-pointer dark:fill-[var(--p-primary-color)]"
+              @click="closeCallback()"
+            />
             <PrimeButton
               @click="closeCallback"
               icon="pi pi-times"
@@ -66,16 +77,8 @@ export default defineComponent({
               <li v-for="(route, index) in routes" :key="index">
                 <router-link
                   :to="route.path"
-                  class="group flex items-center gap-3 p-3 rounded-lg transition-all duration-300"
-                  :class="{
-                    'bg-[var(--p-primary-color)] text-black': $route.path.startsWith(route.path),
-                    'hover:bg-gray-700': !$route.path.startsWith(route.path),
-                    'dark:bg-[var(--p-primary-color)] dark:text-black': $route.path.startsWith(
-                      route.path,
-                    ),
-                    'dark:text-[var(--p-primary-color)] dark:hover:text-black':
-                      !$route.path.startsWith(route.path),
-                  }"
+                  active-class="bg-black dark:bg-[var(--p-primary-color)] transition-colors duration-300"
+                  class="group flex items-center gap-3 p-3 rounded-lg transition-all duration-300 text-gray-800 hover:bg-primary-400 dark:text-white dark:hover:bg-[var(--p-primary-color)]"
                   v-tooltip.left="route.title"
                   @click="closeCallback()"
                 >
@@ -83,18 +86,22 @@ export default defineComponent({
                     :is="route.icon"
                     class="w-6 h-6 transition-all duration-300"
                     :class="{
-                      'fill-black': $route.path.startsWith(route.path),
-                      'fill-black dark:fill-[var(--p-primary-color)] dark:hover:fill-black':
-                        !$route.path.startsWith(route.path),
+                      'dark:fill-black fill-[var(--p-primary-color)]': $route.path.startsWith(
+                        route.path,
+                      ),
+                      'group-hover:fill-black dark:group-hover:fill-black': true,
+                      'dark:fill-[var(--p-primary-color)]': !$route.path.startsWith(route.path),
                     }"
                   />
 
                   <span
                     class="text-sm transition-all duration-300"
                     :class="{
-                      'text-black': $route.path.startsWith(route.path),
-                      'text-black dark:text-[var(--p-primary-color)] dark:hover:text-black':
-                        !$route.path.startsWith(route.path),
+                      'dark:text-black text-[var(--p-primary-color)]': $route.path.startsWith(
+                        route.path,
+                      ),
+                      'group-hover:text-black dark:group-hover:text-black': true,
+                      'dark:text-[var(--p-primary-color)]': !$route.path.startsWith(route.path),
                     }"
                   >
                     {{ route.title }}

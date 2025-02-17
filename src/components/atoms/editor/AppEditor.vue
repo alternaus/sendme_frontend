@@ -19,7 +19,7 @@ export default defineComponent({
     },
     contentType: {
       type: String,
-      default: 'text',
+      default: 'html',
       validator: (value: string) => ['html', 'text'].includes(value),
     },
     showErrorMessage: {

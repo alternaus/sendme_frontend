@@ -96,7 +96,10 @@ export default defineComponent({
 <template>
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
     <div class="flex flex-col items-center md:flex-row md:gap-4">
-      <component :is="IconComponents[icon]" class="w-12 h-12 dark:fill-[var(--p-primary-color)]" />
+      <component
+        :is="IconComponents[icon]"
+        class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]"
+      />
       <span class="text-lg font-semibold text-center md:text-left">
         {{ text }}
       </span>
@@ -118,7 +121,7 @@ export default defineComponent({
           @click="action.onClick(selectedId)"
           :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
         >
-          <component :is="ActionIcons[action.type]" class="w-6 h-6" />
+          <component :is="ActionIcons[action.type]" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
         </button>
       </div>
     </div>

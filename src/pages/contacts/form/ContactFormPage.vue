@@ -173,7 +173,7 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.CONTACTS" :actions="[]" />
 
-  <form @submit.prevent="onSubmitForm" class="w-full mt-8">
+  <form @submit.prevent="onSubmitForm" class="w-full">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput
         v-model="form.name.value"
@@ -240,7 +240,7 @@ export default defineComponent({
       </AppSelect>
     </div>
 
-    <AppCard class="w-full shadow-lg p-6 mt-8">
+    <AppCard class="w-full shadow-lg p-6 mt-4">
       <template #content>
         <div class="flex items-center justify-center gap-2 mb-4">
           <InformationIcon class="w-8 h-8 dark:fill-white" />
