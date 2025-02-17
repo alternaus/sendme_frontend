@@ -69,6 +69,10 @@ export default defineComponent({
       type: String,
       default: null,
     },
+    showSearch: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup() {
     const searchQuery = ref('')
@@ -76,7 +80,7 @@ export default defineComponent({
     const getActionClass = (actionType: ActionTypes) => {
       return actionType === ActionTypes.DELETE
         ? 'bg-red-500 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-700'
-        : 'bg-yellow-300 hover:bg-yellow-400 text-black'
+        : 'bg-[var(--p-primary-color)] hover:bg-yellow-400 text-black'
     }
 
     return {
@@ -92,7 +96,7 @@ export default defineComponent({
 <template>
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
     <div class="flex flex-col items-center md:flex-row md:gap-4">
-      <component :is="IconComponents[icon]" class="w-10 h-10 dark:fill-[var(--p-primary-color)]" />
+      <component :is="IconComponents[icon]" class="w-12 h-12 dark:fill-[var(--p-primary-color)]" />
       <span class="text-lg font-semibold text-center md:text-left">
         {{ text }}
       </span>
@@ -100,6 +104,7 @@ export default defineComponent({
 
     <div class="flex items-center gap-2 ml-auto">
       <AppSearchInput
+        v-if="showSearch"
         :search="searchQuery"
         class="w-full md:w-auto"
         @update:search="searchQuery = $event"
