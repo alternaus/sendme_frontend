@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
 import Contacts from '@/assets/svg/sidebar/contacts.svg?component'
@@ -23,15 +25,16 @@ export default defineComponent({
     Whatsapp,
   },
   setup() {
+    const { t } = useI18n()
     const routes = [
-      { path: '/contacts', icon: Contacts, title: 'Contacts' },
+      { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
       { path: '/campaigns', icon: Campaigns, title: 'Campaigns' },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
       { path: '/send', icon: Send, title: 'Send' },
       { path: '/reports', icon: Reports, title: 'Reports' },
       { path: '/buy', icon: Buy, title: 'Buy' },
       { path: '/settings', icon: Settings, title: 'Settings' },
-    ]
+    ] 
 
     return {
       routes,

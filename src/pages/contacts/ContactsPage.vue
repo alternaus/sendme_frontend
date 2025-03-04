@@ -147,11 +147,7 @@ export default defineComponent({
         },
         type: ActionTypes.EXPORT,
       },
-      {
-        label: 'Import',
-        onClick: () => push('/contacts/import'),
-        type: ActionTypes.IMPORT,
-      },
+      { label: 'Import', onClick: () => push('/contacts/import'), type: ActionTypes.IMPORT },
     ])
 
     return {
@@ -173,7 +169,6 @@ export default defineComponent({
 
 <template>
   <AppHeader :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
-
   <AppTable
     class="w-full mt-4"
     :data="contacts"
@@ -195,37 +190,37 @@ export default defineComponent({
     <template #header-name>
       <div class="flex items-center">
         <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Nombre</span>
+        <span> {{ $t('general.name') }} </span>
       </div>
     </template>
     <template #header-phone>
       <div class="flex items-center">
         <PhoneIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Telefono</span>
+        <span> {{ $t('general.phone') }} </span>
       </div>
     </template>
     <template #header-email>
       <div class="flex items-center">
         <EmailIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Email</span>
+        <span> {{ $t('general.email') }} </span>
       </div>
     </template>
     <template #header-createdAt>
       <div class="flex items-center">
         <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Fecha</span>
+        <span> {{ $t('general.date') }} </span>
       </div>
     </template>
     <template #header-origin>
       <div class="flex items-center">
         <DataOriginIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Origen</span>
+        <span> {{ $t('general.origin') }} </span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Estado</span>
+        <span> {{ $t('general.status') }} </span>
       </div>
     </template>
   </AppTable>

@@ -1,0 +1,16 @@
+{
+  "languages": { "en": "Inglés", "es": "Español" },
+  "contact":{
+    "contact": "Contacto",
+    "contacts": "Contactos"
+  },
+  "general": {
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "email": "Correo Electrónico",
+    "address": "Dirección",
+    "date": "Fecha",
+    "origin": "Origen",
+    "status": "Estado"
+  }
+}
