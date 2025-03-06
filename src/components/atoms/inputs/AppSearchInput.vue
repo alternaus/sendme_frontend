@@ -35,7 +35,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="box-search" :class="{ expanded: isInputExpanded }" v-tooltip.bottom="'Buscar'">
+  <div class="box-search" :class="{ expanded: isInputExpanded }" v-tooltip.bottom="$t('general.search')">
     <input
       type="text"
       class="input"

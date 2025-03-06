@@ -5,6 +5,7 @@ import PrimeButton from 'primevue/button'
 import PrimeDialog from 'primevue/dialog'
 import PrimeMenu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
+import { useI18n } from 'vue-i18n'
 
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -18,16 +19,17 @@ export default defineComponent({
   },
   setup() {
     const { logout, user } = useAuthStore()
+    const { t } = useI18n()
 
     const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
     const target = ref<HTMLElement | null>(null)
     const showLogoutDialog = ref(false)
 
     const items: MenuItem[] = [
-      { label: 'Profile' },
-      { label: 'Settings' },
+      { label: t('general.profile') },
+      { label: t('general.settings') },
       {
-        label: 'Logout',
+        label: t('auth.logout'),
         command: () => (showLogoutDialog.value = true),
       },
     ]

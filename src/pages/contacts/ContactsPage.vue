@@ -1,6 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import { useToast } from 'primevue/usetoast'
 
@@ -30,6 +31,7 @@ export default defineComponent({
     StatusIcon,
   },
   setup() {
+    const { t } = useI18n()
     const { push } = useRouter()
     const { getContacts, deleteContact, exportContacts } = useContactService()
     const page = ref(1)
@@ -62,7 +64,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudieron cargar los contactos',
+          detail: t('contact.error_getting_contacts'),
           life: 3000,
         })
       }
@@ -88,7 +90,7 @@ export default defineComponent({
         toast.add({
           severity: 'success',
           summary: 'Eliminado',
-          detail: 'Contacto eliminado correctamente',
+          detail: t('contact.success_removed'),
           life: 3000,
         })
         await fetchContacts(page.value)
@@ -97,7 +99,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo eliminar el contacto',
+          detail: t('contact.error_removed'),
           life: 3000,
         })
       }
@@ -132,7 +134,7 @@ export default defineComponent({
             toast.add({
               severity: 'success',
               summary: 'Exportado',
-              detail: 'Contactos exportados correctamente',
+              detail: t('contact.success_exported'),
               life: 3000,
             })
           } catch (error) {
@@ -140,7 +142,7 @@ export default defineComponent({
             toast.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'No se pudieron exportar los contactos',
+              detail: t('contact.error_exported'),
               life: 3000,
             })
           }

@@ -106,6 +106,7 @@ export default defineComponent({
           severity: 'error',
           summary: 'Error',
           detail: 'No se pudieron cargar los campos personalizados',
+          group: 'tr',
           life: 3000,
         })
       }

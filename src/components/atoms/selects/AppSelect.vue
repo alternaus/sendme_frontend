@@ -4,6 +4,7 @@ import { defineComponent, type PropType, ref, watch } from 'vue'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import PrimeSelect from 'primevue/select'
+import FloatLabel from 'primevue/floatlabel'
 
 import type { SelectOption } from './types/select-option.types'
 
@@ -13,6 +14,7 @@ export default defineComponent({
     PrimeSelect,
     InputGroup,
     InputGroupAddon,
+    FloatLabel
   },
   props: {
     modelValue: {
@@ -22,6 +24,10 @@ export default defineComponent({
     options: {
       type: Array as PropType<SelectOption[]>,
       required: true,
+    },
+    label: {
+      type: String,
+      default: '',
     },
     placeholder: {
       type: String,
@@ -74,7 +80,8 @@ export default defineComponent({
         <slot name="icon"></slot>
       </InputGroupAddon>
 
-      <PrimeSelect
+      <FloatLabel>
+        <PrimeSelect
         v-model="selectedOption"
         :options="options"
         optionLabel="name"
@@ -84,11 +91,14 @@ export default defineComponent({
         class="w-full min-w-0 !rounded-r-xl !border-l-0"
         size="small"
         :class="{ 'p-invalid': errorMessage.length > 0 }"
-      />
+        />
+        <label :for="inputId">{{ label }}</label>
+      </FloatLabel>
     </InputGroup>
 
-    <PrimeSelect
-      v-else
+    <FloatLabel v-else>
+
+      <PrimeSelect
       v-model="selectedOption"
       :options="options"
       optionLabel="name"
@@ -98,8 +108,9 @@ export default defineComponent({
       class="w-full min-w-0 !rounded-xl"
       size="small"
       :class="{ 'p-invalid': errorMessage.length > 0 }"
-    />
-
+      />
+      <label :for="inputId">{{ label }}</label>
+    </FloatLabel>
     <div
       v-if="showErrorMessage && errorMessage.length"
       class="text-red-400 dark:text-red-300 p-0 m-0"

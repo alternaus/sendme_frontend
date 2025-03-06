@@ -1,16 +1,52 @@
 {
-  "languages": { "en": "Inglés", "es": "Español" },
+  "languages": { 
+    "en": "Inglés", 
+    "es": "Español" 
+  },
+  "auth":{
+    "logout": "Cerrar Sesión"
+  },
   "contact":{
     "contact": "Contacto",
-    "contacts": "Contactos"
+    "contacts": "Contactos",
+    "error_getting_contacts": "No se pudieron cargar los contactos",
+    "success_removed": "Contacto eliminado exitosamente",
+    "error_removed": "Error al eliminar el contacto",
+    "success_exported": "Contactos exportados exitosamente",
+    "error_exported": "Error al exportar los contactos",
+    "custom_fields_not_loaded": "No se pudieron cargar los campos personalizados",
+    "contact_updated": "Contacto actualizado exitosamente",
+    "contact_created": "Contacto creado exitosamente",
+    "error_saving_contact": "Error al guardar el contacto"
+  },
+  "campaign": {
+    "campaign": "Campaña",
+    "campaigns": "Campañas"
+  },
+  "report": {
+    "report": "Reporte",
+    "reports": "Reportes"
   },
   "general": {
     "name": "Nombre",
+    "last_name": "Apellido",
     "phone": "Teléfono",
     "email": "Correo Electrónico",
     "address": "Dirección",
     "date": "Fecha",
     "origin": "Origen",
-    "status": "Estado"
+    "status": "Estado",
+    "settings": "Configuración",
+    "send": "Enviar",
+    "buy": "Comprar",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "country_code": "Código de País",
+    "birth_date": "Fecha de Nacimiento",
+    "personalized_information": "Información Personalizada",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "profile": "Perfil",
+    "search": "Buscar"
   }
 }

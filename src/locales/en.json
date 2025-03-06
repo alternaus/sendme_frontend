@@ -3,17 +3,50 @@
     "en": "English",
     "es": "Spanish"
   },
+  "auth":{
+    "logout": "Logout"
+  },
   "contact": {
     "contact": "Contact",
-    "contacts": "Contacts"
+    "contacts": "Contacts",
+    "error_getting_contacts": "Error getting contacts",
+    "success_removed": "Contact removed successfully",
+    "error_removed": "Error removing contact",
+    "success_exported": "Contacts exported successfully",
+    "error_exported": "Error exporting contacts",
+    "custom_fields_not_loaded": "Custom fields not loaded",
+    "contact_updated": "Contact updated successfully",
+    "contact_created": "Contact created successfully",
+    "error_saving_contact": "Error saving contact"
+  },
+  "campaign": {
+    "campaign": "Campaign",
+    "campaigns": "Campaigns"
+  },
+  "report": {
+    "report": "Report",
+    "reports": "Reports"
   },
   "general": {
     "name": "Name",
+    "last_name": "Last Name",
     "phone": "Phone",
     "email": "Email",
     "address": "Address",
     "date": "Date",
     "origin": "Origin",
-    "status": "Status"
+    "status": "Status",
+    "settings": "Settings",
+    "send": "Send",
+    "buy": "Buy",
+    "active": "Active",
+    "inactive": "Inactive",
+    "country_code": "Country Code",
+    "birth_date": "Birth Date",
+    "personalized_information": "Personalized Information",
+    "save": "Save",
+    "cancel": "Cancel",
+    "profile": "Profile",
+    "search": "Search"
   }
 }

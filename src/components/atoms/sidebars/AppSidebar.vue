@@ -28,12 +28,12 @@ export default defineComponent({
     const { t } = useI18n()
     const routes = [
       { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
-      { path: '/campaigns', icon: Campaigns, title: 'Campaigns' },
+      { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
-      { path: '/send', icon: Send, title: 'Send' },
-      { path: '/reports', icon: Reports, title: 'Reports' },
-      { path: '/buy', icon: Buy, title: 'Buy' },
-      { path: '/settings', icon: Settings, title: 'Settings' },
+      { path: '/send', icon: Send, title: t('general.send') },
+      { path: '/reports', icon: Reports, title: t('report.reports') },
+      { path: '/buy', icon: Buy, title: t('general.buy') },
+      { path: '/settings', icon: Settings, title: t('general.settings') },
     ] 
 
     return {
