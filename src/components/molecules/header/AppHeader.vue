@@ -124,7 +124,7 @@ export default defineComponent({
           :key="index"
           v-tooltip.bottom="action.label"
           @click="action.onClick(selectedId)"
-          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
+          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed, cursor-pointer ${getActionClass(action.type)}`"
         >
           <component :is="ActionIcons[action.type]" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
         </button>

@@ -47,7 +47,9 @@ export default defineComponent({
     class="w-[140px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300"
   >
     <div class="flex items-center justify-center py-4">
-      <Logo class="h-24 w-24 transition-colors duration-300 dark:fill-[var(--p-primary-color)]" />
+      <router-link to="/" class="flex items-center justify-center">
+        <Logo class="h-24 w-24 transition-colors duration-300 dark:fill-[var(--p-primary-color)]" />
+      </router-link>
     </div>
 
     <div class="flex-1 flex flex-col items-center overflow-y-auto">

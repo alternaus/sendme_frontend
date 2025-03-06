@@ -89,7 +89,7 @@ export default defineComponent({
         selectedContact.value = null
         toast.add({
           severity: 'success',
-          summary: 'Eliminado',
+          summary: t('actions.deleted'),
           detail: t('contact.success_removed'),
           life: 3000,
         })
@@ -106,12 +106,12 @@ export default defineComponent({
     }
 
     const headerActions = computed(() => [
-      { label: 'Create', onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
+      { label: t('actions.create'), onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
       ...(selectedContact.value
         ? [
-            { label: 'Delete', onClick: handleDelete, type: ActionTypes.DELETE },
+            { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
             {
-              label: 'View',
+              label: t('actions.view'),
               onClick: () => push('/contacts/view/' + selectedContact.value?.id),
               type: ActionTypes.VIEW,
             },
@@ -120,20 +120,20 @@ export default defineComponent({
       ...(selectedContact.value
         ? [
             {
-              label: 'Update',
+              label: t('actions.edit'),
               onClick: () => push(`/contacts/edit/${selectedContact.value?.id}`),
               type: ActionTypes.EDIT,
             },
           ]
         : []),
       {
-        label: 'Export',
+        label: t('actions.export'),
         onClick: () => {
           try {
             exportContacts()
             toast.add({
               severity: 'success',
-              summary: 'Exportado',
+              summary: t('actions.exported'),
               detail: t('contact.success_exported'),
               life: 3000,
             })
@@ -149,7 +149,7 @@ export default defineComponent({
         },
         type: ActionTypes.EXPORT,
       },
-      { label: 'Import', onClick: () => push('/contacts/import'), type: ActionTypes.IMPORT },
+      { label: t('actions.import'), onClick: () => push('/contacts/import'), type: ActionTypes.IMPORT },
     ])
 
     return {

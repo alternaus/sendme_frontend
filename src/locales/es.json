@@ -4,7 +4,12 @@
     "es": "Español" 
   },
   "auth":{
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "successful_login": "Inicio de sesión exitoso",
+    "incorrect_credentials": "Credenciales incorrectas",
+    "incorrect_email_password": "Correo electrónico o contraseña incorrectos",
+    "login_error": "Error al iniciar sesión",
+    "sesion_closed": "Sesión cerrada exitosamente"
   },
   "contact":{
     "contact": "Contacto",
@@ -26,6 +31,17 @@
   "report": {
     "report": "Reporte",
     "reports": "Reportes"
+  },
+  "actions": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "export": "Exportar",
+    "import": "Importar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "view": "Ver",
+    "deleted": "Eliminado",
+    "exported": "Exportado"
   },
   "general": {
     "name": "Nombre",

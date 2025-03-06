@@ -3,12 +3,13 @@ import { computed, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import { defineStore } from 'pinia'
-
+import { useI18n } from 'vue-i18n'
 import router from '@/router'
 import { useAuthService } from '@/services/auth/useAuthService'
 import type { IUser } from '@/services/user/interfaces/user.interface'
 
 export const useAuthStore = defineStore('auth', () => {
+  const { t } = useI18n()
   const authService = useAuthService()
   const toast = useToast()
 
@@ -43,20 +44,20 @@ export const useAuthStore = defineStore('auth', () => {
 
       toast.add({
         severity: 'success',
-        summary: 'Inicio de sesión exitoso',
-        detail: 'Has iniciado sesión correctamente.',
+        summary: t('auth.successful_login'),
+        // detail: 'Has iniciado sesión correctamente.',
         life: 3000,
       })
 
       router.push('/')
     } catch (error) {
       console.error('❌ Error en login:', error)
-      errorMessage.value = 'Credenciales incorrectas'
+      errorMessage.value = t('auth.incorrect_credentials')
 
       toast.add({
         severity: 'error',
-        summary: 'Error de inicio de sesión',
-        detail: 'Correo o contraseña incorrectos.',
+        summary: t('auth.login_error'),
+        detail: t('auth.incorrect_email_password'),
         life: 3000,
       })
     } finally {
@@ -69,8 +70,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     toast.add({
       severity: 'info',
-      summary: 'Sesión cerrada',
-      detail: 'Has cerrado sesión correctamente.',
+      summary: t('auth.sesion_closed'),
+      // detail: 'Has cerrado sesión correctamente.',
       life: 3000,
     })
 
