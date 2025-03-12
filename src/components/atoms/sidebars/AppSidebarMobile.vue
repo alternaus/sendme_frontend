@@ -1,9 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 import PrimeButton from 'primevue/button'
 import Drawer from 'primevue/drawer'
+
+import { useI18n } from 'vue-i18n'
 
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'

@@ -1,8 +1,10 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+
 import { useToast } from 'primevue/usetoast'
+
+import { useI18n } from 'vue-i18n'
 
 import BirthdayIcon from '@/assets/svg/birthday.svg?component'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
@@ -276,7 +278,6 @@ export default defineComponent({
         </div>
       </template>
     </AppCard>
-
     <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
       <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('general.save')" />
       <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('general.cancel')" @click="goBack" />

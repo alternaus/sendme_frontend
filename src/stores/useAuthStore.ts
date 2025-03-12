@@ -4,6 +4,7 @@ import { useToast } from 'primevue/usetoast'
 
 import { defineStore } from 'pinia'
 import { useI18n } from 'vue-i18n'
+
 import router from '@/router'
 import { useAuthService } from '@/services/auth/useAuthService'
 import type { IUser } from '@/services/user/interfaces/user.interface'

@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, type PropType, ref, toRefs,watch  } from 'vue'
 
+import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
-import FloatLabel from 'primevue/floatlabel'
 
 export default defineComponent({
   name: 'AppInput',
@@ -45,47 +45,59 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue'],
+  setup(props, { emit }) {
+    const { modelValue } = toRefs(props) 
+    const internalValue = ref(modelValue.value)
+    watch(
+      () => props.modelValue,
+      (value) => {
+        internalValue.value = value
+      }
+    )
+
+    watch(internalValue, (value) => {
+      emit('update:modelValue', value)
+    })
+
+    return {
+      internalValue,
+    }
+  },
 })
 </script>
 
 <template>
   <div class="w-full">
-    <!-- ✅ Input con icono -->
     <InputGroup v-if="$slots.icon">
       <InputGroupAddon class="!rounded-l-xl !border-r-0">
         <slot name="icon"></slot>
       </InputGroupAddon>
       <FloatLabel>
         <InputText
+          v-model="internalValue"
           :type="type"
           :placeholder="placeholder"
           :size="size"
           class="!w-full !rounded-r-xl !border-l-0"
           :class="{ 'p-invalid': errorMessage.length > 0 }"
-          :value="modelValue"
-          @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         />
-        <label :for="inputId">{{ label }}</label>
+        <label>{{ label }}</label>
       </FloatLabel>
     </InputGroup>
 
     <FloatLabel v-else>
       <InputText
+        v-model="internalValue"
         :type="type"
         :placeholder="placeholder"
         :size="size"
         class="!w-full !rounded-xl"
         :class="{ 'p-invalid': errorMessage.length > 0 }"
-        :value="modelValue"
-        @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
-      <label :for="inputId">{{ label }}</label>
+      <label>{{ label }}</label>
     </FloatLabel>
 
-    <div
-      v-if="showErrorMessage && errorMessage.length"
-      class="text-red-400 dark:text-red-300 p-0 m-0"
-    >
+    <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>
   </div>

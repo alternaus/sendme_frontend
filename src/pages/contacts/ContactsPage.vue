@@ -1,9 +1,10 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 import { useToast } from 'primevue/usetoast'
+
+import { useI18n } from 'vue-i18n'
 
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
@@ -12,6 +13,7 @@ import EmailIcon from '@/assets/svg/email.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
@@ -29,6 +31,7 @@ export default defineComponent({
     DataOriginIcon,
     DateIcon,
     StatusIcon,
+    AppTag,
   },
   setup() {
     const { t } = useI18n()
@@ -89,7 +92,7 @@ export default defineComponent({
         selectedContact.value = null
         toast.add({
           severity: 'success',
-          summary: t('actions.deleted'),
+          summary: 'Eliminado',
           detail: t('contact.success_removed'),
           life: 3000,
         })
@@ -133,7 +136,7 @@ export default defineComponent({
             exportContacts()
             toast.add({
               severity: 'success',
-              summary: t('actions.exported'),
+              summary: 'Exportado',
               detail: t('contact.success_exported'),
               life: 3000,
             })
@@ -223,6 +226,11 @@ export default defineComponent({
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
         <span> {{ $t('general.status') }} </span>
+      </div>
+    </template>
+    <template #custom-status="{ data }" >
+      <div class="flex justify-center" >
+        <AppTag :label="data.status" />
       </div>
     </template>
   </AppTable>

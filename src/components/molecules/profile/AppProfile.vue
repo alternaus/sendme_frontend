@@ -5,6 +5,7 @@ import PrimeButton from 'primevue/button'
 import PrimeDialog from 'primevue/dialog'
 import PrimeMenu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
+
 import { useI18n } from 'vue-i18n'
 
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'

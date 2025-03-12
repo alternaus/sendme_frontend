@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
+import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import PrimeSelect from 'primevue/select'
-import FloatLabel from 'primevue/floatlabel'
 
 import type { SelectOption } from './types/select-option.types'
 
@@ -53,7 +53,6 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const selectedOption = ref()
-
     watch(
       () => props.modelValue,
       (value) => {
@@ -92,7 +91,7 @@ export default defineComponent({
         size="small"
         :class="{ 'p-invalid': errorMessage.length > 0 }"
         />
-        <label :for="inputId">{{ label }}</label>
+        <label >{{ label }}</label>
       </FloatLabel>
     </InputGroup>
 
@@ -109,7 +108,7 @@ export default defineComponent({
       size="small"
       :class="{ 'p-invalid': errorMessage.length > 0 }"
       />
-      <label :for="inputId">{{ label }}</label>
+      <label>{{ label }}</label>
     </FloatLabel>
     <div
       v-if="showErrorMessage && errorMessage.length"

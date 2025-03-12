@@ -2,9 +2,9 @@
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
 import DatePicker from 'primevue/datepicker'
+import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import FloatLabel from 'primevue/floatlabel'
 export default defineComponent({
   name: 'AppDatePicker',
   components: {
@@ -100,7 +100,7 @@ export default defineComponent({
         class="!w-full"
         :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
-      <label :for="inputId">{{ label }}</label>
+      <label>{{ label }}</label>
       </FloatLabel>
     </InputGroup>
 
@@ -116,7 +116,7 @@ export default defineComponent({
       class="!w-full"
       :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
-      <label :for="inputId">{{ label }}</label>
+      <label>{{ label }}</label>
     </FloatLabel>
       
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
