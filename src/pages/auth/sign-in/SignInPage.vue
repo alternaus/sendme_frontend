@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 
 import { useForm } from 'vee-validate'
+import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
@@ -20,11 +21,21 @@ export default defineComponent({
     AppDivider,
   },
   setup() {
+    const { t } = useI18n()
+    yup.setLocale({
+      mixed: {
+        required: () => t('general.required_field'),
+      },
+      string: {
+        email: () => t('general.invalid_email'),
+      },
+    })
+
     const authStore = useAuthStore()
 
     const schema = yup.object({
-      email: yup.string().email().required().label('Correo Electrónico'),
-      password: yup.string().required().label('Contraseña'),
+      email: yup.string().email().required().label(t('general.email')),
+      password: yup.string().required().label(t('general.password')),
     })
 
     const { defineField, handleSubmit, errors } = useForm({
@@ -58,13 +69,17 @@ export default defineComponent({
 
 <template>
   <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-4 flex-col w-full">
-    <AppInput v-model="email" :error-message="errors.email" placeholder="Correo Electrónico" />
+    <AppInput v-model="email" :error-message="errors.email" :placeholder="$t('general.email')" />
 
-    <AppInputPassword v-model="password" :error-message="errors.password" />
+    <AppInputPassword
+      v-model="password"
+      :error-message="errors.password"
+      :placeholder="$t('general.password')"
+    />
 
-    <AppButton type="submit" label="Ingresar" class="w-full" />
+    <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
 
-    <AppLink label="¿Olvidaste tu contraseña?" />
+    <AppLink :label="$t('auth.forgot_password')" />
 
     <AppDivider />
 

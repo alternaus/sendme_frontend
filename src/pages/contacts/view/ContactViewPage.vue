@@ -21,7 +21,7 @@
       <span
         class="flex items-center gap-2 bg-[var(--p-primary-color)] px-3 py-1 rounded-lg text-sm text-black"
       >
-        <StatusIcon class="w-4 h-4" /> {{ contact.status }}
+        <StatusIcon class="w-4 h-4" /> {{ contact.status === 'active' ? $t('general.active') : $t('general.inactive') }} 
       </span>
     </div>
   </div>
@@ -31,7 +31,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
         <div class="flex flex-col items-center gap-2">
           <InformationIcon class="w-8 h-8 fill-current" />
-          <span class="text-lg font-semibold">Información personalizada</span>
+          <span class="text-lg font-semibold">{{ $t('general.personalized_information')}}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,6 +59,8 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue'
 
+import { useI18n } from 'vue-i18n'
+
 import DateIcon from '@/assets/svg/date.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
@@ -84,6 +86,7 @@ export default defineComponent({
     StatusIcon,
   },
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const router = useRouter()
     const contactId = String(route.params?.id || '')
@@ -104,9 +107,8 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudieron cargar los campos personalizados',
-          group: 'tr',
+          summary: t('general.error'),
+          detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
       }
@@ -123,47 +125,47 @@ export default defineComponent({
       return contact.value.customValues.map((customValue) => {
         const field = customFields.value.find((f) => f.id === customValue.customFieldId)
         return {
-          name: field ? field.fieldName : 'Campo Desconocido',
-          value: customValue.value || 'No definido',
+          name: field ? field.fieldName : t('general.unknown_field'),
+          value: customValue.value || t('general.not_defined'),
         }
       })
     })
 
-    const headerActions = [
+    const headerActions = computed(() => [
       {
-        label: 'Editar',
+        label: t('actions.edit'),
         type: ActionTypes.EDIT,
         onClick: () => router.push(`/contacts/edit/${contactId}`),
       },
       {
-        label: 'Eliminar',
+        label: t('actions.delete'),
         type: ActionTypes.DELETE,
         onClick: async () => {
           try {
             await deleteContact(Number(contactId))
             toast.add({
               severity: 'success',
-              summary: 'Contacto eliminado',
-              detail: 'El contacto ha sido eliminado correctamente',
+              summary: t('contact.contact_deleted'),
+              detail: t('contact.success_removed'),
               life: 3000,
             })
             router.push('/contacts')
           } catch {
             toast.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudo eliminar el contacto',
+              summary: t('general.error'),
+              detail: t('contact.error_removed'),
               life: 3000,
             })
           }
         },
       },
       {
-        label: 'Exportar',
+        label: t('actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => console.log('Exportar contacto'),
       },
-    ]
+    ])
 
     return {
       IconTypes,

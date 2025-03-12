@@ -1,5 +1,6 @@
 {
   "languages": { 
+    "language": "Idioma",
     "en": "Inglés", 
     "es": "Español" 
   },
@@ -9,7 +10,12 @@
     "incorrect_credentials": "Credenciales incorrectas",
     "incorrect_email_password": "Correo electrónico o contraseña incorrectos",
     "login_error": "Error al iniciar sesión",
-    "sesion_closed": "Sesión cerrada exitosamente"
+    "sesion_closed": "Sesión cerrada exitosamente",
+    "sure_logout": "¿Estás seguro de que deseas cerrar sesión?",
+    "confirm_logout": "Confirmar cierre de sesión",
+    "enter": "Ingresar",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "authentication_error": "Error de autenticación"
   },
   "contact":{
     "contact": "Contacto",
@@ -22,7 +28,8 @@
     "custom_fields_not_loaded": "No se pudieron cargar los campos personalizados",
     "contact_updated": "Contacto actualizado exitosamente",
     "contact_created": "Contacto creado exitosamente",
-    "error_saving_contact": "Error al guardar el contacto"
+    "error_saving_contact": "Error al guardar el contacto",
+    "contact_deleted": "Contacto eliminado"
   },
   "campaign": {
     "campaign": "Campaña",
@@ -63,6 +70,13 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "profile": "Perfil",
-    "search": "Buscar"
+    "search": "Buscar",
+    "password": "Contraseña",
+    "required_field": "Este campo es requerido",
+    "invalid_email": "Correo electrónico inválido",
+    "error": "Error",
+    "success": "Éxito",
+    "unknown_field": "Campo desconocido",
+    "not_defined": "No definido"
   }
 }

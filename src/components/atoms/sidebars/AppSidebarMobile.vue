@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import {  computed, defineComponent, ref } from 'vue'
 
 import PrimeButton from 'primevue/button'
 import Drawer from 'primevue/drawer'
@@ -26,7 +26,7 @@ export default defineComponent({
     const visible = ref(false)
 
     const { t } = useI18n()
-    const routes = [
+    const routes = computed(() => [
       { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
       { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
@@ -34,7 +34,7 @@ export default defineComponent({
       { path: '/reports', icon: Reports, title: t('report.reports') },
       { path: '/buy', icon: Buy, title: t('general.buy') },
       { path: '/settings', icon: Settings, title: t('general.settings') },
-    ] 
+    ])
     return {
       visible,
       routes,

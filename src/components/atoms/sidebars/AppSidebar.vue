@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -26,7 +26,7 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
-    const routes = [
+    const routes = computed(() => [
       { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
       { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
@@ -34,7 +34,7 @@ export default defineComponent({
       { path: '/reports', icon: Reports, title: t('report.reports') },
       { path: '/buy', icon: Buy, title: t('general.buy') },
       { path: '/settings', icon: Settings, title: t('general.settings') },
-    ] 
+    ])
 
     return {
       routes,
@@ -42,6 +42,7 @@ export default defineComponent({
   },
 })
 </script>
+
 <template>
   <div
     class="w-[140px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300"

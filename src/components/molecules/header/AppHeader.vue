@@ -16,6 +16,7 @@ import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
+import AppLanguage from '@/components/molecules/language/AppLanguage.vue'
 import AppProfile from '@/components/molecules/profile/AppProfile.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
@@ -41,7 +42,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
 }
 
 export default defineComponent({
-  components: { AppProfile, AppSearchInput },
+  components: { AppProfile, AppSearchInput, AppLanguage },
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
@@ -99,6 +100,13 @@ export default defineComponent({
 </script>
 
 <template>
+  <div
+    class="hidden md:flex md:justify-end md:items-center h-16 dark:border-gray-700 w-full px-4 gap-4"
+  >
+    <AppLanguage />
+    <AppProfile />
+  </div>
+
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
     <div class="flex flex-col items-center md:flex-row md:gap-4">
       <component
@@ -130,7 +138,5 @@ export default defineComponent({
         </button>
       </div>
     </div>
-
-    <AppProfile class="hidden md:block" />
   </div>
 </template>

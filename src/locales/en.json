@@ -1,5 +1,6 @@
 {
   "languages": {
+    "language": "Language",
     "en": "English",
     "es": "Spanish"
   },
@@ -9,7 +10,12 @@
     "incorrect_credentials": "Incorrect credentials",
     "incorrect_email_password": "Incorrect email or password",
     "login_error": "Login error",
-    "sesion_closed": "Session closed successfully"
+    "sesion_closed": "Session closed successfully",
+    "sure_logout": "Are you sure you want to logout?",
+    "confirm_logout": "Confirm logout",
+    "enter": "Enter",
+    "forgot_password": "Forgot your password?",
+    "authentication_error": "Authentication error"
   },
   "contact": {
     "contact": "Contact",
@@ -22,7 +28,8 @@
     "custom_fields_not_loaded": "Custom fields not loaded",
     "contact_updated": "Contact updated successfully",
     "contact_created": "Contact created successfully",
-    "error_saving_contact": "Error saving contact"
+    "error_saving_contact": "Error saving contact",
+    "contact_deleted": "Contact deleted"
   },
   "campaign": {
     "campaign": "Campaign",
@@ -63,6 +70,13 @@
     "save": "Save",
     "cancel": "Cancel",
     "profile": "Profile",
-    "search": "Search"
+    "search": "Search",
+    "password": "Password",
+    "required_field": "This field is required",
+    "invalid_email": "Invalid email",
+    "error": "Error",
+    "success": "Success",
+    "unknown_field": "Unknown field",
+    "not_defined": "Not defined"
   }
 }

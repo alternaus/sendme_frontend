@@ -86,7 +86,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
+          summary: t('general.error'),
           detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
@@ -117,7 +117,7 @@ export default defineComponent({
             await updateContact(contactId, payload)
             toast.add({
               severity: 'success',
-              summary: 'Éxito',
+              summary: t('general.success'),
               detail: t('contact.contact_updated'),
               life: 3000,
             })
@@ -125,7 +125,7 @@ export default defineComponent({
             await createContact(payload)
             toast.add({
               severity: 'success',
-              summary: 'Éxito',
+              summary: t('general.success'),
               detail: t('contact.contact_created'),
               life: 3000,
             })
@@ -135,7 +135,7 @@ export default defineComponent({
         } catch {
           toast.add({
             severity: 'error',
-            summary: 'Error',
+            summary: t('general.error'),
             detail: t('contact.error_saving_contact'),
             life: 3000,
           })
@@ -279,8 +279,18 @@ export default defineComponent({
       </template>
     </AppCard>
     <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
-      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('general.save')" />
-      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('general.cancel')" @click="goBack" />
+      <AppButton
+        class="w-full sm:w-auto"
+        type="submit"
+        severity="primary"
+        :label="$t('general.save')"
+      />
+      <AppButton
+        class="w-full sm:w-auto"
+        severity="secondary"
+        :label="$t('general.cancel')"
+        @click="goBack"
+      />
     </div>
   </form>
 </template>

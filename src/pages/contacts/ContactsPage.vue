@@ -66,7 +66,7 @@ export default defineComponent({
         console.error('❌ Error al obtener los contactos:', error)
         toast.add({
           severity: 'error',
-          summary: 'Error',
+          summary: t('general.error'),
           detail: t('contact.error_getting_contacts'),
           life: 3000,
         })
@@ -101,7 +101,7 @@ export default defineComponent({
         console.error('❌ Error al eliminar contacto:', error)
         toast.add({
           severity: 'error',
-          summary: 'Error',
+          summary:t('general.error'),
           detail: t('contact.error_removed'),
           life: 3000,
         })
@@ -109,7 +109,11 @@ export default defineComponent({
     }
 
     const headerActions = computed(() => [
-      { label: t('actions.create'), onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
+      {
+        label: t('actions.create'),
+        onClick: () => push('/contacts/create'),
+        type: ActionTypes.CREATE,
+      },
       ...(selectedContact.value
         ? [
             { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
@@ -136,7 +140,7 @@ export default defineComponent({
             exportContacts()
             toast.add({
               severity: 'success',
-              summary: 'Exportado',
+              // summary: 'Exportado',
               detail: t('contact.success_exported'),
               life: 3000,
             })
@@ -144,7 +148,7 @@ export default defineComponent({
             console.error('❌ Error al exportar contactos:', error)
             toast.add({
               severity: 'error',
-              summary: 'Error',
+              summary: t('general.error'),
               detail: t('contact.error_exported'),
               life: 3000,
             })
@@ -152,7 +156,11 @@ export default defineComponent({
         },
         type: ActionTypes.EXPORT,
       },
-      { label: t('actions.import'), onClick: () => push('/contacts/import'), type: ActionTypes.IMPORT },
+      {
+        label: t('actions.import'),
+        onClick: () => push('/contacts/import'),
+        type: ActionTypes.IMPORT,
+      },
     ])
 
     return {
@@ -228,9 +236,9 @@ export default defineComponent({
         <span> {{ $t('general.status') }} </span>
       </div>
     </template>
-    <template #custom-status="{ data }" >
-      <div class="flex justify-center" >
-        <AppTag :label="data.status" />
+    <template #custom-status="{ data }">
+      <div class="flex justify-center">
+        <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
       </div>
     </template>
   </AppTable>
