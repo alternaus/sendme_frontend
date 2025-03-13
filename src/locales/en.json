@@ -20,6 +20,10 @@
   "contact": {
     "contact": "Contact",
     "contacts": "Contacts",
+    "new_contact": "New Contact",
+    "edit_contact": "Edit Contact",
+    "contact_information": "Contact Information",
+    "import_contacts": "Import Contacts",
     "error_getting_contacts": "Error getting contacts",
     "success_removed": "Contact removed successfully",
     "error_removed": "Error removing contact",

@@ -174,7 +174,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" :actions="[]" />
+  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS" :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

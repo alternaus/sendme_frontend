@@ -181,7 +181,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
+  <AppHeader :text="$t('contact.contacts')" :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
   <AppTable
     class="w-full mt-4"
     :data="contacts"

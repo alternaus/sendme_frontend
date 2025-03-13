@@ -1,5 +1,5 @@
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" :text="fullName" :actions="headerActions" />
+  <AppHeader  :icon="IconTypes.CONTACTS" :text="$t('contact.contact_information') + ': ' + fullName" :actions="headerActions" />
 
   <div v-if="contact" class="w-full md:w-auto mx-auto my-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">

@@ -20,6 +20,10 @@
   "contact":{
     "contact": "Contacto",
     "contacts": "Contactos",
+    "new_contact": "Nuevo Contacto",
+    "edit_contact": "Editar Contacto",
+    "contact_information": "Información del Contacto",
+    "import_contacts": "Importar Contactos",
     "error_getting_contacts": "No se pudieron cargar los contactos",
     "success_removed": "Contacto eliminado exitosamente",
     "error_removed": "Error al eliminar el contacto",

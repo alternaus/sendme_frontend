@@ -1,5 +1,5 @@
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" :actions="[]" />
+  <AppHeader :text="$t('contact.import_contacts')" :icon="IconTypes.CONTACTS" :actions="[]" />
 </template>
 
 <script lang="ts">
