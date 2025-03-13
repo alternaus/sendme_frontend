@@ -62,6 +62,18 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/settings',
+    name: 'settings',
+    meta: { layout: 'DashboardLayout', requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'settings.index',
+        component: () => import('@/pages/settings/SettingsPage.vue'),
+      },
+    ],
+  },
+  {
     path: '/auth',
     name: 'auth',
     meta: { layout: 'AuthLayout', requiresAuth: false },
