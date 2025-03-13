@@ -10,6 +10,7 @@ import {
 import EyeIcon from '@/assets/svg/eye.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
+import SettingsIcon from '@/assets/svg/header/settings.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
@@ -38,7 +39,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.SEND]: ContactsIcon,
   [IconTypes.REPORTS]: ContactsIcon,
   [IconTypes.BUY]: ContactsIcon,
-  [IconTypes.SETTINGS]: ContactsIcon,
+  [IconTypes.SETTINGS]: SettingsIcon,
 }
 
 export default defineComponent({
@@ -60,7 +61,7 @@ export default defineComponent({
           onClick: (id?: number) => void
         }>
       >,
-      required: true,
+      required: false,
     },
     selectedId: {
       type: Number,
