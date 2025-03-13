@@ -23,3 +23,10 @@
   --color-primary-950: #421c06;
   --font-sans: 'Quicksand', sans-serif;
 }
+
+:root {
+  --p-tooltip-padding: 0.2rem 0.75rem !important;
+}
+.p-tooltip-text {
+  font-size: 14px !important;
+}
