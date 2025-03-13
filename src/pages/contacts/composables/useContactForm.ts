@@ -49,18 +49,18 @@ export const useFormContact = () => {
 
   // ✅ Definir esquema de validación con traducciones
   const schema = yup.object<ContactForm>({
-    name: yup.string().required().label(t('form.name')),
-    lastName: yup.string().required().label(t('form.lastName')),
-    email: yup.string().email().required().label(t('form.email')),
-    phone: yup.string().required().label(t('form.phone')),
-    countryCode: yup.string().required().label(t('form.countryCode')),
-    status: yup.string().oneOf(['active', 'inactive']).required().label(t('form.status')),
-    birthDate: yup.date().required().label(t('form.birthDate')),
+    name: yup.string().required().label(t('general.name')),
+    lastName: yup.string().required().label(t('general.last_name')),
+    email: yup.string().email().required().label(t('general.email')),
+    phone: yup.string().required().label(t('general.phone')),
+    countryCode: yup.string().required().label(t('general.country_code')),
+    status: yup.string().oneOf(['active', 'inactive']).required().label(t('general.status')),
+    birthDate: yup.date().required().label(t('general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({
-        customFieldId: yup.number().integer().required().label(t('form.customFieldId')),
-        value: yup.string().required().label(t('form.customValue')),
-        id: yup.number().integer().nullable().label(t('form.customId')),
+        customFieldId: yup.number().integer().required().label('form.customFieldId'),
+        value: yup.string().required().label('form.customValue'),
+        id: yup.number().integer().nullable().label('form.customId'),
       }),
     ),
   })

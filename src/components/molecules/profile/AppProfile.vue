@@ -52,9 +52,6 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
 
 <template>
   <div class="flex items-center space-x-2">
-    <!-- Botones de cambio de idioma -->
-    <!-- <button @click="i18nStore.changeLanguage('en')">English</button>
-    <button @click="i18nStore.changeLanguage('es')">Español</button> -->
 
     <!-- Avatar con menú -->
     <AppAvatar ref="target" :label="firstLetter" @click="openMenu" class="cursor-pointer" />

@@ -101,7 +101,7 @@ export default defineComponent({
         console.error('❌ Error al eliminar contacto:', error)
         toast.add({
           severity: 'error',
-          summary:t('general.error'),
+          summary: t('general.error'),
           detail: t('contact.error_removed'),
           life: 3000,
         })
@@ -119,7 +119,11 @@ export default defineComponent({
             { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
             {
               label: t('actions.view'),
-              onClick: () => push('/contacts/view/' + selectedContact.value?.id),
+              onClick: () => {
+                if (selectedContact.value?.id) {
+                  push(`/contacts/view/${selectedContact.value?.id}`)
+                }
+              },
               type: ActionTypes.VIEW,
             },
           ]
@@ -128,7 +132,11 @@ export default defineComponent({
         ? [
             {
               label: t('actions.edit'),
-              onClick: () => push(`/contacts/edit/${selectedContact.value?.id}`),
+              onClick: () => {
+    if (selectedContact.value?.id) {
+      push(`/contacts/edit/${selectedContact.value?.id}`)
+    }
+  },
               type: ActionTypes.EDIT,
             },
           ]
@@ -181,7 +189,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :text="$t('contact.contacts')" :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
+  <AppHeader :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
   <AppTable
     class="w-full mt-4"
     :data="contacts"

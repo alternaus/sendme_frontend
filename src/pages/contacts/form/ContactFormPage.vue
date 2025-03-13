@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -22,6 +22,7 @@ import { ActionTypes } from '@/components/molecules/header/enums/action-types.en
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 import { useFormContact } from '../composables/useContactForm'
 
@@ -45,14 +46,27 @@ export default defineComponent({
     const router = useRouter()
     const toast = useToast()
     const { t } = useI18n()
+    const breadcrumbStore = useBreadcrumbStore()
 
-    const contactId = String(route.params?.id || '')
+    const contactId = route.params?.id ? String(route.params.id) : ''
     const { form, handleSubmit, resetForm, errors, addCustomField, setValues } = useFormContact()
     const { getCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
     const customFields = ref<{ id: number; fieldName: string }[]>([])
 
+    watchEffect(() => {
+      const isEditing = contactId !== null && contactId.trim() !== '';
+
+      breadcrumbStore.setBreadcrumbs([
+        { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+        {
+          text: isEditing ? 'actions.edit' : 'actions.create',
+          to: isEditing ? { name: 'contacts.view', params: { id : contactId } } : { name: 'contacts.create' },
+          active: true,
+        },
+      ])
+    })
     onMounted(async () => {
       try {
         const response = await getCustomFields()

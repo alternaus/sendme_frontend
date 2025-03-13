@@ -1,5 +1,9 @@
 <template>
-  <AppHeader  :icon="IconTypes.CONTACTS" :text="$t('contact.contact_information') + ': ' + fullName" :actions="headerActions" />
+  <AppHeader
+    :icon="IconTypes.CONTACTS"
+    :text="$t('contact.contact_information') + ': ' + fullName"
+    :actions="headerActions"
+  />
 
   <div v-if="contact" class="w-full md:w-auto mx-auto my-4">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
@@ -21,7 +25,8 @@
       <span
         class="flex items-center gap-2 bg-[var(--p-primary-color)] px-3 py-1 rounded-lg text-sm text-black"
       >
-        <StatusIcon class="w-4 h-4" /> {{ contact.status === 'active' ? $t('general.active') : $t('general.inactive') }} 
+        <StatusIcon class="w-4 h-4" />
+        {{ contact.status === 'active' ? $t('general.active') : $t('general.inactive') }}
       </span>
     </div>
   </div>
@@ -31,7 +36,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
         <div class="flex flex-col items-center gap-2">
           <InformationIcon class="w-8 h-8 fill-current" />
-          <span class="text-lg font-semibold">{{ $t('general.personalized_information')}}</span>
+          <span class="text-lg font-semibold">{{ $t('general.personalized_information') }}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue'
@@ -73,6 +78,7 @@ import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 export default defineComponent({
   name: 'ContactView',
@@ -88,8 +94,9 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const route = useRoute()
+    const breadcrumbStore = useBreadcrumbStore()
     const router = useRouter()
-    const contactId = String(route.params?.id || '')
+    const contactId = route.params?.id ? String(route.params.id) : ''
 
     const { getContact, deleteContact } = useContactService()
     const { getCustomFields } = useCustomFieldService()
@@ -97,6 +104,19 @@ export default defineComponent({
     const contact = ref<IContact | null>(null)
     const customFields = ref<{ id: number; fieldName: string }[]>([])
     const toast = useToast()
+
+    watchEffect(() => {
+      const isEditing = contactId !== null && contactId.trim() !== '';
+
+      breadcrumbStore.setBreadcrumbs([
+        { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+        {
+          text: isEditing ? 'actions.view' : '',
+          to: isEditing ? { name: 'contacts.view', params: { id: contactId } } : { name: 'contacts.index' },
+          active: true,
+        },
+      ])
+    })
 
     onMounted(async () => {
       try {

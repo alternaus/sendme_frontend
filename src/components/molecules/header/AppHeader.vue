@@ -16,6 +16,7 @@ import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
+import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppLanguage from '@/components/molecules/language/AppLanguage.vue'
 import AppProfile from '@/components/molecules/profile/AppProfile.vue'
@@ -43,7 +44,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
 }
 
 export default defineComponent({
-  components: { AppProfile, AppSearchInput, AppLanguage },
+  components: { AppProfile, AppSearchInput, AppLanguage, AppBreadcrumb },
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
@@ -102,10 +103,14 @@ export default defineComponent({
 
 <template>
   <div
-    class="hidden md:flex md:justify-end md:items-center h-16 dark:border-gray-700 w-full px-4 gap-4"
+    class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4"
   >
+  <AppBreadcrumb />
+  <div class="flex items-center gap-2">
+
     <AppLanguage />
     <AppProfile />
+  </div>
   </div>
 
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
