@@ -4,6 +4,7 @@ import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 import campaignRoutes from './campaignRoutes'
 import contactRoutes from './contactRoutes'
+import sendRoutes from './sendRoutes'
 import settingRoutes from './settingRoutes'
 const routes: RouteRecordRaw[] = [
   {
@@ -15,6 +16,7 @@ const routes: RouteRecordRaw[] = [
   contactRoutes,
   campaignRoutes,
   settingRoutes,
+  sendRoutes,
   {
     path: '/auth',
     name: 'auth',

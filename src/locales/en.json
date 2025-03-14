@@ -43,6 +43,9 @@
     "report": "Report",
     "reports": "Reports"
   },
+  "whatsapp":{
+    "whatsapp": "WhatsApp"
+  },
   "actions": {
     "edit": "Edit",
     "delete": "Delete",
@@ -82,6 +85,8 @@
     "error": "Error",
     "success": "Success",
     "unknown_field": "Unknown field",
-    "not_defined": "Not defined"
+    "not_defined": "Not defined",
+    "instant_message": "Instant Message",
+    "sms": "SMS"
   }
 }

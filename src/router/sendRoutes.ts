@@ -1,8 +1,8 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'general.settings',
-  to: { name: 'settings.index' },
+  text: 'general.instant_message',
+  to: { name: 'send.index' },
   active: false
 }
 

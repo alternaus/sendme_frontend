@@ -69,18 +69,6 @@ export default defineComponent({
     watchEffect(() => {
       breadcrumbStore.setBreadcrumbs(breadcrumbData.value)
     })
-    // watchEffect(() => {
-    //   const isEditing = contactId !== null && contactId.trim() !== '';
-
-    //   breadcrumbStore.setBreadcrumbs([
-    //     { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
-    //     {
-    //       text: isEditing ? 'actions.edit' : 'actions.create',
-    //       to: isEditing ? { name: 'contacts.view', params: { id : contactId } } : { name: 'contacts.create' },
-    //       active: true,
-    //     },
-    //   ])
-    // })
     onMounted(async () => {
       try {
         const response = await getCustomFields()

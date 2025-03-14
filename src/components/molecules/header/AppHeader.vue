@@ -10,6 +10,7 @@ import {
 import EyeIcon from '@/assets/svg/eye.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
+import SendIcon from '@/assets/svg/header/send.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
@@ -37,7 +38,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.CONTACTS]: ContactsIcon,
   [IconTypes.CAMPAIGNS]: CampaignsIcon,
   [IconTypes.WHATSAPP]: ContactsIcon,
-  [IconTypes.SEND]: ContactsIcon,
+  [IconTypes.SEND]: SendIcon,
   [IconTypes.REPORTS]: ContactsIcon,
   [IconTypes.BUY]: ContactsIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
