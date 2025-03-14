@@ -10,12 +10,15 @@ import {
 import EyeIcon from '@/assets/svg/eye.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
+import SettingsIcon from '@/assets/svg/header/settings.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
+import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
+import AppLanguage from '@/components/molecules/language/AppLanguage.vue'
 import AppProfile from '@/components/molecules/profile/AppProfile.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
@@ -37,11 +40,11 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.SEND]: ContactsIcon,
   [IconTypes.REPORTS]: ContactsIcon,
   [IconTypes.BUY]: ContactsIcon,
-  [IconTypes.SETTINGS]: ContactsIcon,
+  [IconTypes.SETTINGS]: SettingsIcon,
 }
 
 export default defineComponent({
-  components: { AppProfile, AppSearchInput },
+  components: { AppProfile, AppSearchInput, AppLanguage, AppBreadcrumb },
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
@@ -59,7 +62,7 @@ export default defineComponent({
           onClick: (id?: number) => void
         }>
       >,
-      required: true,
+      required: false,
     },
     selectedId: {
       type: Number,
@@ -99,6 +102,17 @@ export default defineComponent({
 </script>
 
 <template>
+  <div
+    class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4"
+  >
+  <AppBreadcrumb />
+  <div class="flex items-center gap-2">
+
+    <AppLanguage />
+    <AppProfile />
+  </div>
+  </div>
+
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
     <div class="flex flex-col items-center md:flex-row md:gap-4">
       <component
@@ -124,13 +138,11 @@ export default defineComponent({
           :key="index"
           v-tooltip.bottom="action.label"
           @click="action.onClick(selectedId)"
-          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getActionClass(action.type)}`"
+          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed, cursor-pointer ${getActionClass(action.type)}`"
         >
           <component :is="ActionIcons[action.type]" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
         </button>
       </div>
     </div>
-
-    <AppProfile class="hidden md:block" />
   </div>
 </template>

@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
+
+import campaignRoutes from './campaignRoutes'
+import contactRoutes from './contactRoutes'
+import settingRoutes from './settingRoutes'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -7,60 +12,9 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/home/HomePage.vue'),
     meta: { layout: 'DashboardLayout', requiresAuth: true },
   },
-  {
-    path: '/contacts',
-    name: 'contacts',
-    meta: { layout: 'DashboardLayout', requiresAuth: true },
-    children: [
-      {
-        path: '',
-        name: 'contacts.index',
-        component: () => import('@/pages/contacts/ContactsPage.vue'),
-      },
-      {
-        path: 'create',
-        name: 'contacts.create',
-        component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
-      },
-      {
-        path: 'edit/:id',
-        name: 'contacts.edit',
-        component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
-      },
-      {
-        path: 'import',
-        name: 'contacts.import',
-        component: () => import('@/pages/contacts/import/ContactImportPage.vue'),
-      },
-      {
-        path: 'view/:id',
-        name: 'contacts.view',
-        component: () => import('@/pages/contacts/view/ContactViewPage.vue'),
-      },
-    ],
-  },
-  {
-    path: '/campaigns',
-    name: 'campaigns',
-    meta: { layout: 'DashboardLayout', requiresAuth: true },
-    children: [
-      {
-        path: '',
-        name: 'campaigns.index',
-        component: () => import('@/pages/campaigns/CampaignPage.vue'),
-      },
-      {
-        path: 'create',
-        name: 'campaigns.create',
-        component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
-      },
-      {
-        path: 'edit/:id',
-        name: 'campaigns.edit',
-        component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
-      },
-    ],
-  },
+  contactRoutes,
+  campaignRoutes,
+  settingRoutes,
   {
     path: '/auth',
     name: 'auth',
@@ -94,6 +48,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
+  const breadcrumbStore = useBreadcrumbStore();
+  const breadcrumbs = Array.isArray(to.meta.breadcrumb) ? to.meta.breadcrumb : [];
+
+  breadcrumbStore.setBreadcrumbs(breadcrumbs);
 
   if (to.meta.requiresAuth && !token) {
     console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/sign-in')

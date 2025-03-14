@@ -7,6 +7,8 @@ import PrimeVue from 'primevue/config'
 
 import { createPinia } from 'pinia'
 
+import { instanceI18n } from '@/plugins/i18n'
+
 import App from './App.vue'
 import router from './router'
 import { AppTheme } from './theme/app-theme'
@@ -28,6 +30,7 @@ app.use(PrimeVue, {
     },
   },
 })
+app.use(instanceI18n)
 
 app.directive('tooltip', Tooltip)
 app.directive('ripple', Ripple)

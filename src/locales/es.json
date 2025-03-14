@@ -1,0 +1,87 @@
+{
+  "languages": { 
+    "language": "Idioma",
+    "en": "Inglés", 
+    "es": "Español" 
+  },
+  "auth":{
+    "logout": "Cerrar Sesión",
+    "successful_login": "Inicio de sesión exitoso",
+    "incorrect_credentials": "Credenciales incorrectas",
+    "incorrect_email_password": "Correo electrónico o contraseña incorrectos",
+    "login_error": "Error al iniciar sesión",
+    "sesion_closed": "Sesión cerrada exitosamente",
+    "sure_logout": "¿Estás seguro de que deseas cerrar sesión?",
+    "confirm_logout": "Confirmar cierre de sesión",
+    "enter": "Ingresar",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "authentication_error": "Error de autenticación"
+  },
+  "contact":{
+    "contact": "Contacto",
+    "contacts": "Contactos",
+    "new_contact": "Nuevo Contacto",
+    "edit_contact": "Editar Contacto",
+    "contact_information": "Información del Contacto",
+    "import_contacts": "Importar Contactos",
+    "error_getting_contacts": "No se pudieron cargar los contactos",
+    "success_removed": "Contacto eliminado exitosamente",
+    "error_removed": "Error al eliminar el contacto",
+    "success_exported": "Contactos exportados exitosamente",
+    "error_exported": "Error al exportar los contactos",
+    "custom_fields_not_loaded": "No se pudieron cargar los campos personalizados",
+    "contact_updated": "Contacto actualizado exitosamente",
+    "contact_created": "Contacto creado exitosamente",
+    "error_saving_contact": "Error al guardar el contacto",
+    "contact_deleted": "Contacto eliminado"
+  },
+  "campaign": {
+    "campaign": "Campaña",
+    "campaigns": "Campañas"
+  },
+  "report": {
+    "report": "Reporte",
+    "reports": "Reportes"
+  },
+  "actions": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "export": "Exportar",
+    "import": "Importar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "view": "Ver",
+    "deleted": "Eliminado",
+    "exported": "Exportado"
+  },
+  "general": {
+    "home": "Inicio",
+    "name": "Nombre",
+    "last_name": "Apellido",
+    "phone": "Teléfono",
+    "email": "Correo Electrónico",
+    "address": "Dirección",
+    "date": "Fecha",
+    "origin": "Origen",
+    "status": "Estado",
+    "settings": "Configuración",
+    "send": "Enviar",
+    "buy": "Comprar",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "country_code": "Código de País",
+    "birth_date": "Fecha de Nacimiento",
+    "personalized_information": "Información Personalizada",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "profile": "Perfil",
+    "search": "Buscar",
+    "password": "Contraseña",
+    "required_field": "Este campo es requerido",
+    "invalid_email": "Correo electrónico inválido",
+    "error": "Error",
+    "success": "Éxito",
+    "unknown_field": "Campo desconocido",
+    "not_defined": "No definido"
+  }
+}

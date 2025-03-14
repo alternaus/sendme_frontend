@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 
+// import { useI18n } from 'vue-i18n'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
@@ -13,6 +14,7 @@ export default defineComponent({
     AppTable,
   },
   setup() {
+    // const { t } = useI18n()
     const { push } = useRouter()
     return {
       push,
@@ -28,7 +30,7 @@ export default defineComponent({
     show-search
     :actions="[
       {
-        label: 'Create',
+        label: $t('actions.create'),
         onClick: () => {
           push('/campaigns/create')
         },
@@ -36,25 +38,25 @@ export default defineComponent({
         type: ActionTypes.CREATE,
       },
       {
-        label: 'Delete',
+        label: $t('actions.delete'),
         onClick: () => {},
 
         type: ActionTypes.DELETE,
       },
       {
-        label: 'Edit',
+        label: $t('actions.edit'),
         onClick: () => {},
 
         type: ActionTypes.EDIT,
       },
       {
-        label: 'Export',
+        label: $t('actions.export'),
         onClick: () => {},
 
         type: ActionTypes.EXPORT,
       },
       {
-        label: 'Import',
+        label: $t('actions.import'),
         onClick: () => {},
 
         type: ActionTypes.IMPORT,

@@ -1,0 +1,87 @@
+{
+  "languages": {
+    "language": "Language",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "auth":{
+    "logout": "Logout",
+    "successful_login": "Successful login",
+    "incorrect_credentials": "Incorrect credentials",
+    "incorrect_email_password": "Incorrect email or password",
+    "login_error": "Login error",
+    "sesion_closed": "Session closed successfully",
+    "sure_logout": "Are you sure you want to logout?",
+    "confirm_logout": "Confirm logout",
+    "enter": "Enter",
+    "forgot_password": "Forgot your password?",
+    "authentication_error": "Authentication error"
+  },
+  "contact": {
+    "contact": "Contact",
+    "contacts": "Contacts",
+    "new_contact": "New Contact",
+    "edit_contact": "Edit Contact",
+    "contact_information": "Contact Information",
+    "import_contacts": "Import Contacts",
+    "error_getting_contacts": "Error getting contacts",
+    "success_removed": "Contact removed successfully",
+    "error_removed": "Error removing contact",
+    "success_exported": "Contacts exported successfully",
+    "error_exported": "Error exporting contacts",
+    "custom_fields_not_loaded": "Custom fields not loaded",
+    "contact_updated": "Contact updated successfully",
+    "contact_created": "Contact created successfully",
+    "error_saving_contact": "Error saving contact",
+    "contact_deleted": "Contact deleted"
+  },
+  "campaign": {
+    "campaign": "Campaign",
+    "campaigns": "Campaigns"
+  },
+  "report": {
+    "report": "Report",
+    "reports": "Reports"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "export": "Export",
+    "import": "Import",
+    "create": "Create",
+    "update": "Update",
+    "view": "View",
+    "deleted": "Deleted",
+    "exported": "Exported"
+  },
+  "general": {
+    "home": "Home",
+    "name": "Name",
+    "last_name": "Last Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "date": "Date",
+    "origin": "Origin",
+    "status": "Status",
+    "settings": "Settings",
+    "send": "Send",
+    "buy": "Buy",
+    "active": "Active",
+    "inactive": "Inactive",
+    "country_code": "Country Code",
+    "birth_date": "Birth Date",
+    "personalized_information": "Personalized Information",
+    "save": "Save",
+    "cancel": "Cancel",
+    "profile": "Profile",
+    "search": "Search",
+    "password": "Password",
+    "required_field": "This field is required",
+    "invalid_email": "Invalid email",
+    "error": "Error",
+    "success": "Success",
+    "unknown_field": "Unknown field",
+    "not_defined": "Not defined"
+  }
+}

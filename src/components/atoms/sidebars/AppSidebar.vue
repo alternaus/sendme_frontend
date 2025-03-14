@@ -1,5 +1,7 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+
+import { useI18n } from 'vue-i18n'
 
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
@@ -23,15 +25,16 @@ export default defineComponent({
     Whatsapp,
   },
   setup() {
-    const routes = [
-      { path: '/contacts', icon: Contacts, title: 'Contacts' },
-      { path: '/campaigns', icon: Campaigns, title: 'Campaigns' },
+    const { t } = useI18n()
+    const routes = computed(() => [
+      { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
+      { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
-      { path: '/send', icon: Send, title: 'Send' },
-      { path: '/reports', icon: Reports, title: 'Reports' },
-      { path: '/buy', icon: Buy, title: 'Buy' },
-      { path: '/settings', icon: Settings, title: 'Settings' },
-    ]
+      { path: '/send', icon: Send, title: t('general.send') },
+      { path: '/reports', icon: Reports, title: t('report.reports') },
+      { path: '/buy', icon: Buy, title: t('general.buy') },
+      { path: '/settings', icon: Settings, title: t('general.settings') },
+    ])
 
     return {
       routes,
@@ -39,12 +42,15 @@ export default defineComponent({
   },
 })
 </script>
+
 <template>
   <div
     class="w-[140px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300"
   >
     <div class="flex items-center justify-center py-4">
-      <Logo class="h-24 w-24 transition-colors duration-300 dark:fill-[var(--p-primary-color)]" />
+      <router-link to="/" class="flex items-center justify-center">
+        <Logo class="h-24 w-24 transition-colors duration-300 dark:fill-[var(--p-primary-color)]" />
+      </router-link>
     </div>
 
     <div class="flex-1 flex flex-col items-center overflow-y-auto">

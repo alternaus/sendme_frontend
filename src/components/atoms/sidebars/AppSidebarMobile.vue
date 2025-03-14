@@ -1,8 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import {  computed, defineComponent, ref } from 'vue'
 
 import PrimeButton from 'primevue/button'
 import Drawer from 'primevue/drawer'
+
+import { useI18n } from 'vue-i18n'
 
 import Buy from '@/assets/svg/sidebar/buy.svg?component'
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
@@ -23,16 +25,16 @@ export default defineComponent({
   setup() {
     const visible = ref(false)
 
-    const routes = [
-      { path: '/contacts', icon: Contacts, title: 'Contacts' },
-      { path: '/campaigns', icon: Campaigns, title: 'Campaigns' },
+    const { t } = useI18n()
+    const routes = computed(() => [
+      { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
+      { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
       { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
-      { path: '/send', icon: Send, title: 'Send' },
-      { path: '/reports', icon: Reports, title: 'Reports' },
-      { path: '/buy', icon: Buy, title: 'Buy' },
-      { path: '/settings', icon: Settings, title: 'Settings' },
-    ]
-
+      { path: '/send', icon: Send, title: t('general.send') },
+      { path: '/reports', icon: Reports, title: t('report.reports') },
+      { path: '/buy', icon: Buy, title: t('general.buy') },
+      { path: '/settings', icon: Settings, title: t('general.settings') },
+    ])
     return {
       visible,
       routes,

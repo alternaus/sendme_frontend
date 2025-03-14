@@ -2,20 +2,25 @@
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
 import DatePicker from 'primevue/datepicker'
+import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-
 export default defineComponent({
   name: 'AppDatePicker',
   components: {
     DatePicker,
     InputGroup,
     InputGroupAddon,
+    FloatLabel
   },
   props: {
     modelValue: {
       type: [Date, null] as PropType<Date | null>,
       default: null,
+    },
+    label: {
+      type: String,
+      default: '',
     },
     placeholder: {
       type: String,
@@ -84,7 +89,7 @@ export default defineComponent({
       <InputGroupAddon class="!rounded-l-xl !border-r-0">
         <slot name="icon"></slot>
       </InputGroupAddon>
-
+      <FloatLabel>
       <DatePicker
         v-model="selectedDate"
         size="small"
@@ -95,10 +100,13 @@ export default defineComponent({
         class="!w-full"
         :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
+      <label>{{ label }}</label>
+      </FloatLabel>
     </InputGroup>
 
-    <DatePicker
-      v-else
+    <FloatLabel v-else>
+
+      <DatePicker
       v-model="selectedDate"
       size="small"
       :placeholder="placeholder"
@@ -107,8 +115,10 @@ export default defineComponent({
       input-class="!w-full !rounded-xl"
       class="!w-full"
       :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-    />
-
+      />
+      <label>{{ label }}</label>
+    </FloatLabel>
+      
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

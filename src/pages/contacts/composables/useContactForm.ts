@@ -1,5 +1,6 @@
 import { type FieldEntry, useFieldArray, useForm } from 'vee-validate'
 import type { Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
@@ -33,24 +34,37 @@ export interface ContactFormRef {
   customValue: Ref<FieldEntry<CustomValue>[]>
 }
 
-const schema = yup.object<ContactForm>({
-  name: yup.string().required().label('Nombre'),
-  lastName: yup.string().required().label('Apellido'),
-  email: yup.string().email().required().label('Correo Electrónico'),
-  phone: yup.string().required().label('Teléfono'),
-  countryCode: yup.string().required().label('Código de País'),
-  status: yup.string().oneOf(['active', 'inactive']).required().label('Estado'),
-  birthDate: yup.date().required().label('Fecha de Nacimiento'),
-  customValues: yup.array().of(
-    yup.object().shape({
-      customFieldId: yup.number().integer().required().label('ID de Campo Personalizado'),
-      value: yup.string().required().label('Valor del Campo'),
-      id: yup.number().integer().nullable().label('ID de Valor personalizado'),
-    }),
-  ),
-})
-
 export const useFormContact = () => {
+  const { t } = useI18n() // ✅ Usa useI18n dentro del composable
+
+  // ✅ Configurar Yup con los mensajes traducidos
+  yup.setLocale({
+    mixed: {
+      required: () => t('general.required_field'),
+    },
+    string: {
+      email: () => t('general.invalid_email'),
+    },
+  })
+
+  // ✅ Definir esquema de validación con traducciones
+  const schema = yup.object<ContactForm>({
+    name: yup.string().required().label(t('general.name')),
+    lastName: yup.string().required().label(t('general.last_name')),
+    email: yup.string().email().required().label(t('general.email')),
+    phone: yup.string().required().label(t('general.phone')),
+    countryCode: yup.string().required().label(t('general.country_code')),
+    status: yup.string().oneOf(['active', 'inactive']).required().label(t('general.status')),
+    birthDate: yup.date().required().label(t('general.birth_date')),
+    customValues: yup.array().of(
+      yup.object().shape({
+        customFieldId: yup.number().integer().required().label('form.customFieldId'),
+        value: yup.string().required().label('form.customValue'),
+        id: yup.number().integer().nullable().label('form.customId'),
+      }),
+    ),
+  })
+
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<ContactForm>({
     validationSchema: schema,
     initialValues: {

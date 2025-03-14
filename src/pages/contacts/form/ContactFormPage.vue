@@ -1,8 +1,10 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
+
+import { useI18n } from 'vue-i18n'
 
 import BirthdayIcon from '@/assets/svg/birthday.svg?component'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
@@ -20,6 +22,7 @@ import { ActionTypes } from '@/components/molecules/header/enums/action-types.en
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 import { useFormContact } from '../composables/useContactForm'
 
@@ -42,14 +45,42 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const toast = useToast()
+    const { t } = useI18n()
+    const breadcrumbStore = useBreadcrumbStore()
 
-    const contactId = String(route.params?.id || '')
+    const contactId = route.params?.id ? String(route.params.id) : ''
     const { form, handleSubmit, resetForm, errors, addCustomField, setValues } = useFormContact()
     const { getCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
     const customFields = ref<{ id: number; fieldName: string }[]>([])
 
+    const breadcrumbData = computed(() => [
+      { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+      {
+        text: contactId ? 'actions.edit' : 'actions.create',
+        to: contactId
+          ? { name: 'contacts.view', params: { id: contactId } }
+          : { name: 'contacts.create' },
+        active: true,
+      },
+    ])
+
+    watchEffect(() => {
+      breadcrumbStore.setBreadcrumbs(breadcrumbData.value)
+    })
+    // watchEffect(() => {
+    //   const isEditing = contactId !== null && contactId.trim() !== '';
+
+    //   breadcrumbStore.setBreadcrumbs([
+    //     { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+    //     {
+    //       text: isEditing ? 'actions.edit' : 'actions.create',
+    //       to: isEditing ? { name: 'contacts.view', params: { id : contactId } } : { name: 'contacts.create' },
+    //       active: true,
+    //     },
+    //   ])
+    // })
     onMounted(async () => {
       try {
         const response = await getCustomFields()
@@ -83,16 +114,16 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudieron cargar los campos personalizados',
+          summary: t('general.error'),
+          detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
       }
     })
 
     const statusOptions = [
-      { name: 'Activo', value: 'active' },
-      { name: 'Inactivo', value: 'inactive' },
+      { name: t('general.active'), value: 'active' },
+      { name: t('general.inactive'), value: 'inactive' },
     ]
 
     const onSubmitForm = handleSubmit(
@@ -114,16 +145,16 @@ export default defineComponent({
             await updateContact(contactId, payload)
             toast.add({
               severity: 'success',
-              summary: 'Éxito',
-              detail: 'Contacto actualizado correctamente',
+              summary: t('general.success'),
+              detail: t('contact.contact_updated'),
               life: 3000,
             })
           } else {
             await createContact(payload)
             toast.add({
               severity: 'success',
-              summary: 'Éxito',
-              detail: 'Contacto creado correctamente',
+              summary: t('general.success'),
+              detail: t('contact.contact_created'),
               life: 3000,
             })
           }
@@ -132,8 +163,8 @@ export default defineComponent({
         } catch {
           toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Hubo un problema al guardar el contacto',
+            summary: t('general.error'),
+            detail: t('contact.error_saving_contact'),
             life: 3000,
           })
         }
@@ -171,15 +202,20 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" :actions="[]" />
+  <AppHeader
+    :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')"
+    :icon="IconTypes.CONTACTS"
+    :actions="[]"
+  />
 
   <form @submit.prevent="onSubmitForm" class="w-full">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput
         v-model="form.name.value"
         type="text"
-        class="w-full rounded-md"
+        class="w-full rounded-md mt-3"
         :error-message="errors.name"
+        :label="$t('general.name')"
       >
         <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
@@ -187,8 +223,9 @@ export default defineComponent({
       <AppInput
         v-model="form.lastName.value"
         type="text"
-        class="w-full rounded-md"
+        class="w-full rounded-md mt-3"
         :error-message="errors.lastName"
+        :label="$t('general.last_name')"
       >
         <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
@@ -196,8 +233,9 @@ export default defineComponent({
       <AppInput
         v-model="form.email.value"
         type="email"
-        class="w-full rounded-md"
+        class="w-full rounded-md mt-3"
         :error-message="errors.email"
+        :label="$t('general.email')"
       >
         <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
@@ -205,8 +243,9 @@ export default defineComponent({
       <AppInput
         v-model="form.phone.value"
         type="tel"
-        class="w-full rounded-md"
+        class="w-full rounded-md mt-3"
         :error-message="errors.phone"
+        :label="$t('general.phone')"
       >
         <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
@@ -214,8 +253,9 @@ export default defineComponent({
       <AppInput
         v-model="form.countryCode.value"
         type="text"
-        class="w-full rounded-md"
+        class="w-full rounded-md mt-3"
         :error-message="errors.countryCode"
+        :label="$t('general.country_code')"
       >
         <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppInput>
@@ -223,8 +263,9 @@ export default defineComponent({
       <AppDatePicker
         v-model="form.birthDate.value"
         placeholder="Seleccione una fecha"
-        class="w-full"
+        class="w-full mt-3"
         :error-message="errors.birthDate"
+        :label="$t('general.birth_date')"
       >
         <template #icon><BirthdayIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppDatePicker>
@@ -233,8 +274,9 @@ export default defineComponent({
         v-model="form.status.value"
         :options="statusOptions"
         placeholder="Seleccione un estado"
-        class="w-full"
+        class="w-full mt-3"
         :error-message="errors.status"
+        :label="$t('general.status')"
       >
         <template #icon><StatusIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppSelect>
@@ -244,7 +286,9 @@ export default defineComponent({
       <template #content>
         <div class="flex items-center justify-center gap-2 mb-4">
           <InformationIcon class="w-8 h-8 dark:fill-white" />
-          <h2 class="text-center text-xl font-semibold">Información Personalizada</h2>
+          <h2 class="text-center text-xl font-semibold">
+            {{ $t('general.personalized_information') }}
+          </h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -266,10 +310,19 @@ export default defineComponent({
         </div>
       </template>
     </AppCard>
-
-    <div class="flex flex-col lg:flex-row gap-5 mt-7">
-      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" label="Guardar" />
-      <AppButton class="w-full sm:w-auto" severity="secondary" label="Cancelar" @click="goBack" />
+    <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
+      <AppButton
+        class="w-full sm:w-auto"
+        type="submit"
+        severity="primary"
+        :label="$t('general.save')"
+      />
+      <AppButton
+        class="w-full sm:w-auto"
+        severity="secondary"
+        :label="$t('general.cancel')"
+        @click="goBack"
+      />
     </div>
   </form>
 </template>

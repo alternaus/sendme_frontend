@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
+import { useI18n } from 'vue-i18n'
+
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
@@ -11,6 +13,7 @@ import EmailIcon from '@/assets/svg/email.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
@@ -28,8 +31,10 @@ export default defineComponent({
     DataOriginIcon,
     DateIcon,
     StatusIcon,
+    AppTag,
   },
   setup() {
+    const { t } = useI18n()
     const { push } = useRouter()
     const { getContacts, deleteContact, exportContacts } = useContactService()
     const page = ref(1)
@@ -61,8 +66,8 @@ export default defineComponent({
         console.error('❌ Error al obtener los contactos:', error)
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudieron cargar los contactos',
+          summary: t('general.error'),
+          detail: t('contact.error_getting_contacts'),
           life: 3000,
         })
       }
@@ -88,7 +93,7 @@ export default defineComponent({
         toast.add({
           severity: 'success',
           summary: 'Eliminado',
-          detail: 'Contacto eliminado correctamente',
+          detail: t('contact.success_removed'),
           life: 3000,
         })
         await fetchContacts(page.value)
@@ -96,21 +101,29 @@ export default defineComponent({
         console.error('❌ Error al eliminar contacto:', error)
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo eliminar el contacto',
+          summary: t('general.error'),
+          detail: t('contact.error_removed'),
           life: 3000,
         })
       }
     }
 
     const headerActions = computed(() => [
-      { label: 'Create', onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
+      {
+        label: t('actions.create'),
+        onClick: () => push('/contacts/create'),
+        type: ActionTypes.CREATE,
+      },
       ...(selectedContact.value
         ? [
-            { label: 'Delete', onClick: handleDelete, type: ActionTypes.DELETE },
+            { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
             {
-              label: 'View',
-              onClick: () => push('/contacts/view/' + selectedContact.value?.id),
+              label: t('actions.view'),
+              onClick: () => {
+                if (selectedContact.value?.id) {
+                  push(`/contacts/view/${selectedContact.value?.id}`)
+                }
+              },
               type: ActionTypes.VIEW,
             },
           ]
@@ -118,29 +131,33 @@ export default defineComponent({
       ...(selectedContact.value
         ? [
             {
-              label: 'Update',
-              onClick: () => push(`/contacts/edit/${selectedContact.value?.id}`),
+              label: t('actions.edit'),
+              onClick: () => {
+    if (selectedContact.value?.id) {
+      push(`/contacts/edit/${selectedContact.value?.id}`)
+    }
+  },
               type: ActionTypes.EDIT,
             },
           ]
         : []),
       {
-        label: 'Export',
+        label: t('actions.export'),
         onClick: () => {
           try {
             exportContacts()
             toast.add({
               severity: 'success',
-              summary: 'Exportado',
-              detail: 'Contactos exportados correctamente',
+              // summary: 'Exportado',
+              detail: t('contact.success_exported'),
               life: 3000,
             })
           } catch (error) {
             console.error('❌ Error al exportar contactos:', error)
             toast.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudieron exportar los contactos',
+              summary: t('general.error'),
+              detail: t('contact.error_exported'),
               life: 3000,
             })
           }
@@ -148,7 +165,7 @@ export default defineComponent({
         type: ActionTypes.EXPORT,
       },
       {
-        label: 'Import',
+        label: t('actions.import'),
         onClick: () => push('/contacts/import'),
         type: ActionTypes.IMPORT,
       },
@@ -173,7 +190,6 @@ export default defineComponent({
 
 <template>
   <AppHeader :icon="IconTypes.CONTACTS" v-model="search" show-search :actions="headerActions" />
-
   <AppTable
     class="w-full mt-4"
     :data="contacts"
@@ -195,37 +211,42 @@ export default defineComponent({
     <template #header-name>
       <div class="flex items-center">
         <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Nombre</span>
+        <span> {{ $t('general.name') }} </span>
       </div>
     </template>
     <template #header-phone>
       <div class="flex items-center">
         <PhoneIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Telefono</span>
+        <span> {{ $t('general.phone') }} </span>
       </div>
     </template>
     <template #header-email>
       <div class="flex items-center">
         <EmailIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Email</span>
+        <span> {{ $t('general.email') }} </span>
       </div>
     </template>
     <template #header-createdAt>
       <div class="flex items-center">
         <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Fecha</span>
+        <span> {{ $t('general.date') }} </span>
       </div>
     </template>
     <template #header-origin>
       <div class="flex items-center">
         <DataOriginIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Origen</span>
+        <span> {{ $t('general.origin') }} </span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>Estado</span>
+        <span> {{ $t('general.status') }} </span>
+      </div>
+    </template>
+    <template #custom-status="{ data }">
+      <div class="flex justify-center">
+        <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
       </div>
     </template>
   </AppTable>
