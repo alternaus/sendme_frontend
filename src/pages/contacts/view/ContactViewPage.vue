@@ -105,17 +105,19 @@ export default defineComponent({
     const customFields = ref<{ id: number; fieldName: string }[]>([])
     const toast = useToast()
 
-    watchEffect(() => {
-      const isEditing = contactId !== null && contactId.trim() !== '';
+    const breadcrumbData = computed(() => [
+      { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+      {
+        text: contactId ? 'actions.view' : '',
+        to: contactId
+          ? { name: 'contacts.view', params: { id: contactId } }
+          : { name: 'contacts.index' },
+        active: true,
+      },
+    ])
 
-      breadcrumbStore.setBreadcrumbs([
-        { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
-        {
-          text: isEditing ? 'actions.view' : '',
-          to: isEditing ? { name: 'contacts.view', params: { id: contactId } } : { name: 'contacts.index' },
-          active: true,
-        },
-      ])
+    watchEffect(() => {
+      breadcrumbStore.setBreadcrumbs(breadcrumbData.value)
     })
 
     onMounted(async () => {

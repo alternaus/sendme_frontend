@@ -19,6 +19,7 @@ export const useBreadcrumbStore = defineStore('breadcrumb', {
   }),
   actions: {
     setBreadcrumbs(breadcrumbs: BreadcrumbItem[]) {
+      this.breadcrumbs = [];
       this.breadcrumbs = breadcrumbs.filter(item => !!item.text)
     }
   }

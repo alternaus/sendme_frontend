@@ -1,9 +1,27 @@
 import { type RouteRecordRaw } from 'vue-router'
 
+const baseBreadcrumb = {
+  text: 'campaign.campaigns',
+  to: { name: 'campaigns.index' },
+  active: false,
+}
+const generateBreadcrumb = (text: string, name: string, id?: string) => [
+  baseBreadcrumb,
+  {
+    text,
+    to: id ? { name, params: { id } } : { name },
+    active: true,
+  },
+]
+const beforeEnterWithBreadcrumb = (action: string, name: string) => (to, from, next) => {
+  to.meta.breadcrumb = generateBreadcrumb(action, name, to.params.id as string)
+  next()
+}
+
 const campaignRoutes: RouteRecordRaw = {
   path: '/campaigns',
   name: 'campaigns',
-  meta: { layout: 'DashboardLayout', requiresAuth: true },
+  meta: { layout: 'DashboardLayout', requiresAuth: true, breadcrumb: [baseBreadcrumb] },
   children: [
     {
       path: '',
@@ -14,11 +32,13 @@ const campaignRoutes: RouteRecordRaw = {
       path: 'create',
       name: 'campaigns.create',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
+      meta: { breadcrumb: generateBreadcrumb('actions.create', 'campaigns.create') },
     },
     {
       path: 'edit/:id',
       name: 'campaigns.edit',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
+      beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'campaigns.edit'),
     },
   ],
 }

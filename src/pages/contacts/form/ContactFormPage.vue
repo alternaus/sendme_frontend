@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref, watchEffect } from 'vue'
+import { computed, defineComponent, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -55,18 +55,32 @@ export default defineComponent({
 
     const customFields = ref<{ id: number; fieldName: string }[]>([])
 
-    watchEffect(() => {
-      const isEditing = contactId !== null && contactId.trim() !== '';
+    const breadcrumbData = computed(() => [
+      { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+      {
+        text: contactId ? 'actions.edit' : 'actions.create',
+        to: contactId
+          ? { name: 'contacts.view', params: { id: contactId } }
+          : { name: 'contacts.create' },
+        active: true,
+      },
+    ])
 
-      breadcrumbStore.setBreadcrumbs([
-        { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
-        {
-          text: isEditing ? 'actions.edit' : 'actions.create',
-          to: isEditing ? { name: 'contacts.view', params: { id : contactId } } : { name: 'contacts.create' },
-          active: true,
-        },
-      ])
+    watchEffect(() => {
+      breadcrumbStore.setBreadcrumbs(breadcrumbData.value)
     })
+    // watchEffect(() => {
+    //   const isEditing = contactId !== null && contactId.trim() !== '';
+
+    //   breadcrumbStore.setBreadcrumbs([
+    //     { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
+    //     {
+    //       text: isEditing ? 'actions.edit' : 'actions.create',
+    //       to: isEditing ? { name: 'contacts.view', params: { id : contactId } } : { name: 'contacts.create' },
+    //       active: true,
+    //     },
+    //   ])
+    // })
     onMounted(async () => {
       try {
         const response = await getCustomFields()
@@ -188,7 +202,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS" :actions="[]" />
+  <AppHeader
+    :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')"
+    :icon="IconTypes.CONTACTS"
+    :actions="[]"
+  />
 
   <form @submit.prevent="onSubmitForm" class="w-full">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

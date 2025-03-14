@@ -55,6 +55,7 @@
     "exported": "Exported"
   },
   "general": {
+    "home": "Home",
     "name": "Name",
     "last_name": "Last Name",
     "phone": "Phone",
