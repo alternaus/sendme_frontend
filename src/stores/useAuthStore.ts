@@ -17,7 +17,10 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token') || null)
 
   const refreshToken = ref<string | null>(localStorage.getItem('refreshToken') || null)
-  const user = ref<IUser | null>(null)
+  const user = ref<IUser | null>(
+    localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
+  )
+  
   const loading = ref(false)
   const errorMessage = ref<string | null>(null)
 
@@ -27,10 +30,13 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = newToken
     localStorage.setItem('token', newToken)
   }
+  
 
   const clearAuthData = () => {
     token.value = null
+    user.value = null
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
   const login = async (email: string, password: string) => {
@@ -39,9 +45,11 @@ export const useAuthStore = defineStore('auth', () => {
       errorMessage.value = null
 
       const response = await authService.login({ email, password })
-
-      setAuthData(response.accessToken)
-      user.value = await authService.me()
+      setAuthData(response.accessToken);
+      
+      const userData = await authService.me()
+      user.value = userData
+      localStorage.setItem('user', JSON.stringify(userData))
 
       toast.add({
         severity: 'success',
