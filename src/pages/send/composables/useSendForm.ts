@@ -25,10 +25,11 @@ export const useFormSendMessage = () => {
   })
 
   const schema = yup.object<SendMessageForm>({
-    contacts: yup.array().min(1).required().label(t('general.contacts')),
-    message: yup.string().required().label(t('general.message')),
-    country: yup.string().required().label(t('general.country')),
+    contacts: yup.array().of(yup.string().matches(/^\d+$/, t('general.invalid_phone'))).min(1).required(),
+    message: yup.string().required(),
+    country: yup.string().required(),
   })
+  
 
   const {defineField, handleSubmit, resetForm, errors, setValues} = useForm<SendMessageForm>({
     validationSchema: schema,

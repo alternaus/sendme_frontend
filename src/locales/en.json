@@ -87,6 +87,17 @@
     "unknown_field": "Unknown field",
     "not_defined": "Not defined",
     "instant_message": "Instant Message",
-    "sms": "SMS"
+    "sms": "SMS",
+    "write_message": "Write a message",
+    "enter_numbers_separated_by_commas": "Enter numbers separated by commas",
+    "send_all_contacts": "Send all contacts",
+    "characters": "characters",
+    "message_send_success": "Message sent successfully",
+    "error_sending_message": "Error sending message",
+    "enter_all_fields_send_message": "Enter all fields to send the message",
+    "warning": "Warning",
+    "message": "Message",
+    "country": "Country",
+    "invalid_phone": "Invalid phone"
   }
 }
