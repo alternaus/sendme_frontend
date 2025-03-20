@@ -1,10 +1,14 @@
 {
+  "theme": {
+    "dark": "Dark theme",
+    "light": "Light theme"
+  },
   "languages": {
     "language": "Language",
     "en": "English",
     "es": "Spanish"
   },
-  "auth":{
+  "auth": {
     "logout": "Logout",
     "successful_login": "Successful login",
     "incorrect_credentials": "Incorrect credentials",
@@ -43,7 +47,7 @@
     "report": "Report",
     "reports": "Reports"
   },
-  "whatsapp":{
+  "whatsapp": {
     "whatsapp": "WhatsApp"
   },
   "actions": {

@@ -1,10 +1,14 @@
 {
-  "languages": { 
-    "language": "Idioma",
-    "en": "Inglés", 
-    "es": "Español" 
+  "theme": {
+    "dark": "Tema oscuro",
+    "light": "Tema claro"
   },
-  "auth":{
+  "languages": {
+    "language": "Idioma",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "auth": {
     "logout": "Cerrar Sesión",
     "successful_login": "Inicio de sesión exitoso",
     "incorrect_credentials": "Credenciales incorrectas",
@@ -17,7 +21,7 @@
     "forgot_password": "¿Olvidaste tu contraseña?",
     "authentication_error": "Error de autenticación"
   },
-  "contact":{
+  "contact": {
     "contact": "Contacto",
     "contacts": "Contactos",
     "new_contact": "Nuevo Contacto",
@@ -43,7 +47,7 @@
     "report": "Reporte",
     "reports": "Reportes"
   },
-  "whatsapp":{
+  "whatsapp": {
     "whatsapp": "WhatsApp"
   },
   "actions": {

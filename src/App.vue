@@ -10,7 +10,6 @@
 <script lang="ts">
 import { computed, defineComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDark } from '@vueuse/core'
 
 import Toast from 'primevue/toast'
 
@@ -29,7 +28,6 @@ export default defineComponent({
     Toast,
   },
   setup() {
-    const isDark = useDark({ selector: 'html' })
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
