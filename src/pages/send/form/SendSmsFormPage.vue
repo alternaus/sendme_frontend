@@ -1,8 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watchEffect } from 'vue'
 
-import { useToast } from 'primevue/usetoast'
-
 import { useI18n } from 'vue-i18n'
 
 import BtnSend from '@/assets/svg/btn_send.svg?component'
@@ -10,6 +8,7 @@ import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
+import { useContactService } from '@/services/contact/useContactService'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'
@@ -25,10 +24,11 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
-    const toast = useToast()
     const sendToAllContacts = ref(false)
     const contactsInput = ref('')
+    const contactsCount = ref<number | null>(null)
     const sendService = useSendService()
+    const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage()
     const MAX_SINGLE_MESSAGE = 160
     const MAX_CONCATENATED_MESSAGE = 153
@@ -42,13 +42,22 @@ export default defineComponent({
         smsCount = Math.ceil((length - MAX_SINGLE_MESSAGE) / MAX_CONCATENATED_MESSAGE) + 1
       }
 
-      return `${length} caracteres - ${smsCount} SMS`
+      return `${length} ${t('general.characters')} - ${smsCount} ${t('general.sms')}`
     })
 
-    // Evita que se escriban más de 459 caracteres
+    const fetchContactsCount = async () => {
+      try {
+        const contacts = await contactService.getContactCount()
+        contactsCount.value = contacts?.total ?? null
+      } catch (error) {
+        console.error('Error obteniendo la cantidad de contactos:', error)
+        contactsCount.value = null
+      }
+    }
+
     watchEffect(() => {
-      if (form.message.value.length > MAX_CHARACTERS) {
-        form.message.value = form.message.value.substring(0, MAX_CHARACTERS)
+      if (sendToAllContacts.value) {
+        fetchContactsCount()
       }
     })
 
@@ -60,33 +69,22 @@ export default defineComponent({
     })
 
     const sendMessage = handleSubmit(async (values) => {
-      if (messageCount.value > 3) {
-        toast.add({
-          severity: 'warn',
-          summary: t('general.warning'),
-          detail: t('general.max_messages_reached'),
-          life: 3000,
-        })
-        return
-      }
-      const response = await sendService.sendMessageSms(values)
-
-      if (response) {
-        resetForm()
-        contactsInput.value = ''
-        toast.add({
-          severity: 'success',
-          summary: t('general.success'),
-          detail: t('general.message_send_success'),
-          life: 3000,
-        })
+      console.log(!sendToAllContacts.value);
+      if (!sendToAllContacts.value) {
+        const response = await sendService.sendMessageSms(values)
+        if (response) {
+          resetForm()
+          contactsInput.value = ''
+        }
       } else {
-        toast.add({
-          severity: 'error',
-          summary: t('general.error'),
-          detail: t('general.error_sending_message'),
-          life: 3000,
-        })
+        const data = {
+          message: values.message,
+        } 
+        const response = await sendService.sendSmsToAllContacts(data)
+        if (response) {
+          resetForm()
+          contactsInput.value = ''
+        }
       }
     })
 
@@ -98,6 +96,8 @@ export default defineComponent({
       setValues,
       sendToAllContacts,
       contactsInput,
+      MAX_CHARACTERS,
+      contactsCount,
     }
   },
 })
@@ -108,7 +108,11 @@ export default defineComponent({
     <div class="flex justify-center items-center flex-wrap my-2 mb-4">
       <div
         class="p-2 mx-2 cursor-pointer"
-        :class="!sendToAllContacts ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300' : ''"
+        :class="
+          !sendToAllContacts
+            ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300'
+            : ''
+        "
         @click="sendToAllContacts = false"
       >
         <PhoneIcon class="w-6 h-6 dark:fill-white" />
@@ -120,6 +124,11 @@ export default defineComponent({
       >
         <ContactsIcon class="w-6 h-6 dark:fill-white" />
       </div>
+    </div>
+    <div class="flex flex-col mb-2" v-if="sendToAllContacts">
+      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
+        {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
+      </small>
     </div>
 
     <AppTextarea
@@ -136,20 +145,15 @@ export default defineComponent({
       v-model="form.message.value"
       :rows="12"
       :placeholder="$t('general.write_message')"
+      :maxlength="MAX_CHARACTERS"
       class="w-full mb-2"
     >
       <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
-    <!-- <div class="flex flex-col">
-      <small class="text-center text-sm text-gray-500">
-        {{ remainingCharacters }} {{ $t('general.characters') }}
-      </small>
-    </div> -->
     <div class="flex flex-col">
-     
-      <small class="text-center text-sm text-gray-500">
-        {{ messageInfo  }}
+      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
+        {{ messageInfo }}
       </small>
     </div>
 

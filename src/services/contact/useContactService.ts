@@ -15,6 +15,10 @@ export const useContactService = () => {
     })
   }
 
+  const getContactCount = async (): Promise<{ total: number }> => {
+    return privateApi.get<{ total: number }>('/contacts/count') 
+  }
+
   const getContact = async (id: string) => {
     return privateApi.get<IContact>(`/contacts/${id}`)
   }
@@ -57,6 +61,7 @@ export const useContactService = () => {
   return {
     getContacts,
     getContact,
+    getContactCount,
     createContact,
     updateContact,
     deleteContact,

@@ -44,6 +44,9 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    maxlength: {
+      type: Number,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -78,19 +81,21 @@ export default defineComponent({
           :placeholder="placeholder"
           :size="size"
           :rows="rows"
+          :maxlength="maxlength"
           class="!w-full !rounded-r-xl !border-l-0"
           :class="{ 'p-invalid': errorMessage.length > 0 }"
-        />
-        <label>{{ label }}</label>
-      </FloatLabel>
-    </InputGroup>
-
-    <FloatLabel v-else>
-      <PrimeTextarea
+          />
+          <label>{{ label }}</label>
+        </FloatLabel>
+      </InputGroup>
+      
+      <FloatLabel v-else>
+        <PrimeTextarea
         v-model="internalValue"
         :placeholder="placeholder"
         :size="size"
         :rows="rows"
+        :maxlength="maxlength"
         class="!w-full !rounded-xl"
         :class="{ 'p-invalid': errorMessage.length > 0 }"
       />

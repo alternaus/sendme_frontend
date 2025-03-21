@@ -25,9 +25,9 @@ export const useFormSendMessage = () => {
   })
 
   const schema = yup.object<SendMessageForm>({
-    contacts: yup.array().of(yup.string().matches(/^\d+$/, t('general.invalid_phone'))).min(1).required(),
     message: yup.string().required(),
-    country: yup.string().required(),
+    contacts: yup.array().of(yup.string().matches(/^\d+$/, t('general.invalid_phone'))).optional(),
+    country: yup.string(),
   })
   
 

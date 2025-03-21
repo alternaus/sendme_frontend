@@ -1,5 +1,5 @@
 export interface IMessage {
-  contacts: string[]
   message: string
-  country: string
+  contacts?: string[]
+  country?: string
 }
