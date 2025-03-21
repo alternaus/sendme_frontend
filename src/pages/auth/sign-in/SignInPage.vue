@@ -68,14 +68,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-4 flex-col w-full">
+  <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-6 flex-col w-full">
     <AppInput v-model="email" :error-message="errors.email" :placeholder="$t('general.email')" />
 
-    <AppInputPassword
-      v-model="password"
-      :error-message="errors.password"
-      :placeholder="$t('general.password')"
-    />
+    <AppInputPassword v-model="password" :error-message="errors.password" :placeholder="$t('general.password')" />
 
     <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
 

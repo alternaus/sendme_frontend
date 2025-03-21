@@ -10,7 +10,6 @@
 <script lang="ts">
 import { computed, defineComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDark } from '@vueuse/core'
 
 import Toast from 'primevue/toast'
 
@@ -29,18 +28,15 @@ export default defineComponent({
     Toast,
   },
   setup() {
-    const isDark = useDark({ selector: 'html' })
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
 
-    // Computed para cambiar el layout dinámicamente
     const layout = computed(() => {
       const layoutName = (route.meta.layout as string) || 'DefaultLayout'
       return layoutName
     })
 
-    // Asegurar que el idioma cambia en toda la app
     watch(() => i18nStore.language, (newLang) => {
       i18n.locale.value = newLang
     }, { immediate: true })

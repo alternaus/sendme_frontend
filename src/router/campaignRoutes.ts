@@ -1,4 +1,9 @@
-import { type RouteRecordRaw } from 'vue-router'
+import {
+  type NavigationGuardNext,
+  type RouteLocationNormalized,
+  type RouteLocationNormalizedLoaded,
+  type RouteRecordRaw,
+} from 'vue-router'
 
 const baseBreadcrumb = {
   text: 'campaign.campaigns',
@@ -13,10 +18,12 @@ const generateBreadcrumb = (text: string, name: string, id?: string) => [
     active: true,
   },
 ]
-const beforeEnterWithBreadcrumb = (action: string, name: string) => (to, from, next) => {
-  to.meta.breadcrumb = generateBreadcrumb(action, name, to.params.id as string)
-  next()
-}
+const beforeEnterWithBreadcrumb =
+  (action: string, name: string) =>
+  (to: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
+    to.meta.breadcrumb = generateBreadcrumb(action, name, to.params.id as string)
+    next()
+  }
 
 const campaignRoutes: RouteRecordRaw = {
   path: '/campaigns',

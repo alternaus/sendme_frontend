@@ -26,7 +26,7 @@ app.use(PrimeVue, {
     preset: AppTheme,
     options: {
       prefix: 'p',
-      darkModeSelector: 'system',
+      darkModeSelector: '.dark',
     },
   },
 })

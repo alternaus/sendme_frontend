@@ -1,10 +1,14 @@
 {
+  "theme": {
+    "dark": "Dark theme",
+    "light": "Light theme"
+  },
   "languages": {
     "language": "Language",
     "en": "English",
     "es": "Spanish"
   },
-  "auth":{
+  "auth": {
     "logout": "Logout",
     "successful_login": "Successful login",
     "incorrect_credentials": "Incorrect credentials",
@@ -33,7 +37,16 @@
     "contact_updated": "Contact updated successfully",
     "contact_created": "Contact created successfully",
     "error_saving_contact": "Error saving contact",
-    "contact_deleted": "Contact deleted"
+    "contact_deleted": "Contact deleted",
+    "import": {
+      "notice": {
+        "title": "Important Information",
+        "first_row": "The first row is not imported because it is usually the column title.",
+        "phone_required": "The 'Phone' field is required; without it, your contacts will not be imported.",
+        "supported_formats": "Supported formats are .xlsx and .csv.",
+        "final_message": "At the end, you will find the list of numbers to call."
+      }
+    }
   },
   "campaign": {
     "campaign": "Campaign",
@@ -42,6 +55,9 @@
   "report": {
     "report": "Report",
     "reports": "Reports"
+  },
+  "whatsapp": {
+    "whatsapp": "WhatsApp"
   },
   "actions": {
     "edit": "Edit",
@@ -82,6 +98,19 @@
     "error": "Error",
     "success": "Success",
     "unknown_field": "Unknown field",
-    "not_defined": "Not defined"
+    "not_defined": "Not defined",
+    "instant_message": "Instant Message",
+    "sms": "SMS",
+    "write_message": "Write a message",
+    "enter_numbers_separated_by_commas": "Enter numbers separated by commas",
+    "send_all_contacts": "Send all contacts",
+    "characters": "characters",
+    "message_send_success": "Message sent successfully",
+    "error_sending_message": "Error sending message",
+    "enter_all_fields_send_message": "Enter all fields to send the message",
+    "warning": "Warning",
+    "message": "Message",
+    "country": "Country",
+    "invalid_phone": "Invalid phone"
   }
 }

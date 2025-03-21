@@ -58,30 +58,15 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
     <PrimeMenu ref="menu" :model="items" popup />
 
     <!-- Diálogo de confirmación de cierre de sesión -->
-    <PrimeDialog
-      v-model:visible="showLogoutDialog"
-      modal
-      :header="$t('auth.confirm_logout')"
-      :style="{ width: '25rem' }"
-    >
+    <PrimeDialog v-model:visible="showLogoutDialog" modal :header="$t('auth.confirm_logout')"
+      :style="{ width: '25rem' }">
       <span class="text-surface-500 dark:text-surface-400 block mb-8">
         {{ $t('auth.sure_logout') }}
       </span>
       <div class="flex justify-end gap-2">
-        <PrimeButton
-          type="button"
-          size="small"
-          :label="$t('general.cancel')"
-          severity="secondary"
-          @click="showLogoutDialog = false"
-        />
-        <PrimeButton
-          type="button"
-          size="small"
-          :label="$t('auth.logout')"
-          severity="danger"
-          @click="confirmLogout"
-        />
+        <PrimeButton type="button" size="small" :label="$t('general.cancel')" severity="secondary"
+          @click="showLogoutDialog = false" />
+        <PrimeButton type="button" size="small" :label="$t('auth.logout')" severity="danger" @click="confirmLogout" />
       </div>
     </PrimeDialog>
   </div>

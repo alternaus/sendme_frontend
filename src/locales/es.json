@@ -1,10 +1,14 @@
 {
-  "languages": { 
-    "language": "Idioma",
-    "en": "Inglés", 
-    "es": "Español" 
+  "theme": {
+    "dark": "Tema oscuro",
+    "light": "Tema claro"
   },
-  "auth":{
+  "languages": {
+    "language": "Idioma",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "auth": {
     "logout": "Cerrar Sesión",
     "successful_login": "Inicio de sesión exitoso",
     "incorrect_credentials": "Credenciales incorrectas",
@@ -17,7 +21,7 @@
     "forgot_password": "¿Olvidaste tu contraseña?",
     "authentication_error": "Error de autenticación"
   },
-  "contact":{
+  "contact": {
     "contact": "Contacto",
     "contacts": "Contactos",
     "new_contact": "Nuevo Contacto",
@@ -33,7 +37,16 @@
     "contact_updated": "Contacto actualizado exitosamente",
     "contact_created": "Contacto creado exitosamente",
     "error_saving_contact": "Error al guardar el contacto",
-    "contact_deleted": "Contacto eliminado"
+    "contact_deleted": "Contacto eliminado",
+    "import": {
+      "notice": {
+        "title": "Información importante",
+        "first_row": "La primera fila no se importa debido a que normalmente es el título de la columna.",
+        "phone_required": "El campo 'Teléfono' es obligatorio, sin este no se importarán tus contactos.",
+        "supported_formats": "Los formatos soportados son .xlsx y .csv.",
+        "final_message": "Al finalizar encontrarás la lista de números para llamar."
+      }
+    }
   },
   "campaign": {
     "campaign": "Campaña",
@@ -42,6 +55,9 @@
   "report": {
     "report": "Reporte",
     "reports": "Reportes"
+  },
+  "whatsapp": {
+    "whatsapp": "WhatsApp"
   },
   "actions": {
     "edit": "Editar",
@@ -82,6 +98,19 @@
     "error": "Error",
     "success": "Éxito",
     "unknown_field": "Campo desconocido",
-    "not_defined": "No definido"
+    "not_defined": "No definido",
+    "instant_message": "Mensaje Instantáneo",
+    "sms": "SMS",
+    "write_message": "Escribe un mensaje",
+    "enter_numbers_separated_by_commas": "Ingresa números separados por comas",
+    "send_all_contacts": "Enviar todos los contactos",
+    "characters": "caracteres",
+    "message_send_success": "Mensaje enviado exitosamente",
+    "error_sending_message": "Error al enviar el mensaje",
+    "enter_all_fields_send_message": "Ingresa todos los campos para enviar el mensaje",
+    "warning": "Advertencia",
+    "message": "Mensaje",
+    "country": "País",
+    "invalid_phone": "Teléfono inválido"
   }
 }

@@ -6,4 +6,5 @@ export enum IconTypes {
   REPORTS = 'REPORTS',
   BUY = 'BUY',
   SETTINGS = 'SETTINGS',
+  IMPORT = 'IMPORT',
 }
