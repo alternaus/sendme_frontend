@@ -66,7 +66,7 @@ jobs:
               listen 80 default_server;
               server_name _;
 
-              root /var/www/vhosts/sendme.com;
+              root /var/www/vhosts/sendme.com/dist;
               index index.html;
 
               location / {
