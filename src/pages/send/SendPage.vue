@@ -76,20 +76,19 @@ export default defineComponent({
   flex-direction: column;
   padding: 15px;
   .dark & {
-    background: #1e1e1e; /* Fondo oscuro */
+    background: #1e1e1e; 
     border-color: #555;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
   }
 }
 
 .container-phone-inner {
-  flex: 1; /* Hace que este contenedor tome el espacio disponible dentro de container-phone */
+  flex: 1; 
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(75vh - 50px); /* Ajusta según la altura total menos espacio para encabezado */
+  max-height: calc(75vh - 50px); 
 
-  /* ✅ Personalizar la barra de scroll */
-  scrollbar-width: thin; /* Firefox */
+  scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
 
   &::-webkit-scrollbar {

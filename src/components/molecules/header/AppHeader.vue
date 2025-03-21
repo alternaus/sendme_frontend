@@ -10,6 +10,7 @@ import {
 import EyeIcon from '@/assets/svg/eye.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
+import ReportsIcon from '@/assets/svg/header/reports.svg?component'
 import SendIcon from '@/assets/svg/header/send.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
@@ -40,7 +41,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.CAMPAIGNS]: CampaignsIcon,
   [IconTypes.WHATSAPP]: ContactsIcon,
   [IconTypes.SEND]: SendIcon,
-  [IconTypes.REPORTS]: ContactsIcon,
+  [IconTypes.REPORTS]: ReportsIcon,
   [IconTypes.BUY]: ContactsIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
   [IconTypes.IMPORT]: ImportIcon,
@@ -119,7 +120,7 @@ export default defineComponent({
     <div class="flex flex-col items-center md:flex-row md:gap-4">
       <component :is="IconComponents[icon]"
         class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]" />
-      <span class="text-lg font-semibold text-center md:text-left">
+      <span class="text-xl  font-semibold text-center md:text-left">
         {{ text }}
       </span>
     </div>

@@ -54,7 +54,9 @@
   },
   "report": {
     "report": "Reporte",
-    "reports": "Reportes"
+    "reports": "Reportes",
+    "audit": "Auditoría",
+    "sending_by_campaign": "Envíos por Campaña"
   },
   "whatsapp": {
     "whatsapp": "WhatsApp"
@@ -112,6 +114,7 @@
     "enter_all_fields_send_message": "Ingresa todos los campos para enviar el mensaje",
     "warning": "Advertencia",
     "message": "Mensaje",
+    "messages": "Mensajes",
     "country": "País",
     "invalid_phone": "Teléfono inválido"
   }
