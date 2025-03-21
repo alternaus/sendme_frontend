@@ -50,7 +50,7 @@ export default defineComponent({
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
-      required: true,
+      required: false,
     },
     placeholder: {
       type: String,

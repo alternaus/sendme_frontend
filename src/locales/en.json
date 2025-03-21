@@ -91,6 +91,8 @@
     "unknown_field": "Unknown field",
     "not_defined": "Not defined",
     "instant_message": "Instant Message",
+    "send_instant_message": "Send instant message",
+    "whatsapp_instant_message": "WhatsApp instant message",
     "sms": "SMS",
     "write_message": "Write a message",
     "enter_numbers_separated_by_commas": "Enter numbers separated by commas",

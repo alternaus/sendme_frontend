@@ -30,9 +30,27 @@ export default defineComponent({
     const contactsInput = ref('')
     const sendService = useSendService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage()
-    const maxCharacters = 160
+    const MAX_SINGLE_MESSAGE = 160
+    const MAX_CONCATENATED_MESSAGE = 153
+    const MAX_CHARACTERS = 459
 
-    const remainingCharacters = computed(() => maxCharacters - form.message.value.length)
+    const messageInfo = computed(() => {
+      const length = form.message.value.length
+      let smsCount = 1
+
+      if (length > MAX_SINGLE_MESSAGE) {
+        smsCount = Math.ceil((length - MAX_SINGLE_MESSAGE) / MAX_CONCATENATED_MESSAGE) + 1
+      }
+
+      return `${length} caracteres - ${smsCount} SMS`
+    })
+
+    // Evita que se escriban más de 459 caracteres
+    watchEffect(() => {
+      if (form.message.value.length > MAX_CHARACTERS) {
+        form.message.value = form.message.value.substring(0, MAX_CHARACTERS)
+      }
+    })
 
     watchEffect(() => {
       form.contacts.value = contactsInput.value
@@ -42,7 +60,15 @@ export default defineComponent({
     })
 
     const sendMessage = handleSubmit(async (values) => {
-      // console.log('values', values)
+      if (messageCount.value > 3) {
+        toast.add({
+          severity: 'warn',
+          summary: t('general.warning'),
+          detail: t('general.max_messages_reached'),
+          life: 3000,
+        })
+        return
+      }
       const response = await sendService.sendMessageSms(values)
 
       if (response) {
@@ -66,7 +92,7 @@ export default defineComponent({
 
     return {
       form,
-      remainingCharacters,
+      messageInfo,
       sendMessage,
       errors,
       setValues,
@@ -82,17 +108,17 @@ export default defineComponent({
     <div class="flex justify-center items-center flex-wrap my-2 mb-4">
       <div
         class="p-2 mx-2 cursor-pointer"
-        :class="!sendToAllContacts ? 'bg-white border rounded-lg border-slate-300' : ''"
+        :class="!sendToAllContacts ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300' : ''"
         @click="sendToAllContacts = false"
       >
-        <PhoneIcon class="w-6 h-6" />
+        <PhoneIcon class="w-6 h-6 dark:fill-white" />
       </div>
       <div
         class="p-2 mx-2 cursor-pointer"
         :class="sendToAllContacts ? 'bg-white border rounded-lg border-slate-300' : ''"
         @click="sendToAllContacts = true"
       >
-        <ContactsIcon class="w-6 h-6" />
+        <ContactsIcon class="w-6 h-6 dark:fill-white" />
       </div>
     </div>
 
@@ -103,7 +129,7 @@ export default defineComponent({
       :placeholder="$t('general.enter_numbers_separated_by_commas')"
       class="w-full mb-4"
     >
-      <template #icon><PhoneIcon class="w-4 h-4" /></template>
+      <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
     <AppTextarea
@@ -112,12 +138,18 @@ export default defineComponent({
       :placeholder="$t('general.write_message')"
       class="w-full mb-2"
     >
-      <template #icon><SmsIcon class="w-4 h-4" /></template>
+      <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
-    <div class="flex flex-col">
+    <!-- <div class="flex flex-col">
       <small class="text-center text-sm text-gray-500">
         {{ remainingCharacters }} {{ $t('general.characters') }}
+      </small>
+    </div> -->
+    <div class="flex flex-col">
+     
+      <small class="text-center text-sm text-gray-500">
+        {{ messageInfo  }}
       </small>
     </div>
 
