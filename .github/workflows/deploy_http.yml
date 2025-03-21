@@ -48,22 +48,22 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            # 🔄 Actualizar sistema
-             apt update &&  apt upgrade -y
+            apt update && apt upgrade -y
 
-            # 🌍 Instalar Nginx si no está instalado
             if ! command -v nginx &> /dev/null; then
-               apt install -y nginx
+              apt install -y nginx
             fi
 
-            # 📁 Crear el directorio si no existe
-             mkdir -p /var/www/vhosts/sendme.com
-             chown -R www-data:www-data /var/www/vhosts/sendme.com
-             chmod -R 755 /var/www/vhosts/sendme.com
+            mkdir -p /var/www/vhosts/sendme.com
+            chown -R www-data:www-data /var/www/vhosts/sendme.com
+            chmod -R 755 /var/www/vhosts/sendme.com
 
-            # 📝 Configurar Nginx para servir HTTP sin SSL
+            # Eliminar sitio por defecto
+            rm -f /etc/nginx/sites-enabled/default
+
+            # Crear archivo en sites-available
             echo 'server {
-              listen 80;
+              listen 80 default_server;
               server_name _;
 
               root /var/www/vhosts/sendme.com;
@@ -72,12 +72,12 @@ jobs:
               location / {
                 try_files $uri /index.html;
               }
-            }' |  tee /etc/nginx/sites-available/sendme
+            }' > /etc/nginx/sites-available/sendme
 
-            # 🔗 Habilitar el sitio
-             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
+            # Crear enlace simbólico
+            ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
 
-            # 🔄 Validar configuración y reiniciar Nginx
-             nginx -t &&  systemctl restart nginx
+            # Validar configuración y reiniciar Nginx
+            nginx -t && systemctl restart nginx
 
             echo "🚀 Sitio desplegado correctamente usando HTTP."
