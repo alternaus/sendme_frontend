@@ -3,20 +3,21 @@
 
   <AppCard>
     <template #content>
-      <div>
-        <h3 class="text-xl font-bold my-2">Información importante</h3>
-        <ul class=" list-inside list-disc ml-4 text-sm">
-          <li>La primera fila no se importa debido a que normalmente es el título de la columna.</li>
-          <li>El campo 'Teléfono' es obligatorio, sin este no se importarán tus contactos.</li>
-          <li>Los formatos soportados son .xlsx y .csv.</li>
-          <li>Al finalizar encontrarás la lista de números para llamar.</li>
-        </ul>
-
-        <AppButton class="mt-8 !mx-auto !w-auto" :label="'Cargar Archivo'">
-          <template #icon-start>
-            <ImportIcon class="w-5 h-5" />
-          </template>
-        </AppButton>
+      <div class="w-full flex justify-center">
+        <div class="max-w-auto w-full text-center">
+          <p class="text-xl font-bold my-2">{{ $t('contact.import.notice.title') }}</p>
+          <ul class="list-inside list-disc text-sm text-left mx-auto w-fit">
+            <li>{{ $t('contact.import.notice.first_row') }}</li>
+            <li>{{ $t('contact.import.notice.phone_required') }}</li>
+            <li>{{ $t('contact.import.notice.supported_formats') }}</li>
+            <li>{{ $t('contact.import.notice.final_message') }}</li>
+          </ul>
+          <AppButton class="mt-8 !mx-auto !w-auto" :label="'Cargar Archivo'">
+            <template #icon-start>
+              <ImportIcon class="w-5 h-5" />
+            </template>
+          </AppButton>
+        </div>
       </div>
     </template>
   </AppCard>
@@ -33,6 +34,7 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 
+
 export default defineComponent({
   components: {
     AppHeader,
@@ -40,6 +42,7 @@ export default defineComponent({
     AppButton, ImportIcon
   },
   setup() {
+
     return {
       IconTypes,
     }

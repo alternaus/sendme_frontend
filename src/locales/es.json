@@ -37,7 +37,16 @@
     "contact_updated": "Contacto actualizado exitosamente",
     "contact_created": "Contacto creado exitosamente",
     "error_saving_contact": "Error al guardar el contacto",
-    "contact_deleted": "Contacto eliminado"
+    "contact_deleted": "Contacto eliminado",
+    "import": {
+      "notice": {
+        "title": "Información importante",
+        "first_row": "La primera fila no se importa debido a que normalmente es el título de la columna.",
+        "phone_required": "El campo 'Teléfono' es obligatorio, sin este no se importarán tus contactos.",
+        "supported_formats": "Los formatos soportados son .xlsx y .csv.",
+        "final_message": "Al finalizar encontrarás la lista de números para llamar."
+      }
+    }
   },
   "campaign": {
     "campaign": "Campaña",
