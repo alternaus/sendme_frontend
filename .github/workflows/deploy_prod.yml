@@ -3,7 +3,7 @@ name: Deploy sendme frontend
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   deploy:
@@ -49,56 +49,63 @@ jobs:
           port: 22
           script: |
             # 🔄 Actualizar paquetes
-             apt update &&  apt upgrade -y
+            sudo apt update && sudo apt upgrade -y
 
             # 🌍 Instalar Nginx si no está presente
             if ! command -v nginx &> /dev/null
             then
                 echo "🔧 Instalando Nginx..."
-                 apt install -y nginx
+                sudo apt install -y nginx
             else
                 echo "✅ Nginx ya está instalado."
             fi
 
             # 📁 Crear directorio del sitio si no existe
-             mkdir -p /var/www/vhosts/sendme.com
+            sudo mkdir -p /var/www/vhosts/sendme.com
 
             # ✅ Dar permisos correctos
-             chown -R www-data:www-data /var/www/vhosts/sendme.com
-             chmod -R 755 /var/www/vhosts/sendme.com
+            sudo chown -R www-data:www-data /var/www/vhosts/sendme.com
+            sudo chmod -R 755 /var/www/vhosts/sendme.com
 
-            # 🔧 Configurar Nginx sin SSL para evitar errores en la primera ejecución
+            # 🔧 Configurar Nginx temporalmente sin SSL
             echo 'server {
                 listen 80;
                 server_name sendme.com;
-                location / {
-                    return 301 https://$host$request_uri;
+                
+                location /.well-known/acme-challenge/ {
+                    root /var/www/html;
                 }
-            }' |  tee /etc/nginx/sites-available/sendme
 
-            # 🔗 Habilitar el sitio en Nginx
-             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+                location / {
+                    root /var/www/vhosts/sendme.com;
+                    index index.html;
+                    try_files $uri /index.html;
+                }
+            }' | sudo tee /etc/nginx/sites-available/sendme
+
+            # 🔗 Habilitar configuración temporal en Nginx
+            sudo ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
 
             # 🔄 Verificar configuración de Nginx antes de reiniciar
-             nginx -t &&  systemctl restart nginx || exit 1
+            sudo nginx -t && sudo systemctl restart nginx || exit 1
 
             # 🔐 Instalar Certbot para SSL si no está instalado
             if ! command -v certbot &> /dev/null
             then
                 echo "🔧 Instalando Certbot..."
-                 apt install -y certbot python3-certbot-nginx
+                sudo apt install -y certbot python3-certbot-nginx
             else
                 echo "✅ Certbot ya está instalado."
             fi
 
             # 📜 Generar certificado SSL si no existe
             if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
-                certbot --nginx -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
+               sudo certbot certonly --webroot -w /var/www/html -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
             else
                echo "✅ Certificado SSL ya existente."
             fi
 
-            # 📜 Actualizar configuración de Nginx con SSL
+            # 📜 Configurar Nginx con SSL
             echo 'server {
                 listen 80;
                 server_name sendme.com;
@@ -122,12 +129,12 @@ jobs:
                 ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
                 include /etc/letsencrypt/options-ssl-nginx.conf;
                 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-            }' |  tee /etc/nginx/sites-available/sendme
+            }' | sudo tee /etc/nginx/sites-available/sendme
 
             # 🔗 Habilitar configuración SSL en Nginx
-             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+            sudo ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
 
             # 🔄 Verificar configuración antes de reiniciar Nginx
-             nginx -t &&  systemctl restart nginx || exit 1
+            sudo nginx -t && sudo systemctl restart nginx || exit 1
 
             echo "🎉 Despliegue y configuración con SSL completados exitosamente."

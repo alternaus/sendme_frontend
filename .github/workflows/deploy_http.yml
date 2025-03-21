@@ -1,0 +1,83 @@
+name: Deploy sendme frontend (HTTP only)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SERVER_HOST: ${{ secrets.IP }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SERVER_USER: ${{ secrets.USER }}
+      FRONTEND_PATH: /var/www/vhosts/sendme.com
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔨 Build Vue App
+        run: npm run build
+
+      - name: 📂 Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'dist/*'
+          target: '/var/www/vhosts/sendme.com/'
+
+      - name: ⚙️ Install & configure Nginx (HTTP only)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            # 🔄 Actualizar sistema
+            sudo apt update && sudo apt upgrade -y
+
+            # 🌍 Instalar Nginx si no está instalado
+            if ! command -v nginx &> /dev/null; then
+              sudo apt install -y nginx
+            fi
+
+            # 📁 Crear el directorio si no existe
+            sudo mkdir -p /var/www/vhosts/sendme.com
+            sudo chown -R www-data:www-data /var/www/vhosts/sendme.com
+            sudo chmod -R 755 /var/www/vhosts/sendme.com
+
+            # 📝 Configurar Nginx para servir HTTP sin SSL
+            echo 'server {
+              listen 80;
+              server_name _;
+
+              root /var/www/vhosts/sendme.com;
+              index index.html;
+
+              location / {
+                try_files $uri /index.html;
+              }
+            }' | sudo tee /etc/nginx/sites-available/sendme
+
+            # 🔗 Habilitar el sitio
+            sudo ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
+
+            # 🔄 Validar configuración y reiniciar Nginx
+            sudo nginx -t && sudo systemctl restart nginx
+
+            echo "🚀 Sitio desplegado correctamente usando HTTP."
