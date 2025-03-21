@@ -111,6 +111,7 @@
     "warning": "Advertencia",
     "message": "Mensaje",
     "country": "País",
-    "invalid_phone": "Teléfono inválido"
+    "invalid_phone": "Teléfono inválido",
+    "drag_drop_file": "Arrastra y suelta el archivo aquí"
   }
 }

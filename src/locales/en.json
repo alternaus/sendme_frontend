@@ -111,6 +111,7 @@
     "warning": "Warning",
     "message": "Message",
     "country": "Country",
-    "invalid_phone": "Invalid phone"
+    "invalid_phone": "Invalid phone",
+    "drag_drop_file": "Drag and drop the file here"
   }
 }
