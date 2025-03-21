@@ -49,17 +49,17 @@ jobs:
           port: 22
           script: |
             # 🔄 Actualizar sistema
-            sudo apt update && sudo apt upgrade -y
+             apt update &&  apt upgrade -y
 
             # 🌍 Instalar Nginx si no está instalado
             if ! command -v nginx &> /dev/null; then
-              sudo apt install -y nginx
+               apt install -y nginx
             fi
 
             # 📁 Crear el directorio si no existe
-            sudo mkdir -p /var/www/vhosts/sendme.com
-            sudo chown -R www-data:www-data /var/www/vhosts/sendme.com
-            sudo chmod -R 755 /var/www/vhosts/sendme.com
+             mkdir -p /var/www/vhosts/sendme.com
+             chown -R www-data:www-data /var/www/vhosts/sendme.com
+             chmod -R 755 /var/www/vhosts/sendme.com
 
             # 📝 Configurar Nginx para servir HTTP sin SSL
             echo 'server {
@@ -72,12 +72,12 @@ jobs:
               location / {
                 try_files $uri /index.html;
               }
-            }' | sudo tee /etc/nginx/sites-available/sendme
+            }' |  tee /etc/nginx/sites-available/sendme
 
             # 🔗 Habilitar el sitio
-            sudo ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
+             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
 
             # 🔄 Validar configuración y reiniciar Nginx
-            sudo nginx -t && sudo systemctl restart nginx
+             nginx -t &&  systemctl restart nginx
 
             echo "🚀 Sitio desplegado correctamente usando HTTP."
