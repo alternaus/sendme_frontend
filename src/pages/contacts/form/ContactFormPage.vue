@@ -190,83 +190,58 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader
-    :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')"
-    :icon="IconTypes.CONTACTS"
-    :actions="[]"
-  />
+  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS"
+    :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <AppInput
-        v-model="form.name.value"
-        type="text"
-        class="w-full rounded-md mt-3"
-        :error-message="errors.name"
-        :label="$t('general.name')"
-      >
-        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppInput v-model="form.name.value" type="text" class="w-full rounded-md mt-3" :error-message="errors.name"
+        :label="$t('general.name')">
+        <template #icon>
+          <CredentialIcon class="w-4 h-4 fill-current" />
+        </template>
       </AppInput>
 
-      <AppInput
-        v-model="form.lastName.value"
-        type="text"
-        class="w-full rounded-md mt-3"
-        :error-message="errors.lastName"
-        :label="$t('general.last_name')"
-      >
-        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppInput v-model="form.lastName.value" type="text" class="w-full rounded-md mt-3"
+        :error-message="errors.lastName" :label="$t('general.last_name')">
+        <template #icon>
+          <CredentialIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppInput>
 
-      <AppInput
-        v-model="form.email.value"
-        type="email"
-        class="w-full rounded-md mt-3"
-        :error-message="errors.email"
-        :label="$t('general.email')"
-      >
-        <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppInput v-model="form.email.value" type="email" class="w-full rounded-md mt-3" :error-message="errors.email"
+        :label="$t('general.email')">
+        <template #icon>
+          <EmailIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppInput>
 
-      <AppInput
-        v-model="form.phone.value"
-        type="tel"
-        class="w-full rounded-md mt-3"
-        :error-message="errors.phone"
-        :label="$t('general.phone')"
-      >
-        <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppInput v-model="form.phone.value" type="tel" class="w-full rounded-md mt-3" :error-message="errors.phone"
+        :label="$t('general.phone')">
+        <template #icon>
+          <PhoneIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppInput>
 
-      <AppInput
-        v-model="form.countryCode.value"
-        type="text"
-        class="w-full rounded-md mt-3"
-        :error-message="errors.countryCode"
-        :label="$t('general.country_code')"
-      >
-        <template #icon><CredentialIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppInput v-model="form.countryCode.value" type="text" class="w-full rounded-md mt-3"
+        :error-message="errors.countryCode" :label="$t('general.country_code')">
+        <template #icon>
+          <CredentialIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppInput>
 
-      <AppDatePicker
-        v-model="form.birthDate.value"
-        placeholder="Seleccione una fecha"
-        class="w-full mt-3"
-        :error-message="errors.birthDate"
-        :label="$t('general.birth_date')"
-      >
-        <template #icon><BirthdayIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppDatePicker v-model="form.birthDate.value" placeholder="Seleccione una fecha" class="w-full mt-3"
+        :error-message="errors.birthDate" :label="$t('general.birth_date')">
+        <template #icon>
+          <BirthdayIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppDatePicker>
 
-      <AppSelect
-        v-model="form.status.value"
-        :options="statusOptions"
-        placeholder="Seleccione un estado"
-        class="w-full mt-3"
-        :error-message="errors.status"
-        :label="$t('general.status')"
-      >
-        <template #icon><StatusIcon class="w-4 h-4 dark:fill-white" /></template>
+      <AppSelect v-model="form.status.value" :options="statusOptions" placeholder="Seleccione un estado"
+        class="w-full mt-3" :error-message="errors.status" :label="$t('general.status')">
+        <template #icon>
+          <StatusIcon class="w-4 h-4 dark:fill-white" />
+        </template>
       </AppSelect>
     </div>
 
@@ -280,37 +255,19 @@ export default defineComponent({
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div
-            v-for="(custom, index) in form.customValues.value"
-            :key="index"
-            class="flex flex-col gap-1"
-          >
+          <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
             <label>{{
               customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
-            }}</label>
-            <AppInput
-              v-model="custom.value.value"
-              type="text"
-              class="w-full rounded-md"
-              :error-message="getError(index, 'value')"
-            />
+              }}</label>
+            <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
+              :error-message="getError(index, 'value')" />
           </div>
         </div>
       </template>
     </AppCard>
     <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
-      <AppButton
-        class="w-full sm:w-auto"
-        type="submit"
-        severity="primary"
-        :label="$t('general.save')"
-      />
-      <AppButton
-        class="w-full sm:w-auto"
-        severity="secondary"
-        :label="$t('general.cancel')"
-        @click="goBack"
-      />
+      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('general.save')" />
+      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('general.cancel')" @click="goBack" />
     </div>
   </form>
 </template>

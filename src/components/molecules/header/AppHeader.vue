@@ -43,6 +43,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.REPORTS]: ContactsIcon,
   [IconTypes.BUY]: ContactsIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
+  [IconTypes.IMPORT]: ImportIcon,
 }
 
 export default defineComponent({
