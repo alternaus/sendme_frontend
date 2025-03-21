@@ -3,7 +3,7 @@ name: Deploy sendme frontend
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -16,103 +16,103 @@ jobs:
       FRONTEND_PATH: /var/www/vhosts/sendme.com
 
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v3
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
 
-    - name: ⚙️ Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22.x
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
 
-    - name: 📦 Install dependencies
-      run: npm install 
+      - name: 📦 Install dependencies
+        run: npm install
 
-    - name: 🔨 Build Vue App
-      run: npm run build
+      - name: 🔨 Build Vue App
+        run: npm run build
 
-    - name: 📂 Copy build files to server
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.IP }}
-        username: ${{ secrets.USER }}
-        password: ${{ secrets.PASSWORD }}
-        port: 22
-        source: "dist/*"
-        target: "/var/www/vhosts/sendme.com/"
+      - name: 📂 Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'dist/*'
+          target: '/var/www/vhosts/sendme.com/'
 
-    - name: ⚡ Install & Configure Nginx + SSL
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.IP }}
-        username: ${{ secrets.USER }}
-        password: ${{ secrets.PASSWORD }}
-        port: 22
-        script: |
-          # 🔄 Actualizar paquetes
-          sudo apt update && sudo apt upgrade -y
+      - name: ⚡ Install & Configure Nginx + SSL
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            # 🔄 Actualizar paquetes
+            apt update && apt upgrade -y
 
-          # 🌍 Instalar Nginx si no está presente
-          if ! command -v nginx &> /dev/null
-          then
-              echo "🔧 Instalando Nginx..."
-              sudo apt install -y nginx
-          else
-              echo "✅ Nginx ya está instalado."
-          fi
+            # 🌍 Instalar Nginx si no está presente
+            if ! command -v nginx &> /dev/null
+            then
+                echo "🔧 Instalando Nginx..."
+                apt install -y nginx
+            else
+                echo "✅ Nginx ya está instalado."
+            fi
 
-          # 📁 Crear directorio del sitio si no existe
-          sudo mkdir -p /var/www/vhosts/sendme.com
+            # 📁 Crear directorio del sitio si no existe
+            mkdir -p /var/www/vhosts/sendme.com
 
-          # ✅ Dar permisos correctos
-          sudo chown -R www-data:www-data /var/www/vhosts/sendme.com
-          sudo chmod -R 755 /var/www/vhosts/sendme.com
+            # ✅ Dar permisos correctos
+            chown -R www-data:www-data /var/www/vhosts/sendme.com
+            chmod -R 755 /var/www/vhosts/sendme.com
 
-          # 🔐 Instalar Certbot para SSL si no está instalado
-          if ! command -v certbot &> /dev/null
-          then
-              echo "🔧 Instalando Certbot..."
-              sudo apt install -y certbot python3-certbot-nginx
-          else
-              echo "✅ Certbot ya está instalado."
-          fi
+            # 🔐 Instalar Certbot para SSL si no está instalado
+            if ! command -v certbot &> /dev/null
+            then
+                echo "🔧 Instalando Certbot..."
+                apt install -y certbot python3-certbot-nginx
+            else
+                echo "✅ Certbot ya está instalado."
+            fi
 
-          # 📜 Configurar Nginx para HTTPS
-          echo 'server {
-              listen 80;
-              server_name sendme.com;
-              location / {
-                  return 301 https://$host$request_uri;
-              }
-          }
+            # 📜 Configurar Nginx para HTTPS
+            echo 'server {
+                listen 80;
+                server_name sendme.com;
+                location / {
+                    return 301 https://$host$request_uri;
+                }
+            }
 
-          server {
-              listen 443 ssl;
-              server_name sendme.com;
+            server {
+                listen 443 ssl;
+                server_name sendme.com;
 
-              root /var/www/vhosts/sendme.com;
-              index index.html;
+                root /var/www/vhosts/sendme.com;
+                index index.html;
 
-              location / {
-                  try_files $uri /index.html;
-              }
+                location / {
+                    try_files $uri /index.html;
+                }
 
-              ssl_certificate /etc/letsencrypt/live/sendme.com/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
-              include /etc/letsencrypt/options-ssl-nginx.conf;
-              ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-          }' | sudo tee /etc/nginx/sites-available/sendme
+                ssl_certificate /etc/letsencrypt/live/sendme.com/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
+                include /etc/letsencrypt/options-ssl-nginx.conf;
+                ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+            }' | tee /etc/nginx/sites-available/sendme
 
-          # 🔗 Habilitar el sitio en Nginx
-          sudo ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+            # 🔗 Habilitar el sitio en Nginx
+            ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
 
-          # 📜 Generar certificado SSL de Let's Encrypt (si no existe)
-          if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
-            sudo certbot --nginx -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
-          else
-            echo "✅ Certificado SSL ya existente."
-          fi
+            # 📜 Generar certificado SSL de Let's Encrypt (si no existe)
+            if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
+               certbot --nginx -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
+            else
+              echo "✅ Certificado SSL ya existente."
+            fi
 
-          # 🔄 Reiniciar Nginx para aplicar cambios
-          sudo systemctl restart nginx
+            # 🔄 Reiniciar Nginx para aplicar cambios
+            systemctl restart nginx
 
-          echo "🎉 Despliegue y configuración completados exitosamente."
+            echo "🎉 Despliegue y configuración completados exitosamente."
