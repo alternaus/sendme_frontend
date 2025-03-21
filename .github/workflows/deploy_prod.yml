@@ -49,34 +49,56 @@ jobs:
           port: 22
           script: |
             # 🔄 Actualizar paquetes
-            apt update && apt upgrade -y
+             apt update &&  apt upgrade -y
 
             # 🌍 Instalar Nginx si no está presente
             if ! command -v nginx &> /dev/null
             then
                 echo "🔧 Instalando Nginx..."
-                apt install -y nginx
+                 apt install -y nginx
             else
                 echo "✅ Nginx ya está instalado."
             fi
 
             # 📁 Crear directorio del sitio si no existe
-            mkdir -p /var/www/vhosts/sendme.com
+             mkdir -p /var/www/vhosts/sendme.com
 
             # ✅ Dar permisos correctos
-            chown -R www-data:www-data /var/www/vhosts/sendme.com
-            chmod -R 755 /var/www/vhosts/sendme.com
+             chown -R www-data:www-data /var/www/vhosts/sendme.com
+             chmod -R 755 /var/www/vhosts/sendme.com
+
+            # 🔧 Configurar Nginx sin SSL para evitar errores en la primera ejecución
+            echo 'server {
+                listen 80;
+                server_name sendme.com;
+                location / {
+                    return 301 https://$host$request_uri;
+                }
+            }' |  tee /etc/nginx/sites-available/sendme
+
+            # 🔗 Habilitar el sitio en Nginx
+             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+
+            # 🔄 Verificar configuración de Nginx antes de reiniciar
+             nginx -t &&  systemctl restart nginx || exit 1
 
             # 🔐 Instalar Certbot para SSL si no está instalado
             if ! command -v certbot &> /dev/null
             then
                 echo "🔧 Instalando Certbot..."
-                apt install -y certbot python3-certbot-nginx
+                 apt install -y certbot python3-certbot-nginx
             else
                 echo "✅ Certbot ya está instalado."
             fi
 
-            # 📜 Configurar Nginx para HTTPS
+            # 📜 Generar certificado SSL si no existe
+            if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
+                certbot --nginx -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
+            else
+               echo "✅ Certificado SSL ya existente."
+            fi
+
+            # 📜 Actualizar configuración de Nginx con SSL
             echo 'server {
                 listen 80;
                 server_name sendme.com;
@@ -100,19 +122,12 @@ jobs:
                 ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
                 include /etc/letsencrypt/options-ssl-nginx.conf;
                 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-            }' | tee /etc/nginx/sites-available/sendme
+            }' |  tee /etc/nginx/sites-available/sendme
 
-            # 🔗 Habilitar el sitio en Nginx
-            ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+            # 🔗 Habilitar configuración SSL en Nginx
+             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
 
-            # 📜 Generar certificado SSL de Let's Encrypt (si no existe)
-            if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
-               certbot --nginx -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
-            else
-              echo "✅ Certificado SSL ya existente."
-            fi
+            # 🔄 Verificar configuración antes de reiniciar Nginx
+             nginx -t &&  systemctl restart nginx || exit 1
 
-            # 🔄 Reiniciar Nginx para aplicar cambios
-            systemctl restart nginx
-
-            echo "🎉 Despliegue y configuración completados exitosamente."
+            echo "🎉 Despliegue y configuración con SSL completados exitosamente."
