@@ -32,13 +32,11 @@ export default defineComponent({
     const i18n = useI18n()
     const i18nStore = useI18nStore()
 
-    // Computed para cambiar el layout dinámicamente
     const layout = computed(() => {
       const layoutName = (route.meta.layout as string) || 'DefaultLayout'
       return layoutName
     })
 
-    // Asegurar que el idioma cambia en toda la app
     watch(() => i18nStore.language, (newLang) => {
       i18n.locale.value = newLang
     }, { immediate: true })

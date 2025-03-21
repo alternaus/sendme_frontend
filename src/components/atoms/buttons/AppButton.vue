@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import PrimeButton from 'primevue/button'
 
@@ -14,21 +14,38 @@ export default defineComponent({
       type: String,
       default: 'primary',
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     PrimeButton,
+
   },
   setup(props) {
-    return { ...props }
+    const isDisabled = computed(() => props.loading)
+
+    return { isDisabled }
   },
 })
 </script>
 
 <template>
-  <PrimeButton
-    class="w-full !rounded-xl"
-    :label="label"
-    :severity="variant"
-    size="small"
-  ></PrimeButton>
+  <PrimeButton class="w-full !rounded-xl flex items-center justify-center gap-2" :severity="variant" :loading="loading"
+    size="small" :disabled="isDisabled">
+
+    <slot name="icon-start" v-if="!loading"></slot>
+    {{ label }}
+    <slot name="icon-end" v-if="!loading"></slot>
+  </PrimeButton>
 </template>
+
+<style scoped>
+:deep(.p-button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+</style>
