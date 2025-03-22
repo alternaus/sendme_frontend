@@ -84,7 +84,6 @@ export default defineComponent({
       <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
-    <!-- Sin ícono -->
     <FloatLabel v-else>
       <PrimeSelect editable v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
         :placeholder="placeholder" :showClear="showClear" size="small" class="w-full !rounded-xl"
@@ -92,7 +91,6 @@ export default defineComponent({
       <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
-    <!-- Mensaje de error -->
     <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

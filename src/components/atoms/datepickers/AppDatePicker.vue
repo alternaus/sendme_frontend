@@ -45,7 +45,6 @@ export default defineComponent({
   setup(props, { emit }) {
     const selectedDate = ref<Date | null>(null)
 
-    // ✅ Actualiza el valor inicial correctamente
     watch(
       () => props.modelValue,
       (newValue) => {
@@ -58,7 +57,6 @@ export default defineComponent({
       { immediate: true },
     )
 
-    // ✅ Evita emitir valores innecesarios con debounce y comparación previa
     let previousValue: Date | null = selectedDate.value
 
     watch(
