@@ -1,17 +1,15 @@
 <script lang="ts">
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
+import { IconField, InputIcon } from 'primevue'
 import DatePicker from 'primevue/datepicker'
 import FloatLabel from 'primevue/floatlabel'
-import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
+
 export default defineComponent({
   name: 'AppDatePicker',
   components: {
     DatePicker,
-    InputGroup,
-    InputGroupAddon,
-    FloatLabel
+    FloatLabel, IconField, InputIcon
   },
   props: {
     modelValue: {
@@ -85,40 +83,24 @@ export default defineComponent({
 </script>
 <template>
   <div class="w-full">
-    <InputGroup v-if="$slots.icon">
-      <InputGroupAddon class="!rounded-l-xl !border-r-0">
-        <slot name="icon"></slot>
-      </InputGroupAddon>
-      <FloatLabel>
-      <DatePicker
-        v-model="selectedDate"
-        size="small"
-        :placeholder="placeholder"
-        :showIcon="false"
-        :dateFormat="dateFormat"
-        input-class="!w-full !rounded-r-xl !border-l-0"
-        class="!w-full"
-        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-      />
-      <label>{{ label }}</label>
-      </FloatLabel>
-    </InputGroup>
-
-    <FloatLabel v-else>
-
-      <DatePicker
-      v-model="selectedDate"
-      size="small"
-      :placeholder="placeholder"
-      :showIcon="showIcon"
-      :dateFormat="dateFormat"
-      input-class="!w-full !rounded-xl"
-      class="!w-full"
-      :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-      />
-      <label>{{ label }}</label>
+    <FloatLabel v-if="$slots.icon">
+      <IconField>
+        <InputIcon>
+          <slot name="icon"></slot>
+        </InputIcon>
+        <DatePicker v-model="selectedDate" size="small" :placeholder="placeholder" :showIcon="false"
+          :dateFormat="dateFormat" input-class="!w-full !rounded-xl" class="!w-full"
+          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      </IconField>
+      <label class="text-sm">{{ label }}</label>
     </FloatLabel>
-      
+    <FloatLabel v-else>
+      <DatePicker v-model="selectedDate" size="small" :placeholder="placeholder" :showIcon="showIcon"
+        :dateFormat="dateFormat" input-class="!w-full !rounded-xl" class="!w-full"
+        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
+
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

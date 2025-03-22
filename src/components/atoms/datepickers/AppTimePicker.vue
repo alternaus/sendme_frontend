@@ -1,12 +1,17 @@
 <script lang="ts">
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
+import { IconField, InputIcon } from 'primevue'
 import DatePicker from 'primevue/datepicker'
+import FloatLabel from 'primevue/floatlabel'
 
 export default defineComponent({
   name: 'AppTimePicker',
   components: {
     DatePicker,
+    FloatLabel,
+    IconField,
+    InputIcon,
   },
   props: {
     modelValue: {
@@ -38,11 +43,7 @@ export default defineComponent({
     watch(
       () => props.modelValue,
       (newValue) => {
-        if (newValue instanceof Date) {
-          selectedTime.value = newValue
-        } else {
-          selectedTime.value = null
-        }
+        selectedTime.value = newValue instanceof Date ? newValue : null
       },
       { immediate: true },
     )
@@ -70,15 +71,25 @@ export default defineComponent({
 
 <template>
   <div class="w-full">
-    <DatePicker
-      v-model="selectedTime"
-      timeOnly
-      size="small"
-      inputClass="!w-full !rounded-xl"
-      class="!w-full rounded-xl"
-      :class="{ 'p-invalid': errorMessage.length > 0 }"
-      :hourFormat="hourFormat"
-    />
+    <FloatLabel v-if="$slots.icon">
+      <IconField>
+        <InputIcon>
+          <slot name="icon" />
+        </InputIcon>
+        <DatePicker v-model="selectedTime" timeOnly size="small" :hourFormat="hourFormat"
+          input-class="!w-full !rounded-xl" class="!w-full"
+          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      </IconField>
+      <label>{{ label }}</label>
+    </FloatLabel>
+
+    <FloatLabel v-else>
+      <DatePicker v-model="selectedTime" timeOnly size="small" :hourFormat="hourFormat"
+        input-class="!w-full !rounded-xl" class="!w-full"
+        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      <label>{{ label }}</label>
+    </FloatLabel>
+
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

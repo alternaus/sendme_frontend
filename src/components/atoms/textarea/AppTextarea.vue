@@ -1,20 +1,19 @@
-<script  lang="ts">
-import { defineComponent, type PropType, ref, toRefs,watch  } from 'vue'
+<script lang="ts">
+import { defineComponent, type PropType, ref, toRefs, watch } from 'vue'
 
+import { IconField, InputIcon } from 'primevue';
 import FloatLabel from 'primevue/floatlabel'
-import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
 import PrimeTextarea from 'primevue/textarea';
 
 export default defineComponent({
   name: 'AppTextarea',
   components: {
     PrimeTextarea,
-    InputGroup,
-    InputGroupAddon,
     FloatLabel,
+    IconField,
+    InputIcon
   },
-  props:{
+  props: {
     modelValue: {
       type: String,
       default: '',
@@ -35,7 +34,7 @@ export default defineComponent({
       type: Number,
       default: 3,
     },
-    
+
     errorMessage: {
       type: String,
       default: '',
@@ -47,7 +46,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const { modelValue } = toRefs(props) 
+    const { modelValue } = toRefs(props)
     const internalValue = ref(modelValue.value)
     watch(
       () => props.modelValue,
@@ -68,33 +67,21 @@ export default defineComponent({
 </script>
 <template>
   <div class="w-full">
-    <InputGroup v-if="$slots.icon">
-      <InputGroupAddon class="!rounded-l-xl !border-r-0">
-        <slot name="icon"></slot>
-      </InputGroupAddon>
-      <FloatLabel>
-        <PrimeTextarea
-          v-model="internalValue"
-          :placeholder="placeholder"
-          :size="size"
-          :rows="rows"
-          class="!w-full !rounded-r-xl !border-l-0"
-          :class="{ 'p-invalid': errorMessage.length > 0 }"
-        />
-        <label>{{ label }}</label>
-      </FloatLabel>
-    </InputGroup>
+    <FloatLabel v-if="$slots.icon">
+      <IconField>
+        <InputIcon>
+          <slot name="icon" />
+        </InputIcon>
+        <PrimeTextarea v-model="internalValue" :placeholder="placeholder" :size="size" :rows="rows"
+          class="!w-full !pl-10 !rounded-xl" :class="{ 'p-invalid': errorMessage.length > 0 }" />
+      </IconField>
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
 
     <FloatLabel v-else>
-      <PrimeTextarea
-        v-model="internalValue"
-        :placeholder="placeholder"
-        :size="size"
-        :rows="rows"
-        class="!w-full !rounded-xl"
-        :class="{ 'p-invalid': errorMessage.length > 0 }"
-      />
-      <label>{{ label }}</label>
+      <PrimeTextarea v-model="internalValue" :placeholder="placeholder" :size="size" :rows="rows"
+        class="!w-full !rounded-xl" :class="{ 'p-invalid': errorMessage.length > 0 }" />
+      <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
     <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
