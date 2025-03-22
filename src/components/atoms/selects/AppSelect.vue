@@ -77,7 +77,7 @@ export default defineComponent({
         <InputIcon>
           <slot name="icon" />
         </InputIcon>
-        <PrimeSelect v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
+        <PrimeSelect editable v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
           :placeholder="placeholder" :showClear="showClear" size="small" class="w-full !pl-10 !rounded-xl"
           :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
       </IconField>
@@ -86,7 +86,7 @@ export default defineComponent({
 
     <!-- Sin ícono -->
     <FloatLabel v-else>
-      <PrimeSelect v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
+      <PrimeSelect editable v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
         :placeholder="placeholder" :showClear="showClear" size="small" class="w-full !rounded-xl"
         :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
       <label class="text-sm">{{ label }}</label>
