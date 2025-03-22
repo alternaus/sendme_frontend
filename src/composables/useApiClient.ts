@@ -24,8 +24,6 @@ privateApi.interceptors.request.use(
     const authStore = useAuthStore()
     const token = authStore.token || localStorage.getItem('token')
 
-    console.log('🔑 Token:', token)
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

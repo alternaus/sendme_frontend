@@ -74,7 +74,6 @@ jobs:
                 try_files $uri /index.html;
               }
 
-              # Proxy para la API NestJS (Puerto 4000)
               location /api/ {
                 proxy_pass http://localhost:4000/api/;
                 proxy_http_version 1.1;
@@ -84,7 +83,6 @@ jobs:
                 proxy_cache_bypass $http_upgrade;
               }
 
-              # WebSocket support (por si usás sockets en /ws)
               location /socket.io/ {
                 proxy_pass http://localhost:4000/socket.io/;
                 proxy_http_version 1.1;
@@ -93,6 +91,17 @@ jobs:
                 proxy_set_header Host $host;
                 proxy_cache_bypass $http_upgrade;
               }
+              
+              location /opensearch/ {
+                proxy_pass http://localhost:5602/;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+              }   
             }' > /etc/nginx/sites-available/sendme
 
             # Crear enlace simbólico
