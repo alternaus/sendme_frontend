@@ -133,10 +133,10 @@ export default defineComponent({
             {
               label: t('actions.edit'),
               onClick: () => {
-    if (selectedContact.value?.id) {
-      push(`/contacts/edit/${selectedContact.value?.id}`)
-    }
-  },
+                if (selectedContact.value?.id) {
+                  push(`/contacts/edit/${selectedContact.value?.id}`)
+                }
+              },
               type: ActionTypes.EDIT,
             },
           ]

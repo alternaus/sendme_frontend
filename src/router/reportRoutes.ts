@@ -6,14 +6,14 @@ const baseBreadcrumb = {
   active: false
 }
 
-// const generateBreadcrumb = (text: string, name: string) => [
-//   baseBreadcrumb,
-//   {
-//     text,
-//     to: { name },
-//     active: true
-//   }
-// ]
+const generateBreadcrumb = (text: string, name: string) => [
+  baseBreadcrumb,
+  {
+    text,
+    to: { name },
+    active: true
+  }
+]
 
 const sendRoutes: RouteRecordRaw = {
   path: '/report',
@@ -24,6 +24,12 @@ const sendRoutes: RouteRecordRaw = {
       path: '',
       name: 'report.index',
       component: () => import('@/pages/reports/ReportsPage.vue'),
+    },
+    {
+      path: 'audit',
+      name: 'report.audit',
+      component: () => import('@/pages/reports/pages/audit/AuditPage.vue'),
+      meta: { breadcrumb: generateBreadcrumb('report.audit', 'report.audit') },
     },
   ],
 }

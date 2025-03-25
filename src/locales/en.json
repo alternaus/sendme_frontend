@@ -10,6 +10,7 @@
   },
   "auth": {
     "logout": "Logout",
+    "login": "Login",
     "successful_login": "Successful login",
     "incorrect_credentials": "Incorrect credentials",
     "incorrect_email_password": "Incorrect email or password",
@@ -56,10 +57,23 @@
     "report": "Report",
     "reports": "Reports",
     "audit": "Audit",
-    "sending_by_campaign": "Sending by Campaign"
+    "sending_by_campaign": "Sending by Campaign",
+    "error_getting_audit": "Error getting audit",
+    "audit_success_exported": "Audit exported successfully",
+    "error_exporting_audit": "Error exporting audit"
   },
   "whatsapp": {
     "whatsapp": "WhatsApp"
+  },
+  "user":{
+    "user": "User",
+    "users": "Users",
+    "new_user": "New User",
+    "edit_user": "Edit User",
+    "user_information": "User Information",
+    "error_getting_users": "Error getting users",
+    "success_removed": "User removed successfully",
+    "error_removed": "Error removing user"
   },
   "actions": {
     "edit": "Edit",
@@ -116,6 +130,9 @@
     "message": "Message",
     "messages": "Messages",
     "country": "Country",
-    "invalid_phone": "Invalid phone"
+    "invalid_phone": "Invalid phone",
+    "action": "Action",
+    "module": "Module",
+    "changes": "Changes"
   }
 }
