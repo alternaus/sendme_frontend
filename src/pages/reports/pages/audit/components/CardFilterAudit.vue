@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import ActionIcon from '@/assets/svg/action.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
@@ -34,6 +36,7 @@ export default defineComponent({
   },
   emits: ['update:action', 'update:table', 'update:startDate', 'update:endDate', 'update:search'],
   setup(props, { emit }) {
+    const { t } = useI18n()
     const updateField = (field: string, value: unknown) => {
       emit(`update:${field}`, value as string | null | Date)
     }
@@ -42,6 +45,7 @@ export default defineComponent({
       ActionAuditTypes,
       ModuleTypes,
       updateField,
+      t
     }
   },
 })

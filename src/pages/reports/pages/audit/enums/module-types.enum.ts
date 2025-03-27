@@ -1,4 +1,15 @@
 export enum ModuleTypes {
+  Organization = 'general.organizations',
   User = 'user.users',
+  Role = 'general.roles',
+  Permission = 'general.permissions',
   Contact = 'contact.contacts',
+  CustomField = 'contact.custom_fields',
+  CustomValue = 'contact.custom_values',
+  Campaign = 'campaign.campaigns',
+  CampaignRule = 'campaign.campaign_rules',
+  CampaignDispatch = 'campaign.campaign_dispatches',
+  Provider = 'provider.providers',
+  PaymentProvider = 'provider.payment_providers',
+  Plan = 'plan.plans',
 }

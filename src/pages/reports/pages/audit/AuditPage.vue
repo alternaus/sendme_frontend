@@ -87,23 +87,12 @@ export default defineComponent({
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
-          try {
-            exportAudits()
-            toast.add({
-              severity: 'success',
-              summary: t('general.success'),
-              detail: t('report.audit_success_exported'),
-              life: 3000,
-            })
-          } catch (error) {
-            console.error('❌ Error al exportar contactos:', error)
-            toast.add({
-              severity: 'error',
-              summary: t('general.error'),
-              detail: t('report.audit_error_exported'),
-              life: 3000,
-            })
-          }
+          exportAudits({
+            action: action.value,
+            table: table.value,
+            startDate: startDate.value,
+            endDate: endDate.value,
+          })
         },
       },
     ])
@@ -145,7 +134,7 @@ export default defineComponent({
     v-model:startDate="startDate"
     v-model:endDate="endDate"
     v-model:search="search"
-  /> 
+  />
   <AppTable
     class="w-full mt-4"
     :data="audits"

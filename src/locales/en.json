@@ -34,6 +34,8 @@
     "error_removed": "Error removing contact",
     "success_exported": "Contacts exported successfully",
     "error_exported": "Error exporting contacts",
+    "custom_fields": "Custom fields",
+    "custom_values": "Custom values",
     "custom_fields_not_loaded": "Custom fields not loaded",
     "contact_updated": "Contact updated successfully",
     "contact_created": "Contact created successfully",
@@ -51,7 +53,18 @@
   },
   "campaign": {
     "campaign": "Campaign",
-    "campaigns": "Campaigns"
+    "campaigns": "Campaigns",
+    "campaign_rules": "Campaign Rules",
+    "campaign_dispatches": "Campaign Dispatches"
+  },
+  "provider":{
+    "provider": "Provider",
+    "providers": "Providers",
+    "payment_providers": "Payment Providers"
+  },
+  "plan":{
+    "plan": "Plan",
+    "plans": "Plans"
   },
   "report": {
     "report": "Report",
@@ -156,6 +169,9 @@
     "content": "Content",
     "message_type": "Message type",
     "recipient_details": "Recipient details",
-    "shipment_date": "Shipment date"
+    "shipment_date": "Shipment date",
+    "organizations": "Organizations",
+    "roles"  : "Roles",
+    "permission": "Permission"
   }
 }

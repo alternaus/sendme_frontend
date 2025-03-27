@@ -34,6 +34,8 @@
     "error_removed": "Error al eliminar el contacto",
     "success_exported": "Contactos exportados exitosamente",
     "error_exported": "Error al exportar los contactos",
+    "custom_fields": "Campos personalizados",
+    "custom_values": "Valores personalizados",
     "custom_fields_not_loaded": "No se pudieron cargar los campos personalizados",
     "contact_updated": "Contacto actualizado exitosamente",
     "contact_created": "Contacto creado exitosamente",
@@ -51,7 +53,18 @@
   },
   "campaign": {
     "campaign": "Campaña",
-    "campaigns": "Campañas"
+    "campaigns": "Campañas",
+    "campaign_rules": "Reglas de Campaña",
+    "campaign_dispatches": "Envíos de Campaña"
+  },
+  "provider":{
+    "provider": "Proveedor",
+    "providers": "Proveedores",
+    "payment_providers": "Proveedores de Pago"
+  },
+  "plan":{
+    "plan": "Plan",
+    "plans": "Planes"
   },
   "report": {
     "report": "Reporte",
@@ -156,6 +169,9 @@
     "content": "Contenido",
     "message_type": "Tipo de mensaje",
     "recipient_details": "Detalles del destinatario",
-    "shipment_date": "Fecha de envío"
+    "shipment_date": "Fecha de envío",
+    "organizations": "Organizaciones",
+    "roles": "Roles",
+    "permissions": "Permisos"
   }
 }

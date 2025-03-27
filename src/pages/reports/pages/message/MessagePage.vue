@@ -22,8 +22,8 @@ import { useReportService } from '@/services/report/useReportServices'
 
 import CardFilterMessages from './components/CardFilterMessages.vue'
 import { useMessageFilter } from './composables/useMessageFilter'
-import { StatusMessageTypes } from './enums/status-types.enum'
 import { TypeMessageTypes } from './enums/message-types.enum.ts'
+import { StatusMessageTypes } from './enums/status-types.enum'
 export default defineComponent({
   name: 'MessagesPage',
   components: {
@@ -87,7 +87,7 @@ export default defineComponent({
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
-          try {
+          
             exportMessages({
               content: content.value,
               status: status.value,
@@ -95,21 +95,6 @@ export default defineComponent({
               startDate: startDate.value,
               endDate: endDate.value,
             })
-            toast.add({
-              severity: 'success',
-              summary: t('general.success'),
-              detail: t('report.messages_success_exported'),
-              life: 3000,
-            })
-          } catch (error) {
-            console.error('❌ Error al exportar mensajes:', error)
-            toast.add({
-              severity: 'error',
-              summary: t('general.error'),
-              detail: t('report.messages_error_exported'),
-              life: 3000,
-            })
-          }
         },
       },
     ])
@@ -138,7 +123,7 @@ export default defineComponent({
       startDate,
       endDate,
       getStatusTranslation,
-      getTypeMessageTranslation
+      getTypeMessageTranslation,
     }
   },
 })
@@ -202,6 +187,17 @@ export default defineComponent({
     <template #custom-messageType="{ data }">
       <div class="flex justify-center">
         {{ getTypeMessageTranslation(data.messageType) }}
+      </div>
+    </template>
+    <template #custom-content="{ data }">
+      <div class="flex justify-center">
+        <span
+          v-tooltip.left="data.content"
+          class="line-clamp-1 max-w-[200px] cursor-pointer"
+          :title="data.content"
+        >
+          {{ data.content }}
+        </span>
       </div>
     </template>
     <template #custom-status="{ data }">
