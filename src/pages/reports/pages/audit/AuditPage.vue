@@ -15,10 +15,12 @@ import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import CardFilterAudit from '@/pages/reports/pages/audit/components/CardFilterAudit.vue'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import { useReportService } from '@/services/report/useReportServices'
 
+import { useAuditFilter } from './composables/useAuditFilter'
 import { ActionAuditTypes } from './enums/action-types.enum.ts'
 import { ModuleTypes } from './enums/module-types.enum'
 export default defineComponent({
@@ -30,6 +32,7 @@ export default defineComponent({
     ActionIcon,
     ModuleIcon,
     ChangeIcon,
+    CardFilterAudit,
   },
   setup() {
     const { t } = useI18n()
@@ -37,9 +40,14 @@ export default defineComponent({
     const toast = useToast()
     const { getAudits, exportAudits } = useReportService()
 
+    const { action, table, startDate, endDate, search, handleSubmit } = useAuditFilter()
+
+    const submit = handleSubmit((values) => {
+      console.log('Enviando datos:', values)
+    })
+
     const page = ref(1)
     const limit = ref(10)
-    const search = ref('')
     const audits = ref<IAudit[]>([])
     const auditMeta = ref<IPaginationMeta>({
       currentPage: 1,
@@ -50,17 +58,21 @@ export default defineComponent({
       totalRecords: 0,
     })
 
-    watch(search, async () => {
-      console.log('🔍 Buscando:', search.value)
-      await fetchContacts(1)
+    watch([startDate, endDate, action, table], () => {
+      fetchAudits()
     })
 
-    const fetchAudits = async (newPage = 1) => {
-      page.value = newPage
+    const fetchAudits = async ({ pageSize = 1, limitSize = 10 } = {}) => {
+      page.value = pageSize
+      limit.value = limitSize
       try {
         const response = await getAudits({
           page: page.value,
           limit: limit.value,
+          action: action.value,
+          table: table.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
           // search: search.value,
         })
         audits.value = response.data
@@ -117,12 +129,25 @@ export default defineComponent({
       getActionTranslation,
       getModuleTranslation,
       headerActions,
+      action,
+      table,
+      startDate,
+      endDate,
+      submit,
     }
   },
 })
 </script>
 <template>
   <AppHeader :icon="IconTypes.AUDIT" :text="$t('report.audit')" :actions="headerActions" />
+  <CardFilterAudit
+    v-model:action="action"
+    v-model:table="table"
+    v-model:startDate="startDate"
+    v-model:endDate="endDate"
+    v-model:search="search"
+  />
+  <div></div>
   <AppTable
     class="w-full mt-4"
     :data="audits"
@@ -137,6 +162,7 @@ export default defineComponent({
     :pageCurrent="auditMeta.currentPage"
     :totalItems="auditMeta.totalRecords"
     :multipleSelection="false"
+    textTotalItems="report.audits"
     @page-change="fetchAudits"
   >
     <template #header-createdAt>

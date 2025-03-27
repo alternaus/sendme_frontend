@@ -93,11 +93,12 @@ export default defineComponent({
       <DatePicker
         v-model="selectedDate"
         size="small"
+        input-class="!w-full !rounded-r-xl !border-l-0"
+        class="!w-full"
+        showButtonBar 
         :placeholder="placeholder"
         :showIcon="false"
         :dateFormat="dateFormat"
-        input-class="!w-full !rounded-r-xl !border-l-0"
-        class="!w-full"
         :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
       <label>{{ label }}</label>
@@ -109,11 +110,12 @@ export default defineComponent({
       <DatePicker
       v-model="selectedDate"
       size="small"
+      input-class="!w-full !rounded-xl"
+      class="!w-full"
+      showButtonBar 
       :placeholder="placeholder"
       :showIcon="showIcon"
       :dateFormat="dateFormat"
-      input-class="!w-full !rounded-xl"
-      class="!w-full"
       :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
       <label>{{ label }}</label>
