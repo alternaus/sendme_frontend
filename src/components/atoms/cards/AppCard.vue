@@ -15,7 +15,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Card class="!shadow-xl !w-auto">
+  <Card class="!shadow-md !w-auto">
     <template #title>
       <slot name="title"></slot>
     </template>

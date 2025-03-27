@@ -8,6 +8,9 @@ import type { IFilterAudit } from '@/services/report/interfaces/filter-audit.int
 import type { IFilterMessage } from '@/services/report/interfaces/filter-message.interface'
 import type { IMessage } from '@/services/report/interfaces/message.interface'
 
+import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
+
+
 export const useReportService = () => {
   const privateApi = useApiClient(true)
   const toast = useToast()
@@ -26,7 +29,7 @@ export const useReportService = () => {
   // Auditoria 🔍
   const getAudits = async (query?: IFilterAudit) => {
     try {
-      return await privateApi.get<IAudit[]>('/audit', { params: { ...query } })
+      return await privateApi.get<IPaginationResponse<IAudit>>('/audit', { params: { ...query } })
     } catch (error) {
       handleError(error, 'report.error_getting_audit')
       return null
@@ -63,10 +66,41 @@ export const useReportService = () => {
   // Mensajes ✉️
   const getMessages = async (query?: IFilterMessage) => {
     try {
-      return await privateApi.get<IMessage[]>('/messages', { params: { ...query } })
+      const filteredQuery = Object.fromEntries(
+        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
+      )
+      return await privateApi.get<IPaginationResponse<IMessage>>('/messages', {
+        params: filteredQuery,
+      })
     } catch (error) {
       handleError(error, 'report.error_getting_messages')
       return null
+    }
+  }
+  const exportMessages = async (query?: IFilterMessage) => {
+    try {
+      const response: Blob = await privateApi.get('/messages/export', {
+        responseType: 'blob',
+        params: { ...query },
+      })
+
+      if (!response) {
+        console.error('❌ No response data received')
+        return
+      }
+
+      const blob = new Blob([response], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.setAttribute('download', 'messages_report.xlsx')
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } catch (error) {
+      handleError(error, 'report.error_exporting_messages')
     }
   }
 
@@ -74,5 +108,6 @@ export const useReportService = () => {
     getAudits,
     exportAudits,
     getMessages,
+    exportMessages,
   }
 }

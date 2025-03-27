@@ -11,7 +11,7 @@ export default defineComponent({
     DatePicker,
     InputGroup,
     InputGroupAddon,
-    FloatLabel
+    FloatLabel,
   },
   props: {
     modelValue: {
@@ -41,6 +41,10 @@ export default defineComponent({
     customClass: {
       type: String,
       default: '',
+    },
+    showTime: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue'],
@@ -90,37 +94,40 @@ export default defineComponent({
         <slot name="icon"></slot>
       </InputGroupAddon>
       <FloatLabel>
-      <DatePicker
-        v-model="selectedDate"
-        size="small"
-        input-class="!w-full !rounded-r-xl !border-l-0"
-        class="!w-full"
-        showButtonBar 
-        :placeholder="placeholder"
-        :showIcon="false"
-        :dateFormat="dateFormat"
-        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-      />
-      <label>{{ label }}</label>
+        <DatePicker
+          v-model="selectedDate"
+          size="small"
+          input-class="!w-full !rounded-r-xl !border-l-0"
+          class="!w-full"
+          showButtonBar
+          :placeholder="placeholder"
+          :showIcon="false"
+          :showTime="showTime"
+          hourFormat="12"
+          :dateFormat="dateFormat"
+          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+        />
+        <label>{{ label }}</label>
       </FloatLabel>
     </InputGroup>
 
     <FloatLabel v-else>
-
       <DatePicker
-      v-model="selectedDate"
-      size="small"
-      input-class="!w-full !rounded-xl"
-      class="!w-full"
-      showButtonBar 
-      :placeholder="placeholder"
-      :showIcon="showIcon"
-      :dateFormat="dateFormat"
-      :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+        v-model="selectedDate"
+        size="small"
+        input-class="!w-full !rounded-xl"
+        class="!w-full"
+        showButtonBar
+        :placeholder="placeholder"
+        :showIcon="showIcon"
+        :showTime="showTime"
+        hourFormat="12"
+        :dateFormat="dateFormat"
+        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
       />
       <label>{{ label }}</label>
     </FloatLabel>
-      
+
     <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>

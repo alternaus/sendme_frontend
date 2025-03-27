@@ -32,8 +32,8 @@ export const useAuditFilter = () => {
     initialValues: {
       action: '',
       table: '',
-      startDate: null,
-      endDate: null,
+      startDate: undefined,
+      endDate: undefined,
       search: '',
     },
     validateOnMount: false,

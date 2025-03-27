@@ -42,7 +42,6 @@ export default defineComponent({
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
 
-
     const page = ref(1)
     const limit = ref(10)
     const audits = ref<IAudit[]>([])
@@ -72,8 +71,12 @@ export default defineComponent({
           endDate: endDate.value,
           // search: search.value,
         })
-        audits.value = response.data
-        auditMeta.value = response.meta
+        if (response?.data && response?.meta) {
+          audits.value = response.data
+          auditMeta.value = response.meta
+        } else {
+          console.warn('⚠️ Respuesta no válida:', response)
+        }
       } catch (error) {
         console.error('Error fetching audits:', error)
       }
@@ -108,7 +111,7 @@ export default defineComponent({
     onMounted(() => fetchAudits())
 
     const getActionTranslation = (action: string) => {
-      const translationKey = ActionAuditTypes[action as keyof typeof ActionTypes]
+      const translationKey = ActionAuditTypes[action as keyof typeof ActionAuditTypes]
       return translationKey ? t(translationKey) : action
     }
     const getModuleTranslation = (module: string) => {
@@ -130,7 +133,6 @@ export default defineComponent({
       table,
       startDate,
       endDate,
-      submit,
     }
   },
 })
@@ -143,8 +145,7 @@ export default defineComponent({
     v-model:startDate="startDate"
     v-model:endDate="endDate"
     v-model:search="search"
-  />
-  <div></div>
+  /> 
   <AppTable
     class="w-full mt-4"
     :data="audits"

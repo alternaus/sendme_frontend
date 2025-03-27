@@ -64,7 +64,19 @@
     "error_exporting_audit": "Error exporting audit",
     "error_getting_messages": "Error getting messages",
     "messages_success_exported": "Messages exported successfully",
-    "error_exporting_messages": "Error exporting messages"
+    "error_exporting_messages": "Error exporting messages",
+    "message_status":{
+      "queued": "Queued",
+      "sending": "Sending",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "undelivered": "Undelivered",
+      "failed": "Failed",
+      "received": "Received",
+      "scheduled": "Scheduled",
+      "canceled" : "Canceled",
+      "read": "Read"
+    }
   },
   "whatsapp": {
     "whatsapp": "WhatsApp"
@@ -140,6 +152,10 @@
     "action": "Action",
     "module": "Module",
     "changes": "Changes",
-    "total_records": "Total records"
+    "total_records": "Total records",
+    "content": "Content",
+    "message_type": "Message type",
+    "recipient_details": "Recipient details",
+    "shipment_date": "Shipment date"
   }
 }

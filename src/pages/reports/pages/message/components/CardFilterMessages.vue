@@ -1,62 +1,66 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import ActionIcon from '@/assets/svg/action.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
 import SearchIcon from '@/assets/svg/search.svg?component'
+import StatusIcon from '@/assets/svg/status.svg?component'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 
-import { ActionAuditTypes } from '../enums/action-types.enum.ts'
-import { ModuleTypes } from '../enums/module-types.enum'
-
+import { TypeMessageTypes } from '../enums/message-types.enum'
+import { StatusMessageTypes } from '../enums/status-types.enum'
 export default defineComponent({
-  name: 'CardFilterAudit',
+  name: 'CardFilterMessages',
   components: {
     AppCard,
     AppSelect,
     AppInput,
     AppDatePicker,
-    ActionIcon,
-    ModuleIcon,
-    DateIcon,
     SearchIcon,
+    StatusIcon,
+    DateIcon,
+    ModuleIcon,
   },
   props: {
-    action: String,
-    table: String,
+    content: String,
+    status: String,
+    messageType: String,
     startDate: String,
     endDate: String,
-    search: String,
   },
-  emits: ['update:action', 'update:table', 'update:startDate', 'update:endDate', 'update:search'],
+  emits: [
+    'update:content',
+    'update:status',
+    'update:messageType',
+    'update:startDate',
+    'update:endDate',
+  ],
   setup(props, { emit }) {
     const updateField = (field: string, value: unknown) => {
       emit(`update:${field}`, value as string | null | Date)
     }
 
     return {
-      ActionAuditTypes,
-      ModuleTypes,
+      StatusMessageTypes,
+      TypeMessageTypes,
       updateField,
     }
   },
 })
 </script>
-
 <template>
   <AppCard>
     <template #content>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
         <AppInput
-          :modelValue="search"
+          :modelValue="content"
           type="tel"
           class="w-full rounded-md mt-3"
           :label="$t('general.search')"
-          @input="updateField('search', $event.target.value)"
+          @input="updateField('content', $event.target.value)"
         >
           <template #icon>
             <SearchIcon class="w-4 h-4 dark:fill-white" />
@@ -65,36 +69,43 @@ export default defineComponent({
         <AppSelect
           class="w-full mt-3"
           placeholder=""
-          :modelValue="action"
+          :modelValue="status"
           :options="
-            Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: t(value) }))
+            Object.entries(StatusMessageTypes).map(([key, value]) => ({
+              value: key,
+              name: $t(value),
+            }))
           "
-          :label="$t('general.action')"
-          @update:modelValue="updateField('action', $event)"
+          :label="$t('general.status')"
+          @update:modelValue="updateField('status', $event)"
         >
           <template #icon>
-            <ActionIcon class="w-4 h-4 dark:fill-white" />
+            <StatusIcon class="w-6 h-4 dark:fill-white" />
           </template>
         </AppSelect>
         <AppSelect
           class="w-full mt-3"
           placeholder=""
-          :modelValue="table"
+          :modelValue="messageType"
           :options="
-            Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: t(value) }))
+            Object.entries(TypeMessageTypes).map(([key, value]) => ({
+              value: key,
+              name: $t(value),
+            }))
           "
-          :label="$t('general.module')"
-          @update:modelValue="updateField('table', $event)"
+          :label="$t('general.message_type')"
+          @update:modelValue="updateField('messageType', $event)"
         >
           <template #icon>
-            <ModuleIcon class="w-4 h-4 dark:fill-white" />
+            <ModuleIcon class="w-6 h-4 dark:fill-white" />
           </template>
         </AppSelect>
         <AppDatePicker
-          :modelValue="startDate"
           placeholder=""
-          :label="$t('general.start_date')"
           class="w-full mt-3"
+          :modelValue="startDate"
+          :showTime="true"
+          :label="$t('general.start_date')"
           @update:modelValue="updateField('startDate', $event)"
         >
           <template #icon>
@@ -102,10 +113,11 @@ export default defineComponent({
           </template>
         </AppDatePicker>
         <AppDatePicker
-          :modelValue="endDate"
           placeholder=""
-          :label="$t('general.end_date')"
           class="w-full mt-3"
+          :modelValue="endDate"
+          :showTime="true"
+          :label="$t('general.end_date')"
           @update:modelValue="updateField('endDate', $event)"
         >
           <template #icon>

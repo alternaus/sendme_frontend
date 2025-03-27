@@ -1,11 +1,17 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
 
+import DateSendIcon from '@/assets/svg/date_send.svg?component'
+import MessageTypeIcon from '@/assets/svg/message_type.svg?component'
+import NumberIcon from '@/assets/svg/number.svg?component'
+import SmsIcon from '@/assets/svg/sms.svg?component'
+import StatusIcon from '@/assets/svg/status.svg?component'
+// import UserIcon from '@/assets/svg/user.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
@@ -13,17 +19,30 @@ import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IMessage } from '@/services/report/interfaces/message.interface'
 import { useReportService } from '@/services/report/useReportServices'
+
+import CardFilterMessages from './components/CardFilterMessages.vue'
+import { useMessageFilter } from './composables/useMessageFilter'
+import { StatusMessageTypes } from './enums/status-types.enum'
+import { TypeMessageTypes } from './enums/message-types.enum.ts'
 export default defineComponent({
   name: 'MessagesPage',
   components: {
     AppHeader,
     AppTable,
+    NumberIcon,
+    MessageTypeIcon,
+    DateSendIcon,
+    StatusIcon,
+    SmsIcon,
+    CardFilterMessages,
+    // UserIcon,
   },
   setup() {
     const { t } = useI18n()
     const router = useRouter()
     const toast = useToast()
-    const { getMessages } = useReportService()
+    const { getMessages, exportMessages } = useReportService()
+    const { content, status, messageType, startDate, endDate } = useMessageFilter()
 
     const page = ref(1)
     const limit = ref(10)
@@ -36,6 +55,9 @@ export default defineComponent({
       totalPages: 0,
       totalRecords: 0,
     })
+    watch([content, status, messageType, startDate, endDate], () => {
+      fetchMessages()
+    })
     const fetchMessages = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
       limit.value = limitSize
@@ -43,9 +65,18 @@ export default defineComponent({
         const response = await getMessages({
           page: pageSize,
           limit: limitSize,
+          content: content.value,
+          status: status.value,
+          messageType: messageType.value,
+          startDate: startDate.value,
+          endDate: endDate.value,
         })
-        messages.value = response.data
-        messageMeta.value = response.meta
+        if (response?.data && response?.meta) {
+          messages.value = response.data
+          messageMeta.value = response.meta
+        } else {
+          console.warn('⚠️ Respuesta no válida:', response)
+        }
       } catch (error) {
         console.error('❌ Error al obtener mensajes:', error)
       }
@@ -57,6 +88,13 @@ export default defineComponent({
         type: ActionTypes.EXPORT,
         onClick: () => {
           try {
+            exportMessages({
+              content: content.value,
+              status: status.value,
+              messageType: messageType.value,
+              startDate: startDate.value,
+              endDate: endDate.value,
+            })
             toast.add({
               severity: 'success',
               summary: t('general.success'),
@@ -78,6 +116,15 @@ export default defineComponent({
 
     onMounted(() => fetchMessages())
 
+    const getStatusTranslation = (status: string) => {
+      const translationKey = StatusMessageTypes[status as keyof typeof StatusMessageTypes]
+      return translationKey ? t(translationKey) : status
+    }
+    const getTypeMessageTranslation = (type: string) => {
+      const translationKey = TypeMessageTypes[type as keyof typeof TypeMessageTypes]
+      return translationKey ? t(translationKey) : type
+    }
+
     return {
       router,
       headerActions,
@@ -85,18 +132,31 @@ export default defineComponent({
       messageMeta,
       messages,
       fetchMessages,
+      content,
+      status,
+      messageType,
+      startDate,
+      endDate,
+      getStatusTranslation,
+      getTypeMessageTranslation
     }
   },
 })
 </script>
 <template>
   <AppHeader :icon="IconTypes.MESSAGES" :text="$t('general.messages')" :actions="headerActions" />
-  <!-- {{ messages  }} -->
+  <CardFilterMessages
+    v-model:content="content"
+    v-model:status="status"
+    v-model:messageType="messageType"
+    v-model:startDate="startDate"
+    v-model:endDate="endDate"
+  />
   <AppTable
     class="w-full mt-4"
     :data="messages"
     :headers="[
-      { field: 'createdAt', header: 'Date' },
+      { field: 'sentAt', header: 'Date' },
       { field: 'recipientDetails', header: 'Number' },
       { field: 'messageType', header: 'Type' },
       { field: 'content', header: 'Content' },
@@ -109,5 +169,45 @@ export default defineComponent({
     textTotalItems="general.messages"
     @page-change="fetchMessages"
   >
+    <template #header-recipientDetails>
+      <div class="flex items-center">
+        <NumberIcon class="w-5 h-5 mr-2 fill-current" />
+        <span> {{ $t('general.recipient_details') }} </span>
+      </div>
+    </template>
+    <template #header-sentAt>
+      <div class="flex items-center">
+        <DateSendIcon class="w-5 h-5 mr-2 fill-current" />
+        <span> {{ $t('general.shipment_date') }} </span>
+      </div>
+    </template>
+    <template #header-messageType>
+      <div class="flex items-center">
+        <MessageTypeIcon class="w-5 h-5 mr-2 fill-current" />
+        <span> {{ $t('general.message_type') }} </span>
+      </div>
+    </template>
+    <template #header-content>
+      <div class="flex items-center">
+        <SmsIcon class="w-5 h-5 mr-2 fill-current" />
+        <span> {{ $t('general.content') }} </span>
+      </div>
+    </template>
+    <template #header-status>
+      <div class="flex items-center">
+        <StatusIcon class="w-5 h-5 mr-2 fill-current" />
+        <span> {{ $t('general.status') }} </span>
+      </div>
+    </template>
+    <template #custom-messageType="{ data }">
+      <div class="flex justify-center">
+        {{ getTypeMessageTranslation(data.messageType) }}
+      </div>
+    </template>
+    <template #custom-status="{ data }">
+      <div class="flex justify-center">
+        {{ getStatusTranslation(data.status) }}
+      </div>
+    </template>
   </AppTable>
 </template>

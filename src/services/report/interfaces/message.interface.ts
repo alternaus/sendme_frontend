@@ -12,3 +12,4 @@ export interface IMessage {
   createdAt: Date
   updatedAt: Date
 }
+ 
