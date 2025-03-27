@@ -43,6 +43,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    textTotalItems: {
+      type: String,
+      default: 'general.total_records',
+    },
   },
   emits: ['selection-change', 'page-change'],
   setup(props, { emit }) {
@@ -76,9 +80,20 @@ export default defineComponent({
       contextMenuRef.value.show(event.originalEvent)
     }
 
+    const handlePageChange = (event: { first: number; rows: number }) => {
+      const newPage = Math.floor(event.first / event.rows) + 1
+      const newPageSize = event.rows
+
+      emit('page-change', {
+        pageSize: newPage,
+        limitSize: newPageSize,
+      })
+    }
+
     return {
       selectedRow,
       handleRowSelect,
+      handlePageChange,
       isMdScreen,
       menuModel,
       contextMenuRef,
@@ -154,13 +169,23 @@ export default defineComponent({
           </div>
         </div>
       </div>
-      <!-- :rowsPerPageOptions="rowSizes" -->
-      <Paginator
-        v-show="totalItems > 0"
-        :rows="pageSize"
-        :totalRecords="totalItems"
-        @page="(event) => $emit('page-change', event.page + 1)"
-      />
+      <div class="flex flex-col md:flex-row md:justify-between items-center mt-4 gap-2 md:gap-0">
+        <small class="text-sm text-center md:text-left">
+          <span class="text-base font-semibold">
+            {{ totalItems }}
+          </span>
+          {{ $t(textTotalItems) }}
+        </small>
+
+        <Paginator
+          v-show="totalItems > 0"
+          :rows="pageSize"
+          :rowsPerPageOptions="rowSizes"
+          :totalRecords="totalItems"
+          @page="handlePageChange"
+        />
+      </div>
+      <!-- @page="(event) => $emit('page-change', event.page + 1)" -->
     </template>
   </Card>
 </template>

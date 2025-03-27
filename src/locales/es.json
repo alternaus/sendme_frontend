@@ -57,6 +57,7 @@
     "report": "Reporte",
     "reports": "Reportes",
     "audit": "Auditoría",
+    "audits" : "Auditorías",
     "sending_by_campaign": "Envíos por Campaña",
     "error_getting_audit": "Error al obtener la auditoría",
     "audit_success_exported": "Auditoría exportada exitosamente",
@@ -103,6 +104,8 @@
     "inactive": "Inactivo",
     "country_code": "Código de País",
     "birth_date": "Fecha de Nacimiento",
+    "start_date": "Fecha de Inicio",
+    "end_date": "Fecha de Fin",
     "personalized_information": "Información Personalizada",
     "save": "Guardar",
     "cancel": "Cancelar",
@@ -133,6 +136,7 @@
     "invalid_phone": "Teléfono inválido",
     "action": "Acción",
     "module": "Módulo",
-    "changes": "Cambios"
+    "changes": "Cambios",
+    "total_records": "Total de registros"
   }
 }

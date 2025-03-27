@@ -205,6 +205,7 @@ export default defineComponent({
     :pageCurrent="contactsMeta.currentPage"
     :totalItems="contactsMeta.totalRecords"
     :multipleSelection="false"
+    textTotalItems="contact.contacts"
     @selection-change="handleSelectionChange"
     @page-change="fetchContacts"
   >
