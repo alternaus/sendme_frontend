@@ -19,11 +19,15 @@ export default defineComponent({
     const navigateToAudit = () => {
       router.push({ name: 'report.audit' })
     }
+    const navigateToMessages = () => {
+      router.push({ name: 'report.message' })
+    }
     return {
       router,
       IconTypes,
       IconTypesReports,
       navigateToAudit,
+      navigateToMessages,
     }
   },
 })
@@ -31,7 +35,11 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.REPORTS" :text="$t('report.reports')" :actions="[]" />
   <div class="flex justify-start align-center gap-8 m-4">
-    <Customcard :icon="IconTypesReports.MESSAGES" :text="$t('general.messages')" />
+    <Customcard
+      :icon="IconTypesReports.MESSAGES"
+      :text="$t('general.messages')"
+      @click="navigateToMessages"
+    />
     <Customcard :icon="IconTypesReports.SENDING" :text="$t('report.sending_by_campaign')" />
     <Customcard
       :icon="IconTypesReports.AUDIT"

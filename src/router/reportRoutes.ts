@@ -31,6 +31,12 @@ const sendRoutes: RouteRecordRaw = {
       component: () => import('@/pages/reports/pages/audit/AuditPage.vue'),
       meta: { breadcrumb: generateBreadcrumb('report.audit', 'report.audit') },
     },
+    {
+      path: 'message',
+      name: 'report.message',
+      component: () => import('@/pages/reports/pages/message/MessagePage.vue'),
+      meta: { breadcrumb: generateBreadcrumb('general.messages', 'report.message') },
+    },
   ],
 }
 export default sendRoutes

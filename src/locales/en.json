@@ -61,7 +61,10 @@
     "sending_by_campaign": "Sending by Campaign",
     "error_getting_audit": "Error getting audit",
     "audit_success_exported": "Audit exported successfully",
-    "error_exporting_audit": "Error exporting audit"
+    "error_exporting_audit": "Error exporting audit",
+    "error_getting_messages": "Error getting messages",
+    "messages_success_exported": "Messages exported successfully",
+    "error_exporting_messages": "Error exporting messages"
   },
   "whatsapp": {
     "whatsapp": "WhatsApp"

@@ -14,6 +14,7 @@ import ReportsIcon from '@/assets/svg/header/reports.svg?component'
 import SendIcon from '@/assets/svg/header/send.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
+import MessagesIcon from '@/assets/svg/report/messages.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
@@ -44,6 +45,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.SEND]: SendIcon,
   [IconTypes.REPORTS]: ReportsIcon,
   [IconTypes.AUDIT]: AuditIcon,
+  [IconTypes.MESSAGES]: MessagesIcon,
   [IconTypes.BUY]: ContactsIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
   [IconTypes.IMPORT]: ImportIcon,

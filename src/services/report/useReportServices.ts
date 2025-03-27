@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n'
 import { useApiClient } from '@/composables/useApiClient'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import type { IFilterAudit } from '@/services/report/interfaces/filter-audit.interface'
+import type { IFilterMessage } from '@/services/report/interfaces/filter-message.interface'
+import type { IMessage } from '@/services/report/interfaces/message.interface'
 
 export const useReportService = () => {
   const privateApi = useApiClient(true)
@@ -21,6 +23,7 @@ export const useReportService = () => {
     })
   }
 
+  // Auditoria 🔍
   const getAudits = async (query?: IFilterAudit) => {
     try {
       return await privateApi.get<IAudit[]>('/audit', { params: { ...query } })
@@ -57,8 +60,19 @@ export const useReportService = () => {
     }
   }
 
+  // Mensajes ✉️
+  const getMessages = async (query?: IFilterMessage) => {
+    try {
+      return await privateApi.get<IMessage[]>('/messages', { params: { ...query } })
+    } catch (error) {
+      handleError(error, 'report.error_getting_messages')
+      return null
+    }
+  }
+
   return {
     getAudits,
     exportAudits,
+    getMessages,
   }
 }

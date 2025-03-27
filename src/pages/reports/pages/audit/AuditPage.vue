@@ -40,11 +40,8 @@ export default defineComponent({
     const toast = useToast()
     const { getAudits, exportAudits } = useReportService()
 
-    const { action, table, startDate, endDate, search, handleSubmit } = useAuditFilter()
+    const { action, table, startDate, endDate, search } = useAuditFilter()
 
-    const submit = handleSubmit((values) => {
-      console.log('Enviando datos:', values)
-    })
 
     const page = ref(1)
     const limit = ref(10)
