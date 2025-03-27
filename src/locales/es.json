@@ -45,7 +45,14 @@
         "phone_required": "El campo 'Teléfono' es obligatorio, sin este no se importarán tus contactos.",
         "supported_formats": "Los formatos soportados son .xlsx y .csv.",
         "final_message": "Al finalizar encontrarás la lista de números para llamar."
-      }
+      },
+      "select_file": "Seleccionar archivo",
+      "load_file": "Cargar archivo",
+      "file": "Archivo:",
+      "size": "Tamaño:",
+      "rows": "Filas encontradas:",
+      "not_import": "No importar",
+      "cancel": "Cancelar"
     }
   },
   "campaign": {

@@ -100,25 +100,39 @@ const handleCancel = () => {
 
       <template #content>
         <div v-if="fileData.length" class="mt-8 space-y-4">
-
-          <div class="text-sm text-gray-700 space-y-1">
-            <p><strong>Archivo:</strong> {{ fileName }}</p>
-            <p><strong>Tamaño:</strong> {{ formatFileSize }}</p>
-            <p><strong>Filas encontradas:</strong> {{ totalRows }}</p>
+          <div
+            class="bg-white dark:bg-neutral-700 rounded-xl shadow p-4 w-full text-neutral-800 dark:text-neutral-100 space-y-2">
+            <div class="flex items-center justify-between">
+              <p class="text-base font-semibold truncate" title="Nombre del archivo">
+                {{ fileName }}
+              </p>
+              <button @click="handleCancel"
+                class="text-neutral-400 hover:text-red-500 dark:hover:text-red-400 text-2xl font-bold transition"
+                aria-label="Eliminar archivo">
+                &times;
+              </button>
+            </div>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+              <strong>Tamaño:</strong> {{ formatFileSize }}
+            </p>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400">
+              <strong>Filas encontradas:</strong> {{ totalRows }}
+            </p>
           </div>
-
-          <table class="w-full border table-auto text-sm">
+          <table class="w-full border table-auto text-sm border-neutral-200 dark:border-neutral-700">
             <thead>
               <tr>
                 <th v-for="(col, colIndex) in fileData[0]" :key="'header-' + colIndex"
-                  class="border p-2 text-center bg-gray-50 font-semibold">
+                  class="border p-2 text-center bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-semibold border-neutral-200 dark:border-neutral-700">
                   {{ originalHeaders[colIndex] || `Columna ${colIndex + 1}` }}
                 </th>
               </tr>
               <tr>
-                <th v-for="(col, colIndex) in fileData[0]" :key="'select-' + colIndex" class="border p-2 bg-gray-100">
-                  <select v-model="selectedFields[colIndex]" class="w-full border p-1 rounded">
-                    <option value="">No importar</option>
+                <th v-for="(col, colIndex) in fileData[0]" :key="'select-' + colIndex"
+                  class="border p-2 bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+                  <select v-model="selectedFields[colIndex]"
+                    class="w-full border p-1 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-600">
+                    <option value="">{{ $t('contact.import.not_import') }}</option>
                     <option v-for="option in fieldsOptions" :key="option.value" :value="option.value"
                       :disabled="selectedFields[colIndex] !== option.value && Object.values(selectedFields).includes(option.value)">
                       {{ option.label }}
@@ -128,8 +142,10 @@ const handleCancel = () => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(row, rowIndex) in fileData.slice(1)" :key="'row-' + rowIndex">
-                <td v-for="(cell, cellIndex) in row" :key="'cell-' + cellIndex" class="border p-2">
+              <tr v-for="(row, rowIndex) in fileData.slice(1)" :key="'row-' + rowIndex"
+                class="odd:bg-white even:bg-neutral-50 dark:odd:bg-neutral-800 dark:even:bg-neutral-700">
+                <td v-for="(cell, cellIndex) in row" :key="'cell-' + cellIndex"
+                  class="border p-2 text-neutral-800 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700">
                   {{ cell }}
                 </td>
               </tr>
@@ -137,9 +153,10 @@ const handleCancel = () => {
           </table>
 
           <div class="grid grid-cols-2 gap-2 w-fit">
-            <AppButton class=" !w-auto !mx-auto" :label="'Subir Archivo'" :disabled="!isValid"
+            <AppButton class=" !w-auto !mx-auto" :label="$t('contact.import.load_file')" :disabled="!isValid"
               @click="handleFinalUpload" />
-            <AppButton class=" !w-auto !mx-auto" severity="secondary" :label="'Cancelar'" @click="handleCancel" />
+            <AppButton class=" !w-auto !mx-auto" severity="secondary" :label="$t('contact.import.cancel')"
+              @click="handleCancel" />
           </div>
         </div>
       </template>
@@ -150,7 +167,7 @@ const handleCancel = () => {
             <CloudUploadIcon class="w-12 h-12 text-gray-300" />
           </div>
           <p class="mt-4 text-sm text-gray-500">{{ $t('general.drag_drop_file') }}</p>
-          <AppButton class="mt-6 !w-auto !mx-auto" :label="'Cargar Archivo'" @click="openFileDialog">
+          <AppButton class="mt-6 !w-auto !mx-auto" :label="$t('contact.import.select_file')" @click="openFileDialog">
             <template #icon-start>
               <ImportIcon class="w-5 h-5" />
             </template>

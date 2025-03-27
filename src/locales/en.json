@@ -45,7 +45,14 @@
         "phone_required": "The 'Phone' field is required; without it, your contacts will not be imported.",
         "supported_formats": "Supported formats are .xlsx and .csv.",
         "final_message": "At the end, you will find the list of numbers to call."
-      }
+      },
+      "select_file": "Select file",
+      "load_file": "Load file",
+      "file": "File:",
+      "size": "Size:",
+      "rows": "Rows found:",
+      "not_import": "Do not import",
+      "cancel": "Cancel"
     }
   },
   "campaign": {
