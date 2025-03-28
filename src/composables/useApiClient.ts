@@ -3,7 +3,11 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 import router from '@/router'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
+const isProd = import.meta.env.MODE === 'production'
+
+const API_BASE_URL = isProd
+  ? `${window.location.origin}/api`
+  : import.meta.env.VITE_API_URL || 'http://localhost:4000/api'
 
 const publicApi: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -19,8 +23,6 @@ privateApi.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
     const token = authStore.token || localStorage.getItem('token')
-
-    console.log('🔑 Token:', token)
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`

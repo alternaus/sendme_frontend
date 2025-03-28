@@ -48,7 +48,14 @@
         "phone_required": "El campo 'Teléfono' es obligatorio, sin este no se importarán tus contactos.",
         "supported_formats": "Los formatos soportados son .xlsx y .csv.",
         "final_message": "Al finalizar encontrarás la lista de números para llamar."
-      }
+      },
+      "select_file": "Seleccionar archivo",
+      "load_file": "Cargar archivo",
+      "file": "Archivo:",
+      "size": "Tamaño:",
+      "rows": "Filas encontradas:",
+      "not_import": "No importar",
+      "cancel": "Cancelar"
     }
   },
   "campaign": {
@@ -57,12 +64,12 @@
     "campaign_rules": "Reglas de Campaña",
     "campaign_dispatches": "Envíos de Campaña"
   },
-  "provider":{
+  "provider": {
     "provider": "Proveedor",
     "providers": "Proveedores",
     "payment_providers": "Proveedores de Pago"
   },
-  "plan":{
+  "plan": {
     "plan": "Plan",
     "plans": "Planes"
   },
@@ -70,7 +77,7 @@
     "report": "Reporte",
     "reports": "Reportes",
     "audit": "Auditoría",
-    "audits" : "Auditorías",
+    "audits": "Auditorías",
     "sending_by_campaign": "Envíos por Campaña",
     "error_getting_audit": "Error al obtener la auditoría",
     "audit_success_exported": "Auditoría exportada exitosamente",
@@ -78,7 +85,7 @@
     "error_getting_messages": "Error al obtener los mensajes",
     "messages_success_exported": "Mensajes exportados exitosamente",
     "messages_error_exported": "Error al exportar los mensajes",
-    "message_status":{
+    "message_status": {
       "queued": "En cola",
       "sending": "Enviando",
       "sent": "Enviado",
@@ -87,14 +94,14 @@
       "failed": "Fallido",
       "received": "Recibido",
       "scheduled": "Programado",
-      "canceled" : "Cancelado",
+      "canceled": "Cancelado",
       "read": "Leído"
     }
   },
   "whatsapp": {
     "whatsapp": "WhatsApp"
   },
-  "user":{
+  "user": {
     "user": "Usuario",
     "users": "Usuarios",
     "new_user": "Nuevo Usuario",
@@ -172,6 +179,7 @@
     "shipment_date": "Fecha de envío",
     "organizations": "Organizaciones",
     "roles": "Roles",
-    "permissions": "Permisos"
+    "permissions": "Permisos",
+    "drag_drop_file": "Arrastra y suelta el archivo aquí"
   }
 }

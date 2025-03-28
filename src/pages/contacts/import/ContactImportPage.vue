@@ -12,13 +12,9 @@
             <li>{{ $t('contact.import.notice.supported_formats') }}</li>
             <li>{{ $t('contact.import.notice.final_message') }}</li>
           </ul>
-          <AppButton class="mt-8 !mx-auto !w-auto" :label="'Cargar Archivo'">
-            <template #icon-start>
-              <ImportIcon class="w-5 h-5" />
-            </template>
-          </AppButton>
         </div>
       </div>
+      <UploadFile />
     </template>
   </AppCard>
 
@@ -28,18 +24,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+
+import UploadFile from '../components/UploadFile.vue'
 
 
 export default defineComponent({
   components: {
     AppHeader,
     AppCard,
-    AppButton, ImportIcon
+    UploadFile
   },
   setup() {
 

@@ -237,8 +237,8 @@ export default defineComponent({
         </template>
       </AppDatePicker>
 
-      <AppSelect v-model="form.status.value" :options="statusOptions" placeholder="Seleccione un estado"
-        class="w-full mt-3" :error-message="errors.status" :label="$t('general.status')">
+      <AppSelect v-model="form.status.value" :options="statusOptions" class="w-full mt-3" :error-message="errors.status"
+        :label="$t('general.status')">
         <template #icon>
           <StatusIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -258,7 +258,7 @@ export default defineComponent({
           <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
             <label>{{
               customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
-              }}</label>
+            }}</label>
             <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
               :error-message="getError(index, 'value')" />
           </div>

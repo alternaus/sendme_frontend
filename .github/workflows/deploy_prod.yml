@@ -1,0 +1,140 @@
+name: Deploy sendme frontend
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SERVER_HOST: ${{ secrets.IP }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SERVER_USER: ${{ secrets.USER }}
+      FRONTEND_PATH: /var/www/vhosts/sendme.com
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔨 Build Vue App
+        run: npm run build
+
+      - name: 📂 Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'dist/*'
+          target: '/var/www/vhosts/sendme.com/'
+
+      - name: ⚡ Install & Configure Nginx + SSL
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            # 🔄 Actualizar paquetes
+             apt update &&  apt upgrade -y
+
+            # 🌍 Instalar Nginx si no está presente
+            if ! command -v nginx &> /dev/null
+            then
+                echo "🔧 Instalando Nginx..."
+                 apt install -y nginx
+            else
+                echo "✅ Nginx ya está instalado."
+            fi
+
+            # 📁 Crear directorio del sitio si no existe
+             mkdir -p /var/www/vhosts/sendme.com
+
+            # ✅ Dar permisos correctos
+             chown -R www-data:www-data /var/www/vhosts/sendme.com
+             chmod -R 755 /var/www/vhosts/sendme.com
+
+            # 🔧 Configurar Nginx temporalmente sin SSL
+            echo 'server {
+                listen 80;
+                server_name sendme.com;
+                
+                location /.well-known/acme-challenge/ {
+                    root /var/www/html;
+                }
+
+                location / {
+                    root /var/www/vhosts/sendme.com;
+                    index index.html;
+                    try_files $uri /index.html;
+                }
+            }' |  tee /etc/nginx/sites-available/sendme
+
+            # 🔗 Habilitar configuración temporal en Nginx
+             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+
+            # 🔄 Verificar configuración de Nginx antes de reiniciar
+             nginx -t &&  systemctl restart nginx || exit 1
+
+            # 🔐 Instalar Certbot para SSL si no está instalado
+            if ! command -v certbot &> /dev/null
+            then
+                echo "🔧 Instalando Certbot..."
+                 apt install -y certbot python3-certbot-nginx
+            else
+                echo "✅ Certbot ya está instalado."
+            fi
+
+            # 📜 Generar certificado SSL si no existe
+            if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
+                certbot certonly --webroot -w /var/www/html -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
+            else
+               echo "✅ Certificado SSL ya existente."
+            fi
+
+            # 📜 Configurar Nginx con SSL
+            echo 'server {
+                listen 80;
+                server_name sendme.com;
+                location / {
+                    return 301 https://$host$request_uri;
+                }
+            }
+
+            server {
+                listen 443 ssl;
+                server_name sendme.com;
+
+                root /var/www/vhosts/sendme.com/dist;
+                index index.html;
+
+                location / {
+                    try_files $uri /index.html;
+                }
+
+                ssl_certificate /etc/letsencrypt/live/sendme.com/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
+                include /etc/letsencrypt/options-ssl-nginx.conf;
+                ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+            }' |  tee /etc/nginx/sites-available/sendme
+
+            # 🔗 Habilitar configuración SSL en Nginx
+             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+
+            # 🔄 Verificar configuración antes de reiniciar Nginx
+             nginx -t &&  systemctl restart nginx || exit 1
+
+            echo "🎉 Despliegue y configuración con SSL completados exitosamente."

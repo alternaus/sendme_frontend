@@ -1,9 +1,8 @@
 <script lang="ts">
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
+import { IconField, InputIcon } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
-import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
 import PrimeSelect from 'primevue/select'
 
 import type { SelectOption } from './types/select-option.types'
@@ -12,9 +11,7 @@ export default defineComponent({
   name: 'AppSelect',
   components: {
     PrimeSelect,
-    InputGroup,
-    InputGroupAddon,
-    FloatLabel
+    FloatLabel, IconField, InputIcon
   },
   props: {
     modelValue: {
@@ -31,7 +28,7 @@ export default defineComponent({
     },
     placeholder: {
       type: String,
-      default: 'Seleccione una opción',
+      default: '',
     },
     showClear: {
       type: Boolean,
@@ -74,46 +71,27 @@ export default defineComponent({
 
 <template>
   <div class="w-full min-w-0">
-    <InputGroup v-if="$slots.icon">
-      <InputGroupAddon class="!rounded-l-xl !border-r-0">
-        <slot name="icon"></slot>
-      </InputGroupAddon>
-
-      <FloatLabel>
-        <PrimeSelect
-        v-model="selectedOption"
-        :options="options"
-        optionLabel="name"
-        optionValue="value"
-        :placeholder="placeholder"
-        :showClear="showClear"
-        class="w-full min-w-0 !rounded-r-xl !border-l-0"
-        size="small"
-        :class="{ 'p-invalid': errorMessage.length > 0 }"
-        />
-        <label >{{ label }}</label>
-      </FloatLabel>
-    </InputGroup>
+    <!-- Con ícono -->
+    <FloatLabel v-if="$slots.icon">
+      <IconField class="w-full">
+        <InputIcon>
+          <slot name="icon" />
+        </InputIcon>
+        <PrimeSelect editable v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
+          :placeholder="placeholder" :showClear="showClear" size="small" class="w-full !pl-10 !rounded-xl"
+          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      </IconField>
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
 
     <FloatLabel v-else>
-
-      <PrimeSelect
-      v-model="selectedOption"
-      :options="options"
-      optionLabel="name"
-      optionValue="value"
-      :placeholder="placeholder"
-      :showClear="showClear"
-      class="w-full min-w-0 !rounded-xl"
-      size="small"
-      :class="{ 'p-invalid': errorMessage.length > 0 }"
-      />
-      <label>{{ label }}</label>
+      <PrimeSelect editable v-model="selectedOption" :options="options" optionLabel="name" optionValue="value"
+        :placeholder="placeholder" :showClear="showClear" size="small" class="w-full !rounded-xl"
+        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+      <label class="text-sm">{{ label }}</label>
     </FloatLabel>
-    <div
-      v-if="showErrorMessage && errorMessage.length"
-      class="text-red-400 dark:text-red-300 p-0 m-0"
-    >
+
+    <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>
   </div>

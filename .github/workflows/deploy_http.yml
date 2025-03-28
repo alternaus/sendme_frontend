@@ -1,0 +1,113 @@
+name: Deploy sendme frontend (HTTP only)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      SERVER_HOST: ${{ secrets.IP }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SERVER_USER: ${{ secrets.USER }}
+      FRONTEND_PATH: /var/www/vhosts/sendme.com
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔨 Build Vue App
+        run: npm run build
+
+      - name: 📂 Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'dist/*'
+          strip_components: 1
+          target: '/var/www/vhosts/sendme.com/'
+
+      - name: ⚙️ Install & configure Nginx (HTTP + API + WS)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            apt update && apt upgrade -y
+
+            if ! command -v nginx &> /dev/null; then
+              apt install -y nginx
+            fi
+
+            mkdir -p /var/www/vhosts/sendme.com
+            chown -R www-data:www-data /var/www/vhosts/sendme.com
+            chmod -R 755 /var/www/vhosts/sendme.com
+
+            # Eliminar sitio por defecto
+            rm -f /etc/nginx/sites-enabled/default
+
+            # Crear archivo en sites-available
+            echo 'server {
+              listen 80 default_server;
+              server_name _;
+
+              root /var/www/vhosts/sendme.com;
+              index index.html;
+
+              location / {
+                try_files $uri /index.html;
+              }
+
+              location /api/ {
+                proxy_pass http://localhost:4000/api/;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+              }
+
+              location /socket.io/ {
+                proxy_pass http://localhost:4000/socket.io/;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+              }
+              
+              location /opensearch/ {
+                proxy_pass http://localhost:5602/;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+              }   
+            }' > /etc/nginx/sites-available/sendme
+
+            # Crear enlace simbólico
+            ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/sendme
+
+            # Validar configuración y reiniciar Nginx
+            nginx -t && systemctl restart nginx
+
+            echo "🚀 Sitio desplegado correctamente con frontend, API y WebSockets."

@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 interface BreadcrumbTo {
   name: string
@@ -10,17 +10,17 @@ interface BreadcrumbItem {
   to?: BreadcrumbTo | null
   url?: string
   active?: boolean
+  icon?: string
 }
-
 
 export const useBreadcrumbStore = defineStore('breadcrumb', {
   state: () => ({
-    breadcrumbs: [] as BreadcrumbItem[]
+    breadcrumbs: [] as BreadcrumbItem[],
   }),
   actions: {
     setBreadcrumbs(breadcrumbs: BreadcrumbItem[]) {
-      this.breadcrumbs = [];
-      this.breadcrumbs = breadcrumbs.filter(item => !!item.text)
-    }
-  }
-});
+      this.breadcrumbs = []
+      this.breadcrumbs = breadcrumbs.filter((item) => !!item.text)
+    },
+  },
+})
