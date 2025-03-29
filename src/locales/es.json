@@ -180,6 +180,7 @@
     "organizations": "Organizaciones",
     "roles": "Roles",
     "permissions": "Permisos",
-    "drag_drop_file": "Arrastra y suelta el archivo aquí"
+    "drag_drop_file": "Arrastra y suelta el archivo aquí",
+    "integrations": "Integraciones"
   }
 }
