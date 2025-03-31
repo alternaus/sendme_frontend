@@ -183,6 +183,9 @@
     "drag_drop_file": "Drag and drop the file here",
     "buy_messages": "Buy Messages",
     "choose_value_recharge": "Choose the value of your recharge",
-    "info_remember_recharge":"Remember that as long as you have the plan active your messages do not expire, the recharge will be applied immediately to your account. "
+    "info_remember_recharge":"Remember that as long as you have the plan active your messages do not expire, the recharge will be applied immediately to your account. ",
+    "pay": "Pay",
+    "enter_value": "Enter the value",
+    "select_valid_recharge_value": "Select or enter a valid recharge value."
   }
 }
