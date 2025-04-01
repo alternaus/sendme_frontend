@@ -18,18 +18,22 @@ export default defineComponent({
   setup() {
     // const { t } = useI18n()
     const router = useRouter()
-    const navigateToAudit = () => {
-      router.push({ name: 'report.audit' })
+    const navigateToCustomFields = () => {
+      router.push({ name: 'settings.custom-fields' })
     }
-    const navigateToMessages = () => {
-      router.push({ name: 'report.message' })
+    const navigateToUsers = () => {
+      router.push({ name: 'settings.users' })
+    }
+    const navigateToIntegrations = () => {
+      router.push({ name: 'settings.integrations' })
     }
     return {
       router,
       IconTypes,
       IconTypesSettings,
-      navigateToAudit,
-      navigateToMessages,
+      navigateToCustomFields,
+      navigateToUsers,
+      navigateToIntegrations
     }
   },
 })
@@ -38,8 +42,9 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.SETTINGS" :text="$t('general.settings')" :actions="[]" />
   <div class="flex justify-start align-center gap-8 m-4">
     <CustomCard :icon="IconTypesSettings.CUSTOM_FIELDS" :text="$t('general.personalized_information')"
-      @click="navigateToMessages" />
-    <CustomCard :icon="IconTypesSettings.USERS" :text="$t('user.users')" />
-    <CustomCard :icon="IconTypesSettings.INTEGRATIONS" :text="$t('general.integrations')" @click="navigateToAudit" />
+      @click="navigateToCustomFields" />
+    <CustomCard :icon="IconTypesSettings.USERS" @click="navigateToUsers" :text="$t('user.users')" />
+    <CustomCard :icon="IconTypesSettings.INTEGRATIONS" :text="$t('general.integrations')"
+      @click="navigateToIntegrations" />
   </div>
 </template>

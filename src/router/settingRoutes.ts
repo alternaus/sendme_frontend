@@ -3,7 +3,7 @@ import { type RouteRecordRaw } from 'vue-router'
 const baseBreadcrumb = {
   text: 'general.settings',
   to: { name: 'settings.index' },
-  active: false
+  active: false,
 }
 
 // const generateBreadcrumb = (text: string, name: string) => [
@@ -24,6 +24,21 @@ const settingRoutes: RouteRecordRaw = {
       path: '',
       name: 'settings.index',
       component: () => import('@/pages/settings/SettingsPage.vue'),
+    },
+    {
+      path: 'custom-fields',
+      name: 'settings.custom-fields',
+      component: () => import('@/pages/settings/pages/custom-fields/CustomFieldsPage.vue'),
+    },
+    {
+      path: 'users',
+      name: 'settings.users',
+      component: () => import('@/pages/settings/pages/users/UsersPage.vue'),
+    },
+    {
+      path: 'integrations',
+      name: 'settings.integrations',
+      component: () => import('@/pages/settings/pages/integrations/IntegrationsPage.vue'),
     },
   ],
 }
