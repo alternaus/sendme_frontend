@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
+import accountRoutes from './accountRoutes'
 import campaignRoutes from './campaignRoutes'
 import contactRoutes from './contactRoutes'
 import reportRoutes from './reportRoutes'
@@ -19,6 +20,7 @@ const routes: RouteRecordRaw[] = [
   settingRoutes,
   sendRoutes,
   reportRoutes,
+  accountRoutes,
   {
     path: '/auth',
     name: 'auth',

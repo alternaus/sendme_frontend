@@ -180,6 +180,8 @@
     "organizations": "Organizations",
     "roles": "Roles",
     "permission": "Permission",
-    "drag_drop_file": "Drag and drop the file here"
+    "drag_drop_file": "Drag and drop the file here",
+    "account": "Account",
+    "error_getting_organization": "Error getting organization"
   }
 }

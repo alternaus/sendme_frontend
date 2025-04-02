@@ -27,6 +27,7 @@ const items = ref<MenuItem[]>([])
 const updateMenuItems = () => {
   items.value = [
     { label: t('general.profile') },
+    { label: t('general.account') },
     { label: t('general.settings') },
     {
       label: t('auth.logout'),
