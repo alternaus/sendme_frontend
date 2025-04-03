@@ -168,6 +168,7 @@
     "message": "Message",
     "messages": "Messages",
     "country": "Country",
+    "city": "City",
     "invalid_phone": "Invalid phone",
     "action": "Action",
     "module": "Module",
@@ -182,6 +183,8 @@
     "permission": "Permission",
     "drag_drop_file": "Drag and drop the file here",
     "account": "Account",
-    "error_getting_organization": "Error getting organization"
+    "error_getting_organization": "Error getting organization",
+    "error_getting_recharges": "Error getting recharges",
+    "recharges": "Recharges"
   }
 }

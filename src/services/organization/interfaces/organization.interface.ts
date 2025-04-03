@@ -1,15 +1,16 @@
 export interface IOrganization {
   id:           number;
   name:         string;
-  domain:       string;
-  document:     string;
-  documentType: string;
+  domain:       null;
+  document:     null;
+  documentType: null;
+  email:        null;
   country:      string;
-  city:         string;
-  address:      string;
+  city:         null;
+  address:      null;
   phone:        string;
   apiKey:       string;
   createdAt:    Date;
   updatedAt:    Date;
-  deletedAt:    Date;
+  deletedAt:    null;
 }

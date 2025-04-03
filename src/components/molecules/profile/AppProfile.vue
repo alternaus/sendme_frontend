@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import PrimeButton from 'primevue/button'
 import PrimeDialog from 'primevue/dialog'
@@ -15,6 +16,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 const { logout, user } = useAuthStore()
 const { t } = useI18n()
 const i18nStore = useI18nStore()
+const router = useRouter()
 
 const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
 const target = ref<HTMLElement | null>(null)
@@ -27,7 +29,7 @@ const items = ref<MenuItem[]>([])
 const updateMenuItems = () => {
   items.value = [
     { label: t('general.profile') },
-    { label: t('general.account') },
+    { label: t('general.account'), command: () => router.push({ name: 'account.index' }) },
     { label: t('general.settings') },
     {
       label: t('auth.logout'),
@@ -53,21 +55,35 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
 
 <template>
   <div class="flex items-center space-x-2">
-
     <!-- Avatar con menú -->
     <AppAvatar ref="target" :label="firstLetter" @click="openMenu" class="cursor-pointer" />
     <PrimeMenu ref="menu" :model="items" popup />
 
     <!-- Diálogo de confirmación de cierre de sesión -->
-    <PrimeDialog v-model:visible="showLogoutDialog" modal :header="$t('auth.confirm_logout')"
-      :style="{ width: '25rem' }">
+    <PrimeDialog
+      v-model:visible="showLogoutDialog"
+      modal
+      :header="$t('auth.confirm_logout')"
+      :style="{ width: '25rem' }"
+    >
       <span class="text-surface-500 dark:text-surface-400 block mb-8">
         {{ $t('auth.sure_logout') }}
       </span>
       <div class="flex justify-end gap-2">
-        <PrimeButton type="button" size="small" :label="$t('general.cancel')" severity="secondary"
-          @click="showLogoutDialog = false" />
-        <PrimeButton type="button" size="small" :label="$t('auth.logout')" severity="danger" @click="confirmLogout" />
+        <PrimeButton
+          type="button"
+          size="small"
+          :label="$t('general.cancel')"
+          severity="secondary"
+          @click="showLogoutDialog = false"
+        />
+        <PrimeButton
+          type="button"
+          size="small"
+          :label="$t('auth.logout')"
+          severity="danger"
+          @click="confirmLogout"
+        />
       </div>
     </PrimeDialog>
   </div>

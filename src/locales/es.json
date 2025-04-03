@@ -168,6 +168,7 @@
     "message": "Mensaje",
     "messages": "Mensajes",
     "country": "País",
+    "city": "Ciudad",
     "invalid_phone": "Teléfono inválido",
     "action": "Acción",
     "module": "Módulo",
@@ -182,6 +183,8 @@
     "permissions": "Permisos",
     "drag_drop_file": "Arrastra y suelta el archivo aquí",
     "account": "Cuenta",
-    "error_getting_organization": "Error al obtener la organización"
+    "error_getting_organization": "Error al obtener la organización",
+    "error_getting_recharges": "Error al obtener los recargas",
+    "recharges": "Recargas"
   }
 }
