@@ -122,6 +122,18 @@
     "deleted": "Eliminado",
     "exported": "Exportado"
   },
+  "recharge_status": {
+    "pending": "Pendiente",
+    "accepted" : "Aceptado",
+    "rejected": "Rechazado",
+    "failed": "Fallido",
+    "reversed": "Revertido",
+    "held": "Retenido",
+    "initiated": "Iniciado",
+    "expired": "Expirado",
+    "abandoned": "Abandonado",
+    "cancelled": "Cancelado"
+  },
   "general": {
     "home": "Inicio",
     "name": "Nombre",
@@ -185,6 +197,10 @@
     "account": "Cuenta",
     "error_getting_organization": "Error al obtener la organización",
     "error_getting_recharges": "Error al obtener los recargas",
-    "recharges": "Recargas"
+    "recharges": "Recargas",
+    "movements": "Movimientos",
+    "remaining_messages": "Mensajes restantes",
+    "messages_count": "Cantidad de mensajes",
+    "amount": "Monto"
   }
 }

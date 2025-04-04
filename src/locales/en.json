@@ -122,6 +122,18 @@
     "deleted": "Deleted",
     "exported": "Exported"
   },
+  "recharge_status": {
+    "pending": "Pending",
+    "accepted" : "Accepted",
+    "rejected": "Rejected",
+    "failed": "Failed",
+    "reversed": "Reversed",
+    "held": "Held",
+    "initiated": "Initiated",
+    "expired": "Expired",
+    "abandoned": "Abandoned",
+    "cancelled": "Cancelled"
+  },
   "general": {
     "home": "Home",
     "name": "Name",
@@ -185,6 +197,10 @@
     "account": "Account",
     "error_getting_organization": "Error getting organization",
     "error_getting_recharges": "Error getting recharges",
-    "recharges": "Recharges"
+    "recharges": "Recharges",
+    "movements": "Movements",
+    "remaining_messages": "Remaining messages",
+    "messages_count": "Messages count",
+    "amount": "Amount"
   }
 }
