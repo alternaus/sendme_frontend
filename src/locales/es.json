@@ -208,6 +208,9 @@
     "price_per_message": "Precio por mensaje",
     "cost": "Costo",
     "info_plan": "Información del plan",
-    "info_organization": "Información de la organización"
+    "info_organization": "Información de la organización",
+    "visualize_changes": "Visualizar cambios",
+    "after": "Después",
+    "before": "Antes"
   }
 }
