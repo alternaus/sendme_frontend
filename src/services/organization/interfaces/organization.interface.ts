@@ -1,3 +1,4 @@
+import type { IPlan } from './plan.interface';
 export interface IOrganization {
   id:           number;
   name:         string;
@@ -13,4 +14,5 @@ export interface IOrganization {
   createdAt:    Date;
   updatedAt:    Date;
   deletedAt:    null;
+  plan:        IPlan;
 }

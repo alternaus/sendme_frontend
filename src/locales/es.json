@@ -201,6 +201,13 @@
     "movements": "Movimientos",
     "remaining_messages": "Mensajes restantes",
     "messages_count": "Cantidad de mensajes",
-    "amount": "Monto"
+    "amount": "Monto",
+    "description": "Descripción",
+    "contact_limit": "Límite de contactos",
+    "campaign_limit": "Límite de campañas",
+    "price_per_message": "Precio por mensaje",
+    "cost": "Costo",
+    "info_plan": "Información del plan",
+    "info_organization": "Información de la organización"
   }
 }

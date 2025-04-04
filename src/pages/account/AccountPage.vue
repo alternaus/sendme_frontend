@@ -32,9 +32,8 @@ export default defineComponent({
         organization.value = response ?? null
       } catch (error) {
         console.error('Error fetching organization:', error)
-      } 
+      }
     }
-    
 
     onMounted(() => {
       fetchOrganization()
@@ -46,7 +45,7 @@ export default defineComponent({
       t,
       organization,
       fetchOrganization,
-      organizationId
+      organizationId,
     }
   },
 })
@@ -54,7 +53,7 @@ export default defineComponent({
 <template>
   <AppHeader :actions="[]" />
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <AppCard class="w-full mt-4">
+    <AppCard class="w-full mt-4" v-tooltip.bottom="$t('general.info_organization')">
       <template #content>
         <div class="flex flex-col">
           <small class="text-xl font-bold">{{ organization?.name }} </small>
@@ -70,9 +69,33 @@ export default defineComponent({
         </div>
       </template>
     </AppCard>
-    <!-- <AppCard class="w-full mt-4">
-      <template #content> Planes </template>
-    </AppCard> -->
+    <AppCard class="w-full mt-4" v-tooltip.bottom="$t('general.info_plan')">
+      <template #content>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-briefcase"></i>
+            <small class="text-xl font-bold">
+              {{ organization?.plan.name }}
+            </small>
+          </div>
+          <small class="text-base">
+            {{ $t('general.description') }} : {{ organization?.plan.description }}
+          </small>
+          <small class="text-base">
+            {{ $t('general.contact_limit') }} : {{ organization?.plan.contactLimit }}
+          </small>
+          <small class="text-base">
+            {{ $t('general.campaign_limit') }} : {{ organization?.plan.campaignLimit }}
+          </small>
+          <small class="text-base">
+            {{ $t('general.price_per_message') }} : {{ organization?.plan.pricePerMessage }}
+          </small>
+          <small class="text-base">
+            {{ $t('general.cost') }} : {{ organization?.plan.cost }}
+          </small>
+        </div>
+      </template>
+    </AppCard>
   </div>
   <TableIInfoComponent class="w-full mt-4" :idOrganization="organizationId" />
 </template>
