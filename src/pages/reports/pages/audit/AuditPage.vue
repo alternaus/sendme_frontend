@@ -98,6 +98,17 @@ export default defineComponent({
     ])
 
     onMounted(() => fetchAudits())
+    const formatDate = (isoString: string) => {
+      const date = new Date(isoString)
+      return new Intl.DateTimeFormat('es-CO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }).format(date)
+    }
 
     const getActionTranslation = (action: string) => {
       const translationKey = ActionAuditTypes[action as keyof typeof ActionAuditTypes]
@@ -122,6 +133,7 @@ export default defineComponent({
       table,
       startDate,
       endDate,
+      formatDate,
     }
   },
 })
@@ -180,6 +192,13 @@ export default defineComponent({
       <div class="flex items-center">
         <ActionIcon class="w-5 h-5 mr-2 fill-current" />
         <span> {{ $t('general.action') }} </span>
+      </div>
+    </template>
+    <template #custom-createdAt="{ data }">
+      <div class="flex justify-center items-center">
+        <small class="custom-text-small">
+          {{ formatDate(data.createdAt) }}
+        </small>
       </div>
     </template>
     <template #custom-table="{ data }">

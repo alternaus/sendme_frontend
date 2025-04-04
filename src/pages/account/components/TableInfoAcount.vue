@@ -212,8 +212,3 @@ export default defineComponent({
     </AppTable>
   </div>
 </template>
-<style lang="scss" scoped>
-.custom-text-small {
-  font-size: 12.5px;
-}
-</style>
