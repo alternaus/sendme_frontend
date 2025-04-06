@@ -180,6 +180,12 @@
     "organizations": "Organizaciones",
     "roles": "Roles",
     "permissions": "Permisos",
-    "drag_drop_file": "Arrastra y suelta el archivo aquí"
+    "drag_drop_file": "Arrastra y suelta el archivo aquí",
+    "buy_messages": "Comprar Mensajes",
+    "choose_value_recharge": "Elige el valor de tu recarga",
+    "info_remember_recharge": "Recuerda que mientras tengas activo el plan tus mensajes no vencen, la recarga se aplicará de forma inmediata a tu cuenta.",
+    "pay": "Pagar",
+    "enter_value": "Ingresa el valor",
+    "select_valid_recharge_value": "Selecciona o ingresa un valor de recarga válido."
   }
 }

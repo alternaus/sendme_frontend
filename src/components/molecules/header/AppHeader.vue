@@ -8,6 +8,7 @@ import {
 } from 'vue'
 
 import EyeIcon from '@/assets/svg/eye.svg?component'
+import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import ReportsIcon from '@/assets/svg/header/reports.svg?component'
@@ -46,7 +47,7 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.REPORTS]: ReportsIcon,
   [IconTypes.AUDIT]: AuditIcon,
   [IconTypes.MESSAGES]: MessagesIcon,
-  [IconTypes.BUY]: ContactsIcon,
+  [IconTypes.BUY]: BuyIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
   [IconTypes.IMPORT]: ImportIcon,
 }
