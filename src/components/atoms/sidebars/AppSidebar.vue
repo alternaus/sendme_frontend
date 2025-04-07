@@ -54,12 +54,12 @@ export default defineComponent({
 
 <template>
   <div
-    class="w-[80px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300"
+    class="w-[80px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-500 ease-in-out"
     :class="{ 'w-[200px]': isExpanded }"
   >
     <div class="flex items-center p-3">
       <router-link to="/" class="flex-1 flex items-center justify-center">
-        <Logo class="h-16 w-16 transition-colors duration-300 dark:fill-[var(--p-primary-color)]" />
+        <Logo class="h-16 w-16 transition-all duration-500 ease-in-out dark:fill-[var(--p-primary-color)]" />
       </router-link>
     </div>
 
@@ -68,14 +68,14 @@ export default defineComponent({
         <li class="w-full" v-for="(route, index) in routes" :key="index">
           <router-link
             :to="route.path"
-            active-class="bg-black dark:bg-[var(--p-primary-color)] transition-colors duration-300"
-            class="group flex items-center p-2 rounded-lg transition-colors duration-300 text-gray-800 hover:bg-primary-400 dark:text-white dark:hover:bg-[var(--p-primary-color)]"
+            active-class="bg-black dark:bg-[var(--p-primary-color)] transition-all duration-300 ease-in-out"
+            class="group flex items-center p-2 rounded-lg transition-all duration-300 ease-in-out text-gray-800 hover:bg-primary-400 dark:text-white dark:hover:bg-[var(--p-primary-color)]"
             :class="{ 'justify-center': !isExpanded }"
           >
-            <div class="flex items-center" :class="{ 'w-full': isExpanded }">
+            <div class="flex items-center transition-all duration-300 ease-in-out" :class="{ 'w-full': isExpanded }">
               <component
                 :is="route.icon"
-                class="w-8 h-8 transition-colors duration-300 flex-shrink-0"
+                class="w-10 h-10 transition-all duration-300 ease-in-out flex-shrink-0"
                 :class="{
                   'dark:fill-black fill-[var(--p-primary-color)]': $route.path.startsWith(route.path),
                   'group-hover:fill-black dark:group-hover:fill-black': true,
@@ -83,10 +83,10 @@ export default defineComponent({
                 }"
               />
               <span
-                class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ml-3"
+                class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out"
                 :class="{
-                  'hidden': !isExpanded,
-                  'opacity-100': isExpanded,
+                  'w-0 opacity-0 ml-0': !isExpanded,
+                  'w-auto opacity-100 ml-3': isExpanded,
                   'dark:text-black text-[var(--p-primary-color)]': $route.path.startsWith(route.path),
                   'group-hover:text-black dark:group-hover:text-black': true,
                   'dark:text-[var(--p-primary-color)]': !$route.path.startsWith(route.path),
@@ -103,10 +103,10 @@ export default defineComponent({
     <div class="flex justify-center p-4">
       <button
         @click="toggleExpand"
-        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors duration-300"
+        class="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out text-gray-800 hover:bg-black/10 dark:text-white dark:hover:bg-white/10"
         :class="{ 'rotate-180': isExpanded }"
       >
-        <i class="pi pi-chevron-right text-lg"></i>
+        <i class="pi pi-chevron-right text-lg transition-all duration-300 ease-in-out text-black dark:text-[var(--p-primary-color)]"></i>
       </button>
     </div>
   </div>
