@@ -148,7 +148,7 @@ export default defineComponent({
           </p>
         </div>
 
-        <div class="flex-1 overflow-y-auto mb-4" style="max-height: 400px;">
+        <div class="flex-1 overflow-y-auto mb-4" style="max-height: 300px;">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 auto-rows-min">
             <div v-for="(rule, index) in campaignRules" :key="index"
               :data-field-index="index"
