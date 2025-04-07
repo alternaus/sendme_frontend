@@ -55,6 +55,7 @@ export default defineComponent({
     const { getContact, createContact, updateContact } = useContactService()
 
     const customFields = ref<{ id: number; fieldName: string; dataType: string }[]>([])
+    const touchedFields = ref<Record<string, boolean>>({})
 
     const breadcrumbData = computed(() => [
       { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
@@ -172,17 +173,28 @@ export default defineComponent({
       },
       (errors) => {
         console.log('❌ Errores en el formulario:', errors)
+        // Marcar todos los campos como tocados al intentar enviar el formulario
+        form.customValues.value.forEach((_, index) => {
+          touchedFields.value[`customValues[${index}].value`] = true
+        })
       },
     )
 
     const getError = (index: number, field: string) => {
       const errorKey = `customValues[${index}].${field}`
-      return (errors?.value as Record<string, string | undefined>)[errorKey] || ''
+      // Solo mostrar el error si el campo ha sido tocado
+      return touchedFields.value[errorKey] ? (errors?.value as Record<string, string | undefined>)[errorKey] || '' : ''
     }
 
-    const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>) => {
+    const handleCustomFieldChange = (index: number, field: string) => {
+      const errorKey = `customValues[${index}].${field}`
+      touchedFields.value[errorKey] = true
+    }
+
+    const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>, index: number) => {
       if (custom.value) {
         custom.value.value = value ? value.toISOString() : ''
+        handleCustomFieldChange(index, 'value')
       }
     }
 
@@ -204,6 +216,7 @@ export default defineComponent({
       contactId,
       goBack,
       handleDateChange,
+      handleCustomFieldChange,
     }
   },
 })
@@ -281,15 +294,15 @@ export default defineComponent({
             }}</label>
             <template v-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'string'">
               <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
-                :error-message="getError(index, 'value')" />
+                :error-message="getError(index, 'value')" @update:model-value="() => handleCustomFieldChange(index, 'value')" />
             </template>
             <template v-else-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'number'">
               <AppInput v-model="custom.value.value" type="number" class="w-full rounded-md"
-                :error-message="getError(index, 'value')" />
+                :error-message="getError(index, 'value')" @update:model-value="() => handleCustomFieldChange(index, 'value')" />
             </template>
             <template v-else-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'date'">
               <AppDatePicker :model-value="custom.value.value ? new Date(custom.value.value) : new Date()"
-                @update:model-value="(val) => handleDateChange(val, custom)"
+                @update:model-value="(val) => handleDateChange(val, custom, index)"
                 class="w-full rounded-md"
                 :error-message="getError(index, 'value')" />
             </template>
