@@ -152,17 +152,15 @@ const onSubmit = () => {
       try {
         const existingFields = await getCustomFields()
 
-        for (const field of values.customFields) {
-          const existingField = existingFields.find(
-            ef => ef.fieldName === field.fieldName
-          )
+        for (const [index, field] of values.customFields.entries()) {
+          const existingFieldId = customFieldIds.value[index]
 
-          if (existingField) {
-            await updateCustomField(existingField.id, {
+          if (existingFieldId) {
+            await updateCustomField(existingFieldId, {
               fieldName: field.fieldName,
               dataType: field.dataType,
               elementType: 'input',
-              organizationId: existingField.organizationId
+              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || 1
             })
           } else {
             await createCustomField({
