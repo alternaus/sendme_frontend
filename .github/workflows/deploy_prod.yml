@@ -257,4 +257,3 @@ jobs:
         if: success()
         run: |
           echo "Despliegue completado exitosamente en new.sendme123.com"
-          # Aquí puedes añadir notificaciones a Slack, Discord, etc.
