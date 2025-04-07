@@ -103,7 +103,32 @@ const handleRemoveField = async (idx: number) => {
   }
 }
 
+// Función para validar el formulario antes de enviarlo
+const validateForm = () => {
+  // Verificar si hay campos vacíos
+  const hasEmptyFields = customFields.value.some(field =>
+    !field.value.fieldName.trim() || !field.value.dataType
+  )
+
+  if (hasEmptyFields) {
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('customFields.error_saving'),
+      life: 3000
+    })
+    return false
+  }
+
+  return true
+}
+
 const onSubmit = () => {
+  // Validar el formulario antes de enviarlo
+  if (!validateForm()) {
+    return
+  }
+
   handleSubmit(
     async (values) => {
       try {
@@ -150,6 +175,12 @@ const onSubmit = () => {
     },
     (formErrors) => {
       console.error('Errores de validación:', formErrors)
+      toast.add({
+        severity: 'error',
+        summary: t('general.error'),
+        detail: t('customFields.error_saving'),
+        life: 3000
+      })
     },
   )()
 }
@@ -174,7 +205,8 @@ onMounted(() => {
           <div class="flex-1 min-h-0 max-h-64 lg:max-h-96 overflow-y-auto my-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 auto-rows-min">
               <div v-for="(field, idx) in customFields" :key="field.key"
-                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-fit">
+                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-fit"
+                :class="{'border border-red-500': getError(idx, 'fieldName') || getError(idx, 'dataType')}">
                 <div class="flex flex-col gap-4">
                   <div class="flex items-center justify-between">
                     <div
@@ -189,7 +221,7 @@ onMounted(() => {
                       rounded />
                   </div>
 
-                  <div class="space-y-6">
+                  <div class="space-y-6 mt-2">
                     <AppInput
                       v-model="field.value.fieldName"
                       :label="$t('customFields.field_label')"

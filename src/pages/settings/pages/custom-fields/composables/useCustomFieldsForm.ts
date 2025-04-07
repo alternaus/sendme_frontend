@@ -1,5 +1,6 @@
 import { type FieldEntry, useFieldArray, useForm } from 'vee-validate'
 import type { Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
 export interface CustomFieldForm {
@@ -12,14 +13,24 @@ export interface CustomFieldFormRef {
 }
 
 export const useCustomFieldForm = () => {
+  const { t } = useI18n()
+
+  // Configurar Yup con los mensajes traducidos
+  yup.setLocale({
+    mixed: {
+      required: () => t('general.required_field'),
+    }
+  })
+
   const schema = yup.object({
     customFields: yup.array().of(
       yup.object({
-        fieldName: yup.string().required('El nombre del campo es obligatorio'),
+        fieldName: yup.string().required().label(t('customFields.field_label')),
         dataType: yup
           .string()
           .oneOf(['string', 'number', 'date'])
-          .required('El tipo de campo es obligatorio'),
+          .required()
+          .label(t('customFields.field_type')),
       }),
     ),
   })
