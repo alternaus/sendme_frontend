@@ -213,7 +213,7 @@ export default defineComponent({
   <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS"
     :actions="[]" />
 
-  <form @submit.prevent="onSubmitForm" class="w-full">
+  <form @submit.prevent="onSubmitForm" class="w-full pt-4">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput v-model="form.name.value" type="text" class="w-full rounded-md mt-3" :error-message="errors.name"
         :label="$t('general.name')">

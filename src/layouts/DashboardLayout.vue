@@ -30,8 +30,8 @@ export default defineComponent({
       <AppSidebarMobile />
     </div>
 
-    <main class="flex-1 transition-all duration-300" :class="{ 'lg:ml-[200px]': isSidebarExpanded, 'lg:ml-[80px]': !isSidebarExpanded }">
-      <div class="p-4 lg:p-6 w-full max-w-screen-2xl mx-auto overflow-auto">
+    <main class="flex-1 transition-all duration-300 h-screen overflow-y-auto" :class="{ 'lg:ml-[200px]': isSidebarExpanded, 'lg:ml-[80px]': !isSidebarExpanded }">
+      <div class="p-4 lg:p-6 w-full max-w-screen-2xl mx-auto">
         <div class="lg:mt-0 mt-[56px]">
           <slot />
         </div>
