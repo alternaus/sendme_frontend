@@ -123,6 +123,15 @@
       "saturday": "SA",
       "sunday": "SU"
     },
+    "days_abbr": {
+      "MO": "M",
+      "TU": "T",
+      "WE": "W",
+      "TH": "T",
+      "FR": "F",
+      "SA": "S",
+      "SU": "S"
+    },
     "conditions": {
       "is_empty": "Is Empty",
       "not_empty": "Is Not Empty",

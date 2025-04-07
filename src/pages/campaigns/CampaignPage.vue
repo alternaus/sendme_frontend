@@ -179,7 +179,12 @@ export default defineComponent({
       <div>{{ data.channel?.name || '-' }}</div>
     </template>
     <template #custom-frequency="{ data }">
-      <div>{{ data.days.join(', ') }} {{ data.time }}</div>
+      <div>
+        <template v-if="data.days && data.days.length">
+          {{ data.days.map((day: string) => $t(`campaign.days_abbr.${day}`)).join(', ') }} {{ data.time }}
+        </template>
+        <template v-else>-</template>
+      </div>
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
