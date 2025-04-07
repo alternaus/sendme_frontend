@@ -82,6 +82,7 @@
     "dynamic_data": "Dato dinámico",
     "insert_in_message": "Insertar en el mensaje",
     "select_option": "Seleccione una opción",
+    "channel": "Canal",
     "form": {
       "campaign_name": "Nombre de la Campaña",
       "description": "Descripción",
@@ -112,9 +113,25 @@
     },
     "conditions": {
       "is_empty": "Está vacío",
-      "is_not_empty": "No está vacío",
-      "is_equal": "Es igual a",
-      "is_not_equal": "Es diferente de"
+      "not_empty": "No está vacío",
+      "equals": "Es igual a",
+      "not_equals": "Es diferente de",
+      "greater_than": "Es mayor que",
+      "less_than": "Es menor que",
+      "between": "Está entre",
+      "contains": "Contiene",
+      "starts_with": "Comienza con",
+      "ends_with": "Termina con"
+    },
+    "errors": {
+      "load_channels": "Error al cargar los canales",
+      "load_campaign": "Error al cargar la campaña",
+      "save": "Error al guardar la campaña",
+      "validation": "Error de validación en el formulario"
+    },
+    "success": {
+      "created": "Campaña creada exitosamente",
+      "updated": "Campaña actualizada exitosamente"
     }
   },
   "provider": {
