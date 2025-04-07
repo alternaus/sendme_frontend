@@ -18,6 +18,7 @@ import type { IPaginationMeta } from '@/services/interfaces/pagination-response.
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import { useReportService } from '@/services/report/useReportServices'
 
+import DialogChangesAudit from './components/DialogChangesAudit.vue'
 import { useAuditFilter } from './composables/useAuditFilter'
 import { ActionAuditTypes } from './enums/action-types.enum.ts'
 import { ModuleTypes } from './enums/module-types.enum'
@@ -31,6 +32,7 @@ export default defineComponent({
     ModuleIcon,
     ChangeIcon,
     CardFilterAudit,
+    DialogChangesAudit,
   },
   setup() {
     const { t } = useI18n()
@@ -39,6 +41,8 @@ export default defineComponent({
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
 
+    const dataChanges = ref<Record<string, unknown>>({})
+    const isDialogVisible = ref(false)
     const page = ref(1)
     const limit = ref(10)
     const audits = ref<IAudit[]>([])
@@ -79,6 +83,13 @@ export default defineComponent({
       }
     }
 
+    const handleViewChanges = (rowData: IAudit) => {
+      if (rowData.changes) {
+        dataChanges.value = rowData.changes
+        isDialogVisible.value = true // Muestra el modal
+      }
+    }
+
     const headerActions = computed(() => [
       {
         label: t('actions.export'),
@@ -97,6 +108,17 @@ export default defineComponent({
     ])
 
     onMounted(() => fetchAudits())
+    const formatDate = (isoString: string) => {
+      const date = new Date(isoString)
+      return new Intl.DateTimeFormat('es-CO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }).format(date)
+    }
 
     const getActionTranslation = (action: string) => {
       const translationKey = ActionAuditTypes[action as keyof typeof ActionAuditTypes]
@@ -133,6 +155,10 @@ export default defineComponent({
       headerActions,
       action,
       table,
+      formatDate,
+      dataChanges,
+      handleViewChanges,
+      isDialogVisible,
       startDateString,
       endDateString,
     }
@@ -148,6 +174,11 @@ export default defineComponent({
     v-model:endDate="endDateString"
     v-model:search="search"
   />
+  <DialogChangesAudit
+    :changesData="dataChanges"
+    :visible="isDialogVisible"
+    @update:visible="isDialogVisible = $event"
+  />
   <AppTable
     class="w-full mt-4"
     :data="audits"
@@ -155,7 +186,7 @@ export default defineComponent({
       { field: 'createdAt', header: 'Date' },
       { field: 'userId', header: 'User' },
       { field: 'table', header: 'Module' },
-      // { field: 'changes', header: 'Changes' },
+      { field: 'changes', header: 'Changes' },
       { field: 'action', header: 'Action' },
     ]"
     :pageSize="auditMeta.limit"
@@ -195,6 +226,13 @@ export default defineComponent({
         <span> {{ $t('general.action') }} </span>
       </div>
     </template>
+    <template #custom-createdAt="{ data }">
+      <div class="flex justify-center items-center">
+        <small class="custom-text-small">
+          {{ formatDate(data.createdAt) }}
+        </small>
+      </div>
+    </template>
     <template #custom-table="{ data }">
       <div class="flex justify-center">
         {{ getModuleTranslation(data.table) }}
@@ -202,7 +240,14 @@ export default defineComponent({
     </template>
     <template #custom-changes="{ data }">
       <div class="flex justify-center">
-        {{ data.changes ? data.changes : '--' }}
+        <div
+          v-if="data.changes"
+          class="flex items-center justify-center w-8 h-8 rounded-full border-gray-400 border"
+          @click="handleViewChanges(data)"
+        >
+          <i class="pi pi-eye"></i>
+        </div>
+        <small v-else>--</small>
       </div>
     </template>
     <template #custom-action="{ data }">
