@@ -21,6 +21,13 @@ export default defineComponent({
     PrimeButton,
     Drawer,
     Logo,
+    Buy,
+    Campaigns,
+    Contacts,
+    Reports,
+    Send,
+    Settings,
+    Whatsapp,
   },
   setup() {
     const visible = ref(false)

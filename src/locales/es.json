@@ -8,6 +8,11 @@
     "en": "Inglés",
     "es": "Español"
   },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "backToHome": "Regresar al inicio"
+  },
   "auth": {
     "logout": "Cerrar Sesión",
     "login": "Iniciar Sesión",
@@ -62,7 +67,93 @@
     "campaign": "Campaña",
     "campaigns": "Campañas",
     "campaign_rules": "Reglas de Campaña",
-    "campaign_dispatches": "Envíos de Campaña"
+    "campaign_dispatches": "Envíos de Campaña",
+    "details": "Detalles",
+    "triggers": "Activadores",
+    "message": "Mensaje",
+    "duration": "Duración",
+    "execution_days": "Días de Ejecución",
+    "execution_time": "Hora de Ejecución",
+    "configure_triggers": "Configura los activadores para tu campaña",
+    "add_trigger": "Agregar Activador",
+    "select_field": "Seleccione un campo",
+    "select_condition": "Seleccione el tipo de condición",
+    "value": "Valor",
+    "dynamic_data": "Dato dinámico",
+    "insert_in_message": "Insertar en el mensaje",
+    "select_option": "Seleccione una opción",
+    "channel": "Canal",
+    "name": "Nombre",
+    "frequency": "Frecuencia",
+    "time": "Hora",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de fin",
+    "contact": "Contacto",
+    "status": "Estado",
+    "error_getting_campaigns": "No se pudieron cargar las campañas",
+    "success_removed": "Campaña eliminada exitosamente",
+    "error_removed": "Error al eliminar la campaña",
+    "success_exported": "Campañas exportadas exitosamente",
+    "error_exported": "Error al exportar las campañas",
+    "form": {
+      "campaign_name": "Nombre de la Campaña",
+      "description": "Descripción",
+      "message_content": "Contenido del Mensaje",
+      "content_type": "Tipo de Contenido",
+      "status": "Estado",
+      "start_date": "Fecha de Inicio",
+      "end_date": "Fecha de Fin",
+      "execution_time": "Hora de Ejecución",
+      "execution_days": "Días de Ejecución",
+      "frequency": "Frecuencia",
+      "channel_id": "ID del Canal",
+      "organization_id": "ID de la Organización",
+      "condition_type": "Tipo de Condición",
+      "condition_value": "Valor de la Condición",
+      "custom_field_id": "ID del Campo Personalizado",
+      "select_at_least_one_day": "Debes seleccionar al menos un día",
+      "value_is_required": "El valor es requerido"
+    },
+    "days": {
+      "monday": "LU",
+      "tuesday": "MA",
+      "wednesday": "MI",
+      "thursday": "JU",
+      "friday": "VI",
+      "saturday": "SA",
+      "sunday": "DO"
+    },
+    "days_abbr": {
+      "MO": "L",
+      "TU": "M",
+      "WE": "X",
+      "TH": "J",
+      "FR": "V",
+      "SA": "S",
+      "SU": "D"
+    },
+    "conditions": {
+      "is_empty": "Está vacío",
+      "not_empty": "No está vacío",
+      "equals": "Es igual a",
+      "not_equals": "Es diferente de",
+      "greater_than": "Es mayor que",
+      "less_than": "Es menor que",
+      "between": "Está entre",
+      "contains": "Contiene",
+      "starts_with": "Comienza con",
+      "ends_with": "Termina con"
+    },
+    "errors": {
+      "load_channels": "Error al cargar los canales",
+      "load_campaign": "Error al cargar la campaña",
+      "save": "Error al guardar la campaña",
+      "validation": "Error de validación en el formulario"
+    },
+    "success": {
+      "created": "Campaña creada exitosamente",
+      "updated": "Campaña actualizada exitosamente"
+    }
   },
   "provider": {
     "provider": "Proveedor",
@@ -104,12 +195,27 @@
   "user": {
     "user": "Usuario",
     "users": "Usuarios",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
     "new_user": "Nuevo Usuario",
     "edit_user": "Editar Usuario",
     "user_information": "Información del Usuario",
+    "manage_users": "Gestionar Usuarios",
+    "add_user": "Agregar Usuario",
+    "add_users": "Agregar usuarios",
+    "add_users_limit": "Crea hasta {max} usuarios para que envíen mensajes desde tu cuenta",
+    "add_users_desc": "Agrega usuarios y asígnales nombre y correo electrónico",
     "error_getting_users": "Error al obtener los usuarios",
-    "success_removed": "Usuario eliminado exitosamente",
-    "error_removed": "Error al eliminar el usuario"
+    "error_loading": "No se pudieron cargar los usuarios",
+    "user_deleted": "Usuario eliminado exitosamente",
+    "users_created": "Usuarios creados exitosamente",
+    "users_updated": "Usuarios actualizados exitosamente",
+    "error_saving": "Error al guardar los usuarios",
+    "error_deleting": "Error al eliminar el usuario",
+    "max_users_reached": "Has alcanzado el límite de {max} usuarios",
+    "no_users_added": "Debes agregar al menos un usuario",
+    "incomplete_users": "Todos los usuarios deben tener nombre y correo electrónico"
   },
   "actions": {
     "edit": "Editar",
@@ -139,7 +245,7 @@
     "name": "Nombre",
     "last_name": "Apellido",
     "phone": "Teléfono",
-    "email": "Correo Electrónico",
+    "email": "Correo electrónico",
     "address": "Dirección",
     "date": "Fecha",
     "origin": "Origen",
@@ -211,6 +317,24 @@
     "info_organization": "Información de la organización",
     "visualize_changes": "Visualizar cambios",
     "after": "Después",
-    "before": "Antes"
+    "before": "Antes",
+  },
+  "customFields": {
+    "title": "Campos Personalizados",
+    "add_field": "Agregar campo",
+    "field_label": "Etiqueta del campo",
+    "field_type": "Tipo de campo",
+    "max_fields": "Puedes agregar hasta 10 campos de información complementaria a tus contactos.",
+    "field_added": "Campo agregado exitosamente",
+    "field_updated": "Campo actualizado exitosamente",
+    "field_deleted": "Campo eliminado exitosamente",
+    "error_loading": "Error al cargar los campos personalizados",
+    "error_saving": "Error al guardar los campos personalizados",
+    "error_deleting": "Error al eliminar el campo personalizado",
+    "data_types": {
+      "text": "Texto",
+      "number": "Número",
+      "date": "Fecha"
+    }
   }
 }

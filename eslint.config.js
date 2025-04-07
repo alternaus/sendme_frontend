@@ -54,6 +54,7 @@ export default [
       'vue/no-mutating-props': 'error',
       'vue/no-setup-props-destructure': 'error',
       'vue/require-explicit-emits': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
       'vue/attributes-order': [
         'error',
         {

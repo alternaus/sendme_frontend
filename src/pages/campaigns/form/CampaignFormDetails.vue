@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import DateEndIcon from '@/assets/svg/date_end.svg?component'
 import DateStartIcon from '@/assets/svg/date_start.svg?component'
 import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
@@ -33,14 +35,16 @@ export default defineComponent({
   emits: ['update:form'],
 
   setup(_, { emit }) {
+    const { t } = useI18n()
+
     const daysOptions: SelectButtonOption[] = [
-      { name: 'LU', value: 'MO' },
-      { name: 'MA', value: 'TU' },
-      { name: 'MI', value: 'WE' },
-      { name: 'JU', value: 'TH' },
-      { name: 'VI', value: 'FR' },
-      { name: 'SA', value: 'SA' },
-      { name: 'DO', value: 'SU' },
+      { name: t('campaign.days.monday'), value: 'MO' },
+      { name: t('campaign.days.tuesday'), value: 'TU' },
+      { name: t('campaign.days.wednesday'), value: 'WE' },
+      { name: t('campaign.days.thursday'), value: 'TH' },
+      { name: t('campaign.days.friday'), value: 'FR' },
+      { name: t('campaign.days.saturday'), value: 'SA' },
+      { name: t('campaign.days.sunday'), value: 'SU' },
     ]
 
     const updateFormValue = (key: keyof CampaignFormRef, value: unknown) => {
@@ -50,6 +54,7 @@ export default defineComponent({
     return {
       daysOptions,
       updateFormValue,
+      t,
     }
   },
 })
@@ -65,12 +70,12 @@ export default defineComponent({
           >
             1
           </p>
-          <p class="text-center mt-2 font-medium">Tiempo</p>
+          <p class="text-center mt-2 font-medium">{{ t('campaign.details') }}</p>
         </div>
 
         <div class="grid grid-cols-1 justify-center items-center lg:col-span-3">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">Duración</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.duration') }}</p>
           </div>
           <div class="grid grid-cols-1 gap-2">
             <AppDatePicker
@@ -98,7 +103,7 @@ export default defineComponent({
         <!-- Días de ejecución -->
         <div class="grid grid-rows-2 items-center justify-center lg:col-span-4">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">Días de ejecución</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.execution_days') }}</p>
           </div>
           <div class="w-full">
             <AppSelectButton
@@ -113,7 +118,7 @@ export default defineComponent({
         <!-- Hora de ejecución -->
         <div class="grid grid-rows-2 lg:col-span-3 w-full">
           <div class="flex flex-col justify-center items-center">
-            <p class="text-gray-700 dark:text-neutral-300">Hora de ejecución</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.execution_time') }}</p>
           </div>
           <div class="w-full flex items-center justify-center">
             <AppTimePicker

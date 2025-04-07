@@ -1,0 +1,5 @@
+export enum IconTypesSettings {
+  CUSTOM_FIELDS = 'CUSTOM_FIELDS',
+  USERS = 'USERS',
+  INTEGRATIONS = 'INTEGRATIONS',
+}
