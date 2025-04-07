@@ -25,7 +25,10 @@ jobs:
           node-version: 22.x
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install --no-optional
+          npm install @rollup/rollup-linux-x64-gnu
 
       - name: 🔨 Build Vue App
         run: npm run build
