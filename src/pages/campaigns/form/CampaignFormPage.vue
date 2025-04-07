@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
 import ChannelIcon from '@/assets/svg/channel.svg?component'
@@ -36,6 +37,7 @@ export default defineComponent({
   },
 
   setup() {
+    const router = useRouter()
     const { form, handleSubmit, resetForm, errors, addRule, removeRule } = useFormCampaign()
     const { getChannels } = useChannelService()
     const activeStep = ref(0)
@@ -105,6 +107,11 @@ export default defineComponent({
       }
     }
 
+    const handleCancel = () => {
+      resetForm()
+      router.push('/campaigns')
+    }
+
     return {
       IconTypes,
       form,
@@ -121,6 +128,7 @@ export default defineComponent({
       steps,
       nextStep,
       prevStep,
+      handleCancel,
     }
   },
 })
@@ -223,7 +231,7 @@ export default defineComponent({
           severity="secondary"
           class="w-full sm:w-auto"
           label="Cancelar"
-          @click.prevent="resetForm"
+          @click.prevent="handleCancel"
         />
       </div>
     </div>
