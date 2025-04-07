@@ -8,6 +8,11 @@
     "en": "English",
     "es": "Spanish"
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved.",
+    "backToHome": "Back to home"
+  },
   "auth": {
     "logout": "Logout",
     "login": "Login",

@@ -57,6 +57,16 @@ router.beforeEach((to, from, next) => {
 
   breadcrumbStore.setBreadcrumbs(breadcrumbs);
 
+  if (to.name === 'not-found') {
+    return next()
+  }
+
+
+  if (to.matched.length === 0) {
+    console.warn('⚠️ Ruta no encontrada. Redirigiendo a /not-found')
+    return next({ name: 'not-found' })
+  }
+
   if (to.meta.requiresAuth && !token) {
     console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/sign-in')
     return next('/auth/sign-in')
@@ -68,6 +78,11 @@ router.beforeEach((to, from, next) => {
   }
 
   next()
+})
+
+router.onError((error) => {
+  console.error('Error de navegación:', error)
+  router.push('/not-found')
 })
 
 export default router

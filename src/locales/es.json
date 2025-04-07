@@ -8,6 +8,11 @@
     "en": "Inglés",
     "es": "Español"
   },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "backToHome": "Regresar al inicio"
+  },
   "auth": {
     "logout": "Cerrar Sesión",
     "login": "Iniciar Sesión",
