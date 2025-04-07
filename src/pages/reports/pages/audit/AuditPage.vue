@@ -46,6 +46,7 @@ export default defineComponent({
     const page = ref(1)
     const limit = ref(10)
     const audits = ref<IAudit[]>([])
+    const loading = ref(false)
     const auditMeta = ref<IPaginationMeta>({
       currentPage: 1,
       hasNextPage: false,
@@ -62,6 +63,7 @@ export default defineComponent({
     const fetchAudits = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
       limit.value = limitSize
+      loading.value = true
       try {
         const response = await getAudits({
           page: page.value,
@@ -80,6 +82,8 @@ export default defineComponent({
         }
       } catch (error) {
         console.error('Error fetching audits:', error)
+      } finally {
+        loading.value = false
       }
     }
 
@@ -161,6 +165,7 @@ export default defineComponent({
       isDialogVisible,
       startDateString,
       endDateString,
+      loading,
     }
   },
 })
@@ -193,6 +198,8 @@ export default defineComponent({
     :pageCurrent="auditMeta.currentPage"
     :totalItems="auditMeta.totalRecords"
     :multipleSelection="false"
+    :loading="loading"
+    :emptyMessage="'report.error_getting_audit'"
     textTotalItems="report.audits"
     @page-change="fetchAudits"
   >

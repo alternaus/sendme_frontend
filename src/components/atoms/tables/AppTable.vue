@@ -6,6 +6,7 @@ import Column from 'primevue/column'
 import ContextMenu from 'primevue/contextmenu'
 import DataTable from 'primevue/datatable'
 import Paginator from 'primevue/paginator'
+import ProgressSpinner from 'primevue/progressspinner'
 
 import type { TableHeader } from './types/table-header.type'
 
@@ -17,6 +18,7 @@ export default defineComponent({
     Paginator,
     Card,
     ContextMenu,
+    ProgressSpinner,
   },
   props: {
     data: {
@@ -46,6 +48,14 @@ export default defineComponent({
     textTotalItems: {
       type: String,
       default: 'general.total_records',
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    emptyMessage: {
+      type: String,
+      default: 'general.no_data',
     },
   },
   emits: ['selection-change', 'page-change'],
@@ -107,8 +117,13 @@ export default defineComponent({
 <template>
   <Card class="w-full">
     <template #content>
-      <div class="max-h-[calc(100vh-300px)] overflow-auto">
+      <div class="max-h-[calc(100vh-300px)] overflow-auto relative">
         <ContextMenu ref="contextMenuRef" :model="menuModel" @hide="selectedRow = null" />
+
+        <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-neutral-800/70 z-10">
+          <ProgressSpinner strokeWidth="4" class="w-12 h-12" />
+        </div>
+
         <DataTable
           v-if="!isMdScreen"
           v-model:selection="selectedRow"
@@ -124,6 +139,8 @@ export default defineComponent({
           @row-select-all="handleRowSelect"
           context-menu
           @row-unselect-all="handleRowSelect"
+          :loading="loading"
+          :emptyMessage="$t(emptyMessage)"
         >
           <Column
             selectionMode="multiple"
@@ -152,21 +169,32 @@ export default defineComponent({
         </DataTable>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div
-            v-for="(item, index) in data"
-            :key="index"
-            class="bg-white dark:bg-neutral-800 shadow-lg rounded-lg p-4 flex flex-col"
-          >
-            <div v-for="col in headers" :key="col.field" class="flex items-center gap-2">
-              <strong class="text-gray-600 dark:text-gray-300 flex items-center gap-1">
-                <slot :name="`header-${col.field}`">
-                  {{ col.header }}
-                </slot>
-                :
-              </strong>
-              <small>{{ item[col.field] }}</small>
-            </div>
+          <div v-if="data.length === 0 && !loading" class="col-span-full flex flex-col items-center justify-center p-8 text-center">
+            <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
           </div>
+
+          <template v-else>
+            <div
+              v-for="(item, index) in data"
+              :key="index"
+              class="bg-white dark:bg-neutral-800 shadow-lg rounded-lg p-4 flex flex-col"
+            >
+              <div v-for="col in headers" :key="col.field" class="flex items-center gap-2 py-1">
+                <strong class="text-gray-600 dark:text-gray-300 flex items-center gap-1 min-w-24">
+                  <slot :name="`header-${col.field}`">
+                    {{ col.header }}
+                  </slot>
+                  :
+                </strong>
+                <span class="flex-1">
+                  <slot :name="`custom-${col.field}`" :data="item">
+                    {{ item[col.field] }}
+                  </slot>
+                </span>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
       <div class="flex flex-col md:flex-row md:justify-between items-center mt-4 gap-2 md:gap-0">
@@ -183,6 +211,7 @@ export default defineComponent({
           :rowsPerPageOptions="rowSizes"
           :totalRecords="totalItems"
           @page="handlePageChange"
+          class="small-paginator"
         />
       </div>
       <!-- @page="(event) => $emit('page-change', event.page + 1)" -->
@@ -207,5 +236,23 @@ export default defineComponent({
 
 :deep(.p-paginator) {
   justify-content: end;
+}
+
+:deep(.small-paginator) {
+  .p-paginator-button {
+    min-width: 2rem;
+    height: 2rem;
+  }
+
+  .p-dropdown {
+    height: 2rem;
+    min-width: 4rem;
+  }
+
+  .p-paginator-page, .p-paginator-next, .p-paginator-prev, .p-paginator-first, .p-paginator-last {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
 }
 </style>

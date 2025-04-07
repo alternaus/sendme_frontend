@@ -2,6 +2,8 @@
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useToast } from 'primevue/usetoast'
+
 import { useI18n } from 'vue-i18n'
 
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
@@ -37,6 +39,7 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
+    const toast = useToast()
     const router = useRouter()
     const { getMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
@@ -52,12 +55,14 @@ export default defineComponent({
       totalPages: 0,
       totalRecords: 0,
     })
+    const loading = ref(false)
     watch([content, status, messageType, startDate, endDate], () => {
       fetchMessages()
     })
     const fetchMessages = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
       limit.value = limitSize
+      loading.value = true
       try {
         const response = await getMessages({
           page: pageSize,
@@ -75,7 +80,14 @@ export default defineComponent({
           console.warn('⚠️ Respuesta no válida:', response)
         }
       } catch (error) {
-        console.error('❌ Error al obtener mensajes:', error)
+        console.error('Error fetching messages:', error)
+        toast.add({
+          severity: 'error',
+          summary: t('general.error'),
+          detail: t('report.error_getting_messages'),
+        })
+      } finally {
+        loading.value = false
       }
     }
 
@@ -135,6 +147,7 @@ export default defineComponent({
       endDateString,
       getStatusTranslation,
       getTypeMessageTranslation,
+      loading,
     }
   },
 })
@@ -162,6 +175,8 @@ export default defineComponent({
     :pageCurrent="messageMeta.currentPage"
     :totalItems="messageMeta.totalRecords"
     :multipleSelection="false"
+    :loading="loading"
+    :emptyMessage="'report.error_getting_messages'"
     textTotalItems="general.messages"
     @page-change="fetchMessages"
   >

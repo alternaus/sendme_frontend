@@ -321,7 +321,8 @@
     "integrations": "Integrations",
     "previous": "Previous",
     "next": "Next",
-    "description": "Description"
+    "description": "Description",
+    "no_data": "No data available"
   },
   "customFields": {
     "title": "Custom Fields",

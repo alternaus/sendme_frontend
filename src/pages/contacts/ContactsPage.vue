@@ -41,6 +41,7 @@ export default defineComponent({
     const limit = ref(10)
     const search = ref('')
     const contacts = ref<IContact[]>([])
+    const loading = ref(false)
     const contactsMeta = ref<IPaginationMeta>({
       currentPage: 1,
       hasNextPage: false,
@@ -52,32 +53,41 @@ export default defineComponent({
     const selectedContact = ref<IContact | null>(null)
     const toast = useToast()
 
-    const fetchContacts = async (newPage = 1) => {
-      page.value = newPage
+    const fetchContacts = async ({ pageSize = 1, limitSize = 10 } = {}) => {
+      page.value = pageSize
+      limit.value = limitSize
+      loading.value = true
+
       try {
         const response = await getContacts({
           page: page.value,
           limit: limit.value,
           name: search.value,
         })
-        contacts.value = response.data
-        contactsMeta.value = response.meta
+        if (response && response.data && response.meta) {
+          contacts.value = response.data
+          contactsMeta.value = response.meta
+        } else {
+          console.warn('⚠️ Respuesta no válida:', response)
+        }
       } catch (error) {
-        console.error('❌ Error al obtener los contactos:', error)
+        console.error('Error fetching contacts:', error)
         toast.add({
           severity: 'error',
           summary: t('general.error'),
           detail: t('contact.error_getting_contacts'),
-          life: 3000,
         })
+      } finally {
+        loading.value = false
       }
     }
 
-    onMounted(() => fetchContacts())
+    onMounted(() => {
+      fetchContacts({ pageSize: 1, limitSize: 10 })
+    })
 
-    watch(search, async () => {
-      console.log('🔍 Buscando:', search.value)
-      await fetchContacts(1)
+    watch(search, () => {
+      fetchContacts({ pageSize: 1, limitSize: 10 })
     })
 
     const handleSelectionChange = (selectedRow: IContact) => {
@@ -92,11 +102,11 @@ export default defineComponent({
         selectedContact.value = null
         toast.add({
           severity: 'success',
-          summary: 'Eliminado',
+          summary: t('general.success'),
           detail: t('contact.success_removed'),
           life: 3000,
         })
-        await fetchContacts(page.value)
+        await fetchContacts({ pageSize: page.value, limitSize: limit.value })
       } catch (error) {
         console.error('❌ Error al eliminar contacto:', error)
         toast.add({
@@ -183,6 +193,7 @@ export default defineComponent({
       contactsMeta,
       headerActions,
       search,
+      loading,
     }
   },
 })
@@ -205,6 +216,8 @@ export default defineComponent({
     :pageCurrent="contactsMeta.currentPage"
     :totalItems="contactsMeta.totalRecords"
     :multipleSelection="false"
+    :loading="loading"
+    :emptyMessage="'contact.error_getting_contacts'"
     textTotalItems="contact.contacts"
     @selection-change="handleSelectionChange"
     @page-change="fetchContacts"
@@ -248,6 +261,11 @@ export default defineComponent({
     <template #custom-status="{ data }">
       <div class="flex justify-center">
         <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
+      </div>
+    </template>
+    <template #custom-phoneNumber="{ data }">
+      <div class="flex justify-center">
+        {{ data.phoneNumber || '-' }}
       </div>
     </template>
   </AppTable>

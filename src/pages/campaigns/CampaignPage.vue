@@ -31,7 +31,9 @@ export default defineComponent({
     const limit = ref(10)
     const search = ref('')
     const campaigns = ref<ICampaign[]>([])
-    const campaignsMeta = ref<IPaginationMeta>({
+    const selected = ref<ICampaign | null>(null)
+    const loading = ref(false)
+    const campaignMeta = ref<IPaginationMeta>({
       currentPage: 1,
       hasNextPage: false,
       hasPreviousPage: false,
@@ -39,53 +41,66 @@ export default defineComponent({
       totalPages: 0,
       totalRecords: 0,
     })
-    const selectedCampaign = ref<ICampaign | null>(null)
 
-    const fetchCampaigns = async (newPage = 1) => {
-      page.value = newPage
+    const fetchCampaigns = async (
+      { pageSize = 1, limitSize = campaignMeta.value.limit || 10 } = {
+        pageSize: 1,
+        limitSize: 10,
+      }
+    ) => {
+      page.value = pageSize
+      limit.value = limitSize
+      loading.value = true
+
       try {
         const response = await getCampaigns({
           page: page.value,
           limit: limit.value,
           name: search.value,
         })
-        campaigns.value = response.data
-        campaignsMeta.value = response.meta
+        if (response && response.data && response.meta) {
+          campaigns.value = response.data
+          campaignMeta.value = response.meta
+        } else {
+          console.warn('🔄 Respuesta no válida:', response)
+        }
       } catch (error) {
-        console.error('❌ Error al obtener las campañas:', error)
+        console.error('❌ Error al obtener campañas:', error)
         toast.add({
           severity: 'error',
           summary: t('general.error'),
           detail: t('campaign.error_getting_campaigns'),
-          life: 3000,
         })
+      } finally {
+        loading.value = false
       }
     }
 
-    onMounted(() => fetchCampaigns())
+    onMounted(() => {
+      fetchCampaigns({ pageSize: 1, limitSize: 10 })
+    })
 
-    watch(search, async () => {
-      console.log('🔍 Buscando:', search.value)
-      await fetchCampaigns(1)
+    watch(search, () => {
+      fetchCampaigns({ pageSize: 1, limitSize: 10 })
     })
 
     const handleSelectionChange = (selectedRow: ICampaign) => {
-      selectedCampaign.value = selectedRow
+      selected.value = selectedRow
     }
 
     const handleDelete = async () => {
-      if (!selectedCampaign.value) return
+      if (!selected.value) return
 
       try {
-        await deleteCampaign(selectedCampaign.value.id)
-        selectedCampaign.value = null
+        await deleteCampaign(selected.value.id)
+        selected.value = null
         toast.add({
           severity: 'success',
-          summary: 'Eliminado',
+          summary: t('general.success'),
           detail: t('campaign.success_removed'),
           life: 3000,
         })
-        await fetchCampaigns(page.value)
+        await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
       } catch (error) {
         console.error('❌ Error al eliminar campaña:', error)
         toast.add({
@@ -103,14 +118,14 @@ export default defineComponent({
         onClick: () => push('/campaigns/create'),
         type: ActionTypes.CREATE,
       },
-      ...(selectedCampaign.value
+      ...(selected.value
         ? [
             { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
             {
               label: t('actions.edit'),
               onClick: () => {
-                if (selectedCampaign.value?.id) {
-                  push(`/campaigns/edit/${selectedCampaign.value?.id}`)
+                if (selected.value?.id) {
+                  push(`/campaigns/edit/${selected.value?.id}`)
                 }
               },
               type: ActionTypes.EDIT,
@@ -123,15 +138,16 @@ export default defineComponent({
     return {
       push,
       campaigns,
-      selectedCampaign,
+      selected,
       handleSelectionChange,
       handleDelete,
       fetchCampaigns,
       ActionTypes,
       IconTypes,
-      campaignsMeta,
+      campaignMeta,
       headerActions,
       search,
+      loading,
     }
   },
 })
@@ -149,13 +165,15 @@ export default defineComponent({
       { field: 'endDate', header: $t('campaign.end_date') },
       { field: 'status', header: $t('campaign.status') },
     ]"
-    :pageSize="campaignsMeta.limit"
-    :pageCurrent="campaignsMeta.currentPage"
-    :totalItems="campaignsMeta.totalRecords"
+    :pageSize="campaignMeta.limit"
+    :pageCurrent="campaignMeta.currentPage"
+    :totalItems="campaignMeta.totalRecords"
     :multipleSelection="false"
+    :loading="loading"
+    :emptyMessage="'campaign.error_getting_campaigns'"
     textTotalItems="campaign.campaigns"
     @selection-change="handleSelectionChange"
-    @page-change="fetchCampaigns"
+    @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >
     <template #custom-channelName="{ data }">
       <div>{{ data.channel?.name || '-' }}</div>

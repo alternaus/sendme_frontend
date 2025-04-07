@@ -321,7 +321,8 @@
     "before": "Antes",
     "integrations": "Integraciones",
     "previous": "Anterior",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "no_data": "No hay datos disponibles"
   },
   "customFields": {
     "title": "Campos Personalizados",

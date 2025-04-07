@@ -36,6 +36,7 @@ export default defineComponent({
     const limit = ref(10)
     const page = ref(1)
     const recharges = ref<IRecharge[]>([])
+    const loading = ref(false)
     const rechargesMeta = ref<IPaginationMeta>({
       currentPage: 1,
       hasNextPage: false,
@@ -52,6 +53,7 @@ export default defineComponent({
     const fetchRecharges = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
       limit.value = limitSize
+      loading.value = true
       try {
         const response = await getRecharges({
           page: page.value,
@@ -66,6 +68,8 @@ export default defineComponent({
         }
       } catch (error) {
         console.error('Error fetching recharges:', error)
+      } finally {
+        loading.value = false
       }
     }
 
@@ -114,6 +118,7 @@ export default defineComponent({
       formatCurrency,
       getStatusTranslation,
       formatDate,
+      loading,
     }
   },
 })
@@ -186,6 +191,8 @@ export default defineComponent({
       :pageCurrent="rechargesMeta.currentPage"
       :totalItems="rechargesMeta.totalRecords"
       :multipleSelection="false"
+      :loading="loading"
+      :emptyMessage="'general.error_getting_recharges'"
       textTotalItems="general.recharges"
       @page-change="fetchRecharges"
     >
