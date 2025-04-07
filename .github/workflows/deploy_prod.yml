@@ -3,7 +3,7 @@ name: Deploy sendme frontend
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
       SERVER_HOST: ${{ secrets.IP }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       SERVER_USER: ${{ secrets.USER }}
-      FRONTEND_PATH: /var/www/vhosts/sendme.com
+      FRONTEND_PATH: /var/www/vhosts/new.sendme123.com
 
     steps:
       - name: 📥 Checkout code
@@ -38,7 +38,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           source: 'dist/*'
-          target: '/var/www/vhosts/sendme.com/'
+          strip_components: 1
+          target: '/var/www/vhosts/new.sendme123.com/'
 
       - name: ⚡ Install & Configure Nginx + SSL
         uses: appleboy/ssh-action@v1.2.0
@@ -61,30 +62,30 @@ jobs:
             fi
 
             # 📁 Crear directorio del sitio si no existe
-             mkdir -p /var/www/vhosts/sendme.com
+             mkdir -p /var/www/vhosts/new.sendme123.com
 
             # ✅ Dar permisos correctos
-             chown -R www-data:www-data /var/www/vhosts/sendme.com
-             chmod -R 755 /var/www/vhosts/sendme.com
+             chown -R www-data:www-data /var/www/vhosts/new.sendme123.com
+             chmod -R 755 /var/www/vhosts/new.sendme123.com
 
             # 🔧 Configurar Nginx temporalmente sin SSL
             echo 'server {
                 listen 80;
-                server_name sendme.com;
+                server_name new.sendme123.com;
                 
                 location /.well-known/acme-challenge/ {
                     root /var/www/html;
                 }
 
                 location / {
-                    root /var/www/vhosts/sendme.com;
+                    root /var/www/vhosts/new.sendme123.com;
                     index index.html;
                     try_files $uri /index.html;
                 }
-            }' |  tee /etc/nginx/sites-available/sendme
+            }' |  tee /etc/nginx/sites-available/sendme123
 
             # 🔗 Habilitar configuración temporal en Nginx
-             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+             ln -sf /etc/nginx/sites-available/sendme123 /etc/nginx/sites-enabled/
 
             # 🔄 Verificar configuración de Nginx antes de reiniciar
              nginx -t &&  systemctl restart nginx || exit 1
@@ -99,8 +100,8 @@ jobs:
             fi
 
             # 📜 Generar certificado SSL si no existe
-            if [ ! -d "/etc/letsencrypt/live/sendme.com" ]; then
-                certbot certonly --webroot -w /var/www/html -d sendme.com --non-interactive --agree-tos -m tuemail@sendme.com
+            if [ ! -d "/etc/letsencrypt/live/new.sendme123.com" ]; then
+                certbot certonly --webroot -w /var/www/html -d new.sendme123.com --non-interactive --agree-tos -m tuemail@sendme.com
             else
                echo "✅ Certificado SSL ya existente."
             fi
@@ -108,7 +109,7 @@ jobs:
             # 📜 Configurar Nginx con SSL
             echo 'server {
                 listen 80;
-                server_name sendme.com;
+                server_name new.sendme123.com;
                 location / {
                     return 301 https://$host$request_uri;
                 }
@@ -116,23 +117,52 @@ jobs:
 
             server {
                 listen 443 ssl;
-                server_name sendme.com;
+                server_name new.sendme123.com;
 
-                root /var/www/vhosts/sendme.com/dist;
+                root /var/www/vhosts/new.sendme123.com;
                 index index.html;
 
                 location / {
                     try_files $uri /index.html;
                 }
 
-                ssl_certificate /etc/letsencrypt/live/sendme.com/fullchain.pem;
-                ssl_certificate_key /etc/letsencrypt/live/sendme.com/privkey.pem;
+                location /api/ {
+                    proxy_pass http://localhost:4000/api/;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+
+                location /socket.io/ {
+                    proxy_pass http://localhost:4000/socket.io/;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+                
+                location /opensearch/ {
+                    proxy_pass http://localhost:5602/;
+                    proxy_http_version 1.1;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                }
+
+                ssl_certificate /etc/letsencrypt/live/new.sendme123.com/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/new.sendme123.com/privkey.pem;
                 include /etc/letsencrypt/options-ssl-nginx.conf;
                 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-            }' |  tee /etc/nginx/sites-available/sendme
+            }' |  tee /etc/nginx/sites-available/sendme123
 
             # 🔗 Habilitar configuración SSL en Nginx
-             ln -sf /etc/nginx/sites-available/sendme /etc/nginx/sites-enabled/
+             ln -sf /etc/nginx/sites-available/sendme123 /etc/nginx/sites-enabled/
 
             # 🔄 Verificar configuración antes de reiniciar Nginx
              nginx -t &&  systemctl restart nginx || exit 1
