@@ -67,7 +67,36 @@
     "campaign": "Campaña",
     "campaigns": "Campañas",
     "campaign_rules": "Reglas de Campaña",
-    "campaign_dispatches": "Envíos de Campaña"
+    "campaign_dispatches": "Envíos de Campaña",
+    "details": "Detalles",
+    "triggers": "Activadores",
+    "message": "Mensaje",
+    "duration": "Duración",
+    "execution_days": "Días de Ejecución",
+    "execution_time": "Hora de Ejecución",
+    "configure_triggers": "Configura los activadores para tu campaña",
+    "add_trigger": "Agregar Activador",
+    "select_field": "Seleccione un campo",
+    "select_condition": "Seleccione el tipo de condición",
+    "value": "Valor",
+    "dynamic_data": "Dato dinámico",
+    "insert_in_message": "Insertar en el mensaje",
+    "select_option": "Seleccione una opción",
+    "days": {
+      "monday": "LU",
+      "tuesday": "MA",
+      "wednesday": "MI",
+      "thursday": "JU",
+      "friday": "VI",
+      "saturday": "SA",
+      "sunday": "DO"
+    },
+    "conditions": {
+      "is_empty": "Está vacío",
+      "is_not_empty": "No está vacío",
+      "is_equal": "Es igual a",
+      "is_not_equal": "Es diferente de"
+    }
   },
   "provider": {
     "provider": "Proveedor",
@@ -186,7 +215,10 @@
     "roles": "Roles",
     "permission": "Permisos",
     "drag_drop_file": "Arrastra y suelta el archivo aquí",
-    "integrations": "Integraciones"
+    "integrations": "Integraciones",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "description": "Descripción"
   },
   "customFields": {
     "title": "Campos Personalizados",

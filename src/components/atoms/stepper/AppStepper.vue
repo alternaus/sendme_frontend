@@ -39,7 +39,7 @@ export default defineComponent({
 
 <template>
   <div class="w-full flex justify-center">
-    <div class="max-w-2xl w-full px-4">
+    <div class="max-w-2xl w-full px-2">
       <Steps :model="steps" :activeStep="activeStep" @item-click="handleItemClick" class="custom-stepper" />
     </div>
   </div>
@@ -55,8 +55,8 @@ export default defineComponent({
   background: var(--p-primary-color);
   color: black;
   border-radius: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1rem;
+  height: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;

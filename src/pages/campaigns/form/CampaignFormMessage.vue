@@ -8,13 +8,13 @@
           >
             3
           </p>
-          <p class="text-center mt-2 font-medium">Mensaje</p>
+          <p class="text-center mt-2 font-medium">{{ t('campaign.message') }}</p>
         </div>
 
         <div class="col-span-11 grid grid-cols-8 gap-4 items-center justify-center text-center">
           <div class="flex flex-col items-center justify-center gap-1 col-span-12 lg:col-span-1">
             <SmsIcon class="w-12 h-12 dark:fill-white" />
-            <span class="text-gray-700 dark:text-neutral-300 font-medium">SMS</span>
+            <span class="text-gray-700 dark:text-neutral-300 font-medium">{{ t('general.sms') }}</span>
           </div>
 
           <div class="flex items-center justify-center col-span-12 lg:col-span-5">
@@ -26,11 +26,11 @@
           </div>
 
           <div class="flex flex-col items-center justify-center gap-2 col-span-12 lg:col-span-2">
-            <p class="text-gray-700 dark:text-neutral-300 font-medium">Dato dinámico</p>
+            <p class="text-gray-700 dark:text-neutral-300 font-medium">{{ t('campaign.dynamic_data') }}</p>
 
             <AppSelect v-model="selectedField" :options="availableFields" class="w-full" />
 
-            <AppButton label="Insertar en el mensaje" @click="insertPlaceholder" />
+            <AppButton :label="t('campaign.insert_in_message')" @click="insertPlaceholder" />
           </div>
         </div>
       </div>
@@ -39,7 +39,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType,ref } from 'vue'
+import { defineComponent, type PropType, ref } from 'vue'
+
+import { useI18n } from 'vue-i18n'
 
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
@@ -71,6 +73,7 @@ export default defineComponent({
   },
   emits: ['update:form'],
   setup(props, { emit }) {
+    const { t } = useI18n()
     const { getCustomFields } = useCustomFieldService()
 
     const availableFields = ref<SelectOption[]>([])
@@ -90,13 +93,13 @@ export default defineComponent({
     getCustomFields()
       .then((response) => {
         const contactFields = [
-          { name: 'Nombre', value: '{name}' },
-          { name: 'Apellido', value: '{lastName}' },
-          { name: 'Correo', value: '{email}' },
-          { name: 'Teléfono', value: '{phone}' },
-          { name: 'Código País', value: '{countryCode}' },
-          { name: 'Fecha de Nacimiento', value: '{birthDate}' },
-          { name: 'Estado', value: '{status}' },
+          { name: t('general.name'), value: '{name}' },
+          { name: t('general.last_name'), value: '{lastName}' },
+          { name: t('general.email'), value: '{email}' },
+          { name: t('general.phone'), value: '{phone}' },
+          { name: t('general.country_code'), value: '{countryCode}' },
+          { name: t('general.birth_date'), value: '{birthDate}' },
+          { name: t('general.status'), value: '{status}' },
         ]
 
         const customFields = response.map((field) => ({
@@ -115,6 +118,7 @@ export default defineComponent({
       selectedField,
       insertPlaceholder,
       updateContent,
+      t,
     }
   },
 })

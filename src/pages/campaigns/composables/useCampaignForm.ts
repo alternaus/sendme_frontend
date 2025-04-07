@@ -1,5 +1,6 @@
 import { type FieldEntry,useFieldArray, useForm } from 'vee-validate'
 import type { Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
 export interface CampaignRule {
@@ -41,43 +42,45 @@ export interface CampaignFormRef {
   campaignRules: Ref<FieldEntry<CampaignRule>[]>
 }
 
-const schema = yup.object<CampaignForm>({
-  name: yup.string().required().label('Nombre de la Campaña'),
-  description: yup.string().required().label('Descripción'),
-  content: yup.string().required().label('Contenido del Mensaje'),
-  contentType: yup.string().oneOf(['plain_text', 'html']).required().label('Tipo de Contenido'),
-  status: yup.string().oneOf(['active', 'inactive']).required().label('Estado'),
-  startDate: yup.date().required().label('Fecha de Inicio'),
-  endDate: yup.date().required().label('Fecha de Finalización'),
-  time: yup.string().required().label('Hora de Ejecución'),
-  days: yup
-    .array()
-    .of(yup.string())
-    .min(1, 'Debes seleccionar al menos un día')
-    .label('Días de Ejecución'),
-  frequency: yup.string().oneOf(['DAILY', 'WEEKLY', 'MONTHLY']).required().label('Frecuencia'),
-  channelId: yup.number().integer().required().label('ID del Canal'),
-  organizationId: yup.number().integer().required().label('ID de la Organización'),
-  campaignRules: yup.array().of(
-    yup.object().shape({
-      conditionType: yup.string().required().label('Tipo de Condición'),
-      value: yup
-        .mixed()
-        .test(
-          'is-valid-type',
-          'El valor es obligatorio',
-          (value) =>
-            value &&
-            (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'),
-        )
-        .required()
-        .label('Valor de la Condición'),
-      customFieldId: yup.number().integer().required().label('ID del Campo Personalizado'),
-    }),
-  ),
-})
-
 export const useFormCampaign = () => {
+  const { t } = useI18n()
+
+  const schema = yup.object<CampaignForm>({
+    name: yup.string().required().label(t('campaign.form.campaign_name')),
+    description: yup.string().required().label(t('campaign.form.description')),
+    content: yup.string().required().label(t('campaign.form.message_content')),
+    contentType: yup.string().oneOf(['plain_text', 'html']).required().label(t('campaign.form.content_type')),
+    status: yup.string().oneOf(['active', 'inactive']).required().label(t('campaign.form.status')),
+    startDate: yup.date().required().label(t('campaign.form.start_date')),
+    endDate: yup.date().required().label(t('campaign.form.end_date')),
+    time: yup.string().required().label(t('campaign.form.execution_time')),
+    days: yup
+      .array()
+      .of(yup.string())
+      .min(1, t('campaign.form.select_at_least_one_day'))
+      .label(t('campaign.form.execution_days')),
+    frequency: yup.string().oneOf(['DAILY', 'WEEKLY', 'MONTHLY']).required().label(t('campaign.form.frequency')),
+    channelId: yup.number().integer().required().label(t('campaign.form.channel_id')),
+    organizationId: yup.number().integer().required().label(t('campaign.form.organization_id')),
+    campaignRules: yup.array().of(
+      yup.object().shape({
+        conditionType: yup.string().required().label(t('campaign.form.condition_type')),
+        value: yup
+          .mixed()
+          .test(
+            'is-valid-type',
+            t('campaign.form.value_is_required'),
+            (value) =>
+              value &&
+              (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'),
+          )
+          .required()
+          .label(t('campaign.form.condition_value')),
+        customFieldId: yup.number().integer().required().label(t('campaign.form.custom_field_id')),
+      }),
+    ),
+  })
+
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<CampaignForm>({
     validationSchema: schema,
     initialValues: {

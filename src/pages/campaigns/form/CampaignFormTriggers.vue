@@ -1,6 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent, nextTick, onMounted, type PropType, ref, watch } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
@@ -42,6 +44,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { t } = useI18n()
     const { getCustomFields } = useCustomFieldService()
     const customFieldsOptions = ref<SelectOption[]>([])
     const touchedFields = ref<Record<number, boolean>>({})
@@ -129,6 +132,7 @@ export default defineComponent({
       handleAddRule,
       handleFieldChange,
       handleRemoveRule,
+      t,
     }
   },
 })
@@ -140,7 +144,7 @@ export default defineComponent({
       <div class="flex flex-col h-full">
         <div class="flex-none mb-4">
           <p class="text-center text-neutral-600 dark:text-neutral-300">
-            Configura los activadores para tu campaña
+            {{ t('campaign.configure_triggers') }}
           </p>
         </div>
 
@@ -169,7 +173,7 @@ export default defineComponent({
                     v-model="rule.customFieldId"
                     :options="customFieldsOptions"
                     :errorMessage="getError(index, 'customFieldId')"
-                    placeholder="Seleccione un campo"
+                    :placeholder="t('campaign.select_field')"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
 
@@ -177,14 +181,14 @@ export default defineComponent({
                     v-model="rule.conditionType"
                     :options="conditionOptions"
                     :errorMessage="getError(index, 'conditionType')"
-                    placeholder="Seleccione el tipo de condición"
+                    :placeholder="t('campaign.select_condition')"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
 
                   <AppInput
                     v-model="rule.value"
                     :errorMessage="getError(index, 'value')"
-                    placeholder="Valor"
+                    :placeholder="t('campaign.value')"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
                 </div>
@@ -197,7 +201,7 @@ export default defineComponent({
           <AppButton
             type="button"
             class="!w-fit"
-            label="Agregar Activador"
+            :label="t('campaign.add_trigger')"
             @click="handleAddRule"
             icon="pi pi-plus" />
         </div>

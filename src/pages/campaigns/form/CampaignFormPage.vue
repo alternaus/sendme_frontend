@@ -2,6 +2,8 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useI18n } from 'vue-i18n'
+
 import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
 import ChannelIcon from '@/assets/svg/channel.svg?component'
 import DescriptionIcon from '@/assets/svg/description.svg?component'
@@ -38,26 +40,27 @@ export default defineComponent({
 
   setup() {
     const router = useRouter()
+    const { t } = useI18n()
     const { form, handleSubmit, resetForm, errors, addRule, removeRule } = useFormCampaign()
     const { getChannels } = useChannelService()
     const activeStep = ref(0)
 
     const steps = [
-      { label: 'Detalles', icon: 'pi pi-info-circle' },
-      { label: 'Activadores', icon: 'pi pi-bolt' },
-      { label: 'Mensaje', icon: 'pi pi-comment' },
+      { label: t('campaign.details'), icon: 'pi pi-info-circle' },
+      { label: t('campaign.triggers'), icon: 'pi pi-bolt' },
+      { label: t('campaign.message'), icon: 'pi pi-comment' },
     ]
 
     const statusOptions = [
-      { name: 'Activo', value: 'active' },
-      { name: 'Inactivo', value: 'inactive' },
+      { name: t('general.active'), value: 'active' },
+      { name: t('general.inactive'), value: 'inactive' },
     ]
 
     const conditionOptions = [
-      { name: 'Está vacío', value: 'is_empty' },
-      { name: 'No está vacío', value: 'is_not_empty' },
-      { name: 'Es igual a', value: 'is_equal' },
-      { name: 'Es diferente de', value: 'is_not_equal' },
+      { name: t('campaign.conditions.is_empty'), value: 'is_empty' },
+      { name: t('campaign.conditions.is_not_empty'), value: 'is_not_empty' },
+      { name: t('campaign.conditions.is_equal'), value: 'is_equal' },
+      { name: t('campaign.conditions.is_not_equal'), value: 'is_not_equal' },
     ]
 
     const channels = ref<SelectOption[]>([])
@@ -129,6 +132,7 @@ export default defineComponent({
       nextStep,
       prevStep,
       handleCancel,
+      t,
     }
   },
 })
@@ -146,6 +150,7 @@ export default defineComponent({
         type="text"
         class="w-full border-gray-300 dark:border-gray-600 rounded-md"
         :error-message="errors.name"
+        :placeholder="t('general.name')"
       >
         <template #icon>
           <CampaignRouteIcon class="dark:fill-white w-4 h-4" />
@@ -157,6 +162,7 @@ export default defineComponent({
         :error-message="errors.description"
         type="text"
         class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        :placeholder="t('general.description')"
       >
         <template #icon>
           <DescriptionIcon class="dark:fill-white w-4 h-4" />
@@ -167,7 +173,7 @@ export default defineComponent({
         v-model="form.channelId.value"
         :options="channels"
         :error-message="errors.channelId"
-        placeholder="Seleccione una opción"
+        :placeholder="t('campaign.select_option')"
         class="w-full"
       >
         <template #icon>
@@ -179,7 +185,7 @@ export default defineComponent({
         v-model="form.status.value"
         :options="statusOptions"
         :error-message="errors.status"
-        placeholder="Seleccione una opción"
+        :placeholder="t('campaign.select_option')"
         class="w-full"
       >
         <template #icon>
@@ -208,14 +214,14 @@ export default defineComponent({
           v-if="activeStep > 0"
           severity="secondary"
           class="w-full sm:w-auto"
-          label="Anterior"
+          :label="t('general.previous')"
           @click.prevent="prevStep"
         />
         <AppButton
           v-if="activeStep < steps.length - 1"
           severity="primary"
           class="w-full sm:w-auto"
-          label="Siguiente"
+          :label="t('general.next')"
           @click.prevent="nextStep"
         />
       </div>
@@ -225,12 +231,12 @@ export default defineComponent({
           type="submit"
           severity="primary"
           class="w-full sm:w-auto"
-          label="Guardar"
+          :label="t('general.save')"
         />
         <AppButton
           severity="secondary"
           class="w-full sm:w-auto"
-          label="Cancelar"
+          :label="t('general.cancel')"
           @click.prevent="handleCancel"
         />
       </div>

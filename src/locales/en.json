@@ -67,7 +67,55 @@
     "campaign": "Campaign",
     "campaigns": "Campaigns",
     "campaign_rules": "Campaign Rules",
-    "campaign_dispatches": "Campaign Dispatches"
+    "campaign_dispatches": "Campaign Dispatches",
+    "details": "Details",
+    "triggers": "Triggers",
+    "message": "Message",
+    "duration": "Duration",
+    "execution_days": "Execution Days",
+    "execution_time": "Execution Time",
+    "configure_triggers": "Configure your campaign triggers",
+    "add_trigger": "Add Trigger",
+    "select_field": "Select a field",
+    "select_condition": "Select condition type",
+    "value": "Value",
+    "dynamic_data": "Dynamic Data",
+    "insert_in_message": "Insert in message",
+    "select_option": "Select an option",
+    "form": {
+      "campaign_name": "Campaign Name",
+      "description": "Description",
+      "message_content": "Message Content",
+      "content_type": "Content Type",
+      "status": "Status",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "execution_time": "Execution Time",
+      "execution_days": "Execution Days",
+      "frequency": "Frequency",
+      "channel_id": "Channel ID",
+      "organization_id": "Organization ID",
+      "condition_type": "Condition Type",
+      "condition_value": "Condition Value",
+      "custom_field_id": "Custom Field ID",
+      "select_at_least_one_day": "You must select at least one day",
+      "value_is_required": "Value is required"
+    },
+    "days": {
+      "monday": "MO",
+      "tuesday": "TU",
+      "wednesday": "WE",
+      "thursday": "TH",
+      "friday": "FR",
+      "saturday": "SA",
+      "sunday": "SU"
+    },
+    "conditions": {
+      "is_empty": "Is Empty",
+      "is_not_empty": "Is Not Empty",
+      "is_equal": "Is Equal To",
+      "is_not_equal": "Is Not Equal To"
+    }
   },
   "provider": {
     "provider": "Provider",
@@ -186,7 +234,10 @@
     "roles": "Roles",
     "permission": "Permission",
     "drag_drop_file": "Drag and drop the file here",
-    "integrations": "Integrations"
+    "integrations": "Integrations",
+    "previous": "Previous",
+    "next": "Next",
+    "description": "Description"
   },
   "customFields": {
     "title": "Custom Fields",
