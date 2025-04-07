@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watchEffect } from 'vue'
+import { computed, defineComponent, onMounted, ref, watchEffect, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -100,6 +100,18 @@ export default defineComponent({
             })),
           })
         }
+
+        // Navegar al último elemento después de que se hayan cargado los campos
+        await nextTick()
+        setTimeout(() => {
+          const customFieldsContainer = document.querySelector('.custom-fields-container')
+          if (customFieldsContainer) {
+            const lastField = customFieldsContainer.lastElementChild
+            if (lastField) {
+              lastField.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            }
+          }
+        }, 100)
       } catch {
         toast.add({
           severity: 'error',
@@ -262,7 +274,7 @@ export default defineComponent({
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[300px] overflow-y-auto pr-2 custom-fields-container">
           <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
             <label class="text-sm font-medium">{{
               customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
