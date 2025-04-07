@@ -88,21 +88,22 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 :deep(.ql-editor.ql-blank) {
-  border-radius: var(--radius-xl) !important;
+  border-radius: 0% 0% var(--radius-xl) var(--radius-xl) !important;
   border: 1px solid var(--p-select-border-color) !important;
   background-color: var(--p-inputtext-background) !important;
 }
 
 :deep(.ql-editor) {
-  border-radius: var(--radius-xl) !important;
+  border-radius: 0% 0% var(--radius-xl) var(--radius-xl) !important;
   border: 1px solid var(--p-select-border-color) !important;
   background-color: var(--p-inputtext-background) !important;
 }
 
 :deep(.ql-container) {
-  border-radius: var(--radius-xl);
+  border-radius: 0% 0% var(--radius-xl) var(--radius-xl);
   border: none;
 }
+
 .text-editor:deep(.p-editor-toolbar) {
   display: none;
 }
