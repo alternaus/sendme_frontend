@@ -146,7 +146,6 @@ const saveUsers = async () => {
           roleId: 1,
           organizationId,
           password: generateRandomPassword(),
-          twoFactorEnabled: false
         })
       }
     }
