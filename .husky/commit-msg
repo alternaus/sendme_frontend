@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Valida que el mensaje de commit tenga un formato adecuado
-message="$(cat $1)"
+original_message="$(cat $1)"
+# Elimina las líneas de comentarios que empiezan con #
+message=$(echo "$original_message" | grep -v "^#")
 min_length=10
 max_length=200
 

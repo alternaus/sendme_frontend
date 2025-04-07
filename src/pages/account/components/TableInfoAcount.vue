@@ -57,8 +57,8 @@ export default defineComponent({
           page: page.value,
           limit: limit.value,
           organizationId: props.idOrganization,
-          fromDate: startDate.value ? startDate.value.toISOString() : null,
-          toDate: endDate.value ? endDate.value.toISOString() : null,
+          fromDate: startDate.value ? startDate.value.toISOString() : undefined,
+          toDate: endDate.value ? endDate.value.toISOString() : undefined,
         })
         if (response) {
           rechargesMeta.value = response.meta

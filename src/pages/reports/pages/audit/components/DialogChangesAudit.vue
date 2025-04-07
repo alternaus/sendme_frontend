@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed,defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
@@ -21,17 +21,12 @@ export default defineComponent({
   },
   emits: ['update:visible'],
   setup(props, { emit }) {
-    const internalVisible = ref(props.visible)
-
-    watch(
-      () => props.visible,
-      (val) => {
-        internalVisible.value = val
-      }
-    )
+    const internalVisible = computed({
+      get: () => props.visible,
+      set: (value) => emit('update:visible', value)
+    })
 
     const closeDialog = () => {
-      internalVisible.value = false
       emit('update:visible', false)
     }
 

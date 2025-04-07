@@ -230,7 +230,7 @@
   },
   "recharge_status": {
     "pending": "Pending",
-    "accepted" : "Accepted",
+    "accepted": "Accepted",
     "rejected": "Rejected",
     "failed": "Failed",
     "reversed": "Reversed",

@@ -1,3 +1,22 @@
 #!/usr/bin/env bash
 
+# Ejecutar lint-staged (analiza solo los archivos modificados)
 npx lint-staged
+
+# Si lint-staged pasa, ejecutar build del proyecto completo
+if [ $? -eq 0 ]; then
+  echo "✅ Linting completado. Ejecutando build..."
+  npm run build-only
+  build_result=$?
+  
+  if [ $build_result -eq 0 ]; then
+    echo "✅ Build completado correctamente"
+    exit 0
+  else
+    echo "❌ Build falló"
+    exit 1
+  fi
+else
+  echo "❌ Linting falló"
+  exit 1
+fi

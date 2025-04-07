@@ -230,7 +230,7 @@
   },
   "recharge_status": {
     "pending": "Pendiente",
-    "accepted" : "Aceptado",
+    "accepted": "Aceptado",
     "rejected": "Rechazado",
     "failed": "Fallido",
     "reversed": "Revertido",
@@ -298,6 +298,7 @@
     "shipment_date": "Fecha de envío",
     "organizations": "Organizaciones",
     "roles": "Roles",
+    "permission": "Permiso",
     "permissions": "Permisos",
     "drag_drop_file": "Arrastra y suelta el archivo aquí",
     "account": "Cuenta",
@@ -318,6 +319,9 @@
     "visualize_changes": "Visualizar cambios",
     "after": "Después",
     "before": "Antes",
+    "integrations": "Integraciones",
+    "previous": "Anterior",
+    "next": "Siguiente"
   },
   "customFields": {
     "title": "Campos Personalizados",
