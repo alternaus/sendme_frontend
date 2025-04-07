@@ -38,11 +38,11 @@ export const useReportService = () => {
     let hours = now.getHours()
     const minutes = String(now.getMinutes()).padStart(2, '0')
     const ampm = hours >= 12 ? 'PM' : 'AM'
-    hours = hours % 12 || 12 // Convierte 0 en 12 para formato de 12 horas
-  
+    hours = hours % 12 || 12
+
     return `${prefix}_${day}${month}${year}_${hours}.${minutes}${ampm}.xlsx`
   }
-  
+
 
   // Auditoría 🔍
   const getAudits = async (query?: IFilterAudit) => {

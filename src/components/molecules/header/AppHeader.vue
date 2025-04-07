@@ -8,7 +8,6 @@ import {
 } from 'vue'
 
 import EyeIcon from '@/assets/svg/eye.svg?component'
-import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import ReportsIcon from '@/assets/svg/header/reports.svg?component'
@@ -21,6 +20,7 @@ import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
+import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppDarkMode from '@/components/molecules/dark-mode/AppDarkMode.vue'
@@ -47,9 +47,10 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.REPORTS]: ReportsIcon,
   [IconTypes.AUDIT]: AuditIcon,
   [IconTypes.MESSAGES]: MessagesIcon,
-  [IconTypes.BUY]: BuyIcon,
+  [IconTypes.BUY]: ContactsIcon,
   [IconTypes.SETTINGS]: SettingsIcon,
   [IconTypes.IMPORT]: ImportIcon,
+  [IconTypes.CUSTOM_FIELDS]: InformationIcon,
 }
 
 export default defineComponent({
@@ -123,7 +124,7 @@ export default defineComponent({
 
   <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4">
     <div class="flex flex-col items-center md:flex-row md:gap-4">
-      <component :is="IconComponents[icon]"
+      <component :is="IconComponents[icon]" v-if="icon && IconComponents[icon]"
         class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]" />
       <span class="text-xl  font-semibold text-center md:text-left">
         {{ text }}

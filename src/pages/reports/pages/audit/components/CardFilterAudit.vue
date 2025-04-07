@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed,defineComponent } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -37,15 +37,23 @@ export default defineComponent({
   emits: ['update:action', 'update:table', 'update:startDate', 'update:endDate', 'update:search'],
   setup(props, { emit }) {
     const { t } = useI18n()
-    const updateField = (field: string, value: unknown) => {
+    const updateField = (
+      field: 'search' | 'action' | 'table' | 'startDate' | 'endDate',
+      value: unknown,
+    ) => {
       emit(`update:${field}`, value as string | null | Date)
     }
+
+    const startDateValue = computed(() => (props.startDate ? new Date(props.startDate) : null))
+    const endDateValue = computed(() => (props.endDate ? new Date(props.endDate) : null))
 
     return {
       ActionAuditTypes,
       ModuleTypes,
       updateField,
-      t
+      startDateValue,
+      endDateValue,
+      t,
     }
   },
 })
@@ -95,7 +103,7 @@ export default defineComponent({
           </template>
         </AppSelect>
         <AppDatePicker
-          :modelValue="startDate"
+          :modelValue="startDateValue"
           placeholder=""
           :label="$t('general.start_date')"
           class="w-full mt-3"
@@ -106,7 +114,7 @@ export default defineComponent({
           </template>
         </AppDatePicker>
         <AppDatePicker
-          :modelValue="endDate"
+          :modelValue="endDateValue"
           placeholder=""
           :label="$t('general.end_date')"
           class="w-full mt-3"

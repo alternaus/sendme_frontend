@@ -8,6 +8,11 @@
     "en": "English",
     "es": "Spanish"
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved.",
+    "backToHome": "Back to home"
+  },
   "auth": {
     "logout": "Logout",
     "login": "Login",
@@ -62,7 +67,93 @@
     "campaign": "Campaign",
     "campaigns": "Campaigns",
     "campaign_rules": "Campaign Rules",
-    "campaign_dispatches": "Campaign Dispatches"
+    "campaign_dispatches": "Campaign Dispatches",
+    "details": "Details",
+    "triggers": "Triggers",
+    "message": "Message",
+    "duration": "Duration",
+    "execution_days": "Execution Days",
+    "execution_time": "Execution Time",
+    "configure_triggers": "Configure your campaign triggers",
+    "add_trigger": "Add Trigger",
+    "select_field": "Select a field",
+    "select_condition": "Select condition type",
+    "value": "Value",
+    "dynamic_data": "Dynamic Data",
+    "insert_in_message": "Insert in message",
+    "select_option": "Select an option",
+    "channel": "Channel",
+    "name": "Name",
+    "frequency": "Frequency",
+    "time": "Time",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "contact": "Contact",
+    "status": "Status",
+    "error_getting_campaigns": "Failed to load campaigns",
+    "success_removed": "Campaign successfully deleted",
+    "error_removed": "Error deleting campaign",
+    "success_exported": "Campaigns successfully exported",
+    "error_exported": "Error exporting campaigns",
+    "form": {
+      "campaign_name": "Campaign Name",
+      "description": "Description",
+      "message_content": "Message Content",
+      "content_type": "Content Type",
+      "status": "Status",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "execution_time": "Execution Time",
+      "execution_days": "Execution Days",
+      "frequency": "Frequency",
+      "channel_id": "Channel ID",
+      "organization_id": "Organization ID",
+      "condition_type": "Condition Type",
+      "condition_value": "Condition Value",
+      "custom_field_id": "Custom Field ID",
+      "select_at_least_one_day": "You must select at least one day",
+      "value_is_required": "Value is required"
+    },
+    "days": {
+      "monday": "MO",
+      "tuesday": "TU",
+      "wednesday": "WE",
+      "thursday": "TH",
+      "friday": "FR",
+      "saturday": "SA",
+      "sunday": "SU"
+    },
+    "days_abbr": {
+      "MO": "M",
+      "TU": "T",
+      "WE": "W",
+      "TH": "T",
+      "FR": "F",
+      "SA": "S",
+      "SU": "S"
+    },
+    "conditions": {
+      "is_empty": "Is Empty",
+      "not_empty": "Is Not Empty",
+      "equals": "Equals",
+      "not_equals": "Not Equals",
+      "greater_than": "Greater Than",
+      "less_than": "Less Than",
+      "between": "Between",
+      "contains": "Contains",
+      "starts_with": "Starts With",
+      "ends_with": "Ends With"
+    },
+    "errors": {
+      "load_channels": "Error loading channels",
+      "load_campaign": "Error loading campaign",
+      "save": "Error saving campaign",
+      "validation": "Form validation error"
+    },
+    "success": {
+      "created": "Campaign created successfully",
+      "updated": "Campaign updated successfully"
+    }
   },
   "provider": {
     "provider": "Provider",
@@ -81,10 +172,10 @@
     "sending_by_campaign": "Sending by Campaign",
     "error_getting_audit": "Error getting audit",
     "audit_success_exported": "Audit exported successfully",
-    "error_exporting_audit": "Error exporting audit",
+    "audit_error_exported": "Error exporting audit",
     "error_getting_messages": "Error getting messages",
     "messages_success_exported": "Messages exported successfully",
-    "error_exporting_messages": "Error exporting messages",
+    "messages_error_exported": "Error exporting messages",
     "message_status": {
       "queued": "Queued",
       "sending": "Sending",
@@ -104,12 +195,27 @@
   "user": {
     "user": "User",
     "users": "Users",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
     "new_user": "New User",
     "edit_user": "Edit User",
     "user_information": "User Information",
+    "manage_users": "Manage Users",
+    "add_user": "Add User",
+    "add_users": "Add users",
+    "add_users_limit": "Create up to {max} users to send messages from your account",
+    "add_users_desc": "Add users and assign them a name and email",
     "error_getting_users": "Error getting users",
-    "success_removed": "User removed successfully",
-    "error_removed": "Error removing user"
+    "error_loading": "Failed to load users",
+    "user_deleted": "User successfully deleted",
+    "users_created": "Users successfully created",
+    "users_updated": "Users successfully updated",
+    "error_saving": "Error saving users",
+    "error_deleting": "Error deleting user",
+    "max_users_reached": "You have reached the limit of {max} users",
+    "no_users_added": "You must add at least one user",
+    "incomplete_users": "All users must have a name and email"
   },
   "actions": {
     "edit": "Edit",
@@ -181,11 +287,27 @@
     "roles": "Roles",
     "permission": "Permission",
     "drag_drop_file": "Drag and drop the file here",
-    "buy_messages": "Buy Messages",
-    "choose_value_recharge": "Choose the value of your recharge",
-    "info_remember_recharge":"Remember that as long as you have the plan active your messages do not expire, the recharge will be applied immediately to your account. ",
-    "pay": "Pay",
-    "enter_value": "Enter the value",
-    "select_valid_recharge_value": "Select or enter a valid recharge value."
+    "integrations": "Integrations",
+    "previous": "Previous",
+    "next": "Next",
+    "description": "Description"
+  },
+  "customFields": {
+    "title": "Custom Fields",
+    "add_field": "Add field",
+    "field_label": "Field label",
+    "field_type": "Field type",
+    "max_fields": "You can add up to 10 complementary information fields to your contacts.",
+    "field_added": "Field added successfully",
+    "field_updated": "Field updated successfully",
+    "field_deleted": "Field deleted successfully",
+    "error_loading": "Error loading custom fields",
+    "error_saving": "Error saving custom fields",
+    "error_deleting": "Error deleting custom field",
+    "data_types": {
+      "text": "Text",
+      "number": "Number",
+      "date": "Date"
+    }
   }
 }

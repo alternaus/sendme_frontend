@@ -9,6 +9,7 @@ export interface IAudit {
   timestamp:      Date;
   userId:         number;
   organizationId: number;
+  ipAddress:      string;
   createdAt:      Date;
   updatedAt:      Date;
 }

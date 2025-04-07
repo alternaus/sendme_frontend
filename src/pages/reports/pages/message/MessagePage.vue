@@ -2,8 +2,6 @@
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useToast } from 'primevue/usetoast'
-
 import { useI18n } from 'vue-i18n'
 
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
@@ -40,7 +38,6 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const router = useRouter()
-    const toast = useToast()
     const { getMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
 
@@ -68,8 +65,8 @@ export default defineComponent({
           content: content.value,
           status: status.value,
           messageType: messageType.value,
-          startDate: startDate.value,
-          endDate: endDate.value,
+          startDate: startDate.value?.toISOString(),
+          endDate: endDate.value?.toISOString(),
         })
         if (response?.data && response?.meta) {
           messages.value = response.data
@@ -87,13 +84,13 @@ export default defineComponent({
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
-          
+
             exportMessages({
               content: content.value,
               status: status.value,
               messageType: messageType.value,
-              startDate: startDate.value,
-              endDate: endDate.value,
+              startDate: startDate.value?.toISOString(),
+              endDate: endDate.value?.toISOString(),
             })
         },
       },
@@ -110,6 +107,20 @@ export default defineComponent({
       return translationKey ? t(translationKey) : type
     }
 
+    const startDateString = computed({
+      get: () => startDate.value?.toISOString() || '',
+      set: (value: string) => {
+        startDate.value = value ? new Date(value) : new Date()
+      }
+    })
+
+    const endDateString = computed({
+      get: () => endDate.value?.toISOString() || '',
+      set: (value: string) => {
+        endDate.value = value ? new Date(value) : new Date()
+      }
+    })
+
     return {
       router,
       headerActions,
@@ -120,8 +131,8 @@ export default defineComponent({
       content,
       status,
       messageType,
-      startDate,
-      endDate,
+      startDateString,
+      endDateString,
       getStatusTranslation,
       getTypeMessageTranslation,
     }
@@ -134,8 +145,8 @@ export default defineComponent({
     v-model:content="content"
     v-model:status="status"
     v-model:messageType="messageType"
-    v-model:startDate="startDate"
-    v-model:endDate="endDate"
+    v-model:startDate="startDateString"
+    v-model:endDate="endDateString"
   />
   <AppTable
     class="w-full mt-4"

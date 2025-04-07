@@ -1,3 +1,11 @@
+export interface IRole {
+  id: number
+  name: string
+  description: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface IUser {
   id: number
   roleId: number
@@ -5,15 +13,7 @@ export interface IUser {
   name: string
   email: string
   role: IRole
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date
-}
-
-export interface IRole {
-  id: number
-  name: string
-  description: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }

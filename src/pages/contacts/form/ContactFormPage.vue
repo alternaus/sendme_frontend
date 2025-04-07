@@ -1,9 +1,10 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watchEffect } from 'vue'
+import { computed, defineComponent, nextTick,onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
+import { type FieldEntry } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
 
 import BirthdayIcon from '@/assets/svg/birthday.svg?component'
@@ -24,7 +25,7 @@ import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
-import { useFormContact } from '../composables/useContactForm'
+import { type CustomValue,useFormContact } from '../composables/useContactForm'
 
 export default defineComponent({
   components: {
@@ -53,7 +54,7 @@ export default defineComponent({
     const { getCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
-    const customFields = ref<{ id: number; fieldName: string }[]>([])
+    const customFields = ref<{ id: number; fieldName: string; dataType: string }[]>([])
 
     const breadcrumbData = computed(() => [
       { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
@@ -99,6 +100,18 @@ export default defineComponent({
             })),
           })
         }
+
+        // Navegar al último elemento después de que se hayan cargado los campos
+        await nextTick()
+        setTimeout(() => {
+          const customFieldsContainer = document.querySelector('.custom-fields-container')
+          if (customFieldsContainer) {
+            const lastField = customFieldsContainer.lastElementChild
+            if (lastField) {
+              lastField.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            }
+          }
+        }, 100)
       } catch {
         toast.add({
           severity: 'error',
@@ -167,6 +180,12 @@ export default defineComponent({
       return (errors?.value as Record<string, string | undefined>)[errorKey] || ''
     }
 
+    const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>) => {
+      if (custom.value) {
+        custom.value.value = value ? value.toISOString() : ''
+      }
+    }
+
     const goBack = () => {
       router.push('/contacts')
     }
@@ -184,6 +203,7 @@ export default defineComponent({
       getError,
       contactId,
       goBack,
+      handleDateChange,
     }
   },
 })
@@ -193,12 +213,12 @@ export default defineComponent({
   <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS"
     :actions="[]" />
 
-  <form @submit.prevent="onSubmitForm" class="w-full">
+  <form @submit.prevent="onSubmitForm" class="w-full pt-4">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput v-model="form.name.value" type="text" class="w-full rounded-md mt-3" :error-message="errors.name"
         :label="$t('general.name')">
         <template #icon>
-          <CredentialIcon class="w-4 h-4 fill-current" />
+          <CredentialIcon class="w-4 h-4 dark:fill-white" />
         </template>
       </AppInput>
 
@@ -254,13 +274,25 @@ export default defineComponent({
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[300px] overflow-y-auto pr-2 custom-fields-container">
           <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
-            <label>{{
+            <label class="text-sm font-medium">{{
               customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
             }}</label>
-            <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
-              :error-message="getError(index, 'value')" />
+            <template v-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'string'">
+              <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
+                :error-message="getError(index, 'value')" />
+            </template>
+            <template v-else-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'number'">
+              <AppInput v-model="custom.value.value" type="number" class="w-full rounded-md"
+                :error-message="getError(index, 'value')" />
+            </template>
+            <template v-else-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'date'">
+              <AppDatePicker :model-value="custom.value.value ? new Date(custom.value.value) : new Date()"
+                @update:model-value="(val) => handleDateChange(val, custom)"
+                class="w-full rounded-md"
+                :error-message="getError(index, 'value')" />
+            </template>
           </div>
         </div>
       </template>

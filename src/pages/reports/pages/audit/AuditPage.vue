@@ -2,8 +2,6 @@
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useToast } from 'primevue/usetoast'
-
 import { useI18n } from 'vue-i18n'
 
 import ActionIcon from '@/assets/svg/action.svg?component'
@@ -37,7 +35,6 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const router = useRouter()
-    const toast = useToast()
     const { getAudits, exportAudits } = useReportService()
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
@@ -67,8 +64,8 @@ export default defineComponent({
           limit: limit.value,
           action: action.value,
           table: table.value,
-          startDate: startDate.value,
-          endDate: endDate.value,
+          startDate: startDate.value?.toISOString(),
+          endDate: endDate.value?.toISOString(),
           // search: search.value,
         })
         if (response?.data && response?.meta) {
@@ -90,8 +87,10 @@ export default defineComponent({
           exportAudits({
             action: action.value,
             table: table.value,
-            startDate: startDate.value,
-            endDate: endDate.value,
+            startDate: startDate.value?.toISOString(),
+            endDate: endDate.value?.toISOString(),
+            page: page.value,
+            limit: limit.value,
           })
         },
       },
@@ -108,6 +107,20 @@ export default defineComponent({
       return translationKey ? t(translationKey) : module
     }
 
+    const startDateString = computed({
+      get: () => startDate.value?.toISOString() || '',
+      set: (value: string) => {
+        startDate.value = value ? new Date(value) : new Date()
+      }
+    })
+
+    const endDateString = computed({
+      get: () => endDate.value?.toISOString() || '',
+      set: (value: string) => {
+        endDate.value = value ? new Date(value) : new Date()
+      }
+    })
+
     return {
       router,
       IconTypes,
@@ -120,8 +133,8 @@ export default defineComponent({
       headerActions,
       action,
       table,
-      startDate,
-      endDate,
+      startDateString,
+      endDateString,
     }
   },
 })
@@ -131,8 +144,8 @@ export default defineComponent({
   <CardFilterAudit
     v-model:action="action"
     v-model:table="table"
-    v-model:startDate="startDate"
-    v-model:endDate="endDate"
+    v-model:startDate="startDateString"
+    v-model:endDate="endDateString"
     v-model:search="search"
   />
   <AppTable

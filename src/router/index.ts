@@ -2,7 +2,6 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
-import buyRoutes from './buyRoutes'
 import campaignRoutes from './campaignRoutes'
 import contactRoutes from './contactRoutes'
 import reportRoutes from './reportRoutes'
@@ -20,7 +19,6 @@ const routes: RouteRecordRaw[] = [
   settingRoutes,
   sendRoutes,
   reportRoutes,
-  buyRoutes,
   {
     path: '/auth',
     name: 'auth',
@@ -59,6 +57,16 @@ router.beforeEach((to, from, next) => {
 
   breadcrumbStore.setBreadcrumbs(breadcrumbs);
 
+  if (to.name === 'not-found') {
+    return next()
+  }
+
+
+  if (to.matched.length === 0) {
+    console.warn('⚠️ Ruta no encontrada. Redirigiendo a /not-found')
+    return next({ name: 'not-found' })
+  }
+
   if (to.meta.requiresAuth && !token) {
     console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/sign-in')
     return next('/auth/sign-in')
@@ -71,5 +79,7 @@ router.beforeEach((to, from, next) => {
 
   next()
 })
+
+
 
 export default router
