@@ -321,9 +321,9 @@
     "integrations": "Integrations",
     "previous": "Previous",
     "next": "Next",
-    "description": "Description",
     "no_data": "No data available",
-    "retry": "Retry"
+    "retry": "Retry",
+    "no_records_found": "No records found"
   },
   "customFields": {
     "title": "Custom Fields",

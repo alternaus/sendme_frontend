@@ -176,7 +176,6 @@ export default defineComponent({
     :totalItems="messageMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    :emptyMessage="'report.error_getting_messages'"
     textTotalItems="general.messages"
     @page-change="fetchMessages"
   >
@@ -184,19 +183,6 @@ export default defineComponent({
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
         <span> {{ $t('general.recipient_details') }} </span>
-      </div>
-    </template>
-    <template #empty>
-      <div class="flex flex-col items-center justify-center p-6 text-center">
-        <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
-        <p class="text-gray-500 dark:text-gray-400">{{ $t('report.error_getting_messages') }}</p>
-        <button
-          @click="fetchMessages()"
-          class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-        >
-          <i class="pi pi-refresh mr-2"></i>
-          {{ $t('general.retry') }}
-        </button>
       </div>
     </template>
     <template #header-sentAt>

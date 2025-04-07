@@ -165,7 +165,7 @@ export default defineComponent({
             <slot name="empty">
               <div class="flex flex-col items-center justify-center p-6 text-center">
                 <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
-                <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
+                <p class="text-gray-500 dark:text-gray-400">{{ $t('general.no_records_found') }}</p>
               </div>
             </slot>
           </template>
@@ -178,7 +178,7 @@ export default defineComponent({
           <div v-else-if="data.length === 0" class="col-span-full flex flex-col items-center justify-center p-8 text-center">
             <slot name="empty">
               <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
-              <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t('general.no_records_found') }}</p>
             </slot>
           </div>
 

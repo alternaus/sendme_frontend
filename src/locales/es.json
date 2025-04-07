@@ -323,7 +323,8 @@
     "previous": "Anterior",
     "next": "Siguiente",
     "no_data": "No hay datos disponibles",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "no_records_found": "No se encontraron registros"
   },
   "customFields": {
     "title": "Campos Personalizados",
