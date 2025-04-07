@@ -24,6 +24,7 @@ export default defineComponent({
     Settings,
     Whatsapp,
   },
+  emits: ['update:expanded'],
   setup(props, { emit }) {
     const { t } = useI18n()
     const isExpanded = ref(false)
@@ -48,7 +49,6 @@ export default defineComponent({
       toggleExpand,
     }
   },
-  emits: ['update:expanded'],
 })
 </script>
 
