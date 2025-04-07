@@ -4,7 +4,4 @@ export interface ICreateUser {
   name: string;
   email: string;
   password: string;
-  twoFactorEnabled?: boolean;
-  twoFactorSecret?: string;
-  twoFactorBackupCodes?: string;
 }
