@@ -238,7 +238,7 @@ onMounted(() => {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 auto-rows-min">
               <div v-for="(field, idx) in customFields" :key="field.key"
                 :data-field-index="idx"
-                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-fit"
+                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-900 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 h-fit"
                 :class="{'border border-red-500': getError(idx, 'fieldName') || getError(idx, 'dataType')}">
                 <div class="flex flex-col gap-4">
                   <div class="flex items-center justify-between">
