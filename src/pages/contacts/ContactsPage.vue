@@ -222,6 +222,28 @@ export default defineComponent({
     @selection-change="handleSelectionChange"
     @page-change="fetchContacts"
   >
+    <template #empty>
+      <div class="flex flex-col items-center justify-center p-6 text-center">
+        <i class="pi pi-users text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('contact.error_getting_contacts') }}</p>
+        <div class="flex gap-3 mt-4">
+          <button
+            @click="fetchContacts()"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+          >
+            <i class="pi pi-refresh mr-2"></i>
+            {{ $t('general.retry') }}
+          </button>
+          <button
+            @click="$router.push('/contacts/create')"
+            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+          >
+            <i class="pi pi-plus mr-2"></i>
+            {{ $t('contact.new_contact') }}
+          </button>
+        </div>
+      </div>
+    </template>
     <template #header-name>
       <div class="flex items-center">
         <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
@@ -266,6 +288,11 @@ export default defineComponent({
     <template #custom-phoneNumber="{ data }">
       <div class="flex justify-center">
         {{ data.phoneNumber || '-' }}
+      </div>
+    </template>
+    <template #custom-email="{ data }">
+      <div class="flex justify-center">
+        {{ data.email || '-' }}
       </div>
     </template>
   </AppTable>

@@ -6,7 +6,6 @@ import Column from 'primevue/column'
 import ContextMenu from 'primevue/contextmenu'
 import DataTable from 'primevue/datatable'
 import Paginator from 'primevue/paginator'
-import ProgressSpinner from 'primevue/progressspinner'
 
 import type { TableHeader } from './types/table-header.type'
 
@@ -18,7 +17,6 @@ export default defineComponent({
     Paginator,
     Card,
     ContextMenu,
-    ProgressSpinner,
   },
   props: {
     data: {
@@ -120,10 +118,6 @@ export default defineComponent({
       <div class="max-h-[calc(100vh-300px)] overflow-auto relative">
         <ContextMenu ref="contextMenuRef" :model="menuModel" @hide="selectedRow = null" />
 
-        <div v-if="loading" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-neutral-800/70 z-10">
-          <ProgressSpinner strokeWidth="4" class="w-12 h-12" />
-        </div>
-
         <DataTable
           v-if="!isMdScreen"
           v-model:selection="selectedRow"
@@ -166,12 +160,26 @@ export default defineComponent({
               </slot>
             </template>
           </Column>
+
+          <template #empty>
+            <slot name="empty">
+              <div class="flex flex-col items-center justify-center p-6 text-center">
+                <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
+              </div>
+            </slot>
+          </template>
         </DataTable>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div v-if="data.length === 0 && !loading" class="col-span-full flex flex-col items-center justify-center p-8 text-center">
-            <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
-            <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
+          <div v-if="loading" class="col-span-full flex justify-center py-4">
+            <i class="pi pi-spin pi-spinner text-3xl text-gray-400"></i>
+          </div>
+          <div v-else-if="data.length === 0" class="col-span-full flex flex-col items-center justify-center p-8 text-center">
+            <slot name="empty">
+              <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t(emptyMessage) }}</p>
+            </slot>
           </div>
 
           <template v-else>
@@ -211,7 +219,6 @@ export default defineComponent({
           :rowsPerPageOptions="rowSizes"
           :totalRecords="totalItems"
           @page="handlePageChange"
-          class="small-paginator"
         />
       </div>
       <!-- @page="(event) => $emit('page-change', event.page + 1)" -->
@@ -238,21 +245,5 @@ export default defineComponent({
   justify-content: end;
 }
 
-:deep(.small-paginator) {
-  .p-paginator-button {
-    min-width: 2rem;
-    height: 2rem;
-  }
 
-  .p-dropdown {
-    height: 2rem;
-    min-width: 4rem;
-  }
-
-  .p-paginator-page, .p-paginator-next, .p-paginator-prev, .p-paginator-first, .p-paginator-last {
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.8rem;
-  }
-}
 </style>

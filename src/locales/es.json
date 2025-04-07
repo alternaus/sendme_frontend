@@ -322,7 +322,8 @@
     "integrations": "Integraciones",
     "previous": "Anterior",
     "next": "Siguiente",
-    "no_data": "No hay datos disponibles"
+    "no_data": "No hay datos disponibles",
+    "retry": "Reintentar"
   },
   "customFields": {
     "title": "Campos Personalizados",

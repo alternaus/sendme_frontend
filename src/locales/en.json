@@ -322,7 +322,8 @@
     "previous": "Previous",
     "next": "Next",
     "description": "Description",
-    "no_data": "No data available"
+    "no_data": "No data available",
+    "retry": "Retry"
   },
   "customFields": {
     "title": "Custom Fields",

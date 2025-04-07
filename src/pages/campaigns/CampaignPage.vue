@@ -175,6 +175,28 @@ export default defineComponent({
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >
+    <template #empty>
+      <div class="flex flex-col items-center justify-center p-6 text-center">
+        <i class="pi pi-send text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('campaign.error_getting_campaigns') }}</p>
+        <div class="flex gap-3 mt-4">
+          <button
+            @click="fetchCampaigns({ pageSize: 1, limitSize: 10 })"
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+          >
+            <i class="pi pi-refresh mr-2"></i>
+            {{ $t('general.retry') }}
+          </button>
+          <button
+            @click="push('/campaigns/create')"
+            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+          >
+            <i class="pi pi-plus mr-2"></i>
+            {{ $t('campaign.campaign') }}
+          </button>
+        </div>
+      </div>
+    </template>
     <template #custom-channelName="{ data }">
       <div>{{ data.channel?.name || '-' }}</div>
     </template>
