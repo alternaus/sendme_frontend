@@ -179,8 +179,26 @@
     "shipment_date": "Fecha de envío",
     "organizations": "Organizaciones",
     "roles": "Roles",
-    "permissions": "Permisos",
+    "permission": "Permisos",
     "drag_drop_file": "Arrastra y suelta el archivo aquí",
     "integrations": "Integraciones"
+  },
+  "customFields": {
+    "title": "Campos Personalizados",
+    "add_field": "Agregar campo",
+    "field_label": "Etiqueta del campo",
+    "field_type": "Tipo de campo",
+    "max_fields": "Puedes agregar hasta 10 campos de información complementaria a tus contactos.",
+    "field_added": "Campo agregado exitosamente",
+    "field_updated": "Campo actualizado exitosamente",
+    "field_deleted": "Campo eliminado exitosamente",
+    "error_loading": "Error al cargar los campos personalizados",
+    "error_saving": "Error al guardar los campos personalizados",
+    "error_deleting": "Error al eliminar el campo personalizado",
+    "data_types": {
+      "text": "Texto",
+      "number": "Número",
+      "date": "Fecha"
+    }
   }
 }

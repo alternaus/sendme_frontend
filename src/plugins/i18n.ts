@@ -1,10 +1,9 @@
-import type { I18n } from 'vue-i18n'
-import { createI18n } from 'vue-i18n'
+import { createI18n,type I18n } from 'vue-i18n'
 
 import en from '@/locales/en.json'
 import es from '@/locales/es.json'
 
-type MessageSchema = typeof es
+type MessageSchema = typeof en
 
 const messages: Record<'es' | 'en', MessageSchema> = { es, en }
 

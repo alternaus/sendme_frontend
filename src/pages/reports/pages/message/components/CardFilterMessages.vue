@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 
 import DateIcon from '@/assets/svg/date.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
@@ -39,14 +39,19 @@ export default defineComponent({
     'update:endDate',
   ],
   setup(props, { emit }) {
-    const updateField = (field: string, value: unknown) => {
+    const updateField = (field: 'startDate' | 'endDate' | 'content' | 'status' | 'messageType', value: unknown) => {
       emit(`update:${field}`, value as string | null | Date)
     }
+
+    const startDateValue = computed(() => (props.startDate ? new Date(props.startDate) : null))
+    const endDateValue = computed(() => (props.endDate ? new Date(props.endDate) : null))
 
     return {
       StatusMessageTypes,
       TypeMessageTypes,
       updateField,
+      startDateValue,
+      endDateValue,
     }
   },
 })
@@ -103,7 +108,7 @@ export default defineComponent({
         <AppDatePicker
           placeholder=""
           class="w-full mt-3"
-          :modelValue="startDate"
+          :modelValue="startDateValue"
           :showTime="true"
           :label="$t('general.start_date')"
           @update:modelValue="updateField('startDate', $event)"
@@ -115,7 +120,7 @@ export default defineComponent({
         <AppDatePicker
           placeholder=""
           class="w-full mt-3"
-          :modelValue="endDate"
+          :modelValue="endDateValue"
           :showTime="true"
           :label="$t('general.end_date')"
           @update:modelValue="updateField('endDate', $event)"

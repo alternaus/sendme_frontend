@@ -81,10 +81,10 @@
     "sending_by_campaign": "Sending by Campaign",
     "error_getting_audit": "Error getting audit",
     "audit_success_exported": "Audit exported successfully",
-    "error_exporting_audit": "Error exporting audit",
+    "audit_error_exported": "Error exporting audit",
     "error_getting_messages": "Error getting messages",
     "messages_success_exported": "Messages exported successfully",
-    "error_exporting_messages": "Error exporting messages",
+    "messages_error_exported": "Error exporting messages",
     "message_status": {
       "queued": "Queued",
       "sending": "Sending",
@@ -182,5 +182,23 @@
     "permission": "Permission",
     "drag_drop_file": "Drag and drop the file here",
     "integrations": "Integrations"
+  },
+  "customFields": {
+    "title": "Custom Fields",
+    "add_field": "Add field",
+    "field_label": "Field label",
+    "field_type": "Field type",
+    "max_fields": "You can add up to 10 complementary information fields to your contacts.",
+    "field_added": "Field added successfully",
+    "field_updated": "Field updated successfully",
+    "field_deleted": "Field deleted successfully",
+    "error_loading": "Error loading custom fields",
+    "error_saving": "Error saving custom fields",
+    "error_deleting": "Error deleting custom field",
+    "data_types": {
+      "text": "Text",
+      "number": "Number",
+      "date": "Date"
+    }
   }
 }
