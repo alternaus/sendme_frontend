@@ -80,9 +80,6 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-router.onError((error) => {
-  console.error('Error de navegación:', error)
-  router.push('/not-found')
-})
+
 
 export default router

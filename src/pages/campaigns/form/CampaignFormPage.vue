@@ -9,6 +9,7 @@ import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import { type SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import AppStepper from '@/components/atoms/stepper/AppStepper.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useChannelService } from '@/services/channel/useChannelService'
@@ -24,6 +25,7 @@ export default defineComponent({
     AppButton,
     AppInput,
     AppSelect,
+    AppStepper,
     CampaignFormDetails,
     CampaignFormTriggers,
     CampaignFormMessage,
@@ -36,6 +38,13 @@ export default defineComponent({
   setup() {
     const { form, handleSubmit, resetForm, errors, addRule, removeRule } = useFormCampaign()
     const { getChannels } = useChannelService()
+    const activeStep = ref(0)
+
+    const steps = [
+      { label: 'Detalles', icon: 'pi pi-info-circle' },
+      { label: 'Activadores', icon: 'pi pi-bolt' },
+      { label: 'Mensaje', icon: 'pi pi-comment' },
+    ]
 
     const statusOptions = [
       { name: 'Activo', value: 'active' },
@@ -84,6 +93,18 @@ export default defineComponent({
       },
     )
 
+    const nextStep = () => {
+      if (activeStep.value < steps.length - 1) {
+        activeStep.value++
+      }
+    }
+
+    const prevStep = () => {
+      if (activeStep.value > 0) {
+        activeStep.value--
+      }
+    }
+
     return {
       IconTypes,
       form,
@@ -96,6 +117,10 @@ export default defineComponent({
       removeRule,
       channels,
       updateFormContent,
+      activeStep,
+      steps,
+      nextStep,
+      prevStep,
     }
   },
 })
@@ -105,7 +130,9 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" class="hidden lg:flex" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
-    <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <AppStepper v-model="activeStep" :steps="steps" class="mb-8" />
+
+    <div v-if="activeStep === 0" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput
         v-model="form.name.value"
         type="text"
@@ -153,9 +180,10 @@ export default defineComponent({
       </AppSelect>
     </div>
 
-    <CampaignFormDetails :form="form" :errors="errors" @update:form="updateFormContent" />
+    <CampaignFormDetails v-if="activeStep === 0" :form="form" :errors="errors" @update:form="updateFormContent" />
 
     <CampaignFormTriggers
+      v-if="activeStep === 1"
       :form="form"
       :errors="errors"
       :conditionOptions="conditionOptions"
@@ -164,16 +192,40 @@ export default defineComponent({
       @update:form="updateFormContent"
     />
 
-    <CampaignFormMessage :form="form" :errors="errors" @update:form="updateFormContent" />
+    <CampaignFormMessage v-if="activeStep === 2" :form="form" :errors="errors" @update:form="updateFormContent" />
 
-    <div class="flex flex-col lg:flex-row lg:justify-start gap-5 mt-7">
-      <AppButton type="submit" severity="primary" class="w-full sm:w-auto" label="Guardar" />
-      <AppButton
-        severity="secondary"
-        class="w-full sm:w-auto"
-        label="Cancelar"
-        @click.prevent="resetForm"
-      />
+    <div class="flex flex-col lg:flex-row lg:justify-between gap-5 mt-7">
+      <div class="flex gap-5">
+        <AppButton
+          v-if="activeStep > 0"
+          severity="secondary"
+          class="w-full sm:w-auto"
+          label="Anterior"
+          @click.prevent="prevStep"
+        />
+        <AppButton
+          v-if="activeStep < steps.length - 1"
+          severity="primary"
+          class="w-full sm:w-auto"
+          label="Siguiente"
+          @click.prevent="nextStep"
+        />
+      </div>
+      <div class="flex gap-5">
+        <AppButton
+          v-if="activeStep === steps.length - 1"
+          type="submit"
+          severity="primary"
+          class="w-full sm:w-auto"
+          label="Guardar"
+        />
+        <AppButton
+          severity="secondary"
+          class="w-full sm:w-auto"
+          label="Cancelar"
+          @click.prevent="resetForm"
+        />
+      </div>
     </div>
   </form>
 </template>
