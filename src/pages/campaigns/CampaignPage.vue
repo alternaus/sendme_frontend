@@ -107,15 +107,6 @@ export default defineComponent({
         ? [
             { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
             {
-              label: t('actions.view'),
-              onClick: () => {
-                if (selectedCampaign.value?.id) {
-                  push(`/campaigns/view/${selectedCampaign.value?.id}`)
-                }
-              },
-              type: ActionTypes.VIEW,
-            },
-            {
               label: t('actions.edit'),
               onClick: () => {
                 if (selectedCampaign.value?.id) {
@@ -126,16 +117,7 @@ export default defineComponent({
             },
           ]
         : []),
-      {
-        label: t('actions.export'),
-        onClick: () => {},
-        type: ActionTypes.EXPORT,
-      },
-      {
-        label: t('actions.import'),
-        onClick: () => {},
-        type: ActionTypes.IMPORT,
-      },
+
     ])
 
     return {
