@@ -195,6 +195,8 @@
     "error_loading": "Error loading custom fields",
     "error_saving": "Error saving custom fields",
     "error_deleting": "Error deleting custom field",
+    "field_visible": "Field visible",
+    "field_hidden": "Field hidden",
     "data_types": {
       "text": "Text",
       "number": "Number",

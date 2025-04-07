@@ -195,6 +195,8 @@
     "error_loading": "Error al cargar los campos personalizados",
     "error_saving": "Error al guardar los campos personalizados",
     "error_deleting": "Error al eliminar el campo personalizado",
+    "field_visible": "Campo visible",
+    "field_hidden": "Campo oculto",
     "data_types": {
       "text": "Texto",
       "number": "Número",

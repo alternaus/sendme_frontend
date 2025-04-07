@@ -5,6 +5,7 @@ export interface ICustomField {
   dataType: string
   options: Record<string, unknown>[] | null
   organizationId: number
+  isVisible: boolean
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { nextTick,onMounted, ref } from 'vue'
 
 import { Button as PrimeButton } from 'primevue'
 import { useToast } from 'primevue/usetoast'
@@ -23,14 +23,15 @@ const { getCustomFields, createCustomField, updateCustomField, deleteCustomField
 const {
   customFields,
   addEmptyField,
+  addCustomField,
   removeCustomField,
   handleSubmit,
   errors,
   resetForm,
-  addCustomField: addFormField
 } = useCustomFieldForm()
 
 const customFieldIds = ref<Record<number, number>>({})
+const editingFieldIndices = ref<number[]>([])
 
 const dataTypes = [
   { name: t('customFields.data_types.text'), value: 'string' },
@@ -50,12 +51,18 @@ const loadCustomFields = async () => {
     customFieldIds.value = {}
 
     fields.forEach((field, index) => {
-      addFormField({
+      addCustomField({
         fieldName: field.fieldName,
         dataType: field.dataType as 'string' | 'number' | 'date'
       })
       customFieldIds.value[index] = field.id
     })
+
+    await nextTick()
+    const lastField = document.querySelector(`[data-field-index="${fields.length - 1}"]`)
+    if (lastField) {
+      lastField.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
   } catch {
     toast.add({
       severity: 'error',
@@ -66,11 +73,19 @@ const loadCustomFields = async () => {
   }
 }
 
+const toggleEditMode = (index: number) => {
+  const idx = editingFieldIndices.value.indexOf(index)
+  if (idx === -1) {
+    editingFieldIndices.value.push(index)
+  } else {
+    editingFieldIndices.value.splice(idx, 1)
+  }
+}
+
 const handleRemoveField = async (idx: number) => {
   try {
     if (customFieldIds.value[idx] !== undefined) {
       await deleteCustomField(customFieldIds.value[idx])
-
       delete customFieldIds.value[idx]
 
       const newIds: Record<number, number> = {}
@@ -93,6 +108,10 @@ const handleRemoveField = async (idx: number) => {
     }
 
     removeCustomField(idx)
+    const editIndex = editingFieldIndices.value.indexOf(idx)
+    if (editIndex !== -1) {
+      editingFieldIndices.value.splice(editIndex, 1)
+    }
   } catch {
     toast.add({
       severity: 'error',
@@ -103,9 +122,9 @@ const handleRemoveField = async (idx: number) => {
   }
 }
 
-// Función para validar el formulario antes de enviarlo
+
 const validateForm = () => {
-  // Verificar si hay campos vacíos
+
   const hasEmptyFields = customFields.value.some(field =>
     !field.value.fieldName.trim() || !field.value.dataType
   )
@@ -124,7 +143,6 @@ const validateForm = () => {
 }
 
 const onSubmit = () => {
-  // Validar el formulario antes de enviarlo
   if (!validateForm()) {
     return
   }
@@ -158,6 +176,8 @@ const onSubmit = () => {
 
         await loadCustomFields()
 
+        editingFieldIndices.value = []
+
         toast.add({
           severity: 'success',
           summary: t('general.success'),
@@ -185,6 +205,18 @@ const onSubmit = () => {
   )()
 }
 
+const handleAddField = async () => {
+  addEmptyField()
+  const newIndex = customFields.value.length - 1
+  editingFieldIndices.value.push(newIndex)
+
+  await nextTick()
+  const newField = document.querySelector(`[data-field-index="${newIndex}"]`)
+  if (newField) {
+    newField.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+}
+
 onMounted(() => {
   loadCustomFields()
 })
@@ -205,7 +237,8 @@ onMounted(() => {
           <div class="flex-1 min-h-0 max-h-64 lg:max-h-96 overflow-y-auto my-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 auto-rows-min">
               <div v-for="(field, idx) in customFields" :key="field.key"
-                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-fit"
+                :data-field-index="idx"
+                class="p-4 my-2 bg-neutral-50 dark:bg-neutral-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 h-fit"
                 :class="{'border border-red-500': getError(idx, 'fieldName') || getError(idx, 'dataType')}">
                 <div class="flex flex-col gap-4">
                   <div class="flex items-center justify-between">
@@ -213,27 +246,50 @@ onMounted(() => {
                       class="w-8 h-8 flex items-center justify-center bg-[var(--p-primary-color)] dark:text-black rounded-full font-bold text-sm">
                       {{ idx + 1 }}
                     </div>
-                    <PrimeButton
-                      @click="handleRemoveField(idx)"
-                      icon="pi pi-trash"
-                      severity="danger"
-                      variant="text"
-                      rounded />
+                    <div class="flex gap-2">
+                      <PrimeButton
+                        v-if="idx in customFieldIds"
+                        @click="toggleEditMode(idx)"
+                        :icon="editingFieldIndices.includes(idx) ? 'pi pi-times' : 'pi pi-pencil'"
+                        :severity="editingFieldIndices.includes(idx) ? 'secondary' : 'info'"
+                        variant="text"
+                        rounded />
+                      <PrimeButton
+                        @click="handleRemoveField(idx)"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        variant="text"
+                        rounded />
+                    </div>
                   </div>
 
                   <div class="space-y-6 mt-2">
-                    <AppInput
-                      v-model="field.value.fieldName"
-                      :label="$t('customFields.field_label')"
-                      :errorMessage="getError(idx, 'fieldName')"
-                      class="w-full" />
+                    <template v-if="editingFieldIndices.includes(idx)">
+                      <AppInput
+                        v-model="field.value.fieldName"
+                        :label="$t('customFields.field_label')"
+                        :errorMessage="getError(idx, 'fieldName')"
+                        class="w-full" />
 
-                    <AppSelect
-                      v-model="field.value.dataType"
-                      :options="dataTypes"
-                      :label="$t('customFields.field_type')"
-                      :errorMessage="getError(idx, 'dataType')"
-                      class="w-full" />
+                      <AppSelect
+                        v-model="field.value.dataType"
+                        :options="dataTypes"
+                        :label="$t('customFields.field_type')"
+                        :errorMessage="getError(idx, 'dataType')"
+                        class="w-full" />
+                    </template>
+                    <template v-else>
+                      <div class="flex flex-col gap-2">
+                        <div class="flex flex-col">
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_label') }}</small>
+                          <p class="font-medium">{{ field.value.fieldName }}</p>
+                        </div>
+                        <div class="flex flex-col">
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_type') }}</small>
+                          <p class="font-medium">{{ dataTypes.find(type => type.value === field.value.dataType)?.name }}</p>
+                        </div>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -245,9 +301,10 @@ onMounted(() => {
               type="button"
               class="!w-fit"
               :label="$t('customFields.add_field')"
-              @click="addEmptyField"
+              @click="handleAddField"
               icon="pi pi-plus" />
             <AppButton
+              v-if="editingFieldIndices.length > 0"
               type="button"
               class="!w-fit"
               :label="$t('general.save')"
