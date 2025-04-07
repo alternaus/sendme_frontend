@@ -96,7 +96,7 @@ export const useFormCampaign = () => {
       frequency: 'DAILY',
       channelId: 0,
       organizationId: 0,
-      campaignRules: [{ conditionType: '1', value: '', customFieldId: 0 }],
+      campaignRules: [{ conditionType: 'is_empty', value: '', customFieldId: 0 }],
     },
     validateOnMount: false,
   })
@@ -121,7 +121,7 @@ export const useFormCampaign = () => {
   } = useFieldArray<CampaignRule>('campaignRules')
 
   const addRule = () => {
-    addCampaignRule({ conditionType: '1', value: '', customFieldId: 0 })
+    addCampaignRule({ conditionType: 'is_empty', value: '', customFieldId: 0 })
   }
 
   const removeRule = (index: number) => {
