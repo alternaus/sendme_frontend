@@ -309,9 +309,10 @@ export default defineComponent({
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[300px] overflow-y-auto pr-2 custom-fields-container">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 custom-fields-container"
+          :class="{'h-auto': form.customValues.value.length <= 3, 'h-[300px] overflow-y-auto pr-2': form.customValues.value.length > 3}">
           <div v-if="form.customValues.value.length === 0" class="col-span-full text-center py-8">
-            {{ $t('contact.no_custom_fields') || 'No hay campos personalizados configurados' }}
+            {{ $t('contact.no_custom_fields') }}
           </div>
           <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
             <label class="text-sm font-medium">{{
@@ -333,7 +334,7 @@ export default defineComponent({
                 :error-message="getError(index, 'value')" />
             </template>
             <template v-else>
-              <div class="text-xs text-gray-500">{{ $t('contact.unknown_field_type') || 'Tipo de campo desconocido' }}</div>
+              <div class="text-xs text-gray-500">{{ $t('contact.unknown_field_type') }}</div>
               <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
                 :error-message="getError(index, 'value')" @update:model-value="() => handleCustomFieldChange(index, 'value')" />
             </template>

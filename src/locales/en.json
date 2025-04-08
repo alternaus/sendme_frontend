@@ -46,6 +46,8 @@
     "contact_created": "Contact created successfully",
     "error_saving_contact": "Error saving contact",
     "contact_deleted": "Contact deleted",
+    "no_custom_fields": "No custom fields configured",
+    "unknown_field_type": "Unknown field type",
     "import": {
       "notice": {
         "title": "Important Information",

@@ -46,6 +46,8 @@
     "contact_created": "Contacto creado exitosamente",
     "error_saving_contact": "Error al guardar el contacto",
     "contact_deleted": "Contacto eliminado",
+    "no_custom_fields": "No hay campos personalizados configurados",
+    "unknown_field_type": "Tipo de campo desconocido",
     "import": {
       "notice": {
         "title": "Información importante",
