@@ -161,15 +161,26 @@ export default defineComponent({
         endDate: values.endDate.toISOString(),
         time: values.time.toTimeString().split(' ')[0].substring(0, 5), // Formato HH:MM
         contentType: 'plain_text' as const, // Asegurar que sea 'plain_text'
-        // Eliminar la propiedad rrule que no debe existir
       }
 
-      // Eliminar la propiedad rrule si existe
-      if ('rrule' in formattedData) {
-        delete (formattedData).rrule
+      // Eliminar propiedades que no deben enviarse al backend
+      const fieldsToRemove = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'channel', 'rrule'];
+      fieldsToRemove.forEach(field => {
+        if (field in formattedData) {
+          delete (formattedData as Record<string, unknown>)[field];
+        }
+      });
+
+      // Limpiar también las reglas de campaña si existen
+      if (formattedData.campaignRules && Array.isArray(formattedData.campaignRules)) {
+        formattedData.campaignRules = formattedData.campaignRules.map(rule => {
+          // Extraer solo los campos que necesitamos para el backend
+          const { conditionType, value, customFieldId, campaignId } = rule;
+          return { conditionType, value, customFieldId, campaignId };
+        });
       }
 
-      return formattedData
+      return formattedData;
     }
 
     const onSubmitForm = handleSubmit(
@@ -177,6 +188,9 @@ export default defineComponent({
         try {
           isLoading.value = true
           const formattedData = formatCampaignData(values)
+
+          // Registrar los datos que se van a enviar para debugging
+          console.log('Datos formateados para enviar al backend:', formattedData)
 
           if (isEditMode.value && campaignId.value) {
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)

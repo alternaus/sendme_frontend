@@ -233,13 +233,6 @@ export default defineComponent({
         <span> {{ $t('general.action') }} </span>
       </div>
     </template>
-    <template #custom-createdAt="{ data }">
-      <div class="flex justify-center items-center">
-        <small class="custom-text-small">
-          {{ formatDate(data.createdAt) }}
-        </small>
-      </div>
-    </template>
     <template #custom-table="{ data }">
       <div class="flex justify-center">
         {{ getModuleTranslation(data.table) }}

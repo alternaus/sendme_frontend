@@ -18,8 +18,8 @@ import type { IPaginationMeta } from '@/services/interfaces/pagination-response.
 export default defineComponent({
   components: {
     AppHeader,
-    AppTable,
     AppTag,
+    AppTable,
   },
   setup() {
     const { t } = useI18n()
@@ -69,7 +69,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: t('general.error'),
-          detail: t('campaign.error_getting_campaigns'),
+          detail: t('campaign.errors.load_campaigns'),
         })
       } finally {
         loading.value = false
@@ -97,7 +97,7 @@ export default defineComponent({
         toast.add({
           severity: 'success',
           summary: t('general.success'),
-          detail: t('campaign.success_removed'),
+          detail: t('campaign.success.removed'),
           life: 3000,
         })
         await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
@@ -106,7 +106,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: t('general.error'),
-          detail: t('campaign.error_removed'),
+          detail: t('campaign.errors.removed'),
           life: 3000,
         })
       }
@@ -171,6 +171,7 @@ export default defineComponent({
     :multipleSelection="false"
     :loading="loading"
     textTotalItems="campaign.campaigns"
+    :autoDetectDateFields="true"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >
@@ -181,6 +182,9 @@ export default defineComponent({
       <div>
         <template v-if="data.days && data.days.length">
           {{ data.days.map((day: string) => $t(`campaign.days_abbr.${day}`)).join(', ') }} {{ data.time }}
+        </template>
+        <template v-else-if="data.frequency">
+          {{ $t(`campaign.frequency_types.${data.frequency}`) }}
         </template>
         <template v-else>-</template>
       </div>

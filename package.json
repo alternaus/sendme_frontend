@@ -21,6 +21,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "@vueuse/core": "^12.5.0",
     "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
     "exceljs": "^4.4.0",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",

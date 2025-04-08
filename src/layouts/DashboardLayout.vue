@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent, provide,ref } from 'vue'
+import { computed,defineComponent, provide, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 import AppSidebar from '@/components/atoms/sidebars/AppSidebar.vue'
 import AppSidebarMobile from '@/components/atoms/sidebars/AppSidebarMobile.vue'
@@ -13,8 +14,12 @@ export default defineComponent({
     const isSidebarExpanded = ref(false)
     provide('isSidebarExpanded', isSidebarExpanded)
 
+    const route = useRoute()
+    const currentPath = computed(() => route.fullPath)
+
     return {
       isSidebarExpanded,
+      currentPath
     }
   },
 })
@@ -33,9 +38,30 @@ export default defineComponent({
     <main class="flex-1 transition-all duration-300 h-screen overflow-y-auto" :class="{ 'lg:ml-[200px]': isSidebarExpanded, 'lg:ml-[80px]': !isSidebarExpanded }">
       <div class="p-4 lg:p-6 w-full max-w-screen-2xl mx-auto">
         <div class="lg:mt-0 mt-[56px]">
-          <slot />
+          <transition name="page" mode="out-in">
+            <div :key="currentPath">
+              <slot />
+            </div>
+          </transition>
         </div>
       </div>
     </main>
   </div>
 </template>
+
+<style scoped>
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+</style>

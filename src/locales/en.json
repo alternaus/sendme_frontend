@@ -95,6 +95,26 @@
     "error_removed": "Error deleting campaign",
     "success_exported": "Campaigns successfully exported",
     "error_exported": "Error exporting campaigns",
+    "frequency_types": {
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
+    },
+    "errors": {
+      "load_channels": "Error loading channels",
+      "load_campaign": "Error loading campaign",
+      "save": "Error saving campaign",
+      "validation": "Form validation error",
+      "removed": "Error deleting campaign",
+      "load_campaigns": "Failed to load campaigns",
+      "exported": "Error exporting campaigns"
+    },
+    "success": {
+      "created": "Campaign created successfully",
+      "updated": "Campaign updated successfully",
+      "removed": "Campaign successfully deleted",
+      "exported": "Campaigns successfully exported"
+    },
     "form": {
       "campaign_name": "Campaign Name",
       "description": "Description",
@@ -143,16 +163,6 @@
       "contains": "Contains",
       "starts_with": "Starts With",
       "ends_with": "Ends With"
-    },
-    "errors": {
-      "load_channels": "Error loading channels",
-      "load_campaign": "Error loading campaign",
-      "save": "Error saving campaign",
-      "validation": "Form validation error"
-    },
-    "success": {
-      "created": "Campaign created successfully",
-      "updated": "Campaign updated successfully"
     }
   },
   "provider": {
@@ -262,6 +272,7 @@
     "personalized_information": "Personalized Information",
     "save": "Save",
     "cancel": "Cancel",
+    "update": "Update",
     "profile": "Profile",
     "search": "Search",
     "password": "Password",

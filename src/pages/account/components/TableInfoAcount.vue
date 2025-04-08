@@ -76,31 +76,27 @@ export default defineComponent({
     const toggleOption = (value: string) => {
       optionSelected.value = value
     }
-    const formatDate = (isoString: string) => {
-      const date = new Date(isoString)
-      return new Intl.DateTimeFormat('es-CO', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      }).format(date)
-    }
 
-    const formatCurrency = (valor: number, currency: 'USD' | 'COP') => {
-      const modeCurrency = currency === 'USD' ? 'en-US' : 'es-CO'
-      return new Intl.NumberFormat(modeCurrency, {
-        style: 'currency',
-        currency,
+    // Método para formatear moneda
+    const formatCurrency = (amount: number, _currencyCode: string) => {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(valor)
+      }).format(amount)
     }
 
     const getStatusTranslation = (status: string) => {
-      const translationKey = RechargeStatus[status as keyof typeof RechargeStatus]
-      return translationKey ? t(translationKey) : status
+      switch (status) {
+        case 'accepted':
+          return t(RechargeStatus.accepted)
+        case 'pending':
+          return t(RechargeStatus.pending)
+        case 'rejected':
+          return t(RechargeStatus.rejected)
+        default:
+          return t(RechargeStatus[status as keyof typeof RechargeStatus] || status)
+      }
     }
 
     onMounted(() => {
@@ -108,17 +104,16 @@ export default defineComponent({
     })
 
     return {
-      recharges,
-      rechargesMeta,
-      fetchRecharges,
-      startDate,
-      endDate,
       optionSelected,
       toggleOption,
+      recharges,
+      fetchRecharges,
+      loading,
+      rechargesMeta,
       formatCurrency,
       getStatusTranslation,
-      formatDate,
-      loading,
+      startDate,
+      endDate,
     }
   },
 })
@@ -194,15 +189,9 @@ export default defineComponent({
       :loading="loading"
       :emptyMessage="'general.error_getting_recharges'"
       textTotalItems="general.recharges"
+      :autoDetectDateFields="true"
       @page-change="fetchRecharges"
     >
-      <template #custom-createdAt="{ data }">
-        <div class="flex justify-center items-center">
-          <small class="custom-text-small">
-            {{ formatDate(data.createdAt) }}
-          </small>
-        </div>
-      </template>
       <template #custom-amount="{ data }">
         <div class="flex justify-center items-center">
           <small class="custom-text-small">

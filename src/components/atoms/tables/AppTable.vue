@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, type PropType, ref, watchEffect } from 'vue'
+import { computed, defineComponent, type PropType, ref, watchEffect } from 'vue'
 
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -7,7 +7,19 @@ import ContextMenu from 'primevue/contextmenu'
 import DataTable from 'primevue/datatable'
 import Paginator from 'primevue/paginator'
 
+import dayjs from 'dayjs'
+
+import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
+
 import type { TableHeader } from './types/table-header.type'
+
+// Interfaz para configuración de formato de fecha
+export interface DateFormatConfig {
+  field: string
+  format?: 'date' | 'time' | 'datetime'
+  customFormat?: string
+  showTimezone?: boolean
+}
 
 export default defineComponent({
   name: 'AppTable',
@@ -17,6 +29,7 @@ export default defineComponent({
     Paginator,
     Card,
     ContextMenu,
+    FormattedDate,
   },
   props: {
     data: {
@@ -55,6 +68,16 @@ export default defineComponent({
       type: String,
       default: 'general.no_data',
     },
+    // Configuración de formateo de fechas
+    dateFields: {
+      type: Array as PropType<DateFormatConfig[]>,
+      default: () => [],
+    },
+    // Detectar automáticamente campos de fecha
+    autoDetectDateFields: {
+      type: Boolean,
+      default: true
+    }
   },
   emits: ['selection-change', 'page-change'],
   setup(props, { emit }) {
@@ -71,6 +94,57 @@ export default defineComponent({
         class: 'text-xs',
       },
     ])
+
+    // Detectar campos de fecha automáticamente
+    const detectedDateFields = computed(() => {
+      if (!props.autoDetectDateFields || props.data.length === 0) {
+        return props.dateFields
+      }
+
+      const dateFieldConfigs: DateFormatConfig[] = [...props.dateFields]
+      const existingFields = dateFieldConfigs.map(config => config.field)
+
+      // Comprueba datos para inferir campos de fecha
+      const item = props.data[0]
+
+      props.headers.forEach(header => {
+        const field = header.field
+        const value = item[field]
+
+        // Si ya está configurado, omitir
+        if (existingFields.includes(field)) {
+          return
+        }
+
+        // Detectar si es una fecha por nombre del campo o por valor
+        const isDateField =
+          typeof value === 'string' &&
+          (
+            field.toLowerCase().includes('date') ||
+            field.toLowerCase().includes('at') ||
+            (value && dayjs(value).isValid() && /^\d{4}-\d{2}-\d{2}/.test(value as string))
+          )
+
+        if (isDateField) {
+          dateFieldConfigs.push({
+            field,
+            format: field.toLowerCase().includes('time') ? 'time' : 'datetime'
+          })
+        }
+      })
+
+      return dateFieldConfigs
+    })
+
+    // Detectar si un campo es de fecha
+    const isDateField = (field: string): boolean => {
+      return detectedDateFields.value.some(config => config.field === field)
+    }
+
+    // Obtener la configuración de formato para un campo
+    const getDateConfig = (field: string): DateFormatConfig | undefined => {
+      return detectedDateFields.value.find(config => config.field === field)
+    }
 
     watchEffect(() => {
       const handleResize = () => {
@@ -107,6 +181,8 @@ export default defineComponent({
       contextMenuRef,
       onRowContextMenu,
       rowSizes,
+      isDateField,
+      getDateConfig
     }
   },
 })
@@ -155,9 +231,27 @@ export default defineComponent({
             </template>
 
             <template #body="{ data }">
-              <slot :name="`custom-${col.field}`" :data="data">
+              <!-- Si hay un slot personalizado -->
+              <slot v-if="$slots[`custom-${col.field}`]" :name="`custom-${col.field}`" :data="data">
                 {{ data[col.field] }}
               </slot>
+
+              <!-- Si es un campo de fecha automáticamente detectado -->
+              <template v-else-if="isDateField(col.field) && data[col.field]">
+                <div class="flex justify-center items-center">
+                  <FormattedDate
+                    :date="data[col.field] as string"
+                    :format="getDateConfig(col.field)?.format"
+                    :custom-format="getDateConfig(col.field)?.customFormat"
+                    :show-timezone="getDateConfig(col.field)?.showTimezone"
+                  />
+                </div>
+              </template>
+
+              <!-- Para otros tipos de datos -->
+              <template v-else>
+                {{ data[col.field] }}
+              </template>
             </template>
           </Column>
 
@@ -196,9 +290,25 @@ export default defineComponent({
                   :
                 </strong>
                 <span class="flex-1">
-                  <slot :name="`custom-${col.field}`" :data="item">
+                  <!-- Si hay un slot personalizado -->
+                  <slot v-if="$slots[`custom-${col.field}`]" :name="`custom-${col.field}`" :data="item">
                     {{ item[col.field] }}
                   </slot>
+
+                  <!-- Si es un campo de fecha automáticamente detectado -->
+                  <template v-else-if="isDateField(col.field) && item[col.field]">
+                    <FormattedDate
+                      :date="item[col.field] as string"
+                      :format="getDateConfig(col.field)?.format"
+                      :custom-format="getDateConfig(col.field)?.customFormat"
+                      :show-timezone="getDateConfig(col.field)?.showTimezone"
+                    />
+                  </template>
+
+                  <!-- Para otros tipos de datos -->
+                  <template v-else>
+                    {{ item[col.field] }}
+                  </template>
                 </span>
               </div>
             </div>
