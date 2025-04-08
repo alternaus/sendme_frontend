@@ -76,16 +76,11 @@ export default defineComponent({
         const response = await getCustomFields()
         customFields.value = response
 
-        response.forEach((field) => {
-          addCustomField({
-            customFieldId: field.id,
-            value: '',
-            id: undefined,
-          })
-        })
+        // Si estamos en modo edición, primero obtener los datos del contacto
         if (contactId) {
           const contact = await getContact(contactId)
 
+          // Configurar los valores básicos del contacto
           setValues({
             name: contact.name,
             lastName: contact.lastName,
@@ -94,11 +89,45 @@ export default defineComponent({
             countryCode: contact.countryCode,
             status: contact.status,
             birthDate: contact.birthDate ? new Date(contact.birthDate) : undefined,
-            customValues: contact.customValues?.map((custom) => ({
+            customValues: []  // Inicialmente vacío, lo llenaremos después
+          })
+
+          // Mapa para rastrear campos ya agregados
+          const addedFields = new Set()
+
+          // Agregar primero los campos personalizados que ya tiene el contacto
+          contact.customValues?.forEach((custom) => {
+            addCustomField({
               customFieldId: custom.customFieldId,
               value: custom.value,
               id: custom.id,
-            })),
+            })
+            addedFields.add(custom.customFieldId)
+          })
+
+          // Para depuración
+          console.log('🔍 Campos personalizados del contacto:', contact.customValues)
+          console.log('🔍 CustomFields cargados:', response)
+          console.log('🔍 Campos agregados:', addedFields)
+
+          // Luego agregar el resto de campos personalizados vacíos
+          response.forEach((field) => {
+            if (!addedFields.has(field.id)) {
+              addCustomField({
+                customFieldId: field.id,
+                value: '',
+                id: undefined,
+              })
+            }
+          })
+        } else {
+          // En modo creación, simplemente agregar todos los campos vacíos
+          response.forEach((field) => {
+            addCustomField({
+              customFieldId: field.id,
+              value: '',
+              id: undefined,
+            })
           })
         }
 
@@ -113,7 +142,8 @@ export default defineComponent({
             }
           }
         }, 100)
-      } catch {
+      } catch (error) {
+        console.error('Error loading data:', error)
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -288,9 +318,13 @@ export default defineComponent({
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-[300px] overflow-y-auto pr-2 custom-fields-container">
+          <div v-if="form.customValues.value.length === 0" class="col-span-full text-center py-8">
+            {{ $t('contact.no_custom_fields') || 'No hay campos personalizados configurados' }}
+          </div>
           <div v-for="(custom, index) in form.customValues.value" :key="index" class="flex flex-col gap-1">
             <label class="text-sm font-medium">{{
-              customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName
+              customFields.find((field) => field.id === custom.value.customFieldId)?.fieldName ||
+              `Campo #${custom.value.customFieldId}`
             }}</label>
             <template v-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'string'">
               <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
@@ -305,6 +339,11 @@ export default defineComponent({
                 @update:model-value="(val) => handleDateChange(val, custom, index)"
                 class="w-full rounded-md"
                 :error-message="getError(index, 'value')" />
+            </template>
+            <template v-else>
+              <div class="text-xs text-gray-500">{{ $t('contact.unknown_field_type') || 'Tipo de campo desconocido' }}</div>
+              <AppInput v-model="custom.value.value" type="text" class="w-full rounded-md"
+                :error-message="getError(index, 'value')" @update:model-value="() => handleCustomFieldChange(index, 'value')" />
             </template>
           </div>
         </div>
