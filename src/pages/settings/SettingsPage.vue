@@ -40,7 +40,7 @@ export default defineComponent({
 </script>
 <template>
   <AppHeader :icon="IconTypes.SETTINGS" :text="$t('general.settings')" :actions="[]" />
-  <div class="flex justify-start align-center gap-8 m-4">
+  <div class="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 lg:gap-5 p-4 w-fit mx-auto lg:mx-8">
     <CustomCard :icon="IconTypesSettings.CUSTOM_FIELDS" :text="$t('general.personalized_information')"
       @click="navigateToCustomFields" />
     <CustomCard :icon="IconTypesSettings.USERS" @click="navigateToUsers" :text="$t('user.users')" />

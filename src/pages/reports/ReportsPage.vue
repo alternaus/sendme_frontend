@@ -34,7 +34,7 @@ export default defineComponent({
 </script>
 <template>
   <AppHeader :icon="IconTypes.REPORTS" :text="$t('report.reports')" :actions="[]" />
-  <div class="flex justify-start align-center gap-8 m-4">
+  <div class="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 lg:gap-5 p-4 w-fit mx-auto lg:mx-8">
     <Customcard
       :icon="IconTypesReports.MESSAGES"
       :text="$t('general.messages')"
