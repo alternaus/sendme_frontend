@@ -19,6 +19,26 @@ const privateApi: AxiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
+// Variable para evitar múltiples solicitudes de refreshToken simultáneas
+let isRefreshing = false
+let refreshSubscribers: Array<(token: string) => void> = []
+
+// Función para añadir suscriptores que esperan el nuevo token
+const subscribeTokenRefresh = (callback: (token: string) => void) => {
+  refreshSubscribers.push(callback)
+}
+
+// Función para notificar a todos los suscriptores con el nuevo token
+const onTokenRefreshed = (token: string) => {
+  refreshSubscribers.forEach((callback) => callback(token))
+  refreshSubscribers = []
+}
+
+// Función para rechazar todos los suscriptores en caso de error
+const onRefreshError = () => {
+  refreshSubscribers = []
+}
+
 privateApi.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
@@ -37,14 +57,68 @@ privateApi.interceptors.response.use(
   (response) => response,
   async (error) => {
     const authStore = useAuthStore()
+    const originalRequest = error.config
 
     if (error.response) {
-      const { status } = error.response
+      const { status, data } = error.response
 
-      if (status === 401) {
-        console.warn('⚠️ Token expirado o inválido. Cerrando sesión...')
-        authStore.logout()
-        return router.push('/auth/sign-in')
+      // Verificar si es un error de token expirado o inválido
+      const isTokenError = status === 401 ||
+                           (data?.code && ['1008', '1009'].includes(data.code))
+
+      // Si el token ha expirado y no estamos ya intentando refrescarlo
+      if (isTokenError && !originalRequest._retry) {
+        if (isRefreshing) {
+          // Si ya estamos refrescando, añadimos este request a la cola
+          return new Promise((resolve, reject) => {
+            subscribeTokenRefresh((token) => {
+              if (token) {
+                originalRequest.headers.Authorization = `Bearer ${token}`
+                resolve(axios(originalRequest))
+              } else {
+                reject(error)
+              }
+            })
+          })
+        }
+
+        originalRequest._retry = true
+        isRefreshing = true
+
+        try {
+          const refreshToken = authStore.refreshToken || localStorage.getItem('refreshToken')
+
+          // Si no hay refresh token, hacemos logout
+          if (!refreshToken) {
+            throw new Error('No hay refresh token disponible')
+          }
+
+          // Intentamos obtener un nuevo token
+          const response = await publicApi.post('/auth/refresh', { refreshToken })
+          const { accessToken, refreshToken: newRefreshToken } = response.data
+
+          // Guardamos los nuevos tokens
+          authStore.setAuthData(accessToken, newRefreshToken)
+
+          // Notificamos a todos los requests en espera
+          onTokenRefreshed(accessToken)
+
+          // Retomamos el request original con el nuevo token
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`
+          isRefreshing = false
+          return axios(originalRequest)
+        } catch (refreshError) {
+          console.warn('⚠️ No se pudo refrescar el token. Cerrando sesión...', refreshError)
+          isRefreshing = false
+
+          // Notificar a todos los requests en cola que hubo un error
+          onRefreshError()
+
+          // Hacer logout
+          authStore.logout()
+          router.push('/auth/sign-in')
+          return Promise.reject(refreshError)
+        }
       }
 
       if (status === 403) {

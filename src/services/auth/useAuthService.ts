@@ -1,3 +1,4 @@
+// src/services/auth/useAuthService.ts
 import { useApiClient } from '@/composables/useApiClient'
 
 import type { IUser } from '../user/interfaces/user.interface'
@@ -20,9 +21,14 @@ export const useAuthService = () => {
     return privateApi.get<IUser>('/auth/me')
   }
 
+  const logout = async () => {
+    return privateApi.post<void>('/auth/logout')
+  }
+
   return {
     login,
     refreshAuthToken,
     me,
+    logout
   }
 }

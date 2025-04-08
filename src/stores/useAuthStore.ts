@@ -15,27 +15,29 @@ export const useAuthStore = defineStore('auth', () => {
   const toast = useToast()
 
   const token = ref<string | null>(localStorage.getItem('token') || null)
-
   const refreshToken = ref<string | null>(localStorage.getItem('refreshToken') || null)
   const user = ref<IUser | null>(
     localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
   )
-  
+
   const loading = ref(false)
   const errorMessage = ref<string | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
 
-  const setAuthData = (newToken: string) => {
+  const setAuthData = (newToken: string, newRefreshToken: string) => {
     token.value = newToken
+    refreshToken.value = newRefreshToken
     localStorage.setItem('token', newToken)
+    localStorage.setItem('refreshToken', newRefreshToken)
   }
-  
 
   const clearAuthData = () => {
     token.value = null
+    refreshToken.value = null
     user.value = null
     localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
   }
 
@@ -45,8 +47,8 @@ export const useAuthStore = defineStore('auth', () => {
       errorMessage.value = null
 
       const response = await authService.login({ email, password })
-      setAuthData(response.accessToken);
-      
+      setAuthData(response.accessToken, response.refreshToken);
+
       const userData = await authService.me()
       user.value = userData
       localStorage.setItem('user', JSON.stringify(userData))
@@ -54,7 +56,6 @@ export const useAuthStore = defineStore('auth', () => {
       toast.add({
         severity: 'success',
         summary: t('auth.successful_login'),
-        // detail: 'Has iniciado sesión correctamente.',
         life: 3000,
       })
 
@@ -75,16 +76,39 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    clearAuthData()
+    try {
+      if (token.value) {
+        await authService.logout()
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error)
+    } finally {
+      clearAuthData()
 
-    toast.add({
-      severity: 'info',
-      summary: t('auth.sesion_closed'),
-      // detail: 'Has cerrado sesión correctamente.',
-      life: 3000,
-    })
+      toast.add({
+        severity: 'info',
+        summary: t('auth.sesion_closed'),
+        life: 3000,
+      })
 
-    router.push('/auth/sign-in')
+      router.push('/auth/sign-in')
+    }
+  }
+
+  const refreshUserToken = async () => {
+    if (!refreshToken.value) return false
+
+    try {
+      loading.value = true
+      const response = await authService.refreshAuthToken(refreshToken.value)
+      setAuthData(response.accessToken, response.refreshToken)
+      return true
+    } catch (error) {
+      console.error('Error al refrescar el token:', error)
+      return false
+    } finally {
+      loading.value = false
+    }
   }
 
   return {
@@ -96,5 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     login,
     logout,
+    setAuthData,
+    refreshUserToken
   }
 })
