@@ -76,11 +76,10 @@ export default defineComponent({
         const response = await getCustomFields()
         customFields.value = response
 
-        // Si estamos en modo edición, primero obtener los datos del contacto
+
         if (contactId) {
           const contact = await getContact(contactId)
 
-          // Configurar los valores básicos del contacto
           setValues({
             name: contact.name,
             lastName: contact.lastName,
@@ -89,13 +88,13 @@ export default defineComponent({
             countryCode: contact.countryCode,
             status: contact.status,
             birthDate: contact.birthDate ? new Date(contact.birthDate) : undefined,
-            customValues: []  // Inicialmente vacío, lo llenaremos después
+            customValues: []
           })
 
-          // Mapa para rastrear campos ya agregados
+
           const addedFields = new Set()
 
-          // Agregar primero los campos personalizados que ya tiene el contacto
+
           contact.customValues?.forEach((custom) => {
             addCustomField({
               customFieldId: custom.customFieldId,
@@ -105,12 +104,7 @@ export default defineComponent({
             addedFields.add(custom.customFieldId)
           })
 
-          // Para depuración
-          console.log('🔍 Campos personalizados del contacto:', contact.customValues)
-          console.log('🔍 CustomFields cargados:', response)
-          console.log('🔍 Campos agregados:', addedFields)
 
-          // Luego agregar el resto de campos personalizados vacíos
           response.forEach((field) => {
             if (!addedFields.has(field.id)) {
               addCustomField({
@@ -121,7 +115,6 @@ export default defineComponent({
             }
           })
         } else {
-          // En modo creación, simplemente agregar todos los campos vacíos
           response.forEach((field) => {
             addCustomField({
               customFieldId: field.id,
@@ -131,7 +124,7 @@ export default defineComponent({
           })
         }
 
-        // Navegar al último elemento después de que se hayan cargado los campos
+
         await nextTick()
         setTimeout(() => {
           const customFieldsContainer = document.querySelector('.custom-fields-container')
@@ -173,6 +166,7 @@ export default defineComponent({
               })),
           }
 
+
           if (contactId) {
             await updateContact(contactId, payload)
             toast.add({
@@ -203,7 +197,6 @@ export default defineComponent({
       },
       (errors) => {
         console.log('❌ Errores en el formulario:', errors)
-        // Marcar todos los campos como tocados al intentar enviar el formulario
         form.customValues.value.forEach((_, index) => {
           touchedFields.value[`customValues[${index}].value`] = true
         })
@@ -212,7 +205,6 @@ export default defineComponent({
 
     const getError = (index: number, field: string) => {
       const errorKey = `customValues[${index}].${field}`
-      // Solo mostrar el error si el campo ha sido tocado
       return touchedFields.value[errorKey] ? (errors?.value as Record<string, string | undefined>)[errorKey] || '' : ''
     }
 
