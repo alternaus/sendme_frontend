@@ -242,7 +242,7 @@ export default defineComponent({
       <div class="flex justify-center">
         <div
           v-if="data.changes"
-          class="flex items-center justify-center w-8 h-8 rounded-full border-gray-400 border"
+          class="flex items-center justify-center w-6 h-6 rounded-full border-gray-400 border"
           @click="handleViewChanges(data)"
         >
           <i class="pi pi-eye"></i>
