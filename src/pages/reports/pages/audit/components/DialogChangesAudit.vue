@@ -79,6 +79,7 @@ export default defineComponent({
       v-model="internalVisible"
       :header="$t('general.visualize_changes')"
       :closable="true"
+      :maximizable="true"
       customClass="custom-style"
       @update:modelValue="(val) => { if (!val) closeDialog() }"
     >

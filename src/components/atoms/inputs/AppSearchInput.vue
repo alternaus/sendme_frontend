@@ -38,7 +38,7 @@ export default defineComponent({
   <div class="box-search" :class="{ expanded: isInputExpanded }" v-tooltip.bottom="$t('general.search')">
     <input
       type="text"
-      class="input"
+      class="input sm"
       :value="search"
       @input="updateSearch"
       :placeholder="placeholder"
@@ -54,28 +54,37 @@ export default defineComponent({
 
 .input {
   padding: 10px;
-  width: 35px;
   height: 35px;
+  width: 100%; 
   border: 1px solid var(--p-primary-color);
   border-radius: var(--radius-xl);
   box-sizing: border-box;
   font-size: 0.9rem;
   outline: none;
-  transition: 0.5s;
+  transition: none; 
 }
 
-.box-search:hover input,
-.box-search.expanded input {
-  width: 200px;
-  background: transparent;
-  border-radius: 15px;
+@media (min-width: 640px) {
+  .input {
+    width: 40px;
+    height: 40px; 
+    border-radius: 50px;
+    transition: width 0.5s ease; 
+  }
+
+  .box-search:hover .input,
+  .box-search.expanded .input {
+    width: 200px;
+    background: transparent;
+    /* border-radius: 15px;
+    border-radius: 18px; */
+  }
 }
 
 .box-search .search {
   position: absolute;
-  font-size: 1.2rem !important;
   top: 50%;
-  right: -1px;
+  right: 4px;
   transform: translate(-50%, -50%);
   font-size: 25px;
   background-color: transparent;

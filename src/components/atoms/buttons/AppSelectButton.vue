@@ -58,7 +58,7 @@ export default defineComponent({
       :optionLabel="optionLabel"
       option-value="value"
       multiple
-      class="w-full"
+      class="w-full flex justify-center items-center flex-wrap"
       :class="{ 'p-invalid': hasError }"
       aria-labelledby="multiple"
     />
