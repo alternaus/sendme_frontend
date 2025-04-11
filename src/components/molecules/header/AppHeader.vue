@@ -112,32 +112,50 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4">
+  <div
+    class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4"
+  >
     <AppBreadcrumb />
     <div class="flex items-center gap-2">
-
       <AppDarkMode />
       <AppLanguage />
       <AppProfile />
     </div>
   </div>
 
-  <div class="flex flex-wrap md:flex-nowrap items-center h-16 dark:border-gray-700 w-full px-4"  v-if="text || icon">
+  <div
+    class="flex flex-col sm:flex-row md:flex-nowrap items-center sm:h-16 dark:border-gray-700 w-full px-4"
+    v-if="text || icon"
+  >
     <div class="flex flex-col items-center md:flex-row md:gap-4">
-      <component :is="IconComponents[icon]" v-if="icon && IconComponents[icon]"
-        class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]" />
-      <span class="text-xl  font-semibold text-center md:text-left">
+      <component
+        :is="IconComponents[icon]"
+        v-if="icon && IconComponents[icon]"
+        class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]"
+      />
+      <span class="text-xl font-semibold text-center md:text-left">
         {{ text }}
       </span>
     </div>
 
-    <div class="flex items-center gap-2 ml-auto">
-      <AppSearchInput v-if="showSearch" :search="searchQuery" class="w-full md:w-auto"
-        @update:search="searchQuery = $event" :placeholder="placeholder" />
+    <div
+      class="flex flex-col sm:flex-row justify-center items-center gap-2 ml-auto w-full sm:w-auto"
+    >
+      <AppSearchInput
+        v-if="showSearch"
+        v-model:search="searchQuery"
+        class="w-full md:w-auto"
+        @update:search="$emit('update:modelValue', $event)"
+        :placeholder="placeholder"
+      />
       <div class="flex gap-2 mx-2">
-        <button v-for="(action, index) in actions" :key="index" v-tooltip.bottom="action.label"
+        <button
+          v-for="(action, index) in actions"
+          :key="index"
+          v-tooltip.bottom="action.label"
           @click="action.onClick(selectedId)"
-          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed, cursor-pointer ${getActionClass(action.type)}`">
+          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed, cursor-pointer ${getActionClass(action.type)}`"
+        >
           <component :is="ActionIcons[action.type]" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
         </button>
       </div>
