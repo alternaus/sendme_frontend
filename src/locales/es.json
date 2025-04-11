@@ -340,7 +340,13 @@
     "next": "Siguiente",
     "no_data": "No hay datos disponibles",
     "retry": "Reintentar",
-    "no_records_found": "No se encontraron registros"
+    "no_records_found": "No se encontraron registros",
+    "choose_value_recharge": "Selecciona el valor de tu recarga",
+    "info_remember_recharge": "Recuerda que mientras tengas activo el plan tus mensajes no vencen, la recarga se aplicará de forma inmediata a tu cuenta.",
+    "pay" : "Pagar",
+    "enter_value": "Ingresa el valor",
+    "buy_messages": "Comprar mensajes",
+    "select_valid_recharge_value": "Selecciona un valor de recarga válido"
   },
   "customFields": {
     "title": "Campos Personalizados",

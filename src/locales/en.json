@@ -339,7 +339,13 @@
     "next": "Next",
     "no_data": "No data available",
     "retry": "Retry",
-    "no_records_found": "No records found"
+    "no_records_found": "No records found",
+    "choose_value_recharge": "Choose the value of your recharge",
+    "info_remember_recharge": "Remember that as long as you have the plan active your messages do not expire, the recharge will be applied immediately to your account.",
+    "pay": "Pay",
+    "enter_value": "Enter the value",
+    "buy_messages": "Buy messages",
+    "select_valid_recharge_value": "Select a valid recharge value"
   },
   "customFields": {
     "title": "Custom Fields",
