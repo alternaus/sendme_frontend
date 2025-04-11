@@ -280,13 +280,13 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" class="hidden lg:flex" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
-    <AppStepper v-model="activeStep" :steps="steps" class="mb-8" />
+    <AppStepper v-model="activeStep" :steps="steps" class="mb-2" />
 
     <div v-if="activeStep === 0" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput
         v-model="form.name.value"
         type="text"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full mt-3 border-gray-300 dark:border-gray-600 rounded-md"
         :error-message="errors.name"
         :label="t('general.name')"
         :disabled="isLoading"
@@ -300,7 +300,7 @@ export default defineComponent({
         v-model="form.description.value"
         :error-message="errors.description"
         type="text"
-        class="w-full border-gray-300 dark:border-gray-600 rounded-md"
+        class="w-full mt-3 border-gray-300 dark:border-gray-600 rounded-md"
         :label="t('general.description')"
         :disabled="isLoading"
       >
@@ -314,7 +314,7 @@ export default defineComponent({
         :options="channels"
         :error-message="errors.channelId"
         :label="t('campaign.channel')"
-        class="w-full"
+        class="w-full mt-3"
         :disabled="isLoading"
       >
         <template #icon>
@@ -327,7 +327,7 @@ export default defineComponent({
         :options="statusOptions"
         :error-message="errors.status"
         :label="t('general.status')"
-        class="w-full"
+        class="w-full mt-3"
         :disabled="isLoading"
       >
         <template #icon>
