@@ -146,7 +146,7 @@ export default defineComponent({
         <div
           class="flex flex-col items-center justify-center w-60 h-38 !p-4 border-1 border-gray-900 rounded-md dark:border-white hover:shadow-2xl cursor-pointer hover:bg-[var(--p-primary-300)]"
           :class="
-              customValue > 0 ? 'bg-[var(--p-primary-color)] dark:bg-neutral-700' : ''
+              customValue && customValue > 0 ? 'bg-[var(--p-primary-color)] dark:bg-neutral-700' : ''
             "
         >
           <AppInputNumber
