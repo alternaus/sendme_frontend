@@ -76,8 +76,8 @@ export default defineComponent({
     // Detectar automáticamente campos de fecha
     autoDetectDateFields: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   emits: ['selection-change', 'page-change'],
   setup(props, { emit }) {
@@ -102,12 +102,12 @@ export default defineComponent({
       }
 
       const dateFieldConfigs: DateFormatConfig[] = [...props.dateFields]
-      const existingFields = dateFieldConfigs.map(config => config.field)
+      const existingFields = dateFieldConfigs.map((config) => config.field)
 
       // Comprueba datos para inferir campos de fecha
       const item = props.data[0]
 
-      props.headers.forEach(header => {
+      props.headers.forEach((header) => {
         const field = header.field
         const value = item[field]
 
@@ -119,16 +119,14 @@ export default defineComponent({
         // Detectar si es una fecha por nombre del campo o por valor
         const isDateField =
           typeof value === 'string' &&
-          (
-            field.toLowerCase().includes('date') ||
+          (field.toLowerCase().includes('date') ||
             field.toLowerCase().includes('at') ||
-            (value && dayjs(value).isValid() && /^\d{4}-\d{2}-\d{2}/.test(value as string))
-          )
+            (value && dayjs(value).isValid() && /^\d{4}-\d{2}-\d{2}/.test(value as string)))
 
         if (isDateField) {
           dateFieldConfigs.push({
             field,
-            format: field.toLowerCase().includes('time') ? 'time' : 'datetime'
+            format: field.toLowerCase().includes('time') ? 'time' : 'datetime',
           })
         }
       })
@@ -138,12 +136,12 @@ export default defineComponent({
 
     // Detectar si un campo es de fecha
     const isDateField = (field: string): boolean => {
-      return detectedDateFields.value.some(config => config.field === field)
+      return detectedDateFields.value.some((config) => config.field === field)
     }
 
     // Obtener la configuración de formato para un campo
     const getDateConfig = (field: string): DateFormatConfig | undefined => {
-      return detectedDateFields.value.find(config => config.field === field)
+      return detectedDateFields.value.find((config) => config.field === field)
     }
 
     watchEffect(() => {
@@ -182,7 +180,7 @@ export default defineComponent({
       onRowContextMenu,
       rowSizes,
       isDateField,
-      getDateConfig
+      getDateConfig,
     }
   },
 })
@@ -269,7 +267,10 @@ export default defineComponent({
           <div v-if="loading" class="col-span-full flex justify-center py-4">
             <i class="pi pi-spin pi-spinner text-3xl text-gray-400"></i>
           </div>
-          <div v-else-if="data.length === 0" class="col-span-full flex flex-col items-center justify-center p-8 text-center">
+          <div
+            v-else-if="data.length === 0"
+            class="col-span-full flex flex-col items-center justify-center p-8 text-center"
+          >
             <slot name="empty">
               <i class="pi pi-inbox text-5xl text-gray-300 dark:text-gray-600 mb-4"></i>
               <p class="text-gray-500 dark:text-gray-400">{{ $t('general.no_records_found') }}</p>
@@ -281,17 +282,36 @@ export default defineComponent({
               v-for="(item, index) in data"
               :key="index"
               class="bg-white dark:bg-neutral-800 shadow-lg rounded-lg p-4 flex flex-col"
+              :class="
+                selectedRow === item
+                  ? '!bg-[var(--p-datatable-row-selected-background)] border !border-[var(--p-datatable-row-focus-ring-color)]'
+                  : ''
+              "
+              @click="
+                () => {
+                  selectedRow = selectedRow === item ? null : item
+                  handleRowSelect()
+                }
+              "
             >
-              <div v-for="col in headers" :key="col.field" class="flex items-center gap-2 py-1">
+              <div
+                v-for="col in headers"
+                :key="col.field"
+                class="flex items-center gap-2 py-1 flex-wrap"
+              >
                 <strong class="text-gray-600 dark:text-gray-300 flex items-center gap-1 min-w-24">
                   <slot :name="`header-${col.field}`">
                     {{ col.header }}
                   </slot>
                   :
                 </strong>
-                <span class="flex-1">
+                <span class=" ">
                   <!-- Si hay un slot personalizado -->
-                  <slot v-if="$slots[`custom-${col.field}`]" :name="`custom-${col.field}`" :data="item">
+                  <slot
+                    v-if="$slots[`custom-${col.field}`]"
+                    :name="`custom-${col.field}`"
+                    :data="item"
+                  >
                     {{ item[col.field] }}
                   </slot>
 
@@ -354,6 +374,4 @@ export default defineComponent({
 :deep(.p-paginator) {
   justify-content: end;
 }
-
-
 </style>
