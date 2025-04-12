@@ -38,7 +38,7 @@ export default defineComponent({
 
 <template>
   <div
-    class="flex flex-col items-center justify-center w-64 sm:w-56 md:w-60 h-36 p-3 border-3 border-gray-900 rounded-xl dark:border-neutral-400 hover:shadow-2xl dark:hover:bg-neutral-700 hover:bg-[var(--p-primary-color)] cursor-pointer transition-all duration-200">
+    class="flex flex-col items-center justify-center w-64 sm:w-56 md:w-60 h-36 p-3 border-1 border-gray-900 rounded-xl dark:border-neutral-400 hover:shadow-2xl dark:hover:bg-neutral-700 hover:bg-[var(--p-primary-300)] cursor-pointer transition-all duration-200">
     <component :is="IconComponentsSettings[icon]" class="w-10 h-10 md:w-12 md:h-12 dark:fill-neutral-300" />
     <small class="mt-2 text-center text-sm md:text-base text-gray-800 font-semibold dark:text-neutral-300">{{
       text
