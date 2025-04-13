@@ -5,6 +5,7 @@ import { useForm } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
+import GoogleIcon from '@/assets/svg/google.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
@@ -20,6 +21,7 @@ export default defineComponent({
     AppButton,
     AppLink,
     AppDivider,
+    GoogleIcon
   },
   setup() {
     const { t } = useI18n()
@@ -94,9 +96,14 @@ export default defineComponent({
     <div class="w-full grid grid-cols-2 gap-4">
       <AppButton
         label="Google"
-        variant="white"
+        :variant="'contrast'"
+        outlined
         @click="handleGoogleLogin"
-      />
+      >
+        <template #icon-start>
+          <GoogleIcon class="w-4 h-4" />
+        </template>
+      </AppButton>
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
