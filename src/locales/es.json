@@ -66,7 +66,11 @@
       "cancel": "Cancelar",
       "success": "{count} contactos importados exitosamente",
       "partial_success": "{errors} contactos no pudieron ser importados",
-      "error": "Error al importar los contactos"
+      "error": "Error al importar los contactos",
+      "connection_error": "Error de conexión al servidor",
+      "upload_success": "El archivo se ha subido correctamente y está siendo procesado",
+      "error": "Ha ocurrido un error al importar los contactos",
+      "connection_error": "Error de conexión con el servidor de notificaciones"
     }
   },
   "campaign": {

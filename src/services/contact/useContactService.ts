@@ -72,11 +72,20 @@ export const useContactService = () => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('fieldMapping', JSON.stringify(fieldMapping))
-    return privateApi.post<{ imported: number, errors: string[] }>('/contacts/import', formData, {
+    return privateApi.post<{ jobId: string }>('/contacts/import', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
+  }
+
+  const getImportStatus = async (jobId: string) => {
+    return privateApi.get<{
+      status: 'processing' | 'completed' | 'error'
+      progress: number
+      total: number
+      errors?: string[]
+    }>(`/contacts/import/${jobId}/status`)
   }
 
   return {
@@ -89,5 +98,6 @@ export const useContactService = () => {
     exportContacts,
     getImportPreview,
     importContacts,
+    getImportStatus,
   }
 }

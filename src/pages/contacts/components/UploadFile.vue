@@ -1,20 +1,48 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
+import ProgressBar from 'primevue/progressbar'
 import { useToast } from 'primevue/usetoast'
 
+import { io, type Socket } from 'socket.io-client'
 import { useI18n } from 'vue-i18n'
 
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useContactService } from '@/services/contact/useContactService'
+import { useAuthStore } from '@/stores/authStore'
 
 interface ImportPreviewResponse {
   headers: string[]
-  sampleData: string[][]
-  totalRows: number
+  sampleData: string[]
+  availableFields: string[]
+  totalRows?: number // Opcional ya que no viene del backend
+}
+
+interface ImportProgress {
+  progress: number
+  total: number
+  percentage: number
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string | string[]
+    }
+  }
+}
+
+interface ImportNotification {
+  type: 'success' | 'error' | 'warning' | 'info'
+  message: string
+  data?: {
+    progress?: number
+    total?: number
+    errors?: string[]
+  }
 }
 
 const uploader = ref()
@@ -23,6 +51,7 @@ const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
 const { t } = useI18n()
 const toast = useToast()
+const authStore = useAuthStore()
 const { getImportPreview, importContacts } = useContactService()
 
 const fileName = ref('')
@@ -30,15 +59,18 @@ const fileSize = ref(0)
 const totalRows = ref(0)
 const loading = ref(false)
 const currentFile = ref<File | null>(null)
+const importProgress = ref<ImportProgress | null>(null)
+const socket = ref<Socket | null>(null)
 
 const requiredFields = ['phone']
 
 const fieldsOptions = [
   { label: t('general.name'), value: 'name' },
-  { label: t('general.last_name'), value: 'last_name' },
+  { label: t('general.last_name'), value: 'lastName' },
   { label: t('general.email'), value: 'email' },
   { label: t('general.phone'), value: 'phone' },
-  { label: t('general.birth_date'), value: 'birth_date' }
+  { label: t('general.country_code'), value: 'countryCode' },
+  { label: t('general.birth_date'), value: 'birthDate' }
 ]
 
 const openFileDialog = () => {
@@ -58,10 +90,23 @@ const onUpload = async (event: FileUploadSelectEvent) => {
 
   try {
     const response = await getImportPreview(file) as ImportPreviewResponse
-    if (response?.headers && response?.sampleData) {
+    console.log('Preview response:', response)
+
+    if (response?.headers) {
       originalHeaders.value = response.headers
-      fileData.value = [response.headers, ...response.sampleData]
-      totalRows.value = response.totalRows || 0
+
+      // Convertir sampleData en filas
+      if (response.sampleData) {
+        // Convertir el array plano en una matriz
+        const rowData = []
+        for (let i = 0; i < response.sampleData.length; i += response.headers.length) {
+          rowData.push(response.sampleData.slice(i, i + response.headers.length))
+        }
+        fileData.value = [response.headers, ...rowData]
+      }
+
+      // Calcular el número total de filas basado en los datos de muestra
+      totalRows.value = Math.floor(response.sampleData.length / response.headers.length) || 1
     }
   } catch (error) {
     console.error('Error al obtener preview:', error)
@@ -93,43 +138,125 @@ const handleFinalUpload = async () => {
 
   loading.value = true
   try {
-    // Convertir el mapeo de índices a nombres de columnas
     const fieldMapping: Record<string, string> = {}
     Object.entries(selectedFields.value).forEach(([index, field]) => {
-      if (field && originalHeaders.value[parseInt(index)]) {
-        fieldMapping[originalHeaders.value[parseInt(index)]] = field
+      const headerName = originalHeaders.value[parseInt(index)]
+      if (field && headerName) {
+        fieldMapping[headerName] = field
       }
     })
+
+    console.log('Field Mapping:', fieldMapping)
 
     const result = await importContacts(currentFile.value, fieldMapping)
 
-    if (result.imported > 0) {
-      toast.add({
-        severity: 'success',
-        summary: t('general.success'),
-        detail: t('contact.import.success', { count: result.imported }),
-        life: 3000,
-      })
-
-      if (result.errors?.length > 0) {
-        toast.add({
-          severity: 'warn',
-          summary: t('general.warning'),
-          detail: t('contact.import.partial_success', { errors: result.errors.length }),
-          life: 5000,
-        })
-      }
-
-      handleCancel() // Limpiar el formulario después de una importación exitosa
-    }
-  } catch (error) {
-    console.error('Error al importar contactos:', error)
+    // Mostrar mensaje de éxito
     toast.add({
-      severity: 'error',
-      summary: t('general.error'),
-      detail: t('contact.import.error'),
+      severity: 'success',
+      summary: t('general.success'),
+      detail: t('contact.import.upload_success'),
       life: 3000,
     })
+
+    // Limpiar datos
+    handleCancel()
+
+    if (result.jobId) {
+      // Inicializar Socket.IO para seguimiento del progreso
+      socket.value = io(`${import.meta.env.VITE_API_URL}/notifications`, {
+        query: { token: authStore.token },
+        transports: ['websocket'],
+        path: '/api/socket.io'
+      })
+
+      // Escuchar eventos de conexión
+      socket.value.on('connect', () => {
+        console.log('Conectado al servidor de notificaciones')
+      })
+
+      // Escuchar eventos de desconexión
+      socket.value.on('disconnect', () => {
+        console.log('Desconectado del servidor de notificaciones')
+      })
+
+      // Escuchar errores de conexión
+      socket.value.on('connect_error', (error) => {
+        console.error('Error de conexión:', error)
+        toast.add({
+          severity: 'error',
+          summary: t('general.error'),
+          detail: t('contact.import.connection_error'),
+          life: 3000,
+        })
+      })
+
+      // Escuchar notificaciones de importación
+      socket.value.on(`import:${result.jobId}`, (notification: ImportNotification) => {
+        switch (notification.type) {
+          case 'success':
+            toast.add({
+              severity: 'success',
+              summary: t('general.success'),
+              detail: notification.message,
+              life: 3000,
+            })
+            // Limpiar estado
+            importProgress.value = null
+            socket.value?.disconnect()
+            socket.value = null
+            handleCancel()
+            break
+
+          case 'error':
+            toast.add({
+              severity: 'error',
+              summary: t('general.error'),
+              detail: notification.message,
+              life: 3000,
+            })
+            break
+
+          case 'warning':
+            toast.add({
+              severity: 'warn',
+              summary: t('general.warning'),
+              detail: notification.message,
+              life: 5000,
+            })
+            break
+
+          case 'info':
+            if (notification.data?.progress !== undefined && notification.data?.total !== undefined) {
+              importProgress.value = {
+                progress: notification.data.progress,
+                total: notification.data.total,
+                percentage: Math.round((notification.data.progress / notification.data.total) * 100)
+              }
+            }
+            break
+        }
+      })
+    }
+  } catch (error: unknown) {
+    console.error('Error al importar contactos:', error)
+    const apiError = error as ApiError
+    if (apiError.response?.data?.message) {
+      toast.add({
+        severity: 'error',
+        summary: t('general.error'),
+        detail: Array.isArray(apiError.response.data.message)
+          ? apiError.response.data.message.join(', ')
+          : apiError.response.data.message,
+        life: 5000,
+      })
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: t('general.error'),
+        detail: t('contact.import.error'),
+        life: 3000,
+      })
+    }
   } finally {
     loading.value = false
   }
@@ -144,6 +271,14 @@ const handleCancel = () => {
   fileSize.value = 0
   totalRows.value = 0
 }
+
+// Limpiar socket al desmontar
+onUnmounted(() => {
+  if (socket.value) {
+    socket.value.disconnect()
+    socket.value = null
+  }
+})
 </script>
 
 <template>
@@ -169,11 +304,17 @@ const handleCancel = () => {
               </button>
             </div>
             <p class="text-sm text-neutral-600 dark:text-neutral-400">
-              <strong>Tamaño:</strong> {{ formatFileSize }}
+              <strong>{{ $t('contact.import.size') }}</strong> {{ formatFileSize }}
             </p>
             <p class="text-sm text-neutral-600 dark:text-neutral-400">
-              <strong>Filas encontradas:</strong> {{ totalRows }}
+              <strong>{{ $t('contact.import.rows') }}</strong> {{ totalRows }}
             </p>
+
+            <!-- Barra de progreso -->
+            <div v-if="importProgress" class="mt-4">
+              <p class="text-sm mb-2">{{ $t('contact.import.progress', { progress: importProgress.progress, total: importProgress.total }) }}</p>
+              <ProgressBar :value="importProgress.percentage" />
+            </div>
           </div>
           <table class="w-full border table-auto text-sm border-neutral-200 dark:border-neutral-700">
             <thead>
