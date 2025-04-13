@@ -25,7 +25,8 @@
     "confirm_logout": "Confirmar cierre de sesión",
     "enter": "Ingresar",
     "forgot_password": "¿Olvidaste tu contraseña?",
-    "authentication_error": "Error de autenticación"
+    "authentication_error": "Error de autenticación",
+    "processing_login": "Procesando inicio de sesión..."
   },
   "contact": {
     "contact": "Contacto",

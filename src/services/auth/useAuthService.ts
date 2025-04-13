@@ -25,10 +25,21 @@ export const useAuthService = () => {
     return privateApi.post<void>('/auth/logout')
   }
 
+  // Métodos para autenticación con Google
+  const getGoogleAuthUrl = async () => {
+    return publicApi.get<{ url: string }>('/auth/google')
+  }
+
+  const handleGoogleCallback = async (code: string) => {
+    return publicApi.get<IAuthResponse>(`/auth/google/callback?code=${code}`)
+  }
+
   return {
     login,
     refreshAuthToken,
     me,
-    logout
+    logout,
+    getGoogleAuthUrl,
+    handleGoogleCallback
   }
 }

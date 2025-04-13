@@ -42,6 +42,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/auth/google/callback',
+    name: 'sign-in-google',
+    component: () => import('@/pages/auth/sign-in/SignInGooglePage.vue'),
+    meta: { layout: 'AuthLayout', requiresAuth: false },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),

@@ -10,6 +10,7 @@ import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputPassword from '@/components/atoms/inputs/AppInputPassword.vue'
 import AppLink from '@/components/atoms/links/AppLink.vue'
+import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export default defineComponent({
@@ -22,6 +23,9 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
+    const authStore = useAuthStore()
+    const authService = useAuthService()
+
     yup.setLocale({
       mixed: {
         required: () => t('general.required_field'),
@@ -30,8 +34,6 @@ export default defineComponent({
         email: () => t('general.invalid_email'),
       },
     })
-
-    const authStore = useAuthStore()
 
     const schema = yup.object({
       email: yup.string().email().required().label(t('general.email')),
@@ -57,11 +59,21 @@ export default defineComponent({
       }
     })
 
+    const handleGoogleLogin = async () => {
+      try {
+        const { url } = await authService.getGoogleAuthUrl()
+        window.location.href = url
+      } catch (error) {
+        console.error('Error al iniciar sesión con Google:', error)
+      }
+    }
+
     return {
       email,
       password,
       errors,
       onSubmit,
+      handleGoogleLogin,
     }
   },
 })
@@ -80,10 +92,12 @@ export default defineComponent({
     <AppDivider />
 
     <div class="w-full grid grid-cols-2 gap-4">
-      <AppButton label="Google" variant="white" />
+      <AppButton
+        label="Google"
+        variant="white"
+        @click="handleGoogleLogin"
+      />
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
 </template>
-
-<style lang="scss" scoped></style>

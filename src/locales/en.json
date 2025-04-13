@@ -25,7 +25,8 @@
     "confirm_logout": "Confirm logout",
     "enter": "Enter",
     "forgot_password": "Forgot your password?",
-    "authentication_error": "Authentication error"
+    "authentication_error": "Authentication error",
+    "processing_login": "Processing login..."
   },
   "contact": {
     "contact": "Contact",
