@@ -16,7 +16,7 @@ export const useContactService = () => {
   }
 
   const getContactCount = async (): Promise<{ total: number }> => {
-    return privateApi.get<{ total: number }>('/contacts/count') 
+    return privateApi.get<{ total: number }>('/contacts/count')
   }
 
   const getContact = async (id: string) => {
@@ -58,6 +58,27 @@ export const useContactService = () => {
     document.body.removeChild(link)
   }
 
+  const getImportPreview = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return privateApi.post('/contacts/import/preview', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
+
+  const importContacts = async (file: File, fieldMapping: Record<string, string>) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('fieldMapping', JSON.stringify(fieldMapping))
+    return privateApi.post<{ imported: number, errors: string[] }>('/contacts/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
+
   return {
     getContacts,
     getContact,
@@ -66,5 +87,7 @@ export const useContactService = () => {
     updateContact,
     deleteContact,
     exportContacts,
+    getImportPreview,
+    importContacts,
   }
 }

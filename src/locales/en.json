@@ -63,7 +63,10 @@
       "size": "Size:",
       "rows": "Rows found:",
       "not_import": "Do not import",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "success": "{count} contacts successfully imported",
+      "partial_success": "{errors} contacts could not be imported",
+      "error": "Error importing contacts"
     }
   },
   "campaign": {
@@ -346,7 +349,8 @@
     "pay": "Pay",
     "enter_value": "Enter the value",
     "buy_messages": "Buy messages",
-    "select_valid_recharge_value": "Select a valid recharge value"
+    "select_valid_recharge_value": "Select a valid recharge value",
+    "error_loading_file": "Error loading file"
   },
   "customFields": {
     "title": "Custom Fields",

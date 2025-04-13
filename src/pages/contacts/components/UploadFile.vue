@@ -2,30 +2,43 @@
 import { computed, ref } from 'vue'
 
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
+import { useToast } from 'primevue/usetoast'
 
-import ExcelJS from 'exceljs'
+import { useI18n } from 'vue-i18n'
 
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import { useContactService } from '@/services/contact/useContactService'
+
+interface ImportPreviewResponse {
+  headers: string[]
+  sampleData: string[][]
+  totalRows: number
+}
 
 const uploader = ref()
 const fileData = ref<string[][]>([])
 const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
+const { t } = useI18n()
+const toast = useToast()
+const { getImportPreview, importContacts } = useContactService()
 
 const fileName = ref('')
 const fileSize = ref(0)
 const totalRows = ref(0)
+const loading = ref(false)
+const currentFile = ref<File | null>(null)
 
 const requiredFields = ['phone']
 
 const fieldsOptions = [
-  { label: 'Nombre', value: 'name' },
-  { label: 'Apellido', value: 'last_name' },
-  { label: 'Email', value: 'email' },
-  { label: 'Teléfono', value: 'phone' },
-  { label: 'Fecha de nacimiento', value: 'birth_date' }
+  { label: t('general.name'), value: 'name' },
+  { label: t('general.last_name'), value: 'last_name' },
+  { label: t('general.email'), value: 'email' },
+  { label: t('general.phone'), value: 'phone' },
+  { label: t('general.birth_date'), value: 'birth_date' }
 ]
 
 const openFileDialog = () => {
@@ -38,28 +51,29 @@ const onUpload = async (event: FileUploadSelectEvent) => {
 
   fileName.value = file.name
   fileSize.value = file.size
+  currentFile.value = file
   fileData.value = []
   originalHeaders.value = []
+  loading.value = true
 
-  const buffer = await file.arrayBuffer()
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.load(buffer)
-
-  const worksheet = workbook.worksheets[0]
-  const parsed: string[][] = []
-
-  worksheet.eachRow({ includeEmpty: false }, (row, rowIndex) => {
-    const values = Array.isArray(row?.values) ? row.values.slice(1) as string[] : []
-    if (rowIndex === 1) {
-      originalHeaders.value = values
+  try {
+    const response = await getImportPreview(file) as ImportPreviewResponse
+    if (response?.headers && response?.sampleData) {
+      originalHeaders.value = response.headers
+      fileData.value = [response.headers, ...response.sampleData]
+      totalRows.value = response.totalRows || 0
     }
-    if (rowIndex <= 3) {
-      parsed.push(values)
-    }
-  })
-
-  totalRows.value = worksheet.rowCount - 1
-  fileData.value = parsed
+  } catch (error) {
+    console.error('Error al obtener preview:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('general.error_loading_file'),
+      life: 3000,
+    })
+  } finally {
+    loading.value = false
+  }
 }
 
 const formatFileSize = computed(() => {
@@ -74,9 +88,51 @@ const isValid = computed(() => {
   return requiredFields.every(field => selected.includes(field))
 })
 
-const handleFinalUpload = () => {
-  if (!isValid.value) return
-  console.log('Subiendo archivo con mapeo:', selectedFields.value)
+const handleFinalUpload = async () => {
+  if (!isValid.value || !currentFile.value) return
+
+  loading.value = true
+  try {
+    // Convertir el mapeo de índices a nombres de columnas
+    const fieldMapping: Record<string, string> = {}
+    Object.entries(selectedFields.value).forEach(([index, field]) => {
+      if (field && originalHeaders.value[parseInt(index)]) {
+        fieldMapping[originalHeaders.value[parseInt(index)]] = field
+      }
+    })
+
+    const result = await importContacts(currentFile.value, fieldMapping)
+
+    if (result.imported > 0) {
+      toast.add({
+        severity: 'success',
+        summary: t('general.success'),
+        detail: t('contact.import.success', { count: result.imported }),
+        life: 3000,
+      })
+
+      if (result.errors?.length > 0) {
+        toast.add({
+          severity: 'warn',
+          summary: t('general.warning'),
+          detail: t('contact.import.partial_success', { errors: result.errors.length }),
+          life: 5000,
+        })
+      }
+
+      handleCancel() // Limpiar el formulario después de una importación exitosa
+    }
+  } catch (error) {
+    console.error('Error al importar contactos:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('contact.import.error'),
+      life: 3000,
+    })
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleCancel = () => {

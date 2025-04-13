@@ -63,7 +63,10 @@
       "size": "Tamaño:",
       "rows": "Filas encontradas:",
       "not_import": "No importar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "success": "{count} contactos importados exitosamente",
+      "partial_success": "{errors} contactos no pudieron ser importados",
+      "error": "Error al importar los contactos"
     }
   },
   "campaign": {
