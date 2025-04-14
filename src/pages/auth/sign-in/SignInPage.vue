@@ -33,9 +33,12 @@ export default defineComponent({
 
     // Determinar la URL de callback según el entorno
     const isDevelopment = import.meta.env.MODE === 'development'
-    const callbackUrl = isDevelopment
-      ? 'http://localhost:5173/auth/google/callback'
-      : `${import.meta.env.VITE_API_URL}/auth/google/callback`
+    const baseUrl = isDevelopment
+      ? 'http://localhost:5173'
+      : import.meta.env.VITE_API_URL || window.location.origin
+    const callbackUrl = `${baseUrl}/auth/google/callback`
+
+    console.log('Callback URL:', callbackUrl)
 
     useScriptTag(
       'https://accounts.google.com/gsi/client',
