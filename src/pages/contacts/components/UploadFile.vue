@@ -12,13 +12,14 @@ import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+
 
 interface ImportPreviewResponse {
   headers: string[]
   sampleData: string[]
   availableFields: string[]
-  totalRows?: number // Opcional ya que no viene del backend
+  totalRows?: number
 }
 
 interface ImportProgress {
@@ -163,15 +164,20 @@ const handleFinalUpload = async () => {
 
     if (result.jobId) {
       // Inicializar Socket.IO para seguimiento del progreso
-      socket.value = io(`${import.meta.env.VITE_API_URL}/notifications`, {
+      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin
+      const wsUrl = `${baseUrl}/notifications`
+      console.log('Socket.IO URL:', wsUrl)
+
+      socket.value = io(wsUrl, {
         query: { token: authStore.token },
         transports: ['websocket'],
         path: '/api/socket.io'
       })
 
-      // Escuchar eventos de conexión
       socket.value.on('connect', () => {
-        console.log('Conectado al servidor de notificaciones')
+        console.log('Socket.IO conectado')
+        // Suscribirse al canal de notificaciones del job
+        socket.value?.emit('subscribe', { jobId: result.jobId })
       })
 
       // Escuchar eventos de desconexión

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useScriptTag } from '@vueuse/core'
 
 import { useForm } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
@@ -14,6 +15,8 @@ import AppLink from '@/components/atoms/links/AppLink.vue'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
+
+
 export default defineComponent({
   components: {
     AppInput,
@@ -27,6 +30,16 @@ export default defineComponent({
     const { t } = useI18n()
     const authStore = useAuthStore()
     const authService = useAuthService()
+
+    // Determinar la URL de callback según el entorno
+    const isDevelopment = import.meta.env.MODE === 'development'
+    const callbackUrl = isDevelopment
+      ? 'http://localhost:5173/auth/google/callback'
+      : `${import.meta.env.VITE_API_URL}/auth/google/callback`
+
+    useScriptTag(
+      'https://accounts.google.com/gsi/client',
+    )
 
     yup.setLocale({
       mixed: {
@@ -76,6 +89,7 @@ export default defineComponent({
       errors,
       onSubmit,
       handleGoogleLogin,
+      callbackUrl
     }
   },
 })
@@ -94,12 +108,7 @@ export default defineComponent({
     <AppDivider />
 
     <div class="w-full grid grid-cols-2 gap-4">
-      <AppButton
-        label="Google"
-        :variant="'contrast'"
-        outlined
-        @click="handleGoogleLogin"
-      >
+      <AppButton label="Google" :variant="'contrast'" outlined @click="handleGoogleLogin">
         <template #icon-start>
           <GoogleIcon class="w-4 h-4" />
         </template>
@@ -107,4 +116,12 @@ export default defineComponent({
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
+  <div id="g_id_onload"
+    data-client_id="916028257398-48219o2n9561ggv5kf7qf70sihe82lvd.apps.googleusercontent.com"
+    data-context="signin"
+    :data-login_uri="callbackUrl"
+    data-auto_select="false"
+    data-itp_support="true">
+  </div>
+
 </template>
