@@ -15,8 +15,6 @@ import AppLink from '@/components/atoms/links/AppLink.vue'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-
-
 export default defineComponent({
   components: {
     AppInput,
@@ -124,7 +122,8 @@ export default defineComponent({
     data-context="signin"
     :data-login_uri="callbackUrl"
     data-auto_select="false"
-    data-itp_support="true">
+    data-itp_support="true"
+    data-ux_mode="redirect">
   </div>
 
 </template>
