@@ -49,7 +49,7 @@ export default defineComponent({
     useSeoMeta({
       title: pageTitle,
       description: 'meta description',
-      titleTemplate: `%s | ${i18n.t('general.app_name')}`,
+      titleTemplate: `%s | ${i18n.t('titles.app_name')}`,
     })
 
     watch(() => i18nStore.language, (newLang) => {

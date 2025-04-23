@@ -34,7 +34,8 @@
     "account": "My Account",
     "account_settings": "Account Settings",
     "buy_credits": "Buy Credits",
-    "plans_and_pricing": "Plans and Pricing"
+    "plans_and_pricing": "Plans and Pricing",
+    "app_name": "SendMe"
   },
   "languages": {
     "language": "Language",
