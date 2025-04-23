@@ -308,7 +308,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div v-if="fileData.length" class="mt-4 space-y-4">
+        <div v-if="fileData.length" class="space-y-4">
           <div class="flex justify-start">
             <div
               class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm p-3 max-w-md w-full text-neutral-800 dark:text-neutral-100">
