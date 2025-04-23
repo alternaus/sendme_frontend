@@ -3,17 +3,6 @@
 
   <AppCard>
     <template #content>
-      <div class="w-full flex justify-center">
-        <div class="max-w-auto w-full text-center">
-          <p class="text-xl font-bold my-2">{{ $t('contact.import.notice.title') }}</p>
-          <ul class="list-inside list-disc text-sm text-left mx-auto w-fit">
-            <li>{{ $t('contact.import.notice.first_row') }}</li>
-            <li>{{ $t('contact.import.notice.phone_required') }}</li>
-            <li>{{ $t('contact.import.notice.supported_formats') }}</li>
-            <li>{{ $t('contact.import.notice.final_message') }}</li>
-          </ul>
-        </div>
-      </div>
       <UploadFile />
     </template>
   </AppCard>
