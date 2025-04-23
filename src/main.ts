@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 import { Ripple, ToastService, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
 
+import { createHead } from '@unhead/vue/client'
 import { createPinia } from 'pinia'
 
 import { instanceI18n } from '@/plugins/i18n'
@@ -15,6 +16,9 @@ import { AppTheme } from './theme/app-theme'
 
 const pinia = createPinia()
 const app = createApp(App)
+const head = createHead()
+
+app.use(head)
 app.use(ToastService)
 
 app.use(pinia)

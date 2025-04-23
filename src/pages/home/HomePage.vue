@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
+import { useHead } from '@unhead/vue';
+
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
@@ -13,6 +15,9 @@ export default defineComponent({
     AppHeader,
   },
   setup() {
+    useHead({
+      title: 'Home',
+    })
     return {
       IconTypes,
     }
@@ -21,6 +26,10 @@ export default defineComponent({
 </script>
 
 <template>
+  <Head>
+    <title>Sendme</title>
+    <meta name="description" content="Sendme" />
+  </Head>
   <AppHeader :icon="IconTypes.SEND" :actions="[]" />
   <div class="flex flex-col items-center w-full my-4">
     <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-8 w-full">

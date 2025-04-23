@@ -13,12 +13,15 @@ import { useRoute } from 'vue-router'
 
 import Toast from 'primevue/toast'
 
+import { useSeoMeta } from '@unhead/vue';
 import { useI18n } from 'vue-i18n'
 
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useI18nStore } from '@/stores/i18nStore'
+
+
 
 export default defineComponent({
   components: {
@@ -28,6 +31,11 @@ export default defineComponent({
     Toast,
   },
   setup() {
+    useSeoMeta({
+      title: 'Sendme',
+      description: 'meta description',
+      titleTemplate: '%s | Sendme',
+    });
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
