@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
-    meta: { layout: 'DashboardLayout', requiresAuth: true },
+    meta: { layout: 'DashboardLayout', requiresAuth: true, title: 'home' },
   },
   contactRoutes,
   campaignRoutes,
@@ -26,18 +26,20 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/auth',
     name: 'auth',
-    meta: { layout: 'AuthLayout', requiresAuth: false },
+    meta: { layout: 'AuthLayout', requiresAuth: false, title: 'auth' },
     redirect: '/auth/sign-in',
     children: [
       {
         path: 'sign-in',
         name: 'sign-in',
         component: () => import('@/pages/auth/sign-in/SignInPage.vue'),
+        meta: { title: 'sign_in' },
       },
       {
         path: 'sign-up',
         name: 'sign-up',
         component: () => import('@/pages/auth/sign-up/SignUpPage.vue'),
+        meta: { title: 'sign_up' },
       },
     ],
   },
@@ -45,13 +47,13 @@ const routes: RouteRecordRaw[] = [
     path: '/auth/google/callback',
     name: 'sign-in-google',
     component: () => import('@/pages/auth/sign-in/SignInGooglePage.vue'),
-    meta: { layout: 'AuthLayout', requiresAuth: false },
+    meta: { layout: 'AuthLayout', requiresAuth: false, title: 'sign_in_with_google' },
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
-    meta: { layout: 'DefaultLayout', requiresAuth: false },
+    meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'not_found' },
   },
 ]
 

@@ -31,11 +31,6 @@ export default defineComponent({
     Toast,
   },
   setup() {
-    useSeoMeta({
-      title: 'Sendme',
-      description: 'meta description',
-      titleTemplate: '%s | Sendme',
-    });
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
@@ -43,6 +38,18 @@ export default defineComponent({
     const layout = computed(() => {
       const layoutName = (route.meta.layout as string) || 'DefaultLayout'
       return layoutName
+    })
+
+    // Título dinámico basado en la ruta y traducciones
+    const pageTitle = computed<string>(() => {
+      const titleKey = route.meta.title as string
+      return titleKey ? i18n.t(`titles.${titleKey}`) : i18n.t('titles.home')
+    })
+
+    useSeoMeta({
+      title: pageTitle,
+      description: 'meta description',
+      titleTemplate: `%s | ${i18n.t('general.app_name')}`,
     })
 
     watch(() => i18nStore.language, (newLang) => {
