@@ -322,38 +322,40 @@ onUnmounted(() => {
               <ProgressBar :value="importProgress.percentage" />
             </div>
           </div>
-          <table class="w-full border table-auto text-sm border-neutral-200 dark:border-neutral-700">
-            <thead>
-              <tr>
-                <th v-for="(col, colIndex) in fileData[0]" :key="'header-' + colIndex"
-                  class="border p-2 text-center bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-semibold border-neutral-200 dark:border-neutral-700">
-                  {{ originalHeaders[colIndex] || `Columna ${colIndex + 1}` }}
-                </th>
-              </tr>
-              <tr>
-                <th v-for="(col, colIndex) in fileData[0]" :key="'select-' + colIndex"
-                  class="border p-2 bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
-                  <select v-model="selectedFields[colIndex]"
-                    class="w-full border p-1 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-600">
-                    <option value="">{{ $t('contact.import.not_import') }}</option>
-                    <option v-for="option in fieldsOptions" :key="option.value" :value="option.value"
-                      :disabled="selectedFields[colIndex] !== option.value && Object.values(selectedFields).includes(option.value)">
-                      {{ option.label }}
-                    </option>
-                  </select>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, rowIndex) in fileData.slice(1)" :key="'row-' + rowIndex"
-                class="odd:bg-white even:bg-neutral-50 dark:odd:bg-neutral-800 dark:even:bg-neutral-700">
-                <td v-for="(cell, cellIndex) in row" :key="'cell-' + cellIndex"
-                  class="border p-2 text-neutral-800 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700">
-                  {{ cell }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="bg-white dark:bg-neutral-900 rounded-xl shadow overflow-hidden">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-white dark:bg-neutral-900">
+                  <th v-for="(col, colIndex) in fileData[0]" :key="'header-' + colIndex"
+                    class="p-3 text-center text-neutral-800 dark:text-neutral-100 font-semibold">
+                    {{ originalHeaders[colIndex] || `Columna ${colIndex + 1}` }}
+                  </th>
+                </tr>
+                <tr class="bg-white dark:bg-neutral-900">
+                  <th v-for="(col, colIndex) in fileData[0]" :key="'select-' + colIndex"
+                    class="p-3">
+                    <select v-model="selectedFields[colIndex]"
+                      class="w-full border p-1 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-600">
+                      <option value="">{{ $t('contact.import.not_import') }}</option>
+                      <option v-for="option in fieldsOptions" :key="option.value" :value="option.value"
+                        :disabled="selectedFields[colIndex] !== option.value && Object.values(selectedFields).includes(option.value)">
+                        {{ option.label }}
+                      </option>
+                    </select>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, rowIndex) in fileData.slice(1)" :key="'row-' + rowIndex"
+                  class="bg-white dark:bg-neutral-900">
+                  <td v-for="(cell, cellIndex) in row" :key="'cell-' + cellIndex"
+                    class="p-3 text-neutral-800 dark:text-neutral-100">
+                    {{ cell }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div class="grid grid-cols-2 gap-2 w-fit">
             <AppButton class=" !w-auto !mx-auto" :label="$t('contact.import.load_file')" :disabled="!isValid"
