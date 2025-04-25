@@ -122,9 +122,9 @@ export default defineComponent({
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
               <i class="fas fa-users text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Campañas Activas</span>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Contactos</span>
             </div>
-            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.activeCampaigns || 0 }}</span>
+            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalContacts || 0 }}</span>
           </div>
         </template>
       </AppCard>

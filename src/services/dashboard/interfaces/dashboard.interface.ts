@@ -4,6 +4,7 @@ export interface DashboardStats {
   availableMessages: number
   sentMessages: number
   failedMessages: number
+  totalContacts: number
 }
 
 export interface RecentMessage {
