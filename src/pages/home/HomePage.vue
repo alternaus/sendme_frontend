@@ -12,6 +12,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
 import { useDashboardService } from '@/services/dashboard/useDashboardService'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export default defineComponent({
   components: {
@@ -22,6 +23,7 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
+    const authStore = useAuthStore()
     useHead({
       title: t('titles.home'),
     })
@@ -93,6 +95,7 @@ export default defineComponent({
       dashboardData,
       loading,
       t,
+      authStore,
     }
   },
 })
@@ -106,7 +109,7 @@ export default defineComponent({
     <AppCard class="mb-2">
       <template #content>
         <div class="flex justify-between items-center py-1">
-          <h1 class="text-sm md:text-base">{{ t('home.welcome') }}</h1>
+          <h1 class="text-sm md:text-base">{{ t('home.welcome', { name: authStore.user?.name }) }}</h1>
         </div>
       </template>
     </AppCard>

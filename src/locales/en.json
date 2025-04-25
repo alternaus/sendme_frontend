@@ -409,7 +409,7 @@
     }
   },
   "home": {
-    "welcome": "Hello, welcome to Sendme",
+    "welcome": "Hello {name}, welcome to Sendme",
     "campaigns": "Campaigns",
     "contacts": "Contacts",
     "available": "Available",
