@@ -7,6 +7,7 @@ import { useHead } from '@unhead/vue'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
 import { useDashboardService } from '@/services/dashboard/useDashboardService'
@@ -14,6 +15,7 @@ import { useDashboardService } from '@/services/dashboard/useDashboardService'
 export default defineComponent({
   components: {
     AppCard,
+    AppHeader,
     AppTable,
     Chart,
   },
@@ -94,6 +96,8 @@ export default defineComponent({
 </script>
 
 <template>
+
+<AppHeader :icon="IconTypes.REPORTS" :text="$t('report.reports')" :actions="[]" />
 
   <div class="p-2 md:p-4 mx-auto">
     <AppCard class="mb-2">
