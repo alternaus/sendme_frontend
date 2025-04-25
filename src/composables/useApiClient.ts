@@ -1,7 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
 import router from '@/router'
-import { useAuthStore } from '@/stores/useAuthStore'
 
 const isProd = import.meta.env.MODE === 'production'
 
@@ -28,7 +27,7 @@ const subscribeTokenRefresh = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback)
 }
 
-// Función para notificar a todos los suscriptores con el nuevo token
+// Función para notificar a los suscriptores cuando se refresca el token
 const onTokenRefreshed = (token: string) => {
   refreshSubscribers.forEach((callback) => callback(token))
   refreshSubscribers = []
@@ -41,8 +40,7 @@ const onRefreshError = () => {
 
 privateApi.interceptors.request.use(
   (config) => {
-    const authStore = useAuthStore()
-    const token = authStore.token || localStorage.getItem('token')
+    const token = localStorage.getItem('token')
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -56,7 +54,6 @@ privateApi.interceptors.request.use(
 privateApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const authStore = useAuthStore()
     const originalRequest = error.config
 
     if (error.response) {
@@ -86,7 +83,7 @@ privateApi.interceptors.response.use(
         isRefreshing = true
 
         try {
-          const refreshToken = authStore.refreshToken || localStorage.getItem('refreshToken')
+          const refreshToken = localStorage.getItem('refreshToken')
 
           // Si no hay refresh token, hacemos logout
           if (!refreshToken) {
@@ -98,7 +95,8 @@ privateApi.interceptors.response.use(
           const { accessToken, refreshToken: newRefreshToken } = response.data
 
           // Guardamos los nuevos tokens
-          authStore.setAuthData(accessToken, newRefreshToken)
+          localStorage.setItem('token', accessToken)
+          localStorage.setItem('refreshToken', newRefreshToken)
 
           // Notificamos a todos los requests en espera
           onTokenRefreshed(accessToken)
@@ -114,8 +112,9 @@ privateApi.interceptors.response.use(
           // Notificar a todos los requests en cola que hubo un error
           onRefreshError()
 
-          // Hacer logout
-          authStore.logout()
+          // Limpiar tokens y redirigir al login
+          localStorage.removeItem('token')
+          localStorage.removeItem('refreshToken')
           router.push('/auth/sign-in')
           return Promise.reject(refreshError)
         }

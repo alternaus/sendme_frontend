@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 
 import Chart from 'primevue/chart'
 
@@ -7,14 +7,14 @@ import { useHead } from '@unhead/vue'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
-import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
+import { useDashboardService } from '@/services/dashboard/useDashboardService'
 
 export default defineComponent({
   components: {
     AppCard,
     AppTable,
-    AppHeader,
     Chart,
   },
   setup() {
@@ -22,34 +22,15 @@ export default defineComponent({
       title: 'Home',
     })
 
-    const statsData = {
-      campaigns: 100,
-      contacts: 10000,
-      availableMessages: 100000,
-      availableMoney: 1000,
-      receivedMessages: 100000,
-      rejectedMessages: 100000,
-    }
-
-    const campaignData = [
-      { campaign: 'Cumpleaños', number: '321 3331922', message: 'Lorem ipsum is simply dummy text of the Lorem Ipsum is simply dummy text of the...' },
-      { campaign: 'Cumpleaños', number: '321 3331922', message: 'Lorem ipsum is simply dummy text of the Lorem Ipsum is simply dummy text of the...' },
-      { campaign: 'Cumpleaños', number: '321 3331922', message: 'Lorem ipsum is simply dummy text of the Lorem Ipsum is simply dummy text of the...' },
-      { campaign: 'Cumpleaños', number: '321 3331922', message: 'Lorem ipsum is simply dummy text of the Lorem Ipsum is simply dummy text of the...' },
-      { campaign: 'Cumpleaños', number: '321 3331922', message: 'Lorem ipsum is simply dummy text of the Lorem Ipsum is simply dummy text of the...' },
-    ]
-
-    const tableHeaders = [
-      { field: 'campaign', header: 'Campaña' },
-      { field: 'number', header: 'Número' },
-      { field: 'message', header: 'Mensaje' },
-    ]
+    const { getDashboardData } = useDashboardService()
+    const dashboardData = ref<DashboardResponse | null>(null)
+    const loading = ref(true)
 
     const chartData = ref({
-      labels: ['Recibidos', 'Rechazados'],
+      labels: ['Enviados', 'Fallidos'],
       datasets: [
         {
-          data: [statsData.receivedMessages, statsData.rejectedMessages],
+          data: [0, 0],
           backgroundColor: ['var(--p-primary-color)', '#000000'],
           hoverBackgroundColor: ['var(--p-primary-color)', '#262626'],
         },
@@ -70,13 +51,43 @@ export default defineComponent({
       cutout: '60%',
     })
 
+    const tableHeaders = [
+      { field: 'campaignName', header: 'Campaña' },
+      { field: 'phone', header: 'Número' },
+      { field: 'content', header: 'Contenido' },
+    ]
+
+    const loadDashboardData = async () => {
+      try {
+        loading.value = true
+        const response = await getDashboardData()
+        if (response) {
+          dashboardData.value = response
+
+          // Actualizar datos del gráfico
+          chartData.value.datasets[0].data = [
+            response.stats.sentMessages,
+            response.stats.failedMessages,
+          ]
+        }
+      } catch (error) {
+        console.error('Error loading dashboard data:', error)
+      } finally {
+        loading.value = false
+      }
+    }
+
+    onMounted(() => {
+      loadDashboardData()
+    })
+
     return {
       IconTypes,
-      statsData,
-      campaignData,
-      tableHeaders,
       chartData,
       chartOptions,
+      tableHeaders,
+      dashboardData,
+      loading,
     }
   },
 })
@@ -84,19 +95,15 @@ export default defineComponent({
 
 <template>
 
-  <AppHeader :icon="IconTypes.CONTACTS" />
-
   <div class="p-2 md:p-4 mx-auto">
-    <!-- Header con saludo -->
     <AppCard class="mb-2">
       <template #content>
         <div class="flex justify-between items-center py-1">
-          <h1 class="text-sm md:text-base">Hola, Marie from the boring company</h1>
+          <h1 class="text-sm md:text-base">Hola, bienvenido a Sendme</h1>
         </div>
       </template>
     </AppCard>
 
-    <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
       <AppCard>
         <template #content>
@@ -105,7 +112,7 @@ export default defineComponent({
               <i class="fas fa-bullhorn text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Campañas</span>
             </div>
-            <span class="text-sm md:text-base font-bold">{{ statsData.campaigns }}</span>
+            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalCampaigns || 0 }}</span>
           </div>
         </template>
       </AppCard>
@@ -115,9 +122,9 @@ export default defineComponent({
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
               <i class="fas fa-users text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Contactos</span>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Campañas Activas</span>
             </div>
-            <span class="text-sm md:text-base font-bold">{{ statsData.contacts }}</span>
+            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.activeCampaigns || 0 }}</span>
           </div>
         </template>
       </AppCard>
@@ -130,51 +137,37 @@ export default defineComponent({
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Disponibles</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm md:text-base font-bold">{{ statsData.availableMessages }}</span>
-              <span class="text-sm md:text-base font-bold">U${{ statsData.availableMoney }}</span>
+              <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.availableMessages || 0 }}</span>
             </div>
           </div>
         </template>
       </AppCard>
     </div>
 
-    <!-- Chart and Table Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <AppCard class="h-[300px]">
         <template #content>
           <div class="flex flex-row items-center gap-4 h-full">
-            <div class="w-full flex-2">
-              <Chart type="doughnut" :data="chartData" :options="chartOptions" />
+            <div class="w-full md:flex-2">
+              <Chart type="pie" :data="chartData" :options="chartOptions" />
             </div>
-            <div class="grid grid-rows-2 gap-4 w-full flex-1">
+            <div class="hidden md:grid grid-rows-2 gap-4 w-full flex-1">
               <div class="p-2 rounded text-center bg-[var(--p-primary-color)]">
-                <span class="text-xs md:text-sm font-bold block text-[var(--p-button-primary-color)]">Recibidos</span>
-                <div class="text-sm md:text-base text-[var(--p-button-primary-color)]">{{ statsData.receivedMessages }}</div>
+                <span class="text-xs md:text-sm font-bold block text-[var(--p-button-primary-color)]">Enviados</span>
+                <div class="text-sm md:text-base text-[var(--p-button-primary-color)]">{{
+                  dashboardData?.stats.sentMessages || 0 }}</div>
               </div>
               <div class="bg-black text-white p-2 rounded text-center">
-                <span class="text-xs md:text-sm font-bold block">Rechazados</span>
-                <div class="text-sm md:text-base">{{ statsData.rejectedMessages }}</div>
+                <span class="text-xs md:text-sm font-bold block">Fallidos</span>
+                <div class="text-sm md:text-base">{{ dashboardData?.stats.failedMessages || 0 }}</div>
               </div>
             </div>
           </div>
         </template>
       </AppCard>
 
-      <AppCard class="h-[300px] overflow-hidden">
-        <template #content>
-          <div class="h-full overflow-hidden">
-            <AppTable
-              :data="campaignData"
-              :headers="tableHeaders"
-              :pageSize="10"
-              :pageCurrent="1"
-              :totalItems="campaignData.length"
-              :showPaginator="false"
-              class="h-full"
-            />
-          </div>
-        </template>
-      </AppCard>
+      <AppTable :data="dashboardData?.recentMessages || []" :headers="tableHeaders" :pageSize="10" :pageCurrent="1"
+        :totalItems="(dashboardData?.recentMessages || []).length" :showPaginator="false" class="h-full" />
     </div>
   </div>
 </template>
