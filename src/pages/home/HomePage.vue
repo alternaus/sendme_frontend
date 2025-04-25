@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted, ref, watch } from 'vue'
+import { useDark } from '@vueuse/core'
 
 import Chart from 'primevue/chart'
 
@@ -24,6 +25,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const authStore = useAuthStore()
+    const isDark = useDark()
     useHead({
       title: t('titles.home'),
     })
@@ -32,29 +34,41 @@ export default defineComponent({
     const dashboardData = ref<DashboardResponse | null>(null)
     const loading = ref(true)
 
+    const updateChartColors = (isDarkMode: boolean) => {
+      chartData.value = {
+        ...chartData.value,
+        datasets: [{
+          ...chartData.value.datasets[0],
+          backgroundColor: [isDarkMode ? '#fed757' : '#fece2f', '#000000'],
+          hoverBackgroundColor: [isDarkMode ? '#fed757' : '#fece2f', '#262626'],
+        }]
+      }
+    }
+
     const chartData = ref({
       labels: [t('home.sent'), t('home.failed')],
       datasets: [
         {
           data: [0, 0],
-          backgroundColor: ['var(--p-primary-color)', '#000000'],
-          hoverBackgroundColor: ['var(--p-primary-color)', '#262626'],
+          backgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#000000'],
+          hoverBackgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#262626'],
         },
       ],
     })
 
     const chartOptions = ref({
+      type: 'pie',
       plugins: {
         legend: {
           labels: {
             usePointStyle: true,
-            color: 'var(--text-color)',
+            color: isDark.value ? '#ffffff' : '#000000',
           },
         },
       },
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '60%',
+      cutout: '0%',
     })
 
     const tableHeaders = [
@@ -71,10 +85,19 @@ export default defineComponent({
           dashboardData.value = response
 
           // Actualizar datos del gráfico
-          chartData.value.datasets[0].data = [
-            response.stats.sentMessages,
-            response.stats.failedMessages,
-          ]
+          chartData.value = {
+            labels: [t('home.sent'), t('home.failed')],
+            datasets: [
+              {
+                data: [
+                  response.stats.sentMessages || 0,
+                  response.stats.failedMessages || 0
+                ],
+                backgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#000000'],
+                hoverBackgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#262626'],
+              },
+            ],
+          }
         }
       } catch (error) {
         console.error('Error loading dashboard data:', error)
@@ -82,6 +105,12 @@ export default defineComponent({
         loading.value = false
       }
     }
+
+    // Observar cambios en el modo oscuro
+    watch(isDark, (newValue) => {
+      updateChartColors(newValue)
+      chartOptions.value.plugins.legend.labels.color = newValue ? '#ffffff' : '#000000'
+    })
 
     onMounted(() => {
       loadDashboardData()
@@ -108,8 +137,8 @@ export default defineComponent({
   <div class="p-2 md:p-4 mx-auto">
     <AppCard class="mb-2">
       <template #content>
-        <div class="flex justify-between items-center py-1">
-          <h1 class="text-sm md:text-base">{{ t('home.welcome', { name: authStore.user?.name }) }}</h1>
+        <div class="flex justify-between items-center">
+          <p class="text-sm md:text-base">{{ t('home.welcome', { name: authStore.user?.name }) }}</p>
         </div>
       </template>
     </AppCard>
