@@ -19,6 +19,7 @@
 
           <div class="flex items-center justify-center col-span-12 lg:col-span-5">
             <AppEditor
+            :contentType="'text'"
               :modelValue="form.content.value"
               :errorMessage="errors.content"
               @update:modelValue="updateContent"
