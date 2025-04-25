@@ -1,11 +1,11 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
 
 import PrimeButton from 'primevue/button'
 
 import { useI18n } from 'vue-i18n'
 
+import { useThemeStore } from '@/stores/themeStore'
 
 export default defineComponent({
   components: {
@@ -13,14 +13,13 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
-    const isDark = useDark({ selector: 'html' })
-    const toggleDark = useToggle(isDark)
-    const buttonIcon = computed(() => (isDark.value ? 'pi pi-sun' : 'pi pi-moon'))
+    const themeStore = useThemeStore()
+    const buttonIcon = computed(() => (themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'))
 
     return {
       t,
-      isDark,
-      toggleDark,
+      isDark: themeStore.isDark,
+      toggleDark: themeStore.toggleDark,
       buttonIcon,
     }
   },

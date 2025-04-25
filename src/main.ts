@@ -9,6 +9,7 @@ import { createHead } from '@unhead/vue/client'
 import { createPinia } from 'pinia'
 
 import { instanceI18n } from '@/plugins/i18n'
+import { useThemeStore } from '@/stores/themeStore'
 
 import App from './App.vue'
 import router from './router'
@@ -22,6 +23,8 @@ app.use(head)
 app.use(ToastService)
 
 app.use(pinia)
+
+useThemeStore(pinia)
 
 app.use(router)
 
