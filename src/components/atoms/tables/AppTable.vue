@@ -52,6 +52,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    showPaginator: {
+      type: Boolean,
+      default: true,
+    },
     multipleSelection: {
       type: Boolean,
       default: false,
@@ -335,7 +339,7 @@ export default defineComponent({
           </template>
         </div>
       </div>
-      <div class="flex flex-col md:flex-row md:justify-between items-center mt-4 gap-2 md:gap-0">
+      <div v-if="showPaginator" class="flex flex-col md:flex-row md:justify-between items-center mt-4 gap-2 md:gap-0">
         <small class="text-sm text-center md:text-left">
           <span class="text-base font-semibold">
             {{ totalItems }}
@@ -351,7 +355,6 @@ export default defineComponent({
           @page="handlePageChange"
         />
       </div>
-      <!-- @page="(event) => $emit('page-change', event.page + 1)" -->
     </template>
   </Card>
 </template>
