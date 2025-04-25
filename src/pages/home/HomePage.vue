@@ -4,6 +4,7 @@ import { defineComponent, onMounted, ref } from 'vue'
 import Chart from 'primevue/chart'
 
 import { useHead } from '@unhead/vue'
+import { useI18n } from 'vue-i18n'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
@@ -20,8 +21,9 @@ export default defineComponent({
     Chart,
   },
   setup() {
+    const { t } = useI18n()
     useHead({
-      title: 'Home',
+      title: t('titles.home'),
     })
 
     const { getDashboardData } = useDashboardService()
@@ -29,7 +31,7 @@ export default defineComponent({
     const loading = ref(true)
 
     const chartData = ref({
-      labels: ['Enviados', 'Fallidos'],
+      labels: [t('home.sent'), t('home.failed')],
       datasets: [
         {
           data: [0, 0],
@@ -90,6 +92,7 @@ export default defineComponent({
       tableHeaders,
       dashboardData,
       loading,
+      t,
     }
   },
 })
@@ -97,13 +100,13 @@ export default defineComponent({
 
 <template>
 
-<AppHeader :icon="IconTypes.REPORTS" :text="$t('report.reports')" :actions="[]" />
+<AppHeader :showHeader="false" />
 
   <div class="p-2 md:p-4 mx-auto">
     <AppCard class="mb-2">
       <template #content>
         <div class="flex justify-between items-center py-1">
-          <h1 class="text-sm md:text-base">Hola, bienvenido a Sendme</h1>
+          <h1 class="text-sm md:text-base">{{ t('home.welcome') }}</h1>
         </div>
       </template>
     </AppCard>
@@ -114,7 +117,7 @@ export default defineComponent({
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
               <i class="fas fa-bullhorn text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Campañas</span>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.campaigns') }}</span>
             </div>
             <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalCampaigns || 0 }}</span>
           </div>
@@ -126,7 +129,7 @@ export default defineComponent({
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
               <i class="fas fa-users text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Contactos</span>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.contacts') }}</span>
             </div>
             <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalContacts || 0 }}</span>
           </div>
@@ -138,7 +141,7 @@ export default defineComponent({
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
               <i class="fas fa-comment text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">Disponibles</span>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.available') }}</span>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.availableMessages || 0 }}</span>
@@ -157,12 +160,12 @@ export default defineComponent({
             </div>
             <div class="hidden md:grid grid-rows-2 gap-4 w-full flex-1">
               <div class="p-2 rounded text-center bg-[var(--p-primary-color)]">
-                <span class="text-xs md:text-sm font-bold block text-[var(--p-button-primary-color)]">Enviados</span>
+                <span class="text-xs md:text-sm font-bold block text-[var(--p-button-primary-color)]">{{ t('home.sent') }}</span>
                 <div class="text-sm md:text-base text-[var(--p-button-primary-color)]">{{
                   dashboardData?.stats.sentMessages || 0 }}</div>
               </div>
               <div class="bg-black text-white p-2 rounded text-center">
-                <span class="text-xs md:text-sm font-bold block">Fallidos</span>
+                <span class="text-xs md:text-sm font-bold block">{{ t('home.failed') }}</span>
                 <div class="text-sm md:text-base">{{ dashboardData?.stats.failedMessages || 0 }}</div>
               </div>
             </div>

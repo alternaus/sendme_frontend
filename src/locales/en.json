@@ -407,5 +407,13 @@
       "number": "Number",
       "date": "Date"
     }
+  },
+  "home": {
+    "welcome": "Hello, welcome to Sendme",
+    "campaigns": "Campaigns",
+    "contacts": "Contacts",
+    "available": "Available",
+    "sent": "Sent",
+    "failed": "Failed"
   }
 }

@@ -408,5 +408,13 @@
       "number": "Número",
       "date": "Fecha"
     }
+  },
+  "home": {
+    "welcome": "Hola, bienvenido a Sendme",
+    "campaigns": "Campañas",
+    "contacts": "Contactos",
+    "available": "Disponibles",
+    "sent": "Enviados",
+    "failed": "Fallidos"
   }
 }

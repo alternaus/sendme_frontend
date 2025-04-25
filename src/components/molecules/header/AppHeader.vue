@@ -87,6 +87,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    showHeader: {
+      type: Boolean,
+      default: true,
+    },
     modelValue: {
       type: String,
       default: '',
@@ -126,7 +130,7 @@ export default defineComponent({
 
   <div
     class="flex flex-col sm:flex-row md:flex-nowrap items-center sm:h-16 dark:border-gray-700 w-full px-4"
-    v-if="text || icon"
+    v-if="showHeader && (text || icon)"
   >
     <div class="flex flex-col items-center md:flex-row md:gap-4">
       <component
