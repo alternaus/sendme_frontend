@@ -388,7 +388,9 @@
     "enter_value": "Enter the value",
     "buy_messages": "Buy messages",
     "select_valid_recharge_value": "Select a valid recharge value",
-    "error_loading_file": "Error loading file"
+    "error_loading_file": "Error loading file",
+    "disconnected": "Disconnected",
+    "connection_error": "Connection error"
   },
   "customFields": {
     "title": "Custom Fields",

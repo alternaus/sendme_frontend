@@ -389,7 +389,9 @@
     "enter_value": "Ingresa el valor",
     "buy_messages": "Comprar mensajes",
     "select_valid_recharge_value": "Selecciona un valor de recarga válido",
-    "error_loading_file": "Error al cargar el archivo"
+    "error_loading_file": "Error al cargar el archivo",
+    "disconnected": "Desconectado",
+    "connection_error": "Error de conexión"
   },
   "customFields": {
     "title": "Campos Personalizados",

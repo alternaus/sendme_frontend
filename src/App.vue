@@ -40,7 +40,6 @@ export default defineComponent({
       return layoutName
     })
 
-    // Título dinámico basado en la ruta y traducciones
     const pageTitle = computed<string>(() => {
       const titleKey = route.meta.title as string
       return titleKey ? i18n.t(`titles.${titleKey}`) : i18n.t('titles.home')
