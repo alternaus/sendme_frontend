@@ -418,5 +418,16 @@
     "available": "Disponibles",
     "sent": "Enviados",
     "failed": "Fallidos"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "no_notifications": "No hay notificaciones",
+    "mark_as_read": "Marcar como leída",
+    "types": {
+      "success": "Éxito",
+      "error": "Error",
+      "warning": "Advertencia",
+      "info": "Información"
+    }
   }
 }

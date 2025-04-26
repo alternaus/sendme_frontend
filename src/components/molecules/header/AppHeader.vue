@@ -24,6 +24,7 @@ import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
+import AppNotificationBell from '@/components/atoms/notifications/AppNotificationBell.vue'
 import AppDarkMode from '@/components/molecules/dark-mode/AppDarkMode.vue'
 import AppLanguage from '@/components/molecules/language/AppLanguage.vue'
 import AppProfile from '@/components/molecules/profile/AppProfile.vue'
@@ -55,7 +56,14 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
 }
 
 export default defineComponent({
-  components: { AppProfile, AppSearchInput, AppLanguage, AppBreadcrumb, AppDarkMode },
+  components: {
+    AppProfile,
+    AppSearchInput,
+    AppLanguage,
+    AppBreadcrumb,
+    AppDarkMode,
+    AppNotificationBell
+  },
   props: {
     icon: {
       type: String as PropType<keyof typeof IconTypes>,
@@ -122,6 +130,7 @@ export default defineComponent({
   >
     <AppBreadcrumb />
     <div class="flex items-center gap-2">
+      <AppNotificationBell />
       <AppDarkMode />
       <AppLanguage />
       <AppProfile />

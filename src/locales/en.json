@@ -417,5 +417,16 @@
     "available": "Available",
     "sent": "Sent",
     "failed": "Failed"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "no_notifications": "No notifications",
+    "mark_as_read": "Mark as read",
+    "types": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Information"
+    }
   }
 }
