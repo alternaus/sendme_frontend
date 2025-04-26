@@ -1,31 +1,22 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import ProgressBar from 'primevue/progressbar'
 import { useToast } from 'primevue/usetoast'
 
-import { io, type Socket } from 'socket.io-client'
 import { useI18n } from 'vue-i18n'
 
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { useAuthStore } from '@/stores/useAuthStore'
-
 
 interface ImportPreviewResponse {
   headers: string[]
   sampleData: string[]
   availableFields: string[]
   totalRows?: number
-}
-
-interface ImportProgress {
-  progress: number
-  total: number
-  percentage: number
 }
 
 interface ApiError {
@@ -36,23 +27,12 @@ interface ApiError {
   }
 }
 
-interface ImportNotification {
-  type: 'success' | 'error' | 'warning' | 'info'
-  message: string
-  data?: {
-    progress?: number
-    total?: number
-    errors?: string[]
-  }
-}
-
 const uploader = ref()
 const fileData = ref<string[][]>([])
 const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
 const { t } = useI18n()
 const toast = useToast()
-const authStore = useAuthStore()
 const { getImportPreview, importContacts } = useContactService()
 
 const fileName = ref('')
@@ -60,8 +40,7 @@ const fileSize = ref(0)
 const totalRows = ref(0)
 const loading = ref(false)
 const currentFile = ref<File | null>(null)
-const importProgress = ref<ImportProgress | null>(null)
-const socket = ref<Socket | null>(null)
+const importProgress = ref<{ progress: number; total: number; percentage: number } | null>(null)
 
 const requiredFields = ['phone']
 
@@ -149,7 +128,7 @@ const handleFinalUpload = async () => {
 
     console.log('Field Mapping:', fieldMapping)
 
-    const result = await importContacts(currentFile.value, fieldMapping)
+    await importContacts(currentFile.value, fieldMapping)
 
     // Mostrar mensaje de éxito
     toast.add({
@@ -161,88 +140,6 @@ const handleFinalUpload = async () => {
 
     // Limpiar datos
     handleCancel()
-
-    if (result.jobId) {
-      // Inicializar Socket.IO para seguimiento del progreso
-      const baseUrl = import.meta.env.VITE_API_URL || window.location.origin
-      const wsUrl = `${baseUrl}/notifications`
-      console.log('Socket.IO URL:', wsUrl)
-
-      socket.value = io(wsUrl, {
-        query: { token: authStore.token },
-        transports: ['websocket'],
-        path: '/api/socket.io'
-      })
-
-      socket.value.on('connect', () => {
-        console.log('Socket.IO conectado')
-        // Suscribirse al canal de notificaciones del job
-        socket.value?.emit('subscribe', { jobId: result.jobId })
-      })
-
-      // Escuchar eventos de desconexión
-      socket.value.on('disconnect', () => {
-        console.log('Desconectado del servidor de notificaciones')
-      })
-
-      // Escuchar errores de conexión
-      socket.value.on('connect_error', (error) => {
-        console.error('Error de conexión:', error)
-        toast.add({
-          severity: 'error',
-          summary: t('general.error'),
-          detail: t('contact.import.connection_error'),
-          life: 3000,
-        })
-      })
-
-      // Escuchar notificaciones de importación
-      socket.value.on(`import:${result.jobId}`, (notification: ImportNotification) => {
-        switch (notification.type) {
-          case 'success':
-            toast.add({
-              severity: 'success',
-              summary: t('general.success'),
-              detail: notification.message,
-              life: 3000,
-            })
-            // Limpiar estado
-            importProgress.value = null
-            socket.value?.disconnect()
-            socket.value = null
-            handleCancel()
-            break
-
-          case 'error':
-            toast.add({
-              severity: 'error',
-              summary: t('general.error'),
-              detail: notification.message,
-              life: 3000,
-            })
-            break
-
-          case 'warning':
-            toast.add({
-              severity: 'warn',
-              summary: t('general.warning'),
-              detail: notification.message,
-              life: 5000,
-            })
-            break
-
-          case 'info':
-            if (notification.data?.progress !== undefined && notification.data?.total !== undefined) {
-              importProgress.value = {
-                progress: notification.data.progress,
-                total: notification.data.total,
-                percentage: Math.round((notification.data.progress / notification.data.total) * 100)
-              }
-            }
-            break
-        }
-      })
-    }
   } catch (error: unknown) {
     console.error('Error al importar contactos:', error)
     const apiError = error as ApiError
@@ -276,15 +173,8 @@ const handleCancel = () => {
   fileName.value = ''
   fileSize.value = 0
   totalRows.value = 0
+  importProgress.value = null
 }
-
-// Limpiar socket al desmontar
-onUnmounted(() => {
-  if (socket.value) {
-    socket.value.disconnect()
-    socket.value = null
-  }
-})
 </script>
 
 <template>

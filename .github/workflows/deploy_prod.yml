@@ -2,258 +2,125 @@ name: Deploy sendme frontend
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  lint-and-test:
+    name: 🧪 Lint y Tests
     runs-on: ubuntu-latest
-
-    env:
-      SERVER_HOST: ${{ secrets.IP }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      SERVER_USER: ${{ secrets.USER }}
-      FRONTEND_PATH: /var/www/vhosts/new.sendme123.com
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
-
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
           cache: 'npm'
-
-      - name: 📦 Install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install --no-optional
-          npm install @rollup/rollup-linux-x64-gnu
-
-      - name: 🔨 Build Vue App
-        run: npm run build
-        env:
-          NODE_ENV: production
-
+      - name: 📦 Instalar dependencias
+        run: npm ci
+      - name: 🔍 Lint
+        run: npm run lint
       - name: 🧪 Run tests
-        run: npm test || true
+        run: npm test
 
-      - name: 📂 Copy build files to server
-        uses: appleboy/scp-action@v0.1.7
+  build:
+    name: 🔨 Build
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.IP }}
-          username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          source: 'dist/*'
-          strip_components: 1
-          target: '/var/www/vhosts/new.sendme123.com/'
+          node-version: 22.x
+          cache: 'npm'
+      - name: 📦 Instalar dependencias
+        run: npm ci
+      - name: 📦 Build Vue App
+        run: |
+          npm run build
+      - name: 📂 Subir artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: vue-dist
+          path: dist
 
-      - name: ⚡ Install & Configure Nginx + SSL
+  deploy:
+    name: 🚀 Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔄 Descargar artefacto
+        uses: actions/download-artifact@v3
+        with:
+          name: vue-dist
+          path: dist
+
+      - name: 🔐 Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📂 Sync build to server
+        run: |
+          rsync -avz --delete dist/ \
+            ${{ secrets.USER }}@${{ secrets.IP }}:${{ env.FRONTEND_PATH }}
+
+      - name: 📄 Upload Nginx config
+        run: |
+          rsync -avz nginx/sendme123.conf \
+            ${{ secrets.USER }}@${{ secrets.IP }}:/tmp/sendme123.conf
+
+      - name: 🛠️ Remote server setup (Nginx & SSL)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.IP }}
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # 🔄 Actualizar paquetes
-             apt update &&  apt upgrade -y
+            set -eux
 
-            # 🌍 Instalar Nginx si no está presente
-            if ! command -v nginx &> /dev/null
-            then
-                echo "🔧 Instalando Nginx..."
-                 apt install -y nginx
-            else
-                echo "✅ Nginx ya está instalado."
+            # Verificar o instalar Nginx
+            if ! command -v nginx >/dev/null; then
+              apt-get update
+              apt-get install -y nginx
             fi
 
-            # 📁 Crear directorio del sitio si no existe
-             mkdir -p /var/www/vhosts/new.sendme123.com
+            # Limpiar sites-available y sites-enabled previos
+            rm -f /etc/nginx/sites-enabled/*
+            rm -f /etc/nginx/sites-available/*
 
-            # ✅ Dar permisos correctos
-             chown -R www-data:www-data /var/www/vhosts/new.sendme123.com
-             chmod -R 755 /var/www/vhosts/new.sendme123.com
+            # Desplegar nueva configuración
+            mv /tmp/sendme123.conf /etc/nginx/sites-available/sendme123.conf
+            ln -s /etc/nginx/sites-available/sendme123.conf /etc/nginx/sites-enabled/sendme123.conf
 
-            # 🔧 Configurar Nginx temporalmente sin SSL
-            echo 'server {
-                listen 80;
-                listen [::]:80;
-                server_name new.sendme123.com;
-                
-                location /.well-known/acme-challenge/ {
-                    root /var/www/html;
-                }
+            # Probar y recargar Nginx
+            nginx -t
+            systemctl reload nginx
 
-                location / {
-                    return 301 https://$host$request_uri;
-                }
-            }' |  tee /etc/nginx/sites-available/sendme123
-
-            # 🔗 Habilitar configuración temporal en Nginx
-             ln -sf /etc/nginx/sites-available/sendme123 /etc/nginx/sites-enabled/
-
-            # 🔄 Verificar configuración de Nginx antes de reiniciar
-             nginx -t &&  systemctl restart nginx || exit 1
-
-            # 🔐 Instalar Certbot para SSL si no está instalado
-            if ! command -v certbot &> /dev/null
-            then
-                echo "🔧 Instalando Certbot..."
-                 apt install -y certbot python3-certbot-nginx
-            else
-                echo "✅ Certbot ya está instalado."
+            # Instalar Certbot si no existe
+            if ! command -v certbot >/dev/null; then
+              apt-get install -y certbot python3-certbot-nginx
             fi
 
-            # 📜 Generar certificado SSL si no existe
+            # Obtener o renovar certificado
             if [ ! -d "/etc/letsencrypt/live/new.sendme123.com" ]; then
-                certbot certonly --webroot -w /var/www/html -d new.sendme123.com --non-interactive --agree-tos -m admin@sendme123.com
+              certbot --nginx -d new.sendme123.com --non-interactive --agree-tos -m admin@sendme123.com
             else
-               echo "✅ Certificado SSL ya existente."
+              certbot renew --quiet --post-hook "systemctl reload nginx"
             fi
 
-            # 📜 Configurar Nginx con SSL y optimizaciones
-            echo 'server {
-                listen 80;
-                listen [::]:80;
-                server_name new.sendme123.com;
-                location / {
-                    return 301 https://$host$request_uri;
-                }
-            }
+            # Configurar renovación automática si no existe en crontab
+            (crontab -l | grep -q "certbot renew") || \
+              echo "0 3 * * * certbot renew --quiet --post-hook 'systemctl reload nginx'" >> /etc/crontab
 
-            server {
-                listen 443 ssl http2;
-                listen [::]:443 ssl http2;
-                server_name new.sendme123.com;
-
-                root /var/www/vhosts/new.sendme123.com;
-                index index.html;
-
-                # Configuración de SSL
-                ssl_certificate /etc/letsencrypt/live/new.sendme123.com/fullchain.pem;
-                ssl_certificate_key /etc/letsencrypt/live/new.sendme123.com/privkey.pem;
-                include /etc/letsencrypt/options-ssl-nginx.conf;
-                ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-                
-                # Seguridad adicional
-                add_header X-Content-Type-Options nosniff;
-                add_header X-Frame-Options SAMEORIGIN;
-                add_header X-XSS-Protection "1; mode=block";
-                add_header Content-Security-Policy "default-src https: data: blob: wss: 'unsafe-inline' 'unsafe-eval'";
-
-                # Configuración de compresión
-                gzip on;
-                gzip_comp_level 5;
-                gzip_min_length 256;
-                gzip_proxied any;
-                gzip_vary on;
-                gzip_types
-                    application/javascript
-                    application/json
-                    application/x-javascript
-                    application/xml
-                    text/css
-                    text/javascript
-                    text/plain
-                    text/xml;
-
-                # Configuración de caché
-                location ~* \\.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|webp)$ {
-                    expires 30d;
-                    add_header Cache-Control "public, no-transform";
-                }
-
-                location / {
-                    try_files $uri /index.html;
-                    expires 1h;
-                    add_header Cache-Control "public, no-cache";
-                }
-
-                location /api/ {
-                    proxy_pass http://localhost:4000/api/;
-                    proxy_http_version 1.1;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection "upgrade";
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                    proxy_set_header X-Forwarded-Host $host;
-                    proxy_cache_bypass $http_upgrade;
-                    
-                    # Timeouts optimizados
-                    proxy_connect_timeout 60s;
-                    proxy_send_timeout 60s;
-                    proxy_read_timeout 60s;
-                    
-                    # Buffering optimizado
-                    proxy_buffering on;
-                    proxy_buffer_size 16k;
-                    proxy_busy_buffers_size 32k;
-                    proxy_buffers 16 16k;
-                }
-
-                location /socket.io/ {
-                    proxy_pass http://localhost:4000/socket.io/;
-                    proxy_http_version 1.1;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection "upgrade";
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                    proxy_set_header X-Forwarded-Host $host;
-                    proxy_cache_bypass $http_upgrade;
-                    
-                    # Configuración específica para WebSockets
-                    proxy_connect_timeout 120s;
-                    proxy_send_timeout 120s;
-                    proxy_read_timeout 3600s; # Largo timeout para conexiones prolongadas
-                }
-                
-                location /opensearch/ {
-                    proxy_pass http://localhost:5602/;
-                    proxy_http_version 1.1;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                    proxy_set_header Upgrade $http_upgrade;
-                    proxy_set_header Connection "upgrade";
-                    
-                    # Timeouts optimizados
-                    proxy_connect_timeout 90s;
-                    proxy_send_timeout 90s;
-                    proxy_read_timeout 90s;
-                }
-
-                # Denegar acceso a archivos ocultos
-                location ~ /\\. {
-                    deny all;
-                    access_log off;
-                    log_not_found off;
-                }
-            }' |  tee /etc/nginx/sites-available/sendme123
-
-            # 🔗 Habilitar configuración SSL en Nginx
-             ln -sf /etc/nginx/sites-available/sendme123 /etc/nginx/sites-enabled/
-
-            # 🔄 Verificar configuración antes de reiniciar Nginx
-             nginx -t &&  systemctl restart nginx || exit 1
-
-            # 📊 Configurar renovación automática de certificados
-            if ! crontab -l | grep -q certbot; then
-              (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --post-hook \"systemctl reload nginx\"") | crontab -
-              echo "✅ Renovación automática de certificados configurada."
-            fi
-
-            echo "🎉 Despliegue y configuración con SSL completados exitosamente."
-
-      - name: 🔔 Notificar despliegue exitoso
+      - name: 🔔 Notificar despliegue
         if: success()
-        run: |
-          echo "Despliegue completado exitosamente en new.sendme123.com"
+        run: echo "✅ Deploy completado en new.sendme123.com"
+
+      - name: ⚠️ Rollback on failure
+        if: failure()
+        run: echo "❌ Deploy fallido — revisa los logs"
