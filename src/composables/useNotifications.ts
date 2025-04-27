@@ -104,7 +104,7 @@ export const useNotifications = (orgId?: number) => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get<Notification[]>('/notifications', {
+      const res = await axios.get<INotification[]>('/notifications', {
         params: { orgId, unreadOnly: false },
       })
       list.value = Array.isArray(res.data) ? res.data : []
