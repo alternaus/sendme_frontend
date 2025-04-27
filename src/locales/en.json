@@ -422,6 +422,8 @@
     "title": "Notifications",
     "no_notifications": "No notifications",
     "mark_as_read": "Mark as read",
+    "clear_all": "Clear all",
+    "delete": "Delete",
     "types": {
       "success": "Success",
       "error": "Error",

@@ -423,6 +423,8 @@
     "title": "Notificaciones",
     "no_notifications": "No hay notificaciones",
     "mark_as_read": "Marcar como leída",
+    "clear_all": "Limpiar todo",
+    "delete": "Eliminar",
     "types": {
       "success": "Éxito",
       "error": "Error",

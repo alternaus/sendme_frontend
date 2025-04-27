@@ -1,10 +1,7 @@
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 
-import { useToast } from 'primevue/usetoast'
-
 import axios from 'axios'
 import { io, type Socket } from 'socket.io-client'
-import { useI18n } from 'vue-i18n'
 
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -22,8 +19,6 @@ export const useNotifications = (orgId: number) => {
   const list = ref<Notification[]>([])
   const socket = ref<Socket | null>(null)
   const isConnected = ref(false)
-  const toast = useToast()
-  const { t } = useI18n()
   const authStore = useAuthStore()
 
   watch(
@@ -70,12 +65,6 @@ export const useNotifications = (orgId: number) => {
 
     socket.value.on('connect_error', (err) => {
       console.error('[WebSocket] Error de conexión:', err.message)
-      toast.add({
-        severity: 'error',
-        summary: t('general.error'),
-        detail: t('general.connection_error'),
-        life: 3000,
-      })
     })
 
     socket.value.on('notification', (n: Notification) => {
@@ -85,13 +74,6 @@ export const useNotifications = (orgId: number) => {
       } else {
         list.value = [n]
       }
-      const severity = n.type === 'warning' ? 'warn' : n.type
-      toast.add({
-        severity,
-        summary: n.title,
-        detail: n.message,
-        life: 5000,
-      })
     })
 
     socket.value.on('notifications:history', (notifications: Notification[]) => {
@@ -151,6 +133,17 @@ export const useNotifications = (orgId: number) => {
     }
   }
 
+  const deleteNotification = async (id: number) => {
+    try {
+      await axios.delete(`/notifications/${id}`)
+      if (Array.isArray(list.value)) {
+        list.value = list.value.filter(n => n.id !== id)
+      }
+    } catch (error) {
+      console.error('[Notifications] Error al eliminar notificación:', error)
+    }
+  }
+
   onMounted(async () => {
     await fetchHistory()
     connect()
@@ -165,6 +158,7 @@ export const useNotifications = (orgId: number) => {
     isConnected,
     fetchHistory,
     markRead,
+    deleteNotification,
     connect,
     disconnect,
     subscribe,

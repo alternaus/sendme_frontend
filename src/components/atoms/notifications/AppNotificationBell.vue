@@ -4,7 +4,6 @@ import { computed, defineComponent, ref } from 'vue'
 import PrimeBadge from 'primevue/badge'
 import PrimeButton from 'primevue/button'
 import PrimeMenu from 'primevue/menu'
-import type { MenuItem } from 'primevue/menuitem'
 
 import { useI18n } from 'vue-i18n'
 
@@ -20,67 +19,78 @@ export interface Notification {
   read: boolean
 }
 
+type NotificationType = Notification['type']
+
 export default defineComponent({
   name: 'AppNotificationBell',
-  components: {
-    PrimeButton,
-    PrimeBadge,
-    PrimeMenu
-  },
+  components: { PrimeButton, PrimeBadge, PrimeMenu },
   setup() {
     const { t } = useI18n()
-    const menu = ref()
-    const { list, markRead } = useNotifications(1)
+    const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
+    const { list, deleteNotification } = useNotifications(1)
 
-    const unreadCount = computed(() => {
-      return list.value.filter((n: Notification) => !n.read).length
-    })
+    const unreadCount = computed(() =>
+      list.value.filter((n: Notification) => !n.read).length
+    )
 
-    const menuItems = computed(() => {
-      if (list.value.length === 0) {
-        return [{
-          label: t('notifications.no_notifications'),
-          disabled: true
-        }]
-      }
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString)
+      return new Intl.DateTimeFormat('es', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }).format(date)
+    }
 
-      return list.value.map((notification: Notification) => ({
-        label: notification.title,
-        icon: getIconForType(notification.type),
-        command: () => markRead(notification.id),
-        template: (item: MenuItem) => {
-          return `
-            <div class="flex items-center gap-2 p-2">
-              <i class="${item.icon}"></i>
-              <div class="flex flex-col">
-                <span class="font-semibold">${item.label}</span>
-                <small class="text-gray-500">${notification.message}</small>
-              </div>
-            </div>
-          `
-        }
-      }))
-    })
-
-    const getIconForType = (type: Notification['type']) => {
+    const getIconForType = (type: NotificationType) => {
       switch (type) {
-        case 'success':
-          return 'pi pi-check-circle text-green-500'
-        case 'error':
-          return 'pi pi-times-circle text-red-500'
-        case 'warning':
-          return 'pi pi-exclamation-triangle text-yellow-500'
+        case 'success': return 'pi pi-check-circle'
+        case 'error':   return 'pi pi-times-circle'
+        case 'warning': return 'pi pi-exclamation-triangle'
         case 'info':
-        default:
-          return 'pi pi-info-circle text-blue-500'
+        default:        return 'pi pi-info-circle'
       }
+    }
+
+    const colorClasses: Record<NotificationType, string> = {
+      success: 'text-green-700 dark:text-green-300',
+      error:   'text-red-700 dark:text-red-300',
+      warning: 'text-yellow-700 dark:text-yellow-300',
+      info:    'text-blue-700 dark:text-blue-300',
+    }
+
+    const getIconClasses = (type: NotificationType) => {
+      return [
+        getIconForType(type),
+        colorClasses[type],
+        'text-2xl flex-shrink-0 mt-1'
+      ].join(' ')
+    }
+
+    // Borra una notificación y la elimina de la lista local
+    const handleDelete = async (id: number) => {
+      try {
+        await deleteNotification(id)
+      } finally {
+        list.value = list.value.filter(n => n.id !== id)
+      }
+    }
+
+    // Borra todas las notificaciones
+    const clearAllNotifications = async () => {
+      const ids = list.value.map(n => n.id)
+      await Promise.all(ids.map(id => deleteNotification(id)))
+      list.value = []
     }
 
     return {
       menu,
       unreadCount,
-      menuItems,
-      t
+      list,
+      formatDate,
+      getIconClasses,
+      t,
+      handleDelete,
+      clearAllNotifications
     }
   }
 })
@@ -96,7 +106,7 @@ export default defineComponent({
       size="large"
       severity="secondary"
       variant="text"
-      @click="menu.toggle($event)"
+      @click="menu?.toggle($event)"
       class="relative"
     />
     <PrimeBadge
@@ -105,35 +115,76 @@ export default defineComponent({
       severity="danger"
       class="absolute -top-1 -right-1"
     />
+
     <PrimeMenu
       ref="menu"
-      :model="menuItems"
       :popup="true"
-      class="w-80"
-    />
+      appendTo="body"
+      class="min-w-sm max-w-sm md:max-w-md max-h-80 overflow-y-auto p-2"
+    >
+      <template #start>
+        <div v-if="list.length > 0" class="flex justify-end px-4 pt-2">
+          <button
+            class="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline px-2 py-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors"
+            @click="clearAllNotifications"
+          >
+            {{ t('notifications.clear_all') }}
+          </button>
+        </div>
+
+        <div v-if="list.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400">
+          {{ t('notifications.no_notifications') }}
+        </div>
+
+        <div v-else>
+          <div
+            v-for="notification in list"
+            :key="notification.id"
+            class="relative flex items-start gap-4 px-4 py-3 mb-3 rounded-lg shadow-sm border-l-4 bg-white dark:bg-neutral-800"
+            :class="{
+              'border-green-700 dark:border-green-300': notification.type === 'success',
+              'border-red-700 dark:border-red-300': notification.type === 'error',
+              'border-yellow-700 dark:border-yellow-300': notification.type === 'warning',
+              'border-blue-700 dark:border-blue-300': notification.type === 'info'
+            }"
+          >
+            <i :class="getIconClasses(notification.type)" />
+
+            <div class="flex-grow min-w-0">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-semibold text-gray-800 dark:text-gray-200 truncate">
+                  {{ notification.title }}
+                </span>
+              </div>
+              <p class="text-gray-700 dark:text-gray-300 text-sm">
+                {{ notification.message }}
+              </p>
+              <div class="text-xs text-gray-400 dark:text-gray-500 mt-2 flex justify-end">
+                {{ formatDate(notification.timestamp) }}
+              </div>
+            </div>
+
+            <button
+              class="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors"
+              @click="handleDelete(notification.id)"
+              title="{{ t('notifications.delete') }}"
+            >
+              <i class="pi pi-times text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"></i>
+            </button>
+          </div>
+        </div>
+      </template>
+    </PrimeMenu>
   </div>
 </template>
 
 <style scoped>
 :deep(.p-menu) {
-  min-width: 15rem;
-  padding: 0.5rem;
+  padding: 0;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
 :deep(.p-menu-list) {
   padding: 0;
-}
-
-:deep(.p-menuitem) {
-  margin: 0.25rem 0;
-}
-
-:deep(.p-menuitem-link) {
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-}
-
-:deep(.p-menuitem-icon) {
-  margin-right: 0.5rem;
 }
 </style>
