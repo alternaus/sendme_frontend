@@ -3,20 +3,13 @@ import { onMounted, onUnmounted, ref, watch } from 'vue'
 import axios from 'axios'
 import { io, type Socket } from 'socket.io-client'
 
+import type { INotification } from '@/components/atoms/notifications/interfaces/notification.interface'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-interface Notification {
-  id: number
-  type: 'success' | 'error' | 'warning' | 'info'
-  title: string
-  message: string
-  data?: Record<string, unknown>
-  timestamp: string
-  read: boolean
-}
 
-export const useNotifications = (orgId: number) => {
-  const list = ref<Notification[]>([])
+
+export const useNotifications = (orgId?: number) => {
+  const list = ref<INotification[]>([])
   const socket = ref<Socket | null>(null)
   const isConnected = ref(false)
   const authStore = useAuthStore()
@@ -67,7 +60,7 @@ export const useNotifications = (orgId: number) => {
       console.error('[WebSocket] Error de conexión:', err.message)
     })
 
-    socket.value.on('notification', (n: Notification) => {
+    socket.value.on('notification', (n: INotification) => {
       console.log('[WebSocket] Notificación recibida:', n)
       if (Array.isArray(list.value)) {
         list.value.unshift(n)
@@ -76,7 +69,7 @@ export const useNotifications = (orgId: number) => {
       }
     })
 
-    socket.value.on('notifications:history', (notifications: Notification[]) => {
+    socket.value.on('notifications:history', (notifications: INotification[]) => {
       console.log('[WebSocket] Historial de notificaciones recibido:', notifications)
       list.value = Array.isArray(notifications) ? notifications : []
     })
@@ -135,7 +128,17 @@ export const useNotifications = (orgId: number) => {
 
   const deleteNotification = async (id: number) => {
     try {
+      if (!orgId) {
+        const index = list.value.findIndex(n => n.id === id)
+        if (index !== -1) {
+          list.value.splice(index, 1)
+        }
+        return
+      }
+
+      await axios.patch(`/notifications/${id}/read`)
       await axios.delete(`/notifications/${id}`)
+
       if (Array.isArray(list.value)) {
         list.value = list.value.filter(n => n.id !== id)
       }

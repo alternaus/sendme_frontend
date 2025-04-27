@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 
 import PrimeBadge from 'primevue/badge'
 import PrimeButton from 'primevue/button'
@@ -8,18 +8,11 @@ import PrimeMenu from 'primevue/menu'
 import { useI18n } from 'vue-i18n'
 
 import { useNotifications } from '@/composables/useNotifications'
+import { useAuthStore } from '@/stores/useAuthStore'
 
-export interface Notification {
-  id: number
-  type: 'success' | 'error' | 'warning' | 'info'
-  title: string
-  message: string
-  data?: Record<string, unknown>
-  timestamp: string
-  read: boolean
-}
+import type { INotification } from './interfaces/notification.interface'
 
-type NotificationType = Notification['type']
+type NotificationType = INotification['type']
 
 export default defineComponent({
   name: 'AppNotificationBell',
@@ -27,11 +20,18 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
-    const { list, deleteNotification } = useNotifications(1)
+    const authStore = useAuthStore()
+    const list = ref<INotification[]>([])
+    const unreadCount = computed(() => list.value.filter((n: INotification) => !n.read).length)
 
-    const unreadCount = computed(() =>
-      list.value.filter((n: Notification) => !n.read).length
+    const { deleteNotification: deleteNotificationBase, list: notificationsList } = useNotifications(
+      authStore.user?.organizationId || undefined
     )
+
+    // Sincronizar la lista de notificaciones cuando cambie
+    watch(notificationsList, (newList) => {
+      list.value = newList
+    }, { immediate: true })
 
     const formatDate = (dateString: string) => {
       const date = new Date(dateString)
@@ -66,20 +66,37 @@ export default defineComponent({
       ].join(' ')
     }
 
-    // Borra una notificación y la elimina de la lista local
     const handleDelete = async (id: number) => {
+      if (!id) {
+        console.error('ID de notificación inválido')
+        return
+      }
+      if (!authStore.user?.organizationId) {
+        console.error('No hay ID de organización disponible')
+        return
+      }
       try {
-        await deleteNotification(id)
-      } finally {
-        list.value = list.value.filter(n => n.id !== id)
+        await deleteNotificationBase(id)
+      } catch (error) {
+        console.error('Error al borrar la notificación:', error)
       }
     }
 
-    // Borra todas las notificaciones
     const clearAllNotifications = async () => {
-      const ids = list.value.map(n => n.id)
-      await Promise.all(ids.map(id => deleteNotification(id)))
-      list.value = []
+      if (!authStore.user?.organizationId) {
+        console.error('No hay ID de organización disponible')
+        return
+      }
+      try {
+        const ids = list.value.filter(n => n.id).map(n => n.id)
+        if (ids.length === 0) {
+          console.warn('No hay notificaciones para borrar')
+          return
+        }
+        await Promise.all(ids.map(id => deleteNotificationBase(id)))
+      } catch (error) {
+        console.error('Error al borrar todas las notificaciones:', error)
+      }
     }
 
     return {
