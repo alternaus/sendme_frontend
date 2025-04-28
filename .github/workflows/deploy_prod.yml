@@ -62,17 +62,26 @@ jobs:
             # 🔄 Actualizar paquetes
              apt update &&  apt upgrade -y
 
-            # 🌍 Instalar Nginx si no está presente
-            if ! command -v nginx &> /dev/null
-            then
-                echo "🔧 Instalando Nginx..."
-                 apt install -y nginx
-            else
-                echo "✅ Nginx ya está instalado."
-            fi
+            # 🗑️ Desinstalar Nginx completamente
+            echo "🗑️ Desinstalando Nginx y limpiando configuraciones..."
+             systemctl stop nginx
+             apt remove --purge nginx nginx-common nginx-full -y
+             apt autoremove -y
+             rm -rf /etc/nginx
+             rm -rf /var/log/nginx
+             rm -rf /var/www/html
+             rm -rf /usr/share/nginx
+             rm -rf /usr/lib/nginx
+             rm -rf /usr/share/doc/nginx
 
-            # 📁 Crear directorio del sitio si no existe
+            # 🌍 Instalar Nginx limpio
+            echo "🔧 Instalando Nginx..."
+             apt install -y nginx
+
+            # 📁 Crear directorios necesarios
              mkdir -p /var/www/vhosts/new.sendme123.com
+             mkdir -p /var/www/html
+             mkdir -p /etc/nginx/conf.d
 
             # ✅ Dar permisos correctos
              chown -R www-data:www-data /var/www/vhosts/new.sendme123.com
@@ -95,25 +104,17 @@ jobs:
 
             # 🔗 Habilitar configuración temporal en Nginx
              ln -sf /etc/nginx/sites-available/sendme123 /etc/nginx/sites-enabled/
+             rm -f /etc/nginx/sites-enabled/default
 
             # 🔄 Verificar configuración de Nginx antes de reiniciar
              nginx -t &&  systemctl restart nginx || exit 1
 
-            # 🔐 Instalar Certbot para SSL si no está instalado
-            if ! command -v certbot &> /dev/null
-            then
-                echo "🔧 Instalando Certbot..."
-                 apt install -y certbot python3-certbot-nginx
-            else
-                echo "✅ Certbot ya está instalado."
-            fi
+            # 🔐 Instalar Certbot para SSL
+            echo "🔧 Instalando Certbot..."
+             apt install -y certbot python3-certbot-nginx
 
-            # 📜 Generar certificado SSL si no existe
-            if [ ! -d "/etc/letsencrypt/live/new.sendme123.com" ]; then
-                certbot certonly --webroot -w /var/www/html -d new.sendme123.com --non-interactive --agree-tos -m admin@sendme123.com
-            else
-               echo "✅ Certificado SSL ya existente."
-            fi
+            # 📜 Generar certificado SSL
+            certbot certonly --webroot -w /var/www/html -d new.sendme123.com --non-interactive --agree-tos -m admin@sendme123.com
 
             # 📜 Configurar Nginx con SSL y optimizaciones
             echo 'server {
@@ -139,11 +140,19 @@ jobs:
                 include /etc/letsencrypt/options-ssl-nginx.conf;
                 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
                 
+                # Configuración de buffers y timeouts
+                client_max_body_size 100M;
+                client_body_buffer_size 128k;
+                proxy_connect_timeout 600;
+                proxy_send_timeout 600;
+                proxy_read_timeout 600;
+                send_timeout 600;
+                
                 # Seguridad adicional
                 add_header X-Content-Type-Options nosniff;
                 add_header X-Frame-Options SAMEORIGIN;
                 add_header X-XSS-Protection "1; mode=block";
-                add_header Content-Security-Policy "default-src https: data: blob: wss: 'unsafe-inline' 'unsafe-eval'";
+                add_header Content-Security-Policy "default-src https: data: blob: wss: '\''unsafe-inline'\'' '\''unsafe-eval'\''";
 
                 # Configuración de compresión
                 gzip on;
@@ -162,13 +171,13 @@ jobs:
                     text/xml;
 
                 # Configuración de caché
-                location ~* \\.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|webp)$ {
+                location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|webp)$ {
                     expires 30d;
                     add_header Cache-Control "public, no-transform";
                 }
 
                 location / {
-                    try_files $uri /index.html;
+                    try_files $uri $uri/ /index.html;
                     expires 1h;
                     add_header Cache-Control "public, no-cache";
                 }
@@ -186,12 +195,12 @@ jobs:
                     proxy_cache_bypass $http_upgrade;
                     
                     # Timeouts optimizados
-                    proxy_connect_timeout 60s;
-                    proxy_send_timeout 60s;
-                    proxy_read_timeout 60s;
+                    proxy_connect_timeout 300s;
+                    proxy_send_timeout 300s;
+                    proxy_read_timeout 300s;
                     
                     # Buffering optimizado
-                    proxy_buffering on;
+                    proxy_buffering off;
                     proxy_buffer_size 16k;
                     proxy_busy_buffers_size 32k;
                     proxy_buffers 16 16k;
@@ -210,8 +219,8 @@ jobs:
                     proxy_cache_bypass $http_upgrade;
                     
                     # Configuración específica para WebSockets
-                    proxy_connect_timeout 120s;
-                    proxy_send_timeout 120s;
+                    proxy_connect_timeout 300s;
+                    proxy_send_timeout 300s;
                     proxy_read_timeout 3600s;
                     
                     # Configuración adicional para Socket.IO
@@ -225,19 +234,19 @@ jobs:
                     proxy_busy_buffers_size 256k;
                     
                     # Configuración de CORS para WebSocket
-                    add_header 'Access-Control-Allow-Origin' '*' always;
-                    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
-                    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
-                    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+                    add_header '\''Access-Control-Allow-Origin'\'' '\''*'\'' always;
+                    add_header '\''Access-Control-Allow-Methods'\'' '\''GET, POST, OPTIONS'\'' always;
+                    add_header '\''Access-Control-Allow-Headers'\'' '\''DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization'\'' always;
+                    add_header '\''Access-Control-Expose-Headers'\'' '\''Content-Length,Content-Range'\'' always;
                     
                     # Manejo de OPTIONS para CORS
-                    if ($request_method = 'OPTIONS') {
-                        add_header 'Access-Control-Allow-Origin' '*';
-                        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-                        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-                        add_header 'Access-Control-Max-Age' 1728000;
-                        add_header 'Content-Type' 'text/plain; charset=utf-8';
-                        add_header 'Content-Length' 0;
+                    if ($request_method = '\''OPTIONS'\'') {
+                        add_header '\''Access-Control-Allow-Origin'\'' '\''*'\'';
+                        add_header '\''Access-Control-Allow-Methods'\'' '\''GET, POST, OPTIONS'\'';
+                        add_header '\''Access-Control-Allow-Headers'\'' '\''DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization'\'';
+                        add_header '\''Access-Control-Max-Age'\'' 1728000;
+                        add_header '\''Content-Type'\'' '\''text/plain; charset=utf-8'\'';
+                        add_header '\''Content-Length'\'' 0;
                         return 204;
                     }
                 }
@@ -253,13 +262,13 @@ jobs:
                     proxy_set_header Connection "upgrade";
                     
                     # Timeouts optimizados
-                    proxy_connect_timeout 90s;
-                    proxy_send_timeout 90s;
-                    proxy_read_timeout 90s;
+                    proxy_connect_timeout 300s;
+                    proxy_send_timeout 300s;
+                    proxy_read_timeout 300s;
                 }
 
                 # Denegar acceso a archivos ocultos
-                location ~ /\\. {
+                location ~ /\. {
                     deny all;
                     access_log off;
                     log_not_found off;
