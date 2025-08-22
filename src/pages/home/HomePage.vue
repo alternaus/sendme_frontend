@@ -99,8 +99,7 @@ export default defineComponent({
             ],
           }
         }
-      } catch (error) {
-        console.error('Error loading dashboard data:', error)
+      } catch {
       } finally {
         loading.value = false
       }

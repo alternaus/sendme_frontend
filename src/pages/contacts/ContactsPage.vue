@@ -68,10 +68,8 @@ export default defineComponent({
           contacts.value = response.data
           contactsMeta.value = response.meta
         } else {
-          console.warn('⚠️ Respuesta no válida:', response)
         }
-      } catch (error) {
-        console.error('Error fetching contacts:', error)
+      } catch  {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -107,8 +105,7 @@ export default defineComponent({
           life: 3000,
         })
         await fetchContacts({ pageSize: page.value, limitSize: limit.value })
-      } catch (error) {
-        console.error('❌ Error al eliminar contacto:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -162,8 +159,7 @@ export default defineComponent({
               detail: t('contact.success_exported'),
               life: 3000,
             })
-          } catch (error) {
-            console.error('❌ Error al exportar contactos:', error)
+          } catch {
             toast.add({
               severity: 'error',
               summary: t('general.error'),

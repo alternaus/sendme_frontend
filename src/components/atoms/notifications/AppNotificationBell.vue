@@ -82,13 +82,11 @@ export default defineComponent({
 
     const handleDelete = async (notification: INotification) => {
       if (!notification) {
-        console.error('Notificación inválida')
         return
       }
 
       // Para notificaciones del frontend (sin ID válido del backend)
       if (!notification.id || notification.id <= 0) {
-        console.log('Eliminando notificación local sin ID del backend')
         // Eliminar por índice usando una combinación única
         const index = list.value.findIndex(n =>
           n.title === notification.title &&
@@ -103,7 +101,6 @@ export default defineComponent({
 
       // Para notificaciones del backend (con ID válido)
       if (!authStore.user?.organizationId) {
-        console.error('No hay ID de organización disponible')
         return
       }
 
@@ -112,8 +109,7 @@ export default defineComponent({
         list.value = list.value.filter(n => n.id !== notification.id)
         // Luego eliminar del servidor
         await deleteNotificationBase(notification.id)
-      } catch (error) {
-        console.error('Error al borrar la notificación:', error)
+      } catch {
         // Si hay error, recargar la lista
         if (notificationsList.value) {
           list.value = [...notificationsList.value]
@@ -128,7 +124,6 @@ export default defineComponent({
         const localNotifications = list.value.filter(n => !n.id || n.id <= 0)
 
         if (backendNotifications.length === 0 && localNotifications.length === 0) {
-          console.warn('No hay notificaciones para borrar')
           return
         }
 
@@ -142,10 +137,7 @@ export default defineComponent({
             .filter((id): id is number => id !== undefined && id > 0)
           await Promise.all(ids.map(id => deleteNotificationBase(id)))
         }
-
-        console.log(`Eliminadas ${backendNotifications.length} notificaciones del backend y ${localNotifications.length} notificaciones locales`)
-      } catch (error) {
-        console.error('Error al borrar todas las notificaciones:', error)
+      } catch {
         // Si hay error, recargar la lista
         if (notificationsList.value) {
           list.value = [...notificationsList.value]
@@ -155,13 +147,11 @@ export default defineComponent({
 
     const markAsRead = async (notification: INotification) => {
       if (!notification) {
-        console.error('Notificación inválida')
         return
       }
 
       // Para notificaciones del frontend (sin ID válido del backend)
       if (!notification.id || notification.id <= 0) {
-        console.log('Marcando como leída notificación local sin ID del backend')
         // Marcar como leída solo localmente
         const localNotification = list.value.find(n =>
           n.title === notification.title &&
@@ -183,8 +173,7 @@ export default defineComponent({
         }
         // Luego actualizar en el servidor
         await markReadBase(notification.id)
-      } catch (error) {
-        console.error('Error al marcar como leída:', error)
+      } catch {
         // Si hay error, revertir el cambio
         const targetNotification = list.value.find(n => n.id === notification.id)
         if (targetNotification) {
@@ -194,13 +183,11 @@ export default defineComponent({
     }
 
     // Métodos para manejar jobs
-    const handleJobDismiss = (jobId: string) => {
-      console.log(`Dismissing job ${jobId}`)
+    const handleJobDismiss = (_jobId: string) => {
       // Podríamos ocultar el job o marcarlo como visto
     }
 
-    const handleJobViewReport = (jobId: string) => {
-      console.log(`Viewing report for job ${jobId}`)
+    const handleJobViewReport = (_jobId: string) => {
       // Aquí podríamos navegar a la página de reporte
     }
 

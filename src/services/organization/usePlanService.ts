@@ -27,7 +27,6 @@ export const usePlanService = () => {
   }
 
   const handleError = (error: unknown, messageKey: string) => {
-    console.error(`❌ ${t(messageKey)}:`, error)
     showToast('error', messageKey)
   }
 

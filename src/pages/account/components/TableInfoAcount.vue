@@ -66,8 +66,7 @@ export default defineComponent({
           rechargesMeta.value = response.meta
           recharges.value = response.data ?? []
         }
-      } catch (error) {
-        console.error('Error fetching recharges:', error)
+      } catch {
       } finally {
         loading.value = false
       }

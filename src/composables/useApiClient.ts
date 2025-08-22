@@ -106,7 +106,6 @@ privateApi.interceptors.response.use(
           isRefreshing = false
           return axios(originalRequest)
         } catch (refreshError) {
-          console.warn('⚠️ No se pudo refrescar el token. Cerrando sesión...', refreshError)
           isRefreshing = false
 
           // Notificar a todos los requests en cola que hubo un error
@@ -121,11 +120,9 @@ privateApi.interceptors.response.use(
       }
 
       if (status === 403) {
-        console.warn('🚫 No tienes permisos para esta acción')
       }
 
       if (status >= 500) {
-        console.error('🔥 Error interno del servidor')
       }
     }
 

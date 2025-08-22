@@ -54,17 +54,14 @@ router.beforeEach((to, from, next) => {
 
 
   if (to.matched.length === 0) {
-    console.warn('⚠️ Ruta no encontrada. Redirigiendo a /not-found')
     return next({ name: 'not-found' })
   }
 
   if (to.meta.requiresAuth && !token) {
-    console.warn('⛔ Usuario no autenticado. Redirigiendo a /auth/sign-in')
     return next('/auth/sign-in')
   }
 
   if (!to.meta.requiresAuth && token) {
-    console.info('🔄 Usuario autenticado intentando acceder a una ruta pública. Redirigiendo a /')
     return next('/')
   }
 

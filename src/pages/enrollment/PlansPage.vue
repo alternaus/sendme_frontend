@@ -166,7 +166,6 @@ const router = useRouter()
 const selectPlan = (plan: EnhancedPlan) => {
 
   if (!isEpaycoAvailable.value) {
-    console.error('No se puede procesar el pago porque ePayco no está disponible');
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -209,8 +208,7 @@ const selectPlan = (plan: EnhancedPlan) => {
 
   try {
     epayco?.open(epaycoData);
-  } catch (err) {
-    console.error('Error al abrir la ventana de pago:', err);
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -226,9 +224,8 @@ const fetchPlansData = async () => {
     loading.value = true
     error.value = null
     apiPlans.value = await planService.fetchPlans()
-  } catch (e) {
+  } catch {
     error.value = 'enrollment.error_loading_plans'
-    console.error('Error fetching plans:', e)
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -241,7 +238,6 @@ const fetchPlansData = async () => {
 }
 
 const handlePaymentResponse = (response: EpaycoResponse) => {
-  console.log('ePayco payment response:', response);
 
   if (response && response.data) {
     const paymentData = response.data;
@@ -276,7 +272,6 @@ const handlePaymentResponse = (response: EpaycoResponse) => {
         detail: t('enrollment.payment_failed'),
         life: 5000
       });
-      console.warn('Pago no completado:', paymentData.x_response_reason_text);
     }
   }
 };
@@ -295,7 +290,6 @@ onMounted(() => {
   if (window.ePayco) {
     isEpaycoAvailable.value = true;
   } else {
-    console.error('La librería de ePayco no está disponible. Asegúrate de incluir el script en index.html');
     toast.add({
       severity: 'warn',
       summary: t('general.warning'),

@@ -200,9 +200,8 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
       ...plan,
       features
     }
-  } catch (err) {
+  } catch {
     error.value = 'enrollment.error_loading_plan'
-    console.error('Error fetching plan details:', err)
     return null
   } finally {
     loading.value = false
@@ -223,8 +222,7 @@ const processPayment = async () => {
       name: 'home',
       query: { enrollment: 'success' }
     })
-  } catch (error) {
-    console.error('Payment error:', error)
+  } catch {
     // Handle payment error
     processing.value = false
   }
@@ -242,8 +240,7 @@ onMounted(async () => {
     if (!selectedPlan.value) {
       router.push({ name: 'enrollment-plans' })
     }
-  } catch (error) {
-    console.error('Error fetching plan details:', error)
+  } catch {
     router.push({ name: 'enrollment-plans' })
   }
 })

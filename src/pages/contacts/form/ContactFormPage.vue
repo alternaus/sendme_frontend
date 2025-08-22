@@ -135,8 +135,7 @@ export default defineComponent({
             }
           }
         }, 100)
-      } catch (error) {
-        console.error('Error loading data:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -195,8 +194,7 @@ export default defineComponent({
           })
         }
       },
-      (errors) => {
-        console.log('❌ Errores en el formulario:', errors)
+      (_errors) => {
         form.customValues.value.forEach((_, index) => {
           touchedFields.value[`customValues[${index}].value`] = true
         })

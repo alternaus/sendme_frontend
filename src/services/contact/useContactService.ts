@@ -42,7 +42,6 @@ export const useContactService = () => {
     })
 
     if (!response) {
-      console.error('No response data received')
       return
     }
 

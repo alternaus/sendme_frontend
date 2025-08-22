@@ -29,7 +29,6 @@ export const useDateFormat = () => {
       }
     } catch (e) {
       error.value = e as Error
-      console.error('Error cargando ajustes de formato de fecha:', e)
     } finally {
       isLoading.value = false
     }

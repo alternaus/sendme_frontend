@@ -43,8 +43,7 @@ export default defineComponent({
         } else {
           throw new Error('No se recibió el token de acceso')
         }
-      } catch (error) {
-        console.error('Error en el callback de Google:', error)
+      } catch {
         router.push('/auth/sign-in')
       }
     })

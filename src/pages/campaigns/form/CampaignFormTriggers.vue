@@ -56,8 +56,7 @@ export default defineComponent({
           name: customField.fieldName,
           value: customField.id,
         }))
-      } catch (error) {
-        console.error('❌ Error al obtener campos personalizados:', error)
+      } catch {
       }
     })
 

@@ -28,7 +28,6 @@ export const useOrganizationSettingsService = () => {
       return response
     } catch (e) {
       error.value = e as Error
-      console.error('Error al obtener ajustes de organización:', e)
       return null
     } finally {
       isLoading.value = false

@@ -30,8 +30,7 @@ export default defineComponent({
       try {
         const response = await getOrganization(organizationId!)
         organization.value = response ?? null
-      } catch (error) {
-        console.error('Error fetching organization:', error)
+      } catch {
       }
     }
 

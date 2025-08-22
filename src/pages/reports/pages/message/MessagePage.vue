@@ -77,10 +77,8 @@ export default defineComponent({
           messages.value = response.data
           messageMeta.value = response.meta
         } else {
-          console.warn('⚠️ Respuesta no válida:', response)
         }
-      } catch (error) {
-        console.error('Error fetching messages:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),

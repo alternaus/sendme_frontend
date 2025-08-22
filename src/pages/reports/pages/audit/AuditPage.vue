@@ -78,10 +78,8 @@ export default defineComponent({
           audits.value = response.data
           auditMeta.value = response.meta
         } else {
-          console.warn('⚠️ Respuesta no válida:', response)
         }
-      } catch (error) {
-        console.error('Error fetching audits:', error)
+      } catch {
       } finally {
         loading.value = false
       }

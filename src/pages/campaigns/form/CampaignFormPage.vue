@@ -97,8 +97,7 @@ export default defineComponent({
           isEditMode.value = true
           await loadCampaignData()
         }
-      } catch (error) {
-        console.error('❌ Error al obtener canales:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -128,8 +127,7 @@ export default defineComponent({
         }
 
         setValues(formattedCampaign as unknown as CampaignForm)
-      } catch (error) {
-        console.error('❌ Error al cargar la campaña:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -142,8 +140,6 @@ export default defineComponent({
     }
 
     const updateFormContent = (newContent: Partial<CampaignFormRef>) => {
-      console.log('Updating form content with:', newContent)
-      console.log('Form:', form)
       ;(Object.keys(newContent) as Array<keyof typeof form>).forEach((key) => {
         if (form[key] && form[key].value !== undefined) {
           if (newContent[key] !== undefined) {
@@ -190,7 +186,6 @@ export default defineComponent({
           const formattedData = formatCampaignData(values)
 
           // Registrar los datos que se van a enviar para debugging
-          console.log('Datos formateados para enviar al backend:', formattedData)
 
           if (isEditMode.value && campaignId.value) {
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)
@@ -211,8 +206,7 @@ export default defineComponent({
           }
 
           router.push('/campaigns')
-        } catch (error) {
-          console.error('❌ Error al guardar la campaña:', error)
+        } catch {
           toast.add({
             severity: 'error',
             summary: t('general.error'),
@@ -223,8 +217,7 @@ export default defineComponent({
           isLoading.value = false
         }
       },
-      (error) => {
-        console.log('Formulario con errores', error)
+      (_error) => {
         toast.add({
           severity: 'error',
           summary: t('general.error'),

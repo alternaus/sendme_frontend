@@ -191,8 +191,7 @@ const onSubmit = () => {
         })
       }
     },
-    (formErrors) => {
-      console.error('Errores de validación:', formErrors)
+    (_formErrors) => {
       toast.add({
         severity: 'error',
         summary: t('general.error'),

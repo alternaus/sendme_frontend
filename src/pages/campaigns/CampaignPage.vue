@@ -62,10 +62,8 @@ export default defineComponent({
           campaigns.value = response.data
           campaignMeta.value = response.meta
         } else {
-          console.warn('🔄 Respuesta no válida:', response)
         }
-      } catch (error) {
-        console.error('❌ Error al obtener campañas:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -101,8 +99,7 @@ export default defineComponent({
           life: 3000,
         })
         await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
-      } catch (error) {
-        console.error('❌ Error al eliminar campaña:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),

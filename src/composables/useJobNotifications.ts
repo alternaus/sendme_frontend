@@ -107,8 +107,6 @@ export const useJobNotifications = (notifications: Ref<INotification[]>) => {
       errorDetails: [],
       lastUpdate: new Date(notification.data.timestamp)
     }
-
-    console.log(`[Job ${jobId}] Iniciado - Tipo: ${jobType || 'desconocido'}`)
   }
 
   // Procesar notificación de progreso de job
@@ -140,8 +138,6 @@ export const useJobNotifications = (notifications: Ref<INotification[]>) => {
       total: notification.data.total || jobState.value[jobId].total,
       lastUpdate: new Date(notification.data.timestamp)
     }
-
-    console.log(`[Job ${jobId}] Progreso: ${notification.data.progress}% (${notification.data.processed} procesados, ${notification.data.errors} errores)`)
   }
 
   // Procesar notificación de finalización de job
@@ -177,8 +173,6 @@ export const useJobNotifications = (notifications: Ref<INotification[]>) => {
       lastUpdate: new Date(notification.data.timestamp)
     }
 
-    const status = notification.data.errors > 0 ? 'con errores' : 'exitoso'
-    console.log(`[Job ${jobId}] Completado ${status}: ${notification.data.processed} procesados, ${notification.data.errors} errores`)
   }
 
   // Procesar cualquier notificación de job
@@ -214,7 +208,6 @@ export const useJobNotifications = (notifications: Ref<INotification[]>) => {
       const job = jobState.value[jobId]
       if (!job.isActive && job.endTime && job.endTime < cutoffDate) {
         delete jobState.value[jobId]
-        console.log(`[Job ${jobId}] Limpiado por antigüedad`)
       }
     })
   }

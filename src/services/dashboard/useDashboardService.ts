@@ -8,8 +8,7 @@ export const useDashboardService = () => {
   const getDashboardData = async (): Promise<DashboardResponse | null> => {
     try {
       return await privateApi.get<DashboardResponse>('/reports/dashboard')
-    } catch (error) {
-      console.error('Error getting dashboard data:', error)
+    } catch {
       return null
     }
   }

@@ -36,8 +36,6 @@ export default defineComponent({
       : import.meta.env.VITE_API_URL || window.location.origin
     const callbackUrl = `${baseUrl}/auth/google/callback`
 
-    console.log('Callback URL:', callbackUrl)
-
     useScriptTag(
       'https://accounts.google.com/gsi/client',
     )
@@ -70,8 +68,7 @@ export default defineComponent({
     const onSubmit = handleSubmit(async (values) => {
       try {
         await authStore.login(values.email, values.password)
-      } catch (error) {
-        console.error('Error de autenticación:', error)
+      } catch {
       }
     })
 
@@ -79,8 +76,7 @@ export default defineComponent({
       try {
         const { url } = await authService.getGoogleAuthUrl()
         window.location.href = url
-      } catch (error) {
-        console.error('Error al iniciar sesión con Google:', error)
+      } catch {
       }
     }
 

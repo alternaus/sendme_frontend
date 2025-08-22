@@ -70,7 +70,6 @@ const onUpload = async (event: FileUploadSelectEvent) => {
 
   try {
     const response = await getImportPreview(file) as ImportPreviewResponse
-    console.log('Preview response:', response)
 
     if (response?.headers) {
       originalHeaders.value = response.headers
@@ -88,8 +87,7 @@ const onUpload = async (event: FileUploadSelectEvent) => {
       // Calcular el número total de filas basado en los datos de muestra
       totalRows.value = Math.floor(response.sampleData.length / response.headers.length) || 1
     }
-  } catch (error) {
-    console.error('Error al obtener preview:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -126,8 +124,6 @@ const handleFinalUpload = async () => {
       }
     })
 
-    console.log('Field Mapping:', fieldMapping)
-
     await importContacts(currentFile.value, fieldMapping)
 
     // Mostrar mensaje de éxito
@@ -141,7 +137,6 @@ const handleFinalUpload = async () => {
     // Limpiar datos
     handleCancel()
   } catch (error: unknown) {
-    console.error('Error al importar contactos:', error)
     const apiError = error as ApiError
     if (apiError.response?.data?.message) {
       toast.add({

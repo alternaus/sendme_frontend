@@ -209,8 +209,7 @@ async function checkTransactionStatus() {
       ...data.data,
       success: data.data.x_response === 'Aceptada'
     }
-  } catch (e) {
-    console.error('transaction fetch error', e)
+  } catch {
     error.value = 'enrollment.error_loading_transaction'
     toast.add({
       severity: 'error',

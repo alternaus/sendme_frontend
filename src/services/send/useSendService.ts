@@ -21,8 +21,7 @@ export const useSendService = () => {
         life: 3000,
       })
       return response
-    } catch (error) {
-      console.error('❌ Error enviando el mensaje batch:', error)
+    } catch {
       toast.add({
         severity: 'error',
         summary: t('general.error'),
@@ -46,8 +45,7 @@ export const useSendService = () => {
         life: 3000,
       })
       return response
-    } catch (error) {
-      console.error('❌ Error enviando el mensaje SMS:', error)
+    } catch {
       toast.add({
         severity: 'error',
         summary: t('general.error'),
@@ -71,8 +69,7 @@ export const useSendService = () => {
         life: 3000,
       })
       return response
-    } catch (error) {
-      console.error('❌ Error enviando el mensaje SMS a todos los contactos:', error)
+    } catch {
       toast.add({
         severity: 'error',
         summary: t('general.error'),

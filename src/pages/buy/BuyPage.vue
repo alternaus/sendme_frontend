@@ -87,9 +87,7 @@ export default defineComponent({
 
     const handlePayment = () => {
       if (selectedValue.value !== null) {
-        console.log(`Valor de la recarga: ${selectedValue.value} COP`)
       } else if (customValue.value !== undefined && customValue.value > 0) {
-        console.log(`Valor de la recarga: ${customValue.value} COP`)
       } else {
         toast.add({
           severity: 'warn',

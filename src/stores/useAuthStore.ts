@@ -60,8 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
 
       router.push('/')
-    } catch (error) {
-      console.error('❌ Error en login:', error)
+    } catch {
       errorMessage.value = t('auth.incorrect_credentials')
 
       toast.add({
@@ -80,8 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (token.value) {
         await authService.logout()
       }
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error)
+    } catch  {
     } finally {
       clearAuthData()
 
@@ -103,8 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await authService.refreshAuthToken(refreshToken.value)
       setAuthData(response.accessToken, response.refreshToken)
       return true
-    } catch (error) {
-      console.error('Error al refrescar el token:', error)
+    } catch {
       return false
     } finally {
       loading.value = false

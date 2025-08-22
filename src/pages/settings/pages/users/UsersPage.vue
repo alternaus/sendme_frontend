@@ -47,8 +47,7 @@ const loadUsers = async () => {
         isEditing: true
       })
     }
-  } catch (error) {
-    console.error('Error al cargar usuarios:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -158,8 +157,7 @@ const saveUsers = async () => {
     })
 
     await loadUsers()
-  } catch (error) {
-    console.error('Error al guardar usuarios:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -182,8 +180,7 @@ const handleRemoveUser = async (index: number) => {
         detail: t('user.user_deleted'),
         life: 3000
       })
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error)
+    } catch  {
       toast.add({
         severity: 'error',
         summary: t('general.error'),

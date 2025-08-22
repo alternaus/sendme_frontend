@@ -39,11 +39,9 @@ export const useWebSocket = () => {
 
   const connect = () => {
     if (!authStore.token) {
-      console.warn('[WebSocket] No hay token, omitiendo conexión')
       return
     }
     if (socket.value) {
-      console.log('[WebSocket] Ya conectado')
       return
     }
 
@@ -51,7 +49,6 @@ export const useWebSocket = () => {
     ? 'http://localhost:4000'
     : import.meta.env.VITE_API_URL ?? window.location.origin
     const url = `${base}/notifications`
-    console.log('[WebSocket] Conectando a', url)
 
     socket.value = io(url, {
       transports: ['websocket'],
@@ -61,17 +58,14 @@ export const useWebSocket = () => {
     })
 
     socket.value.on('connect', () => {
-      console.log('[WebSocket] Conectado:', socket.value?.id)
       isConnected.value = true
     })
 
-    socket.value.on('disconnect', (reason) => {
-      console.log('[WebSocket] Desconectado:', reason)
+    socket.value.on('disconnect', (_reason) => {
       isConnected.value = false
     })
 
-    socket.value.on('connect_error', (err) => {
-      console.error('[WebSocket] Error de conexión:', err.message)
+    socket.value.on('connect_error', (_err) => {
       toast.add({
         severity: 'error',
         summary: t('general.error'),
@@ -80,12 +74,10 @@ export const useWebSocket = () => {
       })
     })
 
-    socket.value.onAny((event, ...args) => {
-      console.debug(`[WebSocket] Evento '${event}':`, ...args)
+    socket.value.onAny((_event, ..._args) => {
     })
 
     socket.value.on('notification', (n: Notification) => {
-      console.log('[WebSocket] Notificación recibida:', n)
       const severity = n.type === 'warning' ? 'warn' : n.type
       toast.add({
         severity,
@@ -98,7 +90,6 @@ export const useWebSocket = () => {
 
   const disconnect = () => {
     if (socket.value) {
-      console.log('[WebSocket] Desconectando')
       socket.value.disconnect()
       socket.value = null
     }
@@ -107,19 +98,15 @@ export const useWebSocket = () => {
 
   const subscribe = (channel: string) => {
     if (!socket.value?.connected) {
-      console.error('[WebSocket] No conectado')
       return
     }
-    console.log('[WebSocket] subscribe ->', channel)
     socket.value.emit('subscribe', { channel })
   }
 
   const unsubscribe = (channel: string) => {
     if (!socket.value?.connected) {
-      console.error('[WebSocket] No conectado')
       return
     }
-    console.log('[WebSocket] unsubscribe ->', channel)
     socket.value.emit('unsubscribe', { channel })
   }
 

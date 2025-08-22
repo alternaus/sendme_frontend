@@ -110,8 +110,7 @@ export default defineComponent({
 
         availableFields.value = [...contactFields, ...customFields]
       })
-      .catch((error) => {
-        console.error('❌ Error al obtener campos personalizados:', error)
+      .catch((_error) => {
       })
 
     return {

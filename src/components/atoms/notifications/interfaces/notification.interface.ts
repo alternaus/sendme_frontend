@@ -1,5 +1,5 @@
 export interface INotification {
-  id?: number // ID opcional para notificaciones del frontend
+  id?: number
   type: 'success' | 'error' | 'warning' | 'info'
   title: string
   message: string
@@ -8,31 +8,23 @@ export interface INotification {
   read: boolean
 }
 
-// ===============================================
-// SISTEMA ESCALABLE DE JOBS CON JOB ID
-// ===============================================
-
-// Interface base para cualquier tipo de job
 export interface IBaseJobData extends Record<string, unknown> {
-  jobId: string // ID único del job
-  timestamp: string // Timestamp del evento específico
+  jobId: string
+  timestamp: string
 }
 
-// Interface para notificación de inicio de job
 export interface IJobStartData extends IBaseJobData {
   jobStarted: true
-  jobType?: string // Tipo de job (opcional para categorización)
+  jobType?: string
 }
 
-// Interface para notificación de progreso de job
 export interface IJobProgressData extends IBaseJobData {
-  progress: number // 0-100
+  progress: number
   processed: number
   errors: number
   total?: number
 }
 
-// Interface para notificación de finalización de job
 export interface IJobCompletionData extends IBaseJobData {
   processed: number
   errors: number
@@ -40,10 +32,6 @@ export interface IJobCompletionData extends IBaseJobData {
   completed: true
   errorDetails?: string[]
 }
-
-// ===============================================
-// INTERFACES ESPECÍFICAS PARA IMPORTACIÓN DE CONTACTOS
-// ===============================================
 
 export interface IContactImportStartData extends IJobStartData {
   jobType: 'contact_import'
@@ -57,11 +45,6 @@ export interface IContactImportCompletionData extends IJobCompletionData {
   jobType?: 'contact_import'
 }
 
-// ===============================================
-// INTERFACES PARA FUTUROS TIPOS DE JOBS
-// ===============================================
-
-// Ejemplo para exportación de contactos (futuro)
 export interface IContactExportStartData extends IJobStartData {
   jobType: 'contact_export'
   format?: 'csv' | 'xlsx' | 'pdf'
@@ -76,7 +59,6 @@ export interface IContactExportCompletionData extends IJobCompletionData {
   downloadUrl?: string
 }
 
-// Ejemplo para sincronización de datos (futuro)
 export interface IDataSyncStartData extends IJobStartData {
   jobType: 'data_sync'
   source?: string
@@ -90,23 +72,16 @@ export interface IDataSyncCompletionData extends IJobCompletionData {
   jobType?: 'data_sync'
 }
 
-// ===============================================
-// TYPE GUARDS GENÉRICOS Y ESCALABLES
-// ===============================================
-
-// Type guard genérico para cualquier job
 export const isJobNotification = (notification: INotification): boolean => {
   return notification.data?.jobId !== undefined && typeof notification.data.jobId === 'string'
 }
 
-// Type guard para notificaciones de inicio de job
 export const isJobStartNotification = (data: Record<string, unknown> | undefined): data is IJobStartData => {
   return data !== undefined &&
          typeof data.jobId === 'string' &&
          data.jobStarted === true
 }
 
-// Type guard para notificaciones de progreso de job
 export const isJobProgressNotification = (data: Record<string, unknown> | undefined): data is IJobProgressData => {
   return data !== undefined &&
          typeof data.jobId === 'string' &&
@@ -114,17 +89,12 @@ export const isJobProgressNotification = (data: Record<string, unknown> | undefi
          typeof data.processed === 'number'
 }
 
-// Type guard para notificaciones de finalización de job
 export const isJobCompletionNotification = (data: Record<string, unknown> | undefined): data is IJobCompletionData => {
   return data !== undefined &&
          typeof data.jobId === 'string' &&
          data.completed === true &&
          typeof data.total === 'number'
 }
-
-// ===============================================
-// TYPE GUARDS ESPECÍFICOS PARA IMPORTACIÓN DE CONTACTOS
-// ===============================================
 
 export const isContactImportNotification = (notification: INotification): boolean => {
   if (!isJobNotification(notification)) return false
@@ -133,7 +103,6 @@ export const isContactImportNotification = (notification: INotification): boolea
   const message = notification.message?.toLowerCase() || ''
   const jobType = notification.data?.jobType as string
 
-  // Excluir notificaciones de conexión/WebSocket
   if (title.includes('conexión') || title.includes('conexion') ||
       title.includes('conectado') || title.includes('websocket') ||
       message.includes('conexión') || message.includes('conexion') ||
@@ -141,10 +110,8 @@ export const isContactImportNotification = (notification: INotification): boolea
     return false
   }
 
-  // Verificar por jobType específico
   if (jobType === 'contact_import') return true
 
-  // Fallback: verificar por contenido del título/mensaje
   const isImportRelated = title.includes('importación') || title.includes('importacion') ||
                           message.includes('importación') || message.includes('importacion')
 
@@ -159,7 +126,6 @@ export const isContactImportNotification = (notification: INotification): boolea
                            notification.data?.jobStarted !== undefined)
 }
 
-// Type guards específicos para importación de contactos
 export const isProgressNotification = (data: Record<string, unknown> | undefined): data is IContactImportProgressData => {
   return isJobProgressNotification(data)
 }
@@ -172,21 +138,14 @@ export const isStartNotification = (data: Record<string, unknown> | undefined): 
   return isJobStartNotification(data)
 }
 
-// ===============================================
-// UTILIDADES PARA MANEJO DE JOBS
-// ===============================================
-
-// Extraer jobId de una notificación
 export const getJobId = (notification: INotification): string | null => {
   return notification.data?.jobId as string || null
 }
 
-// Obtener tipo de job
 export const getJobType = (notification: INotification): string | null => {
   return notification.data?.jobType as string || null
 }
 
-// Verificar si un job está activo (tiene inicio pero no finalización)
 export const isJobActive = (jobId: string, notifications: INotification[]): boolean => {
   const jobNotifications = notifications.filter(n => getJobId(n) === jobId)
 

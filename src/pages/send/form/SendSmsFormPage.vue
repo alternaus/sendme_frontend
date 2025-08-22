@@ -49,8 +49,7 @@ export default defineComponent({
       try {
         const contacts = await contactService.getContactCount()
         contactsCount.value = contacts?.total ?? null
-      } catch (error) {
-        console.error('Error obteniendo la cantidad de contactos:', error)
+      } catch {
         contactsCount.value = null
       }
     }
