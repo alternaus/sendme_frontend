@@ -3,19 +3,26 @@ import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
+import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { validateContactsRequiredWhenSpecific } from '@/services/send/validators/contacts-required-when-specific.validator'
+
 export interface SendMessageForm {
-  contacts: string[];
+  channel: MessageChannel;
   message: string;
+  sendToAll?: boolean;
+  contacts: string[];
   country: string;
 }
 
 export interface SendMessageFormRef {
-  contacts: Ref<string[]>;
+  channel: Ref<MessageChannel>;
   message: Ref<string>;
+  sendToAll: Ref<boolean>;
+  contacts: Ref<string[]>;
   country: Ref<string>;
 }
 
-export const useFormSendMessage = () => {
+export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChannel.SMS) => {
   const { t } = useI18n()
 
   yup.setLocale({
@@ -25,30 +32,48 @@ export const useFormSendMessage = () => {
   })
 
   const schema = yup.object<SendMessageForm>({
+    channel: yup.string().oneOf(Object.values(MessageChannel)).required(),
     message: yup.string().required(),
-    contacts: yup.array().of(yup.string().matches(/^\d+$/, t('general.invalid_phone'))).optional(),
+    sendToAll: yup.boolean().optional(),
+    contacts: yup.array().of(yup.string()).when(['sendToAll', 'channel'], {
+      is: (sendToAll: boolean, _channel: MessageChannel) => !sendToAll,
+      then: (schema) => schema.min(1, t('general.contacts_required')).test('contacts-valid', function(value) {
+        const { channel } = this.parent
+        if (!value || value.length === 0) return false
+        const contacts = value.filter((c): c is string => typeof c === 'string')
+        return validateContactsRequiredWhenSpecific(contacts, false, channel)
+      }),
+      otherwise: (schema) => schema.optional(),
+    }),
     country: yup.string(),
   })
-  
+
 
   const {defineField, handleSubmit, resetForm, errors, setValues} = useForm<SendMessageForm>({
     validationSchema: schema,
     initialValues: {
-      contacts: [],
+      channel: defaultChannel,
       message: '',
+      sendToAll: false,
+      contacts: [],
       country: 'CO',
     },
     validateOnMount: false,
   })
-  const [contacts] = defineField('contacts')
+
+  const [channel] = defineField('channel')
   const [message] = defineField('message')
+  const [sendToAll] = defineField('sendToAll')
+  const [contacts] = defineField('contacts')
   const [country] = defineField('country')
 
 
   return {
     form:{
-      contacts,
+      channel,
       message,
+      sendToAll,
+      contacts,
       country,
     },
     handleSubmit,

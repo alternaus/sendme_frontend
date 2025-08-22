@@ -9,6 +9,7 @@ import PhoneIcon from '@/assets/svg/phone.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
+import { MessageChannel } from '@/services/send/interfaces/message.interface'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'
@@ -24,12 +25,11 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
-    const sendToAllContacts = ref(false)
     const contactsInput = ref('')
     const contactsCount = ref<number | null>(null)
     const sendService = useSendService()
     const contactService = useContactService()
-    const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage()
+    const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.SMS)
     const MAX_SINGLE_MESSAGE = 160
     const MAX_CONCATENATED_MESSAGE = 153
     const MAX_CHARACTERS = 459
@@ -56,7 +56,7 @@ export default defineComponent({
     }
 
     watchEffect(() => {
-      if (sendToAllContacts.value) {
+      if (form.sendToAll.value) {
         fetchContactsCount()
       }
     })
@@ -69,22 +69,18 @@ export default defineComponent({
     })
 
     const sendMessage = handleSubmit(async (values) => {
-      console.log(!sendToAllContacts.value);
-      if (!sendToAllContacts.value) {
-        const response = await sendService.sendMessageSms(values)
-        if (response) {
-          resetForm()
-          contactsInput.value = ''
-        }
-      } else {
-        const data = {
-          message: values.message,
-        } 
-        const response = await sendService.sendSmsToAllContacts(data)
-        if (response) {
-          resetForm()
-          contactsInput.value = ''
-        }
+      const batchMessage = {
+        channel: MessageChannel.SMS,
+        message: values.message,
+        sendToAll: values.sendToAll,
+        contacts: values.sendToAll ? [] : values.contacts,
+        country: values.country,
+      }
+
+      const response = await sendService.sendBatchMessage(batchMessage)
+      if (response) {
+        resetForm()
+        contactsInput.value = ''
       }
     })
 
@@ -94,7 +90,6 @@ export default defineComponent({
       sendMessage,
       errors,
       setValues,
-      sendToAllContacts,
       contactsInput,
       MAX_CHARACTERS,
       contactsCount,
@@ -109,30 +104,30 @@ export default defineComponent({
       <div
         class="p-2 mx-2 cursor-pointer"
         :class="
-          !sendToAllContacts
+          !form.sendToAll.value
             ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300'
             : ''
         "
-        @click="sendToAllContacts = false"
+        @click="form.sendToAll.value = false"
       >
         <PhoneIcon class="w-6 h-6 dark:fill-white" />
       </div>
       <div
         class="p-2 mx-2 cursor-pointer"
-        :class="sendToAllContacts ? 'bg-white border rounded-lg border-slate-300' : ''"
-        @click="sendToAllContacts = true"
+        :class="form.sendToAll.value ? 'bg-white border rounded-lg border-slate-300' : ''"
+        @click="form.sendToAll.value = true"
       >
         <ContactsIcon class="w-6 h-6 dark:fill-white" />
       </div>
     </div>
-    <div class="flex flex-col mb-2" v-if="sendToAllContacts">
+    <div class="flex flex-col mb-2" v-if="form.sendToAll.value">
       <small class="text-center text-sm text-gray-500 dark:text-gray-100">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
 
     <AppTextarea
-      v-if="!sendToAllContacts"
+      v-if="!form.sendToAll.value"
       v-model="contactsInput"
       :rows="2"
       :placeholder="$t('general.enter_numbers_separated_by_commas')"
