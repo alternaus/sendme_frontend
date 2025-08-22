@@ -468,6 +468,7 @@
     "title": "Notificaciones",
     "no_notifications": "No hay notificaciones",
     "mark_as_read": "Marcar como leída",
+    "read": "Leída",
     "clear_all": "Limpiar todo",
     "delete": "Eliminar",
     "types": {
@@ -475,6 +476,18 @@
       "error": "Error",
       "warning": "Advertencia",
       "info": "Información"
+    }
+  },
+  "contacts": {
+    "import": {
+      "progress": "Progreso",
+      "processed": "procesados",
+      "successful": "exitosos",
+      "errors": "errores",
+      "imported": "Importados",
+      "total": "Total",
+      "view_errors": "Ver errores",
+      "started_at": "Iniciado el"
     }
   }
 }
