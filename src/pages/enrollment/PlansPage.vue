@@ -1,0 +1,354 @@
+<template>
+  <div class="bg-surface-50 dark:bg-surface-950 px-6 py-4 md:px-12 lg:px-20">
+    <div class="flex flex-col gap-4 items-center justify-center">
+      <div class="text-surface-900 dark:text-surface-0 font-bold text-3xl lg:text-4xl text-center leading-tight">{{
+        $t('enrollment.select_plan') }}</div>
+      <div class="text-surface-500 dark:text-surface-400 text-md text-center leading-normal">{{
+        $t('enrollment.select_plan_description') }}</div>
+    </div>
+
+    <!-- Mostrar estado de carga -->
+    <div v-if="loading" class="flex justify-center items-center py-16">
+      <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]"></i>
+    </div>
+
+    <!-- Mostrar mensaje de error -->
+    <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
+      <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
+      <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
+      <AppButton @click="fetchPlansData" :label="$t('general.retry')" class="mt-4" />
+    </div>
+
+    <!-- Mostrar planes -->
+    <Carousel v-else :value="plans" :responsiveOptions="carouselResponsiveOptions" :numVisible="3" :numScroll="1"
+      class="mt-12 flex max-w-6xl mx-auto">
+      <template #item="slotProps">
+        <div class="flex flex-col w-full h-full p-1 box-border">
+          <div :key="slotProps.data.id"
+            class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
+            <div class="flex flex-col gap-2">
+              <h4 class="text-surface-900 dark:text-surface-0 font-bold text-md leading-tight capitalize">{{
+                slotProps.data.name
+              }}</h4>
+              <p class="text-surface-500 dark:text-surface-400 text-xs leading-normal">{{ slotProps.data.description }}
+              </p>
+            </div>
+
+            <div class="w-full h-px bg-surface-200 dark:bg-surface-700" />
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-xl text-surface-900 dark:text-surface-0 leading-tight">${{
+                slotProps.data.cost }}</span>
+              <span class="font-medium text-xs text-surface-500 dark:text-surface-400 leading-tight">/{{
+                $t('enrollment.month') }}</span>
+            </div>
+            <div class="w-full h-px bg-surface-200 dark:bg-surface-600" />
+            <ul class="list-none flex flex-col gap-4 flex-1">
+              <li v-for="(feature, i) in slotProps.data.features" :key="i" class="flex items-center gap-2">
+                <i class="pi pi-check-circle text-md! text-[var(--p-primary-color)]" />
+                <span class="text-surface-800 text-sm dark:text-surface-100 leading-tight">{{ feature }}</span>
+              </li>
+            </ul>
+            <AppButton @click="selectPlan(slotProps.data)" :label="$t('enrollment.select_plan_button')"
+              :aria-label="`${$t('enrollment.select_plan_button')} ${slotProps.data.name}`" rounded class="w-full" />
+          </div>
+        </div>
+      </template>
+    </Carousel>
+  </div>
+
+</template>
+
+
+
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import Carousel from 'primevue/carousel'
+import { useToast } from 'primevue/usetoast'
+
+import { useI18n } from 'vue-i18n'
+
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import type { IPlan } from '@/services/organization/interfaces/plan.interface'
+import { usePlanService } from '@/services/organization/usePlanService'
+
+declare global {
+  interface Window {
+    ePayco?: {
+      checkout: {
+        configure: (config: {
+          key: string;
+          test: boolean;
+        }) => {
+          open: (data: Record<string, string | number | boolean | string[]>) => void;
+        };
+      };
+    };
+  }
+}
+
+const epayco = window.ePayco?.checkout?.configure({
+  key: '469ac6140f4662232f03f667ea035dd3',
+  test: true
+});
+
+interface EpaycoPaymentData {
+  x_response: string;
+  x_response_reason_text: string;
+  x_transaction_id: string;
+  x_ref_payco: string;
+  x_transaction_state: string;
+  x_amount: string;
+  x_currency_code: string;
+  x_extra1: string;
+  x_extra2: string;
+  x_extra3: string;
+  success: boolean;
+}
+
+interface EpaycoResponse {
+  data?: EpaycoPaymentData;
+  type?: string;
+  object?: string;
+}
+
+interface EnhancedPlan extends IPlan {
+  isPopular: boolean;
+  features: string[];
+}
+
+
+const carouselResponsiveOptions = [
+  {
+    breakpoint: '1024px',
+    numVisible: 2,
+    numScroll: 1
+  },
+  {
+    breakpoint: '768px',
+    numVisible: 2,
+    numScroll: 1
+  },
+  {
+    breakpoint: '640px',
+    numVisible: 1,
+    numScroll: 1
+  }
+]
+
+const planService = usePlanService()
+const apiPlans = ref<IPlan[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
+const toast = useToast()
+const { t } = useI18n()
+
+const plans = computed<EnhancedPlan[]>(() =>
+  apiPlans.value
+    .map((plan) => {
+      const lname = plan.name.toLowerCase()
+      const isPopular = lname === 'standard'
+      const features = [
+        `Up to ${plan.contactLimit.toLocaleString()} contacts`,
+        `Up to ${plan.campaignLimit.toLocaleString()} campaigns`,
+        `$${Number(plan.pricePerMessage).toFixed(2)} per message`,
+        lname === 'premium' ? 'Priority support' : 'Standard support',
+        lname === 'trial' ? 'Limited features' : 'Full features'
+      ]
+      return { ...plan, isPopular, features }
+    })
+    .sort((a, b) => a.cost - b.cost)
+)
+
+const router = useRouter()
+
+const selectPlan = (plan: EnhancedPlan) => {
+
+  if (!isEpaycoAvailable.value) {
+    console.error('No se puede procesar el pago porque ePayco no está disponible');
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('enrollment.epayco_not_available'),
+      life: 5000
+    });
+    error.value = 'enrollment.epayco_not_available';
+    return;
+  }
+  const amount = plan.cost.toString();
+  const taxPercent = 19;
+  const taxBase = (plan.cost / (1 + taxPercent / 100)).toFixed(2);
+  const tax = (plan.cost - Number(taxBase)).toFixed(2);
+
+  const invoiceNumber = `SENDME-${Date.now().toString().slice(-8)}`;
+
+  const epaycoData = {
+    name: `Plan ${plan.name} SendMe`,
+    description: `Suscripción mensual al plan ${plan.name} - ${plan.contactLimit.toLocaleString()} contactos`,
+    invoice: invoiceNumber,
+    currency: "cop",
+    amount: amount,
+    tax_base: taxBase,
+    tax: tax,
+    tax_ico: "0",
+    country: "co",
+    lang: "es",
+    external: "false",
+    extra1: "enrollment",
+    extra3: plan.id,
+    name_billing: "",
+    address_billing: "",
+    type_doc_billing: "cc",
+    mobilephone_billing: "",
+    number_doc_billing: "",
+    response: `${window.location.origin}/enrollment/confirmation`,
+    email_billing: "",
+    methodsDisable: []
+  };
+
+  try {
+    epayco?.open(epaycoData);
+  } catch (err) {
+    console.error('Error al abrir la ventana de pago:', err);
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('enrollment.payment_error'),
+      life: 5000
+    });
+    error.value = 'enrollment.payment_error';
+  }
+}
+
+const fetchPlansData = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    apiPlans.value = await planService.fetchPlans()
+  } catch (e) {
+    error.value = 'enrollment.error_loading_plans'
+    console.error('Error fetching plans:', e)
+    toast.add({
+      severity: 'error',
+      summary: t('general.error'),
+      detail: t('enrollment.error_loading_plans'),
+      life: 5000
+    });
+  } finally {
+    loading.value = false
+  }
+}
+
+const handlePaymentResponse = (response: EpaycoResponse) => {
+  console.log('ePayco payment response:', response);
+
+  if (response && response.data) {
+    const paymentData = response.data;
+
+    if (paymentData.success && paymentData.x_response === 'Aceptada') {
+      toast.add({
+        severity: 'success',
+        summary: t('general.success'),
+        detail: t('enrollment.payment_success'),
+        life: 5000
+      });
+
+      setTimeout(() => {
+        router.push({
+          name: 'enrollment-confirmation',
+          query: {
+            ref_payco: paymentData.x_ref_payco
+          }
+        });
+      }, 2000);
+    } else if (paymentData.x_transaction_state === 'Pendiente') {
+      toast.add({
+        severity: 'info',
+        summary: t('general.info'),
+        detail: t('enrollment.payment_pending'),
+        life: 5000
+      });
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: t('general.error'),
+        detail: t('enrollment.payment_failed'),
+        life: 5000
+      });
+      console.warn('Pago no completado:', paymentData.x_response_reason_text);
+    }
+  }
+};
+
+const setupEpaycoListeners = () => {
+  window.addEventListener('message', (evt) => {
+    if (evt.origin.includes('epayco')) {
+      handlePaymentResponse(evt.data);
+    }
+  });
+};
+
+const isEpaycoAvailable = ref(false);
+
+onMounted(() => {
+  if (window.ePayco) {
+    isEpaycoAvailable.value = true;
+  } else {
+    console.error('La librería de ePayco no está disponible. Asegúrate de incluir el script en index.html');
+    toast.add({
+      severity: 'warn',
+      summary: t('general.warning'),
+      detail: t('enrollment.epayco_not_available'),
+      life: 8000
+    });
+    error.value = 'enrollment.epayco_not_available';
+  }
+
+  fetchPlansData();
+  setupEpaycoListeners();
+});
+</script>
+
+<style scoped>
+:deep(.p-carousel) {
+  width: 100%;
+}
+
+:deep(.p-carousel-container) {
+  padding: 0 1rem;
+}
+
+:deep(.p-carousel-items-container) {
+  margin: 0 -0.5rem;
+}
+
+:deep(.p-carousel-items-content) {
+  overflow: hidden;
+}
+
+:deep(.p-carousel-item) {
+  box-sizing: border-box;
+  padding: 0 0.5rem;
+}
+
+/* Mejoras en los controles del carrusel */
+:deep(.p-carousel-prev),
+:deep(.p-carousel-next) {
+  background-color: var(--p-primary-color);
+  color: white;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+}
+
+:deep(.p-carousel-prev:hover),
+:deep(.p-carousel-next:hover) {
+  background-color: var(--p-primary-darker-color, var(--p-primary-color));
+  color: white;
+}
+
+:deep(.p-carousel-indicators .p-carousel-indicator.p-highlight button) {
+  background-color: var(--p-primary-color);
+}
+</style>
