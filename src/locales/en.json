@@ -191,6 +191,10 @@
       "load_campaign": "Error loading campaign",
       "save": "Error saving campaign",
       "validation": "Form validation error",
+      "validation_failed": "Form validation error",
+      "complete_current_step": "Complete the current step before continuing",
+      "create_campaign": "Error creating campaign",
+      "update_campaign": "Error updating campaign",
       "removed": "Error deleting campaign",
       "load_campaigns": "Failed to load campaigns",
       "exported": "Error exporting campaigns"
@@ -369,6 +373,7 @@
     "invalid_email": "Invalid email",
     "error": "Error",
     "success": "Success",
+    "validation_error": "Validation error",
     "unknown_field": "Unknown field",
     "not_defined": "Not defined",
     "instant_message": "Instant Message",

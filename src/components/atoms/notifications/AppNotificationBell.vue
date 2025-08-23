@@ -70,8 +70,8 @@ export default defineComponent({
     const handleDelete = async (notification: INotification) => {
       try {
         await deleteNotification(notification)
-      } catch (error) {
-        console.error('Error deleting notification:', error)
+      } catch  {
+
       }
     }
 
@@ -79,16 +79,16 @@ export default defineComponent({
 
       try {
         await deleteAll()
-      } catch (error) {
-        console.error('Error clearing notifications:', error)
+      } catch  {
+
       }
     }
 
     const handleMarkAsRead = async (notification: INotification) => {
       try {
         await markAsRead(notification)
-      } catch (error) {
-        console.error('Error marking as read:', error)
+      } catch  {
+
       }
     }
 
@@ -101,7 +101,6 @@ export default defineComponent({
       // Implementar navegación a reporte
     }
 
-    // Obtener job progress de manera segura
     const getJobProgressSafe = (notification: INotification) => {
       if (!isJobNotification(notification) || !notification.data?.jobId) return null
       return getJobProgress(notification.data.jobId)
@@ -110,7 +109,7 @@ export default defineComponent({
     return {
       menu,
       unreadCount,
-      list: notifications, // Alias para compatibilidad con el template
+      list: notifications,
       formatDate,
       getIconClasses,
       t,

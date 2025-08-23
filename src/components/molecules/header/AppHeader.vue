@@ -126,6 +126,7 @@ export default defineComponent({
 
 <template>
   <div
+
     class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4"
   >
     <AppBreadcrumb />

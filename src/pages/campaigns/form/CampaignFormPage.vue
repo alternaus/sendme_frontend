@@ -1,29 +1,23 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useRoute,useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
+import type { GenericObject } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
 
-import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
-import ChannelIcon from '@/assets/svg/channel.svg?component'
-import DescriptionIcon from '@/assets/svg/description.svg?component'
-import StatusIcon from '@/assets/svg/status.svg?component'
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import { type SelectOption } from '@/components/atoms/selects/types/select-option.types'
-import AppStepper from '@/components/atoms/stepper/AppStepper.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import AppFormStepper from '@/components/molecules/stepper/AppFormStepper.vue'
 import type { ICreateCampaign } from '@/services/campaign/interfaces/create-campaign.interface'
 import type { IUpdateCampaign } from '@/services/campaign/interfaces/update-campaign.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
 import { useChannelService } from '@/services/channel/useChannelService'
 
 import type { CampaignForm } from '../composables/useCampaignForm'
-import { type CampaignFormRef, useFormCampaign } from '../composables/useCampaignForm'
+import { useFormCampaign } from '../composables/useCampaignForm'
 import CampaignFormDetails from './CampaignFormDetails.vue'
 import CampaignFormMessage from './CampaignFormMessage.vue'
 import CampaignFormTriggers from './CampaignFormTriggers.vue'
@@ -31,17 +25,10 @@ import CampaignFormTriggers from './CampaignFormTriggers.vue'
 export default defineComponent({
   components: {
     AppHeader,
-    AppButton,
-    AppInput,
-    AppSelect,
-    AppStepper,
+    AppFormStepper,
     CampaignFormDetails,
     CampaignFormTriggers,
     CampaignFormMessage,
-    CampaignRouteIcon,
-    ChannelIcon,
-    DescriptionIcon,
-    StatusIcon,
   },
 
   setup() {
@@ -49,19 +36,33 @@ export default defineComponent({
     const route = useRoute()
     const { t } = useI18n()
     const toast = useToast()
-    const { form, handleSubmit, resetForm, errors, addRule, removeRule, setValues } = useFormCampaign()
+
+    const {
+      form,
+      handleSubmit,
+      resetForm,
+      errors,
+      addRule,
+      removeRule,
+      setValues,
+      steps,
+      currentStep,
+      currentStepIndex,
+      isFirstStep,
+      isLastStep,
+      nextStep,
+      prevStep,
+      goToStep,
+      canNavigateToStep,
+      hasStepErrors,
+    } = useFormCampaign()
+
     const { getChannels } = useChannelService()
     const { createCampaign, updateCampaign, getCampaign } = useCampaignService()
-    const activeStep = ref(0)
+
     const isLoading = ref(false)
     const isEditMode = ref(false)
     const campaignId = ref<string | null>(null)
-
-    const steps = [
-      { label: t('campaign.details'), icon: 'pi pi-info-circle' },
-      { label: t('campaign.triggers'), icon: 'pi pi-bolt' },
-      { label: t('campaign.message'), icon: 'pi pi-comment' },
-    ]
 
     const statusOptions = [
       { name: t('general.active'), value: 'active' },
@@ -107,27 +108,34 @@ export default defineComponent({
       }
     })
 
-    const loadCampaignData = async () => {
+    const loadCampaignData = async (): Promise<void> => {
       if (!campaignId.value) return
 
       try {
         isLoading.value = true
         const campaign = await getCampaign(campaignId.value)
 
-        // Convertir las fechas de string a Date y adaptar el formato de las reglas
-        const formattedCampaign = {
+        // Convertir las fechas de string a Date y time string a Date
+        const timeString = campaign.time || '12:00'
+        const [hours, minutes] = timeString.split(':').map(Number)
+        const timeDate = new Date(0, 0, 0, hours, minutes)
+
+        const formattedCampaign: Partial<CampaignForm> = {
           ...campaign,
           startDate: new Date(campaign.startDate),
           endDate: new Date(campaign.endDate),
-          time: new Date(`2000-01-01T${campaign.time}`),
-          campaignRules: campaign.campaignRules.map(rule => ({
-            ...rule,
-            value: rule.value?.toString() || ''
-          }))
+          time: timeDate,
+          campaignRules: (campaign.campaignRules || []).map(rule => ({
+            conditionType: rule.conditionType,
+            value: String(rule.value || ''),
+            customFieldId: rule.customFieldId,
+            campaignId: rule.campaignId,
+          })),
         }
 
-        setValues(formattedCampaign as unknown as CampaignForm)
-      } catch {
+        setValues(formattedCampaign as Record<string, unknown>)
+      } catch (error) {
+        console.error('❌ Error loading campaign:', error)
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -139,44 +147,63 @@ export default defineComponent({
       }
     }
 
-    const updateFormContent = (newContent: Partial<CampaignFormRef>) => {
-      ;(Object.keys(newContent) as Array<keyof typeof form>).forEach((key) => {
-        if (form[key] && form[key].value !== undefined) {
-          if (newContent[key] !== undefined) {
-            form[key].value = newContent[key]!.value
-          }
-        }
-      })
+    const updateFormContent = (newContent: Partial<CampaignForm>) => {
+      try {
+        console.log('🔄 Updating form content with:', newContent)
+
+        // Usar setValues que es más seguro y type-safe
+        setValues(newContent as Record<string, unknown>)
+
+        console.log('📋 Current form state after update:', {
+          name: form.name.value,
+          description: form.description.value,
+          channelId: form.channelId.value,
+          status: form.status.value,
+          startDate: form.startDate.value,
+          endDate: form.endDate.value,
+          time: form.time.value,
+          days: form.days.value,
+        })
+      } catch (error) {
+        console.error('❌ Error updating form content:', error)
+      }
     }
 
-    const formatCampaignData = (values: CampaignForm) => {
-      // Formatear las fechas para el backend
-      const formattedData = {
-        ...values,
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString(),
-        time: values.time.toTimeString().split(' ')[0].substring(0, 5), // Formato HH:MM
-        contentType: 'plain_text' as const, // Asegurar que sea 'plain_text'
-      }
+    const formatCampaignData = (values: GenericObject): Record<string, unknown> => {
+      try {
+        // Convertir la hora (Date) a string en formato HH:MM
+        const timeString = values.time instanceof Date
+          ? values.time.toTimeString().split(' ')[0].substring(0, 5)
+          : '12:00'
 
-      // Eliminar propiedades que no deben enviarse al backend
-      const fieldsToRemove = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'channel', 'rrule'];
-      fieldsToRemove.forEach(field => {
-        if (field in formattedData) {
-          delete (formattedData as Record<string, unknown>)[field];
+        const formattedData: Record<string, unknown> = {
+          ...values,
+          startDate: values.startDate instanceof Date
+            ? values.startDate.toISOString().split('T')[0]
+            : values.startDate,
+          endDate: values.endDate instanceof Date
+            ? values.endDate.toISOString().split('T')[0]
+            : values.endDate,
+          time: timeString,
+          campaignRules: Array.isArray(values.campaignRules)
+            ? values.campaignRules.map((rule: Record<string, unknown>) => ({
+                conditionType: rule.conditionType,
+                value: String(rule.value || ''),
+                customFieldId: rule.customFieldId,
+              }))
+            : [],
         }
-      });
 
-      // Limpiar también las reglas de campaña si existen
-      if (formattedData.campaignRules && Array.isArray(formattedData.campaignRules)) {
-        formattedData.campaignRules = formattedData.campaignRules.map(rule => {
-          // Extraer solo los campos que necesitamos para el backend
-          const { conditionType, value, customFieldId, campaignId } = rule;
-          return { conditionType, value, customFieldId, campaignId };
-        });
+        const fieldsToRemove = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'channel', 'rrule']
+        fieldsToRemove.forEach(field => {
+          delete formattedData[field]
+        })
+
+        return formattedData
+      } catch (error) {
+        console.error('❌ Error formatting campaign data:', error)
+        return values
       }
-
-      return formattedData;
     }
 
     const onSubmitForm = handleSubmit(
@@ -184,8 +211,6 @@ export default defineComponent({
         try {
           isLoading.value = true
           const formattedData = formatCampaignData(values)
-
-          // Registrar los datos que se van a enviar para debugging
 
           if (isEditMode.value && campaignId.value) {
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)
@@ -196,7 +221,7 @@ export default defineComponent({
               life: 3000,
             })
           } else {
-            await createCampaign(formattedData as ICreateCampaign)
+            await createCampaign(formattedData as unknown as ICreateCampaign)
             toast.add({
               severity: 'success',
               summary: t('general.success'),
@@ -210,7 +235,7 @@ export default defineComponent({
           toast.add({
             severity: 'error',
             summary: t('general.error'),
-            detail: t('campaign.errors.save'),
+            detail: isEditMode.value ? t('campaign.errors.update_campaign') : t('campaign.errors.create_campaign'),
             life: 3000,
           })
         } finally {
@@ -219,27 +244,39 @@ export default defineComponent({
       },
       (_error) => {
         toast.add({
-          severity: 'error',
-          summary: t('general.error'),
-          detail: t('campaign.errors.validation'),
+          severity: 'warn',
+          summary: t('general.validation_error'),
+          detail: t('campaign.errors.validation_failed'),
           life: 3000,
         })
       },
     )
 
-    const nextStep = () => {
-      if (activeStep.value < steps.length - 1) {
-        activeStep.value++
+    const handleNext = async (): Promise<void> => {
+      const success = await nextStep()
+      if (!success) {
+        toast.add({
+          severity: 'warn',
+          summary: t('general.validation_error'),
+          detail: t('campaign.errors.complete_current_step'),
+          life: 3000,
+        })
       }
     }
 
-    const prevStep = () => {
-      if (activeStep.value > 0) {
-        activeStep.value--
-      }
+    const handlePrev = async (): Promise<void> => {
+      await prevStep()
     }
 
-    const handleCancel = () => {
+    const handleGoToStep = async (stepId: string): Promise<void> => {
+      await goToStep(stepId)
+    }
+
+    const handleFormSubmit = (): void => {
+      onSubmitForm()
+    }
+
+    const handleCancel = (): void => {
       resetForm()
       router.push('/campaigns')
     }
@@ -256,11 +293,21 @@ export default defineComponent({
       removeRule,
       channels,
       updateFormContent,
-      activeStep,
+
+      // Stepper
       steps,
-      nextStep,
-      prevStep,
+      currentStep,
+      currentStepIndex,
+      isFirstStep,
+      isLastStep,
+      canNavigateToStep,
+      hasStepErrors,
+      handleNext,
+      handlePrev,
+      handleGoToStep,
+      handleFormSubmit,
       handleCancel,
+
       isLoading,
       isEditMode,
       t,
@@ -273,113 +320,52 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" class="hidden lg:flex" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
-    <AppStepper v-model="activeStep" :steps="steps" class="mb-2" />
-
-    <div v-if="activeStep === 0" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <AppInput
-        v-model="form.name.value"
-        type="text"
-        class="w-full mt-3 border-gray-300 dark:border-gray-600 rounded-md"
-        :error-message="errors.name"
-        :label="t('general.name')"
-        :disabled="isLoading"
-      >
-        <template #icon>
-          <CampaignRouteIcon class="dark:fill-white w-4 h-4" />
-        </template>
-      </AppInput>
-
-      <AppInput
-        v-model="form.description.value"
-        :error-message="errors.description"
-        type="text"
-        class="w-full mt-3 border-gray-300 dark:border-gray-600 rounded-md"
-        :label="t('general.description')"
-        :disabled="isLoading"
-      >
-        <template #icon>
-          <DescriptionIcon class="dark:fill-white w-4 h-4" />
-        </template>
-      </AppInput>
-
-      <AppSelect
-        v-model="form.channelId.value"
-        :options="channels"
-        :error-message="errors.channelId"
-        :label="t('campaign.channel')"
-        class="w-full mt-3"
-        :disabled="isLoading"
-      >
-        <template #icon>
-          <ChannelIcon class="dark:fill-white w-4 h-4" />
-        </template>
-      </AppSelect>
-
-      <AppSelect
-        v-model="form.status.value"
-        :options="statusOptions"
-        :error-message="errors.status"
-        :label="t('general.status')"
-        class="w-full mt-3"
-        :disabled="isLoading"
-      >
-        <template #icon>
-          <StatusIcon class="dark:fill-white w-4 h-4" />
-        </template>
-      </AppSelect>
-    </div>
-
-    <CampaignFormDetails v-if="activeStep === 0" :form="form" :errors="errors" @update:form="updateFormContent" :disabled="isLoading" />
-
-    <CampaignFormTriggers
-      v-if="activeStep === 1"
-      :form="form"
-      :errors="errors"
-      :conditionOptions="conditionOptions"
-      :addRule="addRule"
-      :removeRule="removeRule"
-      @update:form="updateFormContent"
-      :disabled="isLoading"
-    />
-
-    <CampaignFormMessage v-if="activeStep === 2" :form="form" :errors="errors" @update:form="updateFormContent" :disabled="isLoading" />
-
-    <div class="flex flex-col lg:flex-row lg:justify-between gap-5 mt-7">
-      <div class="flex gap-5">
-        <AppButton
-          v-if="activeStep > 0"
-          severity="secondary"
-          class="w-full sm:w-auto"
-          :label="t('general.previous')"
-          @click.prevent="prevStep"
+    <AppFormStepper
+      :steps="steps"
+      :current-step="currentStep"
+      :is-first-step="isFirstStep"
+      :is-last-step="isLastStep"
+      :can-navigate-to-step="canNavigateToStep"
+      :has-step-errors="hasStepErrors"
+      :is-loading="isLoading"
+      :submit-label="isEditMode ? t('general.update') : t('general.save')"
+      @next="handleNext"
+      @prev="handlePrev"
+      @go-to="handleGoToStep"
+      @submit="handleFormSubmit"
+      @cancel="handleCancel"
+    >
+      <template #step-1>
+        <CampaignFormDetails
+          :form="form"
+          :errors="errors"
+          :channels="channels"
+          :status-options="statusOptions"
+          @update:form="updateFormContent"
           :disabled="isLoading"
         />
-        <AppButton
-          v-if="activeStep < steps.length - 1"
-          severity="primary"
-          class="w-full sm:w-auto"
-          :label="t('general.next')"
-          @click.prevent="nextStep"
+      </template>
+
+      <template #step-2>
+        <CampaignFormTriggers
+          :form="form"
+          :errors="errors"
+          :condition-options="conditionOptions"
+          :add-rule="addRule"
+          :remove-rule="removeRule"
+          @update:form="updateFormContent"
           :disabled="isLoading"
         />
-      </div>
-      <div class="flex gap-5">
-        <AppButton
-          v-if="activeStep === steps.length - 1"
-          type="submit"
-          severity="primary"
-          class="w-full sm:w-auto"
-          :label="isEditMode ? t('general.update') : t('general.save')"
-          :loading="isLoading"
-        />
-        <AppButton
-          severity="secondary"
-          class="w-full sm:w-auto"
-          :label="t('general.cancel')"
-          @click.prevent="handleCancel"
+      </template>
+
+      <template #step-3>
+        <CampaignFormMessage
+          :form="form"
+          :errors="errors"
+          @update:form="updateFormContent"
           :disabled="isLoading"
         />
-      </div>
-    </div>
+      </template>
+    </AppFormStepper>
   </form>
 </template>

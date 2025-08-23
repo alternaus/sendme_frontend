@@ -1,7 +1,10 @@
-import { type FieldEntry,useFieldArray, useForm } from 'vee-validate'
+import { type FieldEntry, useFieldArray } from 'vee-validate'
 import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
+
+import { type StepConfig, useFormStepper } from '@/composables/useFormStepper'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface CampaignRule {
   conditionType: string | undefined
@@ -10,7 +13,7 @@ export interface CampaignRule {
   campaignId?: number | undefined
 }
 
-export interface CampaignForm {
+export interface CampaignForm extends Record<string, unknown> {
   name: string
   description: string
   content: string
@@ -44,24 +47,30 @@ export interface CampaignFormRef {
 
 export const useFormCampaign = () => {
   const { t } = useI18n()
+  const authStore = useAuthStore()
 
-  const schema = yup.object<CampaignForm>({
+  // Obtener el organizationId del usuario autenticado
+  const userOrganizationId = authStore.user?.organizationId || 1
+
+  // Schemas separados para cada paso
+  const step1Schema = yup.object({
     name: yup.string().required().label(t('campaign.form.campaign_name')),
     description: yup.string().required().label(t('campaign.form.description')),
-    content: yup.string().required().label(t('campaign.form.message_content')),
-    contentType: yup.string().oneOf(['plain_text', 'html']).required().label(t('campaign.form.content_type')),
+    channelId: yup.number().integer().min(1, t('campaign.form.channel_id')).required().label(t('campaign.form.channel_id')),
     status: yup.string().oneOf(['active', 'inactive']).required().label(t('campaign.form.status')),
     startDate: yup.date().required().label(t('campaign.form.start_date')),
     endDate: yup.date().required().label(t('campaign.form.end_date')),
-    time: yup.string().required().label(t('campaign.form.execution_time')),
+    time: yup.date().required().label(t('campaign.form.execution_time')),
     days: yup
       .array()
       .of(yup.string())
       .min(1, t('campaign.form.select_at_least_one_day'))
       .label(t('campaign.form.execution_days')),
+    organizationId: yup.number().integer().min(1, t('campaign.form.organization_id')).required().label(t('campaign.form.organization_id')),
+  })
+
+  const step2Schema = yup.object({
     frequency: yup.string().oneOf(['DAILY', 'WEEKLY', 'MONTHLY']).required().label(t('campaign.form.frequency')),
-    channelId: yup.number().integer().required().label(t('campaign.form.channel_id')),
-    organizationId: yup.number().integer().required().label(t('campaign.form.organization_id')),
     campaignRules: yup.array().of(
       yup.object().shape({
         conditionType: yup.string().required().label(t('campaign.form.condition_type')),
@@ -81,8 +90,53 @@ export const useFormCampaign = () => {
     ),
   })
 
-  const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<CampaignForm>({
-    validationSchema: schema,
+  const step3Schema = yup.object({
+    content: yup.string().required().label(t('campaign.form.message_content')),
+    contentType: yup.string().oneOf(['plain_text', 'html']).required().label(t('campaign.form.content_type')),
+  })
+
+  const steps: StepConfig[] = [
+    {
+      id: '1',
+      label: t('campaign.details'),
+      icon: 'pi pi-info-circle',
+      fields: ['name', 'description', 'channelId', 'status', 'startDate', 'endDate', 'time', 'days', 'organizationId'],
+      schema: step1Schema
+    },
+    {
+      id: '2',
+      label: t('campaign.triggers'),
+      icon: 'pi pi-bolt',
+      fields: ['frequency', 'campaignRules'],
+      schema: step2Schema
+    },
+    {
+      id: '3',
+      label: t('campaign.message'),
+      icon: 'pi pi-comment',
+      fields: ['content', 'contentType'],
+      schema: step3Schema
+    }
+  ]
+
+  const {
+    defineField,
+    handleSubmit,
+    resetForm,
+    errors,
+    setValues,
+    currentStep,
+    currentStepIndex,
+    isFirstStep,
+    isLastStep,
+    nextStep,
+    prevStep,
+    goToStep,
+    canNavigateToStep,
+    hasStepErrors,
+    validateCurrentStep,
+  } = useFormStepper({
+    steps,
     initialValues: {
       name: '',
       description: '',
@@ -91,16 +145,17 @@ export const useFormCampaign = () => {
       status: 'active',
       startDate: new Date(),
       endDate: new Date(),
-      time: new Date(),
+      time: new Date(0, 0, 0, 12, 0),
       days: [],
       frequency: 'DAILY',
-      channelId: 0,
-      organizationId: 0,
+      channelId: 1, // Changed from 0 to 1 to avoid validation issues
+      organizationId: userOrganizationId,
       campaignRules: [{ conditionType: 'is_empty', value: '', customFieldId: 0 }],
     },
     validateOnMount: false,
   })
 
+  // Define fields with explicit typing
   const [name] = defineField('name')
   const [description] = defineField('description')
   const [content] = defineField('content')
@@ -129,25 +184,43 @@ export const useFormCampaign = () => {
   }
 
   return {
+    // Form fields with proper typing
     form: {
-      name,
-      description,
-      content,
-      contentType,
-      status,
-      startDate,
-      endDate,
-      time,
-      days,
-      frequency,
-      channelId,
-      organizationId,
-      campaignRules,
-    },
+      name: name as Ref<string>,
+      description: description as Ref<string>,
+      content: content as Ref<string>,
+      contentType: contentType as Ref<'plain_text' | 'html'>,
+      status: status as Ref<'active' | 'inactive'>,
+      startDate: startDate as Ref<Date>,
+      endDate: endDate as Ref<Date>,
+      time: time as Ref<Date>,
+      days: days as Ref<string[]>,
+      frequency: frequency as Ref<'DAILY' | 'WEEKLY' | 'MONTHLY'>,
+      channelId: channelId as Ref<number>,
+      organizationId: organizationId as Ref<number>,
+      campaignRules: campaignRules as Ref<FieldEntry<CampaignRule>[]>,
+    } as CampaignFormRef,
+
+    // Form utilities
     handleSubmit,
     resetForm,
     errors,
     setValues,
+
+    // Stepper
+    steps,
+    currentStep,
+    currentStepIndex,
+    isFirstStep,
+    isLastStep,
+    nextStep,
+    prevStep,
+    goToStep,
+    canNavigateToStep,
+    hasStepErrors,
+    validateCurrentStep,
+
+    // Campaign rules
     addRule,
     removeRule,
   }

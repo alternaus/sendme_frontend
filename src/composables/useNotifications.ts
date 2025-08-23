@@ -124,8 +124,7 @@ export const useNotifications = () => {
   const fetchNotifications = async (): Promise<INotification[]> => {
     try {
       return await privateApi.get<INotification[]>('/notifications')
-    } catch (error) {
-      console.error('Error fetching notifications:', error)
+    } catch {
       return []
     }
   }
@@ -302,8 +301,7 @@ export const useNotifications = () => {
       notifications.value = Array.from(uniqueNotifications.values())
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
-    } catch (error) {
-      console.error('Error loading notifications:', error)
+    } catch {
       notifications.value = []
     }
   }

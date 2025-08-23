@@ -1,7 +1,5 @@
 <template>
-  <AppCard>
-    <template #content>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+   <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div class="flex-col items-center justify-center col-span-1 hidden lg:flex">
           <p
             class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-400 text-lg font-bold"
@@ -35,8 +33,6 @@
           </div>
         </div>
       </div>
-    </template>
-  </AppCard>
 </template>
 
 <script lang="ts">
@@ -46,7 +42,6 @@ import { useI18n } from 'vue-i18n'
 
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
@@ -56,7 +51,6 @@ import type { CampaignFormRef } from '../composables/useCampaignForm'
 
 export default defineComponent({
   components: {
-    AppCard,
     AppEditor,
     SmsIcon,
     AppSelect,
@@ -81,13 +75,23 @@ export default defineComponent({
     const selectedField = ref<string | null>(null)
 
     const updateContent = (value: string) => {
-      emit('update:form', { content: { value } })
+      try {
+        console.log('🔄 CampaignFormMessage updating content:', value)
+        emit('update:form', { content: value })
+      } catch (error) {
+        console.error('❌ Error updating content in CampaignFormMessage:', error)
+      }
     }
 
     const insertPlaceholder = () => {
-      if (selectedField.value) {
-        const newValue = `${props.form.content.value} ${selectedField.value}`
-        updateContent(newValue)
+      try {
+        if (selectedField.value) {
+          console.log('🔄 Inserting placeholder:', selectedField.value)
+          const newValue = `${props.form.content.value} ${selectedField.value}`
+          updateContent(newValue)
+        }
+      } catch (error) {
+        console.error('❌ Error inserting placeholder:', error)
       }
     }
 

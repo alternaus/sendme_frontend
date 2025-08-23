@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 
 import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
@@ -15,7 +14,6 @@ import type { CampaignFormRef, CampaignRule } from '../composables/useCampaignFo
 
 export default defineComponent({
   components: {
-    AppCard,
     AppInput,
     AppSelect,
     AppButton,
@@ -138,9 +136,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppCard>
-    <template #content>
-      <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full">
         <div class="flex-none mb-4">
           <p class="text-center text-neutral-600 dark:text-neutral-300">
             {{ t('campaign.configure_triggers') }}
@@ -205,8 +201,6 @@ export default defineComponent({
             icon="pi pi-plus" />
         </div>
       </div>
-    </template>
-  </AppCard>
 </template>
 
 <style scoped></style>

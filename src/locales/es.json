@@ -191,6 +191,10 @@
       "load_campaign": "Error al cargar la campaña",
       "save": "Error al guardar la campaña",
       "validation": "Error de validación en el formulario",
+      "validation_failed": "Error de validación en el formulario",
+      "complete_current_step": "Completa el paso actual antes de continuar",
+      "create_campaign": "Error al crear la campaña",
+      "update_campaign": "Error al actualizar la campaña",
       "removed": "Error al eliminar la campaña",
       "load_campaigns": "No se pudieron cargar las campañas",
       "exported": "Error al exportar las campañas"
@@ -369,6 +373,7 @@
     "invalid_email": "Correo electrónico inválido",
     "error": "Error",
     "success": "Éxito",
+    "validation_error": "Error de validación",
     "unknown_field": "Campo desconocido",
     "not_defined": "No definido",
     "instant_message": "Mensaje Instantáneo",
