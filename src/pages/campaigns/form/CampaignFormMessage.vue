@@ -1,15 +1,8 @@
 <template>
-   <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div class="flex-col items-center justify-center col-span-1 hidden lg:flex">
-          <p
-            class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-400 text-lg font-bold"
-          >
-            3
-          </p>
-          <p class="text-center mt-2 font-medium">{{ t('campaign.message') }}</p>
-        </div>
+   <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4">
 
-        <div class="col-span-11 grid grid-cols-8 gap-4 items-center justify-center text-center">
+
+        <div class="col-span-12 grid grid-cols-8 gap-4 items-center justify-center text-center">
           <div class="flex flex-col items-center justify-center gap-1 col-span-12 lg:col-span-1">
             <SmsIcon class="w-12 h-12 dark:fill-white" />
             <span class="text-gray-700 dark:text-neutral-300 font-medium">{{ t('general.sms') }}</span>
@@ -18,7 +11,7 @@
           <div class="flex items-center justify-center col-span-12 lg:col-span-5">
             <AppEditor
             :contentType="'text'"
-              :modelValue="form.content.value"
+              :modelValue="(form.content.value as string)"
               :errorMessage="errors.content"
               @update:modelValue="updateContent"
             />
@@ -35,8 +28,8 @@
       </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, type PropType, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -47,83 +40,66 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
-import type { CampaignFormRef } from '../composables/useCampaignForm'
+import type { CampaignFormFields } from '../composables/useCampaignForm'
 
-export default defineComponent({
-  components: {
-    AppEditor,
-    SmsIcon,
-    AppSelect,
-    AppButton,
-  },
-  props: {
-    form: {
-      type: Object as PropType<CampaignFormRef>,
-      required: true,
-    },
-    errors: {
-      type: Object as PropType<Partial<Record<string, string>>>,
-      required: true,
-    },
-  },
-  emits: ['update:form'],
-  setup(props, { emit }) {
-    const { t } = useI18n()
-    const { getCustomFields } = useCustomFieldService()
+interface Props {
+  form: CampaignFormFields
+  errors: Partial<Record<string, string | undefined>>
+}
 
-    const availableFields = ref<SelectOption[]>([])
-    const selectedField = ref<string | null>(null)
+const props = defineProps<Props>()
 
-    const updateContent = (value: string) => {
-      try {
-        console.log('🔄 CampaignFormMessage updating content:', value)
-        emit('update:form', { content: value })
-      } catch (error) {
-        console.error('❌ Error updating content in CampaignFormMessage:', error)
-      }
+const emit = defineEmits<{
+  'update:form': [key: string, value: unknown]
+}>()
+
+const { t } = useI18n()
+const { getCustomFields } = useCustomFieldService()
+
+const availableFields = ref<SelectOption[]>([])
+const selectedField = ref<string | null>(null)
+
+const updateContent = (value: string) => {
+  try {
+    console.log('🔄 CampaignFormMessage updating content:', value)
+    emit('update:form', 'content', value)
+  } catch (error) {
+    console.error('❌ Error updating content in CampaignFormMessage:', error)
+  }
+}
+
+const insertPlaceholder = () => {
+  try {
+    if (selectedField.value) {
+      console.log('🔄 Inserting placeholder:', selectedField.value)
+      const currentContent = props.form.content.value as string || ''
+      const newValue = `${currentContent} ${selectedField.value}`
+      updateContent(newValue)
     }
+  } catch (error) {
+    console.error('❌ Error inserting placeholder:', error)
+  }
+}
 
-    const insertPlaceholder = () => {
-      try {
-        if (selectedField.value) {
-          console.log('🔄 Inserting placeholder:', selectedField.value)
-          const newValue = `${props.form.content.value} ${selectedField.value}`
-          updateContent(newValue)
-        }
-      } catch (error) {
-        console.error('❌ Error inserting placeholder:', error)
-      }
-    }
+getCustomFields()
+  .then((response) => {
+    const contactFields = [
+      { name: t('general.name'), value: '{name}' },
+      { name: t('general.last_name'), value: '{lastName}' },
+      { name: t('general.email'), value: '{email}' },
+      { name: t('general.phone'), value: '{phone}' },
+      { name: t('general.country_code'), value: '{countryCode}' },
+      { name: t('general.birth_date'), value: '{birthDate}' },
+      { name: t('general.status'), value: '{status}' },
+    ]
 
-    getCustomFields()
-      .then((response) => {
-        const contactFields = [
-          { name: t('general.name'), value: '{name}' },
-          { name: t('general.last_name'), value: '{lastName}' },
-          { name: t('general.email'), value: '{email}' },
-          { name: t('general.phone'), value: '{phone}' },
-          { name: t('general.country_code'), value: '{countryCode}' },
-          { name: t('general.birth_date'), value: '{birthDate}' },
-          { name: t('general.status'), value: '{status}' },
-        ]
+    const customFields = response.map((field) => ({
+      name: field.fieldName,
+      value: `{${field.fieldName}}`,
+    }))
 
-        const customFields = response.map((field) => ({
-          name: field.fieldName,
-          value: `{${field.fieldName}}`,
-        }))
-
-        availableFields.value = [...contactFields, ...customFields]
-      })
-      .catch((_error) => {
-      })
-
-    return {
-      availableFields,
-      selectedField,
-      insertPlaceholder,
-      updateContent,
-      t,
-    }
-  },
-})
+    availableFields.value = [...contactFields, ...customFields]
+  })
+  .catch((_error) => {
+  })
 </script>

@@ -1,5 +1,5 @@
-<script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, type PropType, ref, watch } from 'vue'
+<script setup lang="ts">
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -10,129 +10,94 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
-import type { CampaignFormRef, CampaignRule } from '../composables/useCampaignForm'
+import type { CampaignFormFields, CampaignRule } from '../composables/useCampaignForm'
 
-export default defineComponent({
-  components: {
-    AppInput,
-    AppSelect,
-    AppButton,
-    DeleteIcon,
-  },
-  props: {
-    form: {
-      type: Object as PropType<CampaignFormRef>,
-      required: true,
-    },
-    conditionOptions: {
-      type: Array as PropType<SelectOption[]>,
-      required: true,
-    },
-    addRule: {
-      type: Function as PropType<() => void>,
-      required: true,
-    },
-    removeRule: {
-      type: Function as PropType<(index: number) => void>,
-      required: true,
-    },
-    errors: {
-      type: Object as PropType<Partial<Record<string, string>>>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { t } = useI18n()
-    const { getCustomFields } = useCustomFieldService()
-    const customFieldsOptions = ref<SelectOption[]>([])
-    const touchedFields = ref<Record<number, boolean>>({})
+interface Props {
+  form: CampaignFormFields
+  conditionOptions: SelectOption[]
+  addRule: () => void
+  removeRule: (index: number) => void
+  errors: Partial<Record<string, string | undefined>>
+}
 
-    onMounted(async () => {
-      try {
-        const response = await getCustomFields()
-        customFieldsOptions.value = response.map((customField) => ({
-          name: customField.fieldName,
-          value: customField.id,
-        }))
-      } catch {
-      }
-    })
+const props = defineProps<Props>()
 
-    const campaignRules = computed<CampaignRule[]>(() =>
-      props.form.campaignRules.value.map((entry) => entry.value),
-    )
+const { t } = useI18n()
+const { getCustomFields } = useCustomFieldService()
+const customFieldsOptions = ref<SelectOption[]>([])
+const touchedFields = ref<Record<number, boolean>>({})
 
-    // Observar cambios en la cantidad de reglas para actualizar touchedFields
-    watch(
-      () => campaignRules.value.length,
-      () => {
-        const newTouchedFields: Record<number, boolean> = {}
-        campaignRules.value.forEach((_, index) => {
-          // Mantener el estado anterior si existe, false si es nuevo
-          newTouchedFields[index] = touchedFields.value[index] || false
-        })
-        touchedFields.value = newTouchedFields
-      },
-      { immediate: true }
-    )
-
-    const getError = (index: number, field: string) => {
-      const errorKey = `campaignRules[${index}].${field}`
-      return touchedFields.value[index] ? props.errors?.[errorKey] || '' : ''
-    }
-
-    const hasErrors = (index: number) => {
-      return touchedFields.value[index] && (
-        getError(index, 'customFieldId') ||
-        getError(index, 'conditionType') ||
-        getError(index, 'value')
-      )
-    }
-
-    const handleFieldChange = (index: number) => {
-      touchedFields.value[index] = true
-    }
-
-    const scrollToLastTrigger = async () => {
-      await nextTick()
-      const lastTrigger = document.querySelector(`[data-field-index="${campaignRules.value.length - 1}"]`)
-      if (lastTrigger) {
-        lastTrigger.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    }
-
-    const handleAddRule = () => {
-      props.addRule()
-      scrollToLastTrigger()
-    }
-
-    const handleRemoveRule = (index: number) => {
-      props.removeRule(index)
-      // Actualizar los índices después de eliminar
-      const newTouchedFields: Record<number, boolean> = {}
-      Object.entries(touchedFields.value).forEach(([key, value]) => {
-        const numKey = Number(key)
-        if (numKey < index) {
-          newTouchedFields[numKey] = value
-        } else if (numKey > index) {
-          newTouchedFields[numKey - 1] = value
-        }
-      })
-      touchedFields.value = newTouchedFields
-    }
-
-    return {
-      campaignRules,
-      customFieldsOptions,
-      getError,
-      hasErrors,
-      handleAddRule,
-      handleFieldChange,
-      handleRemoveRule,
-      t,
-    }
-  },
+onMounted(async () => {
+  try {
+    const response = await getCustomFields()
+    customFieldsOptions.value = response.map((customField) => ({
+      name: customField.fieldName,
+      value: customField.id,
+    }))
+  } catch {
+  }
 })
+
+const campaignRules = computed<CampaignRule[]>(() =>
+  props.form.campaignRules.value.map((entry) => entry.value),
+)
+
+watch(
+  () => campaignRules.value.length,
+  () => {
+    const newTouchedFields: Record<number, boolean> = {}
+    campaignRules.value.forEach((_, index) => {
+      newTouchedFields[index] = touchedFields.value[index] || false
+    })
+    touchedFields.value = newTouchedFields
+  },
+  { immediate: true }
+)
+
+const getError = (index: number, field: string) => {
+  const errorKey = `campaignRules[${index}].${field}`
+  return touchedFields.value[index] ? props.errors?.[errorKey] || '' : ''
+}
+
+const hasErrors = (index: number) => {
+  return touchedFields.value[index] && (
+    getError(index, 'customFieldId') ||
+    getError(index, 'conditionType') ||
+    getError(index, 'value')
+  )
+}
+
+const handleFieldChange = (index: number) => {
+  touchedFields.value[index] = true
+}
+
+const scrollToLastTrigger = async () => {
+  await nextTick()
+  const lastTrigger = document.querySelector(`[data-field-index="${campaignRules.value.length - 1}"]`)
+  if (lastTrigger) {
+    lastTrigger.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+}
+
+const handleAddRule = () => {
+  props.addRule()
+  scrollToLastTrigger()
+}
+
+const handleRemoveRule = (index: number) => {
+  props.removeRule(index)
+  // Actualizar los índices después de eliminar
+  const newTouchedFields: Record<number, boolean> = {}
+  Object.entries(touchedFields.value).forEach(([key, value]) => {
+    const numKey = Number(key)
+    if (numKey < index) {
+      newTouchedFields[numKey] = value
+    } else if (numKey > index) {
+      newTouchedFields[numKey - 1] = value
+    }
+  })
+  touchedFields.value = newTouchedFields
+}
 </script>
 
 <template>

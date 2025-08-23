@@ -1,201 +1,174 @@
-import { computed, readonly, ref } from 'vue'
+import { computed, readonly,ref } from 'vue'
 
-import type { PartialDeep } from 'type-fest'
-import { useForm } from 'vee-validate'
+import { type GenericObject,useForm } from 'vee-validate'
 import * as yup from 'yup'
 
-// Tipos auxiliares
-type StepId = string
-type FieldName = string
-type ErrorMap = Record<string, string | undefined>
-
-/**
- * Configuración de un paso del formulario multi-step
- */
-export interface StepConfig {
-  /** Identificador único del paso */
-  id: StepId
-  /** Etiqueta visible del paso */
+export interface StepConfig<T = GenericObject> {
+  id: string
   label: string
-  /** Icono opcional para mostrar en el paso */
   icon?: string
-  /** Lista de nombres de campos que pertenecen a este paso */
-  fields: FieldName[]
-  /** Esquema de validación Yup para este paso */
-  schema: yup.AnyObjectSchema
+  fields: Array<keyof T>
+  schema: yup.ObjectSchema<Partial<T>>
 }
 
-/**
- * Opciones de configuración para el form stepper
- */
-export interface StepperFormOptions<T extends Record<string, unknown>> {
-  /** Lista de pasos del formulario */
-  steps: StepConfig[]
-  /** Valores iniciales del formulario */
-  initialValues: PartialDeep<T>
-  /** Si debe validar al montar el componente */
+export interface StepperFormOptions<T extends GenericObject> {
+  steps: StepConfig<T>[]
+  initialValues: Partial<T>
   validateOnMount?: boolean
 }
 
-/**
- * Hook personalizado para manejar formularios multi-step con validación por pasos.
- *
- * @template T - Tipo del objeto del formulario
- * @param options - Opciones de configuración del stepper
- * @returns Objeto con funciones y estado para manejar el formulario multi-step
- */
-export const useFormStepper = <T extends Record<string, unknown>>(options: StepperFormOptions<T>) => {
-  const firstId = options.steps[0]?.id ?? '1'
-  const currentStep = ref<string>(firstId)
-  const visitedSteps = ref<Set<string>>(new Set([firstId]))
+export function useFormStepper<T extends GenericObject>(
+  options: StepperFormOptions<T>
+) {
+  const firstStepId = options.steps[0]?.id ?? '1'
+  const currentStep = ref(firstStepId)
+  const visitedSteps = ref<Set<string>>(new Set([firstStepId]))
 
-  const stepMap: Map<string, StepConfig> = new Map(options.steps.map(s => [s.id, s]))
+  const stepMap = new Map(options.steps.map(step => [step.id, step]))
 
-  const combinedSchema: yup.AnyObjectSchema = options.steps
-    .map(s => s.schema)
-    .reduce((acc, s) => acc.concat(s), yup.object())
+  const combinedSchema = yup.object().shape(
+    options.steps.reduce((acc, step) => {
+      const stepFields = step.schema.fields || {}
+      return { ...acc, ...stepFields }
+    }, {})
+  )
 
   const {
-    defineField,
+    defineField: _defineField,
     handleSubmit: _handleSubmit,
     resetForm,
     errors,
-    values,
-    setValues,
-    setFieldError,
-    setErrors,
-    validate,
-  } = useForm({
+    setValues: _setValues,
+    values
+  } = useForm<Record<string, unknown>>({
     initialValues: options.initialValues as Record<string, unknown>,
-    validateOnMount: !!options.validateOnMount,
+    validateOnMount: options.validateOnMount ?? false
   })
 
-  const currentStepIndex = computed<number>(() =>
+  // Type-safe defineField wrapper
+  const defineField = <K extends keyof T>(name: K) => {
+    return _defineField(String(name))
+  }
+
+  // Type-safe setValues wrapper
+  const setValues = (newValues: Partial<T>) => {
+    _setValues(newValues as Record<string, unknown>)
+  }
+
+  const currentStepIndex = computed(() =>
     options.steps.findIndex(step => step.id === currentStep.value)
   )
 
-  const currentStepConfig = computed<StepConfig | undefined>(() =>
+  const currentStepConfig = computed(() =>
     stepMap.get(currentStep.value)
   )
 
-  const isFirstStep = computed<boolean>(() => currentStepIndex.value === 0)
-  const isLastStep = computed<boolean>(() => currentStepIndex.value === options.steps.length - 1)
-
-  const canNavigateToStep = (stepId: StepId): boolean => visitedSteps.value.has(stepId)
-
-  // Extrae valores del paso actual sin disparar validación global
-  const pickValues = (keys: readonly FieldName[]): Record<string, unknown> => {
-    const src = values as unknown as Record<string, unknown>
-    const out: Record<string, unknown> = {}
-    for (const k of keys) out[k] = src[k]
-    return out
-  }
+  const isFirstStep = computed(() => currentStepIndex.value === 0)
+  const isLastStep = computed(() => currentStepIndex.value === options.steps.length - 1)
 
   const validateCurrentStep = async (): Promise<boolean> => {
-    const step = currentStepConfig.value
-    if (!step || step.fields.length === 0) return true
+    const stepConfig = currentStepConfig.value
+    if (!stepConfig) return true
 
     try {
-      const v = pickValues(step.fields)
-      await step.schema.validate(v, { abortEarly: false })
-      // limpia errores del paso actual
-      step.fields.forEach(f => setFieldError(f as string, undefined))
+      const stepValues = Object.fromEntries(
+        stepConfig.fields.map(field => [field, (values as T)[field]])
+      )
+
+      await stepConfig.schema.validate(stepValues, { abortEarly: false })
       return true
-    } catch (e) {
-      const ye = e as yup.ValidationError
-      const map: ErrorMap = {}
-      if (Array.isArray(ye.inner) && ye.inner.length > 0) {
-        for (const i of ye.inner) if (i.path) map[i.path] = i.message
-      } else if (ye.path) {
-        map[ye.path] = ye.message
-      }
-      setErrors(map)
+    } catch {
       return false
     }
   }
 
-  const goToStep = async (stepId: StepId, skipValidation = false): Promise<boolean> => {
-    if (!skipValidation) {
-      const ok = await validateCurrentStep()
-      if (!ok) return false
+  const goToStep = async (stepId: string, skipValidation = false): Promise<boolean> => {
+    if (!skipValidation && !(await validateCurrentStep())) {
+      return false
     }
+
     currentStep.value = stepId
     visitedSteps.value.add(stepId)
     return true
   }
 
   const nextStep = async (): Promise<boolean> => {
-    const i = currentStepIndex.value
-    if (i < 0) return false
-    if (i < options.steps.length - 1) return goToStep(options.steps[i + 1].id)
+    const currentIndex = currentStepIndex.value
+    if (currentIndex < options.steps.length - 1) {
+      return goToStep(options.steps[currentIndex + 1].id)
+    }
     return false
   }
 
-  const prevStep = (): Promise<boolean> => {
-    const i = currentStepIndex.value
-    if (i > 0) return goToStep(options.steps[i - 1].id, true)
-    return Promise.resolve(false)
+  const prevStep = async (): Promise<boolean> => {
+    const currentIndex = currentStepIndex.value
+    if (currentIndex > 0) {
+      return goToStep(options.steps[currentIndex - 1].id, true)
+    }
+    return false
+  }
+
+  const canNavigateToStep = (stepId: string): boolean => {
+    return visitedSteps.value.has(stepId)
+  }
+
+  const hasStepErrors = (stepId: string): boolean => {
+    const stepConfig = stepMap.get(stepId)
+    if (!stepConfig) return false
+
+    return stepConfig.fields.some(field => {
+      const errorKey = String(field)
+      const errorObj = errors.value as Record<string, string | undefined>
+      return Boolean(errorObj[errorKey])
+    })
   }
 
   const handleSubmit = (
     onSubmit: (values: T) => void | Promise<void>,
     onError?: (errors: Record<string, string>) => void
-  ) =>
-    _handleSubmit(async (vals) => {
+  ) => {
+    return _handleSubmit(async (values) => {
       try {
-        const validated = await combinedSchema.validate(vals, { abortEarly: false })
-        await onSubmit(validated as T)
-      } catch (e) {
-        const ye = e as yup.ValidationError
-        const map: ErrorMap = {}
-        if (Array.isArray(ye.inner) && ye.inner.length > 0) {
-          for (const i of ye.inner) if (i.path) map[i.path] = i.message
-        } else if (ye.path) {
-          map[ye.path] = ye.message
+        const validatedValues = await combinedSchema.validate(values, { abortEarly: false })
+        await onSubmit(validatedValues as T)
+      } catch (error) {
+        if (onError && error instanceof yup.ValidationError) {
+          const errorMap: Record<string, string> = {}
+          error.inner.forEach(err => {
+            if (err.path) {
+              errorMap[err.path] = err.message
+            }
+          })
+          onError(errorMap)
         }
-        setErrors(map)
-        onError?.(map as Record<string, string>)
       }
     })
-
-  const getStepErrors = (stepId: StepId): string[] => {
-    const step = stepMap.get(stepId)
-    if (!step) return []
-    const errObj = errors.value as ErrorMap
-    return step.fields
-      .map(f => errObj[f])
-      .filter((error): error is string => Boolean(error))
-  }
-
-  const hasStepErrors = (stepId: StepId): boolean => {
-    const step = stepMap.get(stepId)
-    if (!step) return false
-    const errObj = errors.value as ErrorMap
-    return step.fields.some(f => Boolean(errObj[f]))
   }
 
   return {
+    // Navigation
     currentStep: readonly(currentStep),
     currentStepIndex,
-    currentStepConfig,
     isFirstStep,
     isLastStep,
-    visitedSteps: readonly(visitedSteps),
 
+    // Form
     defineField,
     handleSubmit,
     resetForm,
     errors,
     setValues,
-    validate,
 
-    goToStep,
+    // Step Management
     nextStep,
     prevStep,
+    goToStep,
     canNavigateToStep,
-
-    validateCurrentStep,
-    getStepErrors,
     hasStepErrors,
+    validateCurrentStep,
+
+    // Meta
+    steps: options.steps,
+    visitedSteps
   }
 }

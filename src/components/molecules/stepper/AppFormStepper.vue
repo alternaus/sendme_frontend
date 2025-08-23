@@ -46,7 +46,13 @@ const effectiveSubmitLabel = computed(() =>
 )
 
 const handleStepClick = (stepId: string) => {
-  if (props.canNavigateToStep(stepId)) {
+  // Prevenir navegación si el step está deshabilitado
+  if (!props.canNavigateToStep(stepId)) {
+    return
+  }
+
+  // Solo navegar si el step es diferente al actual
+  if (stepId !== props.currentStep) {
     emit('goTo', stepId)
   }
 }
@@ -78,13 +84,14 @@ const handleCancel = () => {
           :value="step.id"
           :class="{
             'cursor-pointer': canNavigateToStep(step.id),
-            'cursor-not-allowed opacity-50': !canNavigateToStep(step.id),
-            'step-error': hasStepErrors(step.id)
+            'cursor-not-allowed': !canNavigateToStep(step.id),
+            'step-error': hasStepErrors(step.id),
+            'step-disabled': !canNavigateToStep(step.id)
           }"
           @click="handleStepClick(step.id)"
         >
           <template #default>
-            <div class="flex items-center gap-2">
+            <div class="hidden md:flex items-center gap-2">
               <i v-if="step.icon" :class="step.icon" />
               <span>{{ step.label }}</span>
               <i v-if="hasStepErrors(step.id)" class="pi pi-exclamation-triangle text-red-500" />
@@ -110,8 +117,9 @@ const handleCancel = () => {
               <Button
                 v-if="!isFirstStep"
                 :label="t('general.previous')"
-                severity="secondary"
+                severity="contrast"
                 size="small"
+                outlined
                 icon="pi pi-arrow-left"
                 @click="handlePrev"
                 :disabled="isLoading"
@@ -141,7 +149,7 @@ const handleCancel = () => {
 
               <Button
                 :label="t('general.cancel')"
-                severity="secondary"
+                severity="contrast"
                 outlined
                 size="small"
                 @click="handleCancel"
@@ -156,20 +164,5 @@ const handleCancel = () => {
 </template>
 
 <style scoped>
-:deep(.step-error .p-step-header) {
-  border-color: var(--p-red-500);
-  background-color: var(--p-red-50);
-}
 
-:deep(.step-error .p-step-title) {
-  color: var(--p-red-500);
-}
-
-:deep(.p-step:not(.p-disabled)) {
-  cursor: pointer;
-}
-
-:deep(.p-step.cursor-not-allowed) {
-  cursor: not-allowed;
-}
 </style>

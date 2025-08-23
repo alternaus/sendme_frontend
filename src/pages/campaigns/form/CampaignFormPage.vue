@@ -16,8 +16,8 @@ import type { IUpdateCampaign } from '@/services/campaign/interfaces/update-camp
 import { useCampaignService } from '@/services/campaign/useCampaignService'
 import { useChannelService } from '@/services/channel/useChannelService'
 
-import type { CampaignForm } from '../composables/useCampaignForm'
-import { useFormCampaign } from '../composables/useCampaignForm'
+import type { CampaignFormData } from '../composables/useCampaignForm'
+import { useCampaignForm } from '../composables/useCampaignForm'
 import CampaignFormDetails from './CampaignFormDetails.vue'
 import CampaignFormMessage from './CampaignFormMessage.vue'
 import CampaignFormTriggers from './CampaignFormTriggers.vue'
@@ -39,12 +39,12 @@ export default defineComponent({
 
     const {
       form,
-      handleSubmit,
-      resetForm,
-      errors,
       addRule,
       removeRule,
+      handleSubmit,
+      resetForm,
       setValues,
+      errors,
       steps,
       currentStep,
       currentStepIndex,
@@ -55,7 +55,7 @@ export default defineComponent({
       goToStep,
       canNavigateToStep,
       hasStepErrors,
-    } = useFormCampaign()
+    } = useCampaignForm()
 
     const { getChannels } = useChannelService()
     const { createCampaign, updateCampaign, getCampaign } = useCampaignService()
@@ -120,7 +120,7 @@ export default defineComponent({
         const [hours, minutes] = timeString.split(':').map(Number)
         const timeDate = new Date(0, 0, 0, hours, minutes)
 
-        const formattedCampaign: Partial<CampaignForm> = {
+        const formattedCampaign: Partial<CampaignFormData> = {
           ...campaign,
           startDate: new Date(campaign.startDate),
           endDate: new Date(campaign.endDate),
@@ -147,12 +147,12 @@ export default defineComponent({
       }
     }
 
-    const updateFormContent = (newContent: Partial<CampaignForm>) => {
+    const updateFormContent = (key: string, value: unknown) => {
       try {
-        console.log('🔄 Updating form content with:', newContent)
+        console.log(`🔄 Updating form field ${key} with:`, value)
 
-        // Usar setValues que es más seguro y type-safe
-        setValues(newContent as Record<string, unknown>)
+        // Actualizar el campo específico
+        setValues({ [key]: value } as Record<string, unknown>)
 
         console.log('📋 Current form state after update:', {
           name: form.name.value,

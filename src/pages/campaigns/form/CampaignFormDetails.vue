@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -17,86 +17,75 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 
-import type { CampaignFormRef } from '../composables/useCampaignForm'
+import type { CampaignFormFields } from '../composables/useCampaignForm'
 
-export default defineComponent({
-  components: {
-    AppInput,
-    AppSelect,
-    AppDatePicker,
-    AppTimePicker,
-    AppSelectButton,
-    CampaignRouteIcon,
-    ChannelIcon,
-    DateStartIcon,
-    DateEndIcon,
-    DescriptionIcon,
-    StatusIcon,
-  },
-  props: {
-    form: {
-      type: Object as PropType<CampaignFormRef>,
-      required: true,
-    },
-    errors: {
-      type: Object as PropType<Partial<Record<string, string>>>,
-      required: true,
-    },
-    channels: {
-      type: Array as PropType<SelectOption[]>,
-      default: () => [],
-    },
-    statusOptions: {
-      type: Array as PropType<SelectOption[]>,
-      default: () => [],
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['update:form'],
+interface Props {
+  form: CampaignFormFields
+  errors: Partial<Record<string, string | undefined>>
+  channels?: SelectOption[]
+  statusOptions?: SelectOption[]
+  disabled?: boolean
+}
 
-  setup(_, { emit }) {
-    const { t } = useI18n()
-
-    const daysOptions: SelectButtonOption[] = [
-      { name: t('campaign.days.monday'), value: 'MO' },
-      { name: t('campaign.days.tuesday'), value: 'TU' },
-      { name: t('campaign.days.wednesday'), value: 'WE' },
-      { name: t('campaign.days.thursday'), value: 'TH' },
-      { name: t('campaign.days.friday'), value: 'FR' },
-      { name: t('campaign.days.saturday'), value: 'SA' },
-      { name: t('campaign.days.sunday'), value: 'SU' },
-    ]
-
-    const updateFormValue = (key: keyof CampaignFormRef, value: unknown) => {
-      try {
-        console.log(`🔄 CampaignFormDetails updating ${key}:`, value)
-        emit('update:form', { [key]: value })
-      } catch (error) {
-        console.error('❌ Error updating form value in CampaignFormDetails:', error)
-      }
-    }
-
-    return {
-      daysOptions,
-      updateFormValue,
-      t,
-    }
-  },
+const props = withDefaults(defineProps<Props>(), {
+  channels: () => [],
+  statusOptions: () => [],
+  disabled: false
 })
+
+const emit = defineEmits<{
+  'update:form': [key: string, value: unknown]
+}>()
+
+const { t } = useI18n()
+
+const daysOptions: SelectButtonOption[] = [
+  { name: t('campaign.days.monday'), value: 'MO' },
+  { name: t('campaign.days.tuesday'), value: 'TU' },
+  { name: t('campaign.days.wednesday'), value: 'WE' },
+  { name: t('campaign.days.thursday'), value: 'TH' },
+  { name: t('campaign.days.friday'), value: 'FR' },
+  { name: t('campaign.days.saturday'), value: 'SA' },
+  { name: t('campaign.days.sunday'), value: 'SU' },
+]
+
+const updateField = (key: string, value: unknown) => {
+  emit('update:form', key, value)
+}
+
+// Computed properties to access ref values safely
+const formValues = computed(() => ({
+  name: props.form.name.value as string,
+  description: props.form.description.value as string,
+  channelId: props.form.channelId.value as number,
+  status: props.form.status.value as string,
+  startDate: props.form.startDate.value as Date,
+  endDate: props.form.endDate.value as Date,
+  days: props.form.days.value as string[],
+  time: props.form.time.value as Date
+}))
+
+const errorMessages = computed(() => ({
+  name: props.errors.name || '',
+  description: props.errors.description || '',
+  channelId: props.errors.channelId || '',
+  status: props.errors.status || '',
+  startDate: props.errors.startDate || '',
+  endDate: props.errors.endDate || '',
+  days: props.errors.days || '',
+  time: props.errors.time || ''
+}))
 </script>
 
 <template>
   <div class="space-y-6 p-4 pt-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <AppInput
-        :modelValue="form.name.value"
-        @update:modelValue="updateFormValue('name', $event)"
+        :modelValue="formValues.name"
+        @update:modelValue="updateField('name', $event)"
         type="text"
         class="w-full"
-        :error-message="errors.name"
+        :error-message="errorMessages.name"
         :label="t('general.name')"
         :disabled="disabled"
       >
@@ -106,9 +95,9 @@ export default defineComponent({
       </AppInput>
 
       <AppInput
-        :modelValue="form.description.value"
-        @update:modelValue="updateFormValue('description', $event)"
-        :error-message="errors.description"
+        :modelValue="formValues.description"
+        @update:modelValue="updateField('description', $event)"
+        :error-message="errorMessages.description"
         type="text"
         class="w-full"
         :label="t('general.description')"
@@ -120,10 +109,10 @@ export default defineComponent({
       </AppInput>
 
       <AppSelect
-        :modelValue="form.channelId.value"
-        @update:modelValue="updateFormValue('channelId', $event)"
+        :modelValue="formValues.channelId"
+        @update:modelValue="updateField('channelId', $event)"
         :options="channels"
-        :error-message="errors.channelId"
+        :error-message="errorMessages.channelId"
         :label="t('campaign.channel')"
         class="w-full"
         :disabled="disabled"
@@ -134,10 +123,10 @@ export default defineComponent({
       </AppSelect>
 
       <AppSelect
-        :modelValue="form.status.value"
-        @update:modelValue="updateFormValue('status', $event)"
+        :modelValue="formValues.status"
+        @update:modelValue="updateField('status', $event)"
         :options="statusOptions"
-        :error-message="errors.status"
+        :error-message="errorMessages.status"
         :label="t('general.status')"
         class="w-full"
         :disabled="disabled"
@@ -159,9 +148,9 @@ export default defineComponent({
           </div>
           <div class="grid grid-cols-1 gap-2">
             <AppDatePicker
-              :modelValue="form.startDate.value"
-              @update:modelValue="updateFormValue('startDate', $event)"
-              :errorMessage="errors.startDate"
+              :modelValue="formValues.startDate"
+              @update:modelValue="updateField('startDate', $event)"
+              :errorMessage="errorMessages.startDate"
             >
               <template #icon>
                 <DateStartIcon class="dark:fill-white w-4 h-4" />
@@ -169,9 +158,9 @@ export default defineComponent({
             </AppDatePicker>
 
             <AppDatePicker
-              :modelValue="form.endDate.value"
-              @update:modelValue="updateFormValue('endDate', $event)"
-              :errorMessage="errors.endDate"
+              :modelValue="formValues.endDate"
+              @update:modelValue="updateField('endDate', $event)"
+              :errorMessage="errorMessages.endDate"
             >
               <template #icon>
                 <DateEndIcon class="dark:fill-white w-4 h-4" />
@@ -187,10 +176,10 @@ export default defineComponent({
           </div>
           <div class="w-full">
             <AppSelectButton
-              :modelValue="form.days.value"
-              @update:modelValue="updateFormValue('days', $event)"
+              :modelValue="formValues.days"
+              @update:modelValue="updateField('days', $event)"
               :options="daysOptions"
-              :errorMessage="errors.days"
+              :errorMessage="errorMessages.days"
             />
           </div>
         </div>
@@ -202,10 +191,10 @@ export default defineComponent({
           </div>
           <div class="w-full flex items-center justify-center">
             <AppTimePicker
-              :modelValue="form.time.value"
-              @update:modelValue="updateFormValue('time', $event)"
+              :modelValue="formValues.time"
+              @update:modelValue="updateField('time', $event)"
               class="w-full"
-              :errorMessage="errors.time"
+              :errorMessage="errorMessages.time"
             />
           </div>
         </div>
