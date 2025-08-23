@@ -1,94 +1,216 @@
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import { io, type Socket } from 'socket.io-client'
 
-import type { INotification } from '@/components/atoms/notifications/interfaces/notification.interface'
-import { useNotificationService } from '@/services/notification/useNotificationService'
+import { useApiClient } from '@/composables/useApiClient'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-import { useJobNotifications } from './useJobNotifications'
+// Interfaces simplificadas
+export interface INotification {
+  id?: number
+  type: 'success' | 'error' | 'warning' | 'info'
+  title: string
+  message: string
+  data?: {
+    jobId?: string
+    jobType?: string
+    progress?: number
+    processed?: number
+    errors?: number
+    total?: number
+    completed?: boolean
+    errorDetails?: string[]
+    [key: string]: unknown
+  }
+  timestamp: string
+  read: boolean
+}
 
-export const useNotifications = (orgId?: number) => {
-  const list = ref<INotification[]>([])
+export interface JobProgress {
+  jobId: string
+  jobType?: string
+  isActive: boolean
+  progress: number
+  processed: number
+  errors: number
+  total?: number
+  errorDetails: string[]
+  startTime: Date
+  endTime?: Date
+  lastUpdate: Date
+}
+
+export const useNotifications = () => {
+  const authStore = useAuthStore()
+  const privateApi = useApiClient(true)
+
+  // Estado principal
+  const notifications = ref<INotification[]>([])
+  const jobs = ref<Map<string, JobProgress>>(new Map())
   const socket = ref<Socket | null>(null)
   const isConnected = ref(false)
-  const authStore = useAuthStore()
 
-  // Integrar el sistema de jobs
-  const jobSystem = useJobNotifications(list)
-
-  // Servicio de notificaciones para llamadas API
-  const notificationService = useNotificationService()
-
-  // Función helper para verificar si una notificación es de job
-  const isJobNotificationCheck = (notification: INotification): boolean => {
-    if (!notification.data?.jobId) return false
-
-    const title = notification.title?.toLowerCase() || ''
-    const message = notification.message?.toLowerCase() || ''
-
-    // Verificar palabras clave de jobs conocidos
-    const jobKeywords = [
-      'importación',
-      'importacion',
-      'progreso',
-      'completada',
-      'fallida',
-      'exportación',
-      'exportacion',
-      'sincronización',
-      'sincronizacion',
-      'campaña',
-      'campaign',
-      'análisis',
-      'analysis',
-      'backup',
-      'restore',
-    ]
-
-    return jobKeywords.some((keyword) => title.includes(keyword) || message.includes(keyword))
-  }
-
-  // Función para filtrar notificaciones de sistema que no son relevantes para el usuario
-
-  // Función para filtrar notificaciones de sistema que no son relevantes para el usuario
-  const isSystemNotification = (notification: INotification): boolean => {
-    const title = notification.title?.toLowerCase() || ''
-    const message = notification.message?.toLowerCase() || ''
-
-    const systemKeywords = [
-      'conexión', 'conexion', 'conectado', 'websocket', 'sistema', 'servidor',
-      'authentication', 'auth', 'login', 'logout', 'session', 'token'
-    ]
-
-    return systemKeywords.some(keyword =>
-      title.includes(keyword) || message.includes(keyword)
-    )
-  }
-
-  watch(
-    () => authStore.token,
-    (token) => {
-      if (token && !socket.value) connect()
-      if (!token && socket.value) disconnect()
-    },
+  // Computed properties
+  const unreadCount = computed(() =>
+    notifications.value.filter(n => !n.read).length
   )
 
-  const connect = () => {
-    if (!authStore.token) {
-      return
+  const activeJobs = computed(() =>
+    Array.from(jobs.value.values()).filter(job => job.isActive)
+  )
+
+  const completedJobs = computed(() =>
+    Array.from(jobs.value.values()).filter(job => !job.isActive)
+  )
+
+  const hasActiveImports = computed(() =>
+    activeJobs.value.some(job => job.jobType === 'contact_import')
+  )
+
+  // Utilidades
+  const isJobNotification = (notification: INotification): boolean => {
+    return Boolean(notification.data?.jobId)
+  }
+
+  const isContactImportNotification = (notification: INotification): boolean => {
+    if (!isJobNotification(notification)) return false
+
+    const { title = '', message = '' } = notification
+    const jobType = notification.data?.jobType
+
+    // Filtrar notificaciones de sistema
+    const systemKeywords = ['conexión', 'conectado', 'websocket', 'sistema']
+    if (systemKeywords.some(keyword =>
+      title.toLowerCase().includes(keyword) || message.toLowerCase().includes(keyword)
+    )) {
+      return false
     }
-    if (socket.value) {
+
+    return jobType === 'contact_import' ||
+           (title.toLowerCase().includes('importación') ||
+            message.toLowerCase().includes('importación'))
+  }
+
+  const getJobProgress = (jobId: string): JobProgress | null => {
+    return jobs.value.get(jobId) || null
+  }
+
+  // Gestión de jobs
+  const updateJobFromNotification = (notification: INotification) => {
+    const jobId = notification.data?.jobId
+    if (!jobId) return
+
+    const existingJob = jobs.value.get(jobId)
+    const timestamp = new Date(notification.timestamp)
+
+    const jobData: JobProgress = {
+      jobId,
+      jobType: notification.data?.jobType,
+      isActive: !notification.data?.completed,
+      progress: notification.data?.progress || (notification.data?.completed ? 100 : 0),
+      processed: notification.data?.processed || 0,
+      errors: notification.data?.errors || 0,
+      total: notification.data?.total,
+      errorDetails: notification.data?.errorDetails || [],
+      startTime: existingJob?.startTime || timestamp,
+      endTime: notification.data?.completed ? timestamp : undefined,
+      lastUpdate: timestamp
+    }
+
+    jobs.value.set(jobId, jobData)
+  }
+
+  // API calls
+  const fetchNotifications = async (): Promise<INotification[]> => {
+    try {
+      return await privateApi.get<INotification[]>('/notifications')
+    } catch (error) {
+      console.error('Error fetching notifications:', error)
+      return []
+    }
+  }
+
+  const markAsRead = async (notification: INotification) => {
+    if (!notification.id || notification.id <= 0) {
+      // Notificación local
+      const index = notifications.value.findIndex(n =>
+        n.title === notification.title &&
+        n.message === notification.message &&
+        n.timestamp === notification.timestamp
+      )
+      if (index !== -1) {
+        notifications.value[index].read = true
+      }
       return
     }
 
-    const base =
-      import.meta.env.MODE === 'development'
-        ? 'http://localhost:4000'
-        : (import.meta.env.VITE_API_URL ?? window.location.origin)
-    const url = `${base}/notifications`
+    try {
+      // Marcar optimísticamente
+      const target = notifications.value.find(n => n.id === notification.id)
+      if (target) target.read = true
 
-    socket.value = io(url, {
+      await privateApi.patch(`/notifications/${notification.id}/read`)
+    } catch (error) {
+      // Revertir en caso de error
+      const target = notifications.value.find(n => n.id === notification.id)
+      if (target) target.read = false
+      throw error
+    }
+  }
+
+  const deleteNotification = async (notification: INotification) => {
+    if (!notification.id || notification.id <= 0) {
+      // Eliminar notificación local
+      notifications.value = notifications.value.filter(n =>
+        !(n.title === notification.title &&
+          n.message === notification.message &&
+          n.timestamp === notification.timestamp)
+      )
+      return
+    }
+
+    try {
+      // Eliminar optimísticamente
+      notifications.value = notifications.value.filter(n => n.id !== notification.id)
+      await privateApi.patch(`/notifications/${notification.id}/read`)
+    } catch (error) {
+      // Recargar en caso de error
+      await loadNotifications()
+      throw error
+    }
+  }
+
+  const markAllAsRead = async () => {
+    try {
+      notifications.value.forEach(n => n.read = true)
+      await privateApi.patch('/notifications/read', {
+        orgId: authStore.user?.organizationId
+      })
+    } catch (error) {
+      await loadNotifications()
+      throw error
+    }
+  }
+
+  const deleteAll = async () => {
+    try {
+      notifications.value = []
+      await privateApi.patch('/notifications/read')
+    } catch (error) {
+      await loadNotifications()
+      throw error
+    }
+  }
+
+  // WebSocket
+  const connectWebSocket = () => {
+    if (!authStore.token || socket.value) return
+
+    const base = import.meta.env.MODE === 'development'
+      ? 'http://localhost:4000'
+      : (import.meta.env.VITE_API_URL ?? window.location.origin)
+
+    socket.value = io(`${base}/notifications`, {
       transports: ['websocket'],
       auth: { token: authStore.token },
       reconnectionAttempts: 5,
@@ -96,95 +218,55 @@ export const useNotifications = (orgId?: number) => {
     })
 
     socket.value.on('connect', () => {
-      console.log('[WebSocket] Connected successfully')
       isConnected.value = true
-      subscribe('notifications')
-
-      // No solicitar historial via WebSocket ya que lo obtenemos via fetch API
-      // El WebSocket solo se usa para actualizaciones en tiempo real
+      socket.value?.emit('subscribe', { channel: 'notifications' })
     })
 
     socket.value.on('disconnect', () => {
       isConnected.value = false
     })
 
-    socket.value.on('connect_error', () => {})
+    socket.value.on('notification', (notification: INotification) => {
+      // Filtrar notificaciones de sistema irrelevantes
+      const systemKeywords = ['conexión', 'conectado', 'websocket', 'authentication', 'login']
+      const title = notification.title?.toLowerCase() || ''
+      const message = notification.message?.toLowerCase() || ''
 
-    socket.value.on('notification', (n: INotification) => {
-      console.log('[WebSocket] Real-time notification received:', { title: n.title, jobId: n.data?.jobId })
-
-      // Filtrar notificaciones de conexión/sistema que no son relevantes para el usuario
-      if (isSystemNotification(n)) {
-        console.log('[WebSocket] System notification filtered out')
+      if (systemKeywords.some(keyword => title.includes(keyword) || message.includes(keyword))) {
         return
       }
 
-      // Procesar con el sistema de jobs si aplica
-      jobSystem.processJobNotification(n)
-
-      if (!Array.isArray(list.value)) {
-        list.value = []
+      // Actualizar job si aplica
+      if (isJobNotification(notification)) {
+        updateJobFromNotification(notification)
       }
 
-      // Para notificaciones de job, buscar por jobId y actualizar la existente
-      if (isJobNotificationCheck(n) && n.data?.jobId) {
-        const jobId = n.data.jobId as string
-        const existingJobIndex = list.value.findIndex(
-          (existing) => existing.data?.jobId === jobId && isJobNotificationCheck(existing),
+      // Agregar/actualizar notificación
+      if (notification.data?.jobId) {
+        // Para jobs, mantener solo la más reciente por jobId
+        const existingIndex = notifications.value.findIndex(n =>
+          n.data?.jobId === notification.data?.jobId
         )
-
-        if (existingJobIndex !== -1) {
-          // Actualizar la notificación existente del job
-          console.log(`[WebSocket] Updating existing job notification: ${jobId}`)
-          list.value[existingJobIndex] = {
-            ...list.value[existingJobIndex],
-            ...n,
-            // Mantener el ID original si existe
-            id: list.value[existingJobIndex].id || n.id,
-          }
-          return
+        if (existingIndex !== -1) {
+          notifications.value[existingIndex] = notification
         } else {
-          // Primera notificación de este job, agregarla normalmente
-          console.log(`[WebSocket] Adding new job notification: ${jobId}`)
-          list.value.unshift(n)
-          return
+          notifications.value.unshift(notification)
         }
-      }
-
-      // Para notificaciones normales (no de job), verificar duplicados por contenido
-      const existingIndex = list.value.findIndex((existing) => {
-        // Si ambas tienen ID, comparar por ID
-        if (existing.id && n.id && existing.id > 0 && n.id > 0) {
-          return existing.id === n.id
-        }
-
-        // Si no tienen ID válido, comparar por contenido
-        return (
-          existing.title === n.title &&
-          existing.message === n.message &&
-          Math.abs(new Date(existing.timestamp).getTime() - new Date(n.timestamp).getTime()) < 5000
-        )
-      })
-
-      if (existingIndex !== -1) {
-        // Actualizar notificación existente
-        console.log('[WebSocket] Updating existing notification')
-        list.value[existingIndex] = { ...list.value[existingIndex], ...n }
       } else {
-        // Nueva notificación
-        console.log('[WebSocket] Adding new notification')
-        list.value.unshift(n)
+        // Para notificaciones normales, verificar duplicados
+        const exists = notifications.value.some(n =>
+          n.title === notification.title &&
+          n.message === notification.message &&
+          Math.abs(new Date(n.timestamp).getTime() - new Date(notification.timestamp).getTime()) < 5000
+        )
+        if (!exists) {
+          notifications.value.unshift(notification)
+        }
       }
-    })
-
-    socket.value.on('notifications:history', (_notifications: INotification[]) => {
-      // Este evento ya no es necesario porque cargamos el historial via API
-      // Solo lo mantenemos por compatibilidad con el backend
-      console.log('[WebSocket] History event received but ignored (using API fetch instead)')
     })
   }
 
-  const disconnect = () => {
+  const disconnectWebSocket = () => {
     if (socket.value) {
       socket.value.disconnect()
       socket.value = null
@@ -192,156 +274,96 @@ export const useNotifications = (orgId?: number) => {
     isConnected.value = false
   }
 
-  const subscribe = (channel: string) => {
-    if (!socket.value?.connected) {
-      return
-    }
-    socket.value.emit('subscribe', { channel })
-  }
-
-  const unsubscribe = (channel: string) => {
-    if (!socket.value?.connected) {
-      return
-    }
-    socket.value.emit('unsubscribe', { channel })
-  }
-
-  const fetchHistory = async () => {
+  // Cargar notificaciones iniciales
+  const loadNotifications = async () => {
     try {
-      console.log('[Notifications] Fetching initial history from API...')
-      const notifications = await notificationService.getUnreadNotifications()
+      const fetchedNotifications = await fetchNotifications()
 
-      console.log(`[Notifications] Fetched ${notifications.length} notifications from API`)
-
-      // Procesar y limpiar duplicados
-      const cleanNotifications = removeDuplicates(notifications)
-
-      // Ordenar por timestamp (más recientes primero)
-      list.value = cleanNotifications.sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-      )
-
-      // Inicializar el sistema de jobs con las notificaciones obtenidas
-      console.log('[Notifications] Initializing job system with fetched notifications...')
-      jobSystem.initializeFromExistingNotifications()
-
-      console.log(`[Notifications] Initialization complete: ${list.value.length} notifications loaded`)
-    } catch (error) {
-      console.error('[Notifications] Error fetching history:', error)
-      list.value = []
-    }
-  }
-
-  const removeDuplicates = (notifications: INotification[]): INotification[] => {
-    const seen = new Set<string>()
-    const jobsSeen = new Map<string, number>() // jobId -> index del más reciente
-
-    return notifications.filter((notification, index) => {
-      // Para notificaciones de job, mantener solo la más reciente por jobId
-      if (notification.data?.jobId && isJobNotificationCheck(notification)) {
-        const jobId = notification.data.jobId as string
-        const existingIndex = jobsSeen.get(jobId)
-
-        if (existingIndex !== undefined) {
-          // Ya existe una notificación de este job, mantener la más reciente
-          const existingNotification = notifications[existingIndex]
-          const currentTime = new Date(notification.timestamp).getTime()
-          const existingTime = new Date(existingNotification.timestamp).getTime()
-
-          if (currentTime > existingTime) {
-            // La actual es más reciente, marcar la anterior para eliminación
-            jobsSeen.set(jobId, index)
-            return true
-          } else {
-            // La existente es más reciente, eliminar la actual
-            return false
-          }
-        } else {
-          // Primera notificación de este job
-          jobsSeen.set(jobId, index)
-          return true
+      // Procesar jobs de las notificaciones existentes
+      fetchedNotifications.forEach(notification => {
+        if (isJobNotification(notification)) {
+          updateJobFromNotification(notification)
         }
-      }
+      })
 
-      // Para notificaciones normales, usar la lógica existente
-      const key =
-        notification.id && notification.id > 0
+      // Remover duplicados y ordenar
+      const uniqueNotifications = new Map<string, INotification>()
+
+      fetchedNotifications.forEach(notification => {
+        const key = notification.id && notification.id > 0
           ? `id:${notification.id}`
           : `content:${notification.title}:${notification.message}:${notification.timestamp}`
 
-      if (seen.has(key)) {
-        return false
-      }
+        if (!uniqueNotifications.has(key)) {
+          uniqueNotifications.set(key, notification)
+        }
+      })
 
-      seen.add(key)
-      return true
-    })
-  }
+      notifications.value = Array.from(uniqueNotifications.values())
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
-  const markRead = async (id: number) => {
-    try {
-      await notificationService.markReadNotification(id)
-      if (Array.isArray(list.value)) {
-        const item = list.value.find((n) => n.id === id)
-        if (item) item.read = true
-      }
-    } catch {}
-  }
-
-  const deleteNotification = async (id: number) => {
-    if (!id || id <= 0) {
-      return
-    }
-
-    try {
-      // Eliminar optimísticamente de la lista local
-      if (Array.isArray(list.value)) {
-        list.value = list.value.filter((n) => n.id !== id)
-      }
-
-      if (!orgId) {
-        return
-      }
-
-      // Marcar como leída y eliminar en el servidor
-      await notificationService.markReadNotification(id)
-    } catch {
-      // En caso de error, recargar la lista
-      await fetchHistory()
+    } catch (error) {
+      console.error('Error loading notifications:', error)
+      notifications.value = []
     }
   }
 
+  // Watchers
+  watch(
+    () => authStore.token,
+    (token) => {
+      if (token && !socket.value) {
+        connectWebSocket()
+      } else if (!token && socket.value) {
+        disconnectWebSocket()
+      }
+    }
+  )
+
+  // Lifecycle
   onMounted(async () => {
-    // Estrategia de carga:
-    // 1. Primero cargar notificaciones existentes via API
-    // 2. Después conectar WebSocket para actualizaciones en tiempo real
-    console.log('[Notifications] Starting initialization...')
-
-    await fetchHistory() // 1. Carga inicial via fetch
-    connect()            // 2. WebSocket para tiempo real
-
-    console.log('[Notifications] Initialization complete')
+    await loadNotifications()
+    connectWebSocket()
   })
 
   onUnmounted(() => {
-    disconnect()
+    disconnectWebSocket()
   })
 
+  // Limpiar jobs antiguos (7 días por defecto)
+  const cleanupOldJobs = (daysOld: number = 7) => {
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - daysOld)
+
+    for (const [jobId, job] of jobs.value.entries()) {
+      if (!job.isActive && job.endTime && job.endTime < cutoffDate) {
+        jobs.value.delete(jobId)
+      }
+    }
+  }
+
   return {
-    list,
+    // Estado
+    notifications,
+    unreadCount,
     isConnected,
-    fetchHistory,
-    markRead,
+
+    // Jobs
+    activeJobs,
+    completedJobs,
+    hasActiveImports,
+    getJobProgress,
+    cleanupOldJobs,
+
+    // Métodos
+    loadNotifications,
+    markAsRead,
     deleteNotification,
-    connect,
-    disconnect,
-    subscribe,
-    unsubscribe,
+    markAllAsRead,
+    deleteAll,
 
-    // Sistema de jobs expuesto para uso avanzado
-    jobSystem,
-
-    // Helper para verificar notificaciones de job
-    isJobNotificationCheck,
+    // Utilidades
+    isJobNotification,
+    isContactImportNotification
   }
 }

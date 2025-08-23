@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 import PrimeBadge from 'primevue/badge'
 import PrimeButton from 'primevue/button'
@@ -8,12 +8,7 @@ import PrimeMenu from 'primevue/menu'
 import { useI18n } from 'vue-i18n'
 
 import JobNotification from '@/components/molecules/notifications/JobNotification.vue'
-import { useNotifications } from '@/composables/useNotifications'
-import { useAuthStore } from '@/stores/useAuthStore'
-
-import ContactImportNotification from './ContactImportNotification.vue'
-import type { INotification } from './interfaces/notification.interface'
-import { isContactImportNotification, isJobNotification } from './interfaces/notification.interface'
+import { type INotification, useNotifications } from '@/composables/useNotifications'
 
 type NotificationType = INotification['type']
 
@@ -23,29 +18,21 @@ export default defineComponent({
     PrimeButton,
     PrimeBadge,
     PrimeMenu,
-    ContactImportNotification,
     JobNotification
   },
   setup() {
     const { t } = useI18n()
     const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
-    const authStore = useAuthStore()
-    const list = ref<INotification[]>([])
-    const unreadCount = computed(() => list.value.filter((n: INotification) => !n.read).length)
 
     const {
-      deleteNotification: deleteNotificationBase,
-      list: notificationsList,
-      markRead: markReadBase,
-      jobSystem
-    } = useNotifications(
-      authStore.user?.organizationId || undefined
-    )
-
-    // Sincronizar la lista de notificaciones cuando cambie
-    watch(notificationsList, (newList) => {
-      list.value = Array.isArray(newList) ? [...newList] : []
-    }, { immediate: true, deep: true })
+      notifications,
+      unreadCount,
+      markAsRead,
+      deleteNotification,
+      deleteAll,
+      isJobNotification,
+      getJobProgress
+    } = useNotifications()
 
     const formatDate = (dateString: string) => {
       const date = new Date(dateString)
@@ -81,146 +68,59 @@ export default defineComponent({
     }
 
     const handleDelete = async (notification: INotification) => {
-      if (!notification) {
-        return
-      }
-
-      // Para notificaciones del frontend (sin ID válido del backend)
-      if (!notification.id || notification.id <= 0) {
-        // Eliminar por índice usando una combinación única
-        const index = list.value.findIndex(n =>
-          n.title === notification.title &&
-          n.message === notification.message &&
-          n.timestamp === notification.timestamp
-        )
-        if (index !== -1) {
-          list.value.splice(index, 1)
-        }
-        return
-      }
-
-      // Para notificaciones del backend (con ID válido)
-      if (!authStore.user?.organizationId) {
-        return
-      }
-
       try {
-        // Eliminar optimísticamente de la UI
-        list.value = list.value.filter(n => n.id !== notification.id)
-        // Luego eliminar del servidor
-        await deleteNotificationBase(notification.id)
-      } catch {
-        // Si hay error, recargar la lista
-        if (notificationsList.value) {
-          list.value = [...notificationsList.value]
-        }
+        await deleteNotification(notification)
+      } catch (error) {
+        console.error('Error deleting notification:', error)
       }
     }
 
     const clearAllNotifications = async () => {
+
       try {
-        // Separar notificaciones locales de las del backend
-        const backendNotifications = list.value.filter(n => n.id && n.id > 0)
-        const localNotifications = list.value.filter(n => !n.id || n.id <= 0)
-
-        if (backendNotifications.length === 0 && localNotifications.length === 0) {
-          return
-        }
-
-        // Limpiar optimísticamente la UI
-        list.value = []
-
-        // Si hay notificaciones del backend y tenemos organización
-        if (backendNotifications.length > 0 && authStore.user?.organizationId) {
-          const ids = backendNotifications
-            .map(n => n.id)
-            .filter((id): id is number => id !== undefined && id > 0)
-          await Promise.all(ids.map(id => deleteNotificationBase(id)))
-        }
-      } catch {
-        // Si hay error, recargar la lista
-        if (notificationsList.value) {
-          list.value = [...notificationsList.value]
-        }
+        await deleteAll()
+      } catch (error) {
+        console.error('Error clearing notifications:', error)
       }
     }
 
-    const markAsRead = async (notification: INotification) => {
-      if (!notification) {
-        return
-      }
-
-      // Para notificaciones del frontend (sin ID válido del backend)
-      if (!notification.id || notification.id <= 0) {
-        // Marcar como leída solo localmente
-        const localNotification = list.value.find(n =>
-          n.title === notification.title &&
-          n.message === notification.message &&
-          n.timestamp === notification.timestamp
-        )
-        if (localNotification) {
-          localNotification.read = true
-        }
-        return
-      }
-
-      // Para notificaciones del backend (con ID válido)
+    const handleMarkAsRead = async (notification: INotification) => {
       try {
-        // Marcar como leída optimísticamente
-        const targetNotification = list.value.find(n => n.id === notification.id)
-        if (targetNotification) {
-          targetNotification.read = true
-        }
-        // Luego actualizar en el servidor
-        await markReadBase(notification.id)
-      } catch {
-        // Si hay error, revertir el cambio
-        const targetNotification = list.value.find(n => n.id === notification.id)
-        if (targetNotification) {
-          targetNotification.read = false
-        }
+        await markAsRead(notification)
+      } catch (error) {
+        console.error('Error marking as read:', error)
       }
     }
 
     // Métodos para manejar jobs
     const handleJobDismiss = (_jobId: string) => {
-      // Podríamos ocultar el job o marcarlo como visto
+      // Implementar si es necesario
     }
 
     const handleJobViewReport = (_jobId: string) => {
-      // Aquí podríamos navegar a la página de reporte
-    }
-
-    // Verificar si una notificación es de job
-    const isJobNotificationCheck = (notification: INotification): boolean => {
-      return isJobNotification(notification)
+      // Implementar navegación a reporte
     }
 
     // Obtener job progress de manera segura
     const getJobProgressSafe = (notification: INotification) => {
       if (!isJobNotification(notification) || !notification.data?.jobId) return null
-      const jobId = notification.data.jobId as string
-      return jobSystem.getJobProgress(jobId)
+      return getJobProgress(notification.data.jobId)
     }
 
     return {
       menu,
       unreadCount,
-      list,
+      list: notifications, // Alias para compatibilidad con el template
       formatDate,
       getIconClasses,
       t,
       handleDelete,
       clearAllNotifications,
-      markAsRead,
-      isContactImportNotification,
-
-      // Sistema de jobs
-      jobSystem,
+      markAsRead: handleMarkAsRead,
+      isJobNotification,
+      getJobProgressSafe,
       handleJobDismiss,
-      handleJobViewReport,
-      isJobNotification: isJobNotificationCheck,
-      getJobProgressSafe
+      handleJobViewReport
     }
   }
 })
@@ -271,17 +171,9 @@ export default defineComponent({
             v-for="notification in list"
             :key="`notification-${notification.id}-${notification.timestamp}`"
           >
-            <!-- Notificación especializada para importación de contactos -->
-            <ContactImportNotification
-              v-if="isContactImportNotification(notification)"
-              :notification="notification"
-              @delete="handleDelete"
-              @mark-as-read="markAsRead"
-            />
-
-            <!-- Notificación de Job genérica -->
+            <!-- Notificación de Job (incluye importación de contactos) -->
             <JobNotification
-              v-else-if="getJobProgressSafe(notification)"
+              v-if="getJobProgressSafe(notification)"
               :job="getJobProgressSafe(notification)!"
               @dismiss="handleJobDismiss"
               @view-report="handleJobViewReport"
