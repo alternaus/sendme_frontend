@@ -9,10 +9,10 @@ export function useCampaignTriggerInputs(
   customFieldsDataRef: Ref<ICustomField[]>,
   conditionOptionsRef: Ref<SelectOption[]>
 ) {
-  // Variables para manejar los valores de "between" por separado
+  //Variables para manejar los valores de "between" por separado
   const betweenValues = ref<Record<number, { min: string; max: string }>>({})
 
-  // Definir qué condiciones son aplicables para cada tipo de dato
+  //Definir qué condiciones son aplicables para cada tipo de dato
   const getConditionsForDataType = (dataType: string): string[] => {
     switch (dataType) {
       case 'string':
@@ -65,7 +65,7 @@ export function useCampaignTriggerInputs(
     }
   }
 
-  // Obtener las opciones de condiciones filtradas para un custom field específico
+  //Obtener las opciones de condiciones filtradas para un custom field específico
   const getFilteredConditionOptions = (customFieldId: number): SelectOption[] => {
     if (!customFieldId) return []
 
@@ -78,7 +78,7 @@ export function useCampaignTriggerInputs(
     )
   }
 
-  // Definir qué condiciones no necesitan input de valor
+  //Definir qué condiciones no necesitan input de valor
   const conditionsWithoutValue = [
     'is_empty',
     'not_empty',
@@ -88,13 +88,13 @@ export function useCampaignTriggerInputs(
     'is_tomorrow'
   ]
 
-  // Definir qué condiciones necesitan input numérico (independientemente del tipo de campo)
+  //Definir qué condiciones necesitan input numérico (independientemente del tipo de campo)
   const numericInputConditions = [
     'birthday_in_x_days',
     'in_x_days'
   ]
 
-  // Definir qué condiciones necesitan input de fecha (para campos de fecha)
+  //Definir qué condiciones necesitan input de fecha (para campos de fecha)
   const dateInputConditions = [
     'equals',
     'not_equals',
@@ -104,7 +104,7 @@ export function useCampaignTriggerInputs(
     'less_or_equal'
   ]
 
-  // Definir qué condiciones necesitan input numérico para campos numéricos
+  //Definir qué condiciones necesitan input numérico para campos numéricos
   const numericFieldConditions = [
     'greater_than',
     'less_than',
@@ -112,7 +112,7 @@ export function useCampaignTriggerInputs(
     'less_or_equal'
   ]
 
-  // Definir qué condiciones necesitan dos valores
+  //Definir qué condiciones necesitan dos valores
   const betweenConditions = [
     'between',
     'between_dates'
@@ -123,12 +123,12 @@ export function useCampaignTriggerInputs(
   }
 
   const isNumericInput = (conditionType: string, customFieldId?: number) => {
-    // Condiciones que siempre necesitan input numérico (días)
+    //Condiciones que siempre necesitan input numérico (días)
     if (numericInputConditions.includes(conditionType)) {
       return true
     }
 
-    // Para campos numéricos, ciertas condiciones necesitan input numérico
+    //Para campos numéricos, ciertas condiciones necesitan input numérico
     if (customFieldId) {
       const customField = customFieldsDataRef.value.find((field: ICustomField) => field.id === customFieldId)
       if (customField?.dataType === 'number' && numericFieldConditions.includes(conditionType)) {
@@ -140,7 +140,7 @@ export function useCampaignTriggerInputs(
   }
 
   const isDateInput = (conditionType: string, customFieldId?: number) => {
-    // Para campos de fecha, ciertas condiciones necesitan input de fecha
+    //Para campos de fecha, ciertas condiciones necesitan input de fecha
     if (customFieldId) {
       const customField = customFieldsDataRef.value.find((field: ICustomField) => field.id === customFieldId)
       if (customField?.dataType === 'date' && dateInputConditions.includes(conditionType)) {
@@ -160,26 +160,26 @@ export function useCampaignTriggerInputs(
   }
 
   const getPlaceholderText = (conditionType: string, t: (key: string) => string) => {
-    // Condiciones específicas de fechas que necesitan días
+    //Condiciones específicas de fechas que necesitan días
     if (conditionType === 'birthday_in_x_days' || conditionType === 'in_x_days') {
       return t('campaign.days_number')
     }
 
-    // Condiciones numéricas puras
+    //Condiciones numéricas puras
     if (isNumericInput(conditionType)) {
       return t('campaign.numeric_value')
     }
 
-    // Condiciones between
+    //Condiciones between
     if (isBetweenInput(conditionType)) {
       return t('campaign.value_range')
     }
 
-    // Por defecto
+    //Por defecto
     return t('campaign.value')
   }
 
-  // Funciones para manejar los valores de "between"
+  //Funciones para manejar los valores de "between"
   const updateBetweenValue = (index: number, type: 'min' | 'max', value: string) => {
     if (!betweenValues.value[index]) {
       betweenValues.value[index] = { min: '', max: '' }
@@ -187,7 +187,7 @@ export function useCampaignTriggerInputs(
 
     betweenValues.value[index][type] = value
 
-    // Actualizar el valor del rule combinando min y max
+    //Actualizar el valor del rule combinando min y max
     const rule = campaignRulesRef.value[index]
     if (rule) {
       const { min, max } = betweenValues.value[index]
@@ -199,14 +199,14 @@ export function useCampaignTriggerInputs(
     return betweenValues.value[index]?.[type] || ''
   }
 
-  // Inicializar valores de between cuando las reglas cambien
+  //Inicializar valores de between cuando las reglas cambien
   const initializeBetweenValues = () => {
     const newBetweenValues: Record<number, { min: string; max: string }> = {}
 
     campaignRulesRef.value.forEach((rule: CampaignRule, index: number) => {
-      // Inicializar valores de between si no existen
+      //Inicializar valores de between si no existen
       if (!betweenValues.value[index]) {
-        // Si ya hay un valor en formato "min,max", parsearlo
+        //Si ya hay un valor en formato "min,max", parsearlo
         if (rule.value && rule.value.includes(',')) {
           const [min, max] = rule.value.split(',')
           newBetweenValues[index] = { min: min.trim(), max: max.trim() }

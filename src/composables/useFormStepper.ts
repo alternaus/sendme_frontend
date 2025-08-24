@@ -47,12 +47,12 @@ export function useFormStepper<T extends GenericObject>(
     validateOnMount: options.validateOnMount ?? false
   })
 
-  // Type-safe defineField wrapper
+  //Type-safe defineField wrapper
   const defineField = <K extends keyof T>(name: K) => {
     return _defineField(String(name))
   }
 
-  // Type-safe setValues wrapper
+  //Type-safe setValues wrapper
   const setValues = (newValues: Partial<T>) => {
     _setValues(newValues as Record<string, unknown>)
   }
@@ -79,7 +79,7 @@ export function useFormStepper<T extends GenericObject>(
 
       await stepConfig.schema.validate(stepValues, { abortEarly: false })
 
-      // Limpiar errores existentes para este step
+      //Limpiar errores existentes para este step
       stepConfig.fields.forEach(field => {
         const errorKey = String(field)
         if (errors.value[errorKey]) {
@@ -89,7 +89,7 @@ export function useFormStepper<T extends GenericObject>(
 
       return true
     } catch (validationError) {
-      // Establecer errores de validación usando yup ValidationError
+      //Establecer errores de validación usando yup ValidationError
       if (validationError instanceof yup.ValidationError) {
         validationError.inner.forEach(error => {
           if (error.path && stepConfig.fields.includes(error.path as keyof T)) {
@@ -153,7 +153,7 @@ export function useFormStepper<T extends GenericObject>(
 
       await stepConfig.schema.validate(stepValues, { abortEarly: false })
 
-      // Limpiar errores existentes para este step
+      //Limpiar errores existentes para este step
       stepConfig.fields.forEach(field => {
         const errorKey = String(field)
         if (errors.value[errorKey]) {
@@ -163,7 +163,7 @@ export function useFormStepper<T extends GenericObject>(
 
       return true
     } catch (validationError) {
-      // Establecer errores de validación usando yup ValidationError
+      //Establecer errores de validación usando yup ValidationError
       if (validationError instanceof yup.ValidationError) {
         validationError.inner.forEach(error => {
           if (error.path && stepConfig.fields.includes(error.path as keyof T)) {
@@ -198,20 +198,20 @@ export function useFormStepper<T extends GenericObject>(
   }
 
   return {
-    // Navigation
+    //Navigation
     currentStep: readonly(currentStep),
     currentStepIndex,
     isFirstStep,
     isLastStep,
 
-    // Form
+    //Form
     defineField,
     handleSubmit,
     resetForm,
     errors,
     setValues,
 
-    // Step Management
+    //Step Management
     nextStep,
     prevStep,
     goToStep,
@@ -220,7 +220,7 @@ export function useFormStepper<T extends GenericObject>(
     validateCurrentStep,
     validateStep,
 
-    // Meta
+    //Meta
     steps: options.steps,
     visitedSteps
   }

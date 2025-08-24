@@ -43,7 +43,7 @@ export const useReportService = () => {
   }
 
 
-  // Auditoría 🔍
+  //Auditoría 🔍
   const getAudits = async (query?: IFilterAudit) => {
     try {
       return await privateApi.get<IPaginationResponse<IAudit>>('/audit', { params: { ...query } })
@@ -79,7 +79,7 @@ export const useReportService = () => {
     }
   }
 
-  // Mensajes ✉️
+  //Mensajes ✉️
   const getMessages = async (query?: IFilterMessage) => {
     try {
       const filteredQuery = Object.fromEntries(

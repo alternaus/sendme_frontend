@@ -77,12 +77,12 @@ watch(
   { immediate: true }
 )
 
-// Observar cambios en los errores para mostrarlos inmediatamente
+//Observar cambios en los errores para mostrarlos inmediatamente
 watch(
   () => props.errors,
   (newErrors) => {
     if (newErrors && Object.keys(newErrors).length > 0) {
-      // Marcar como tocados los campos que tienen errores del servidor
+      //Marcar como tocados los campos que tienen errores del servidor
       Object.keys(newErrors).forEach(errorKey => {
         const match = errorKey.match(/campaignRules\[(\d+)\]\./)
         if (match) {
@@ -100,7 +100,7 @@ watch(
 const getError = (index: number, field: string) => {
   const errorKey = `campaignRules[${index}].${field}`
   const error = props.errors?.[errorKey] || ''
-  // Mostrar errores si el campo fue tocado O si ya hay errores (para validación del servidor)
+  //Mostrar errores si el campo fue tocado O si ya hay errores (para validación del servidor)
   return (touchedFields.value[index] || error) ? error : ''
 }
 

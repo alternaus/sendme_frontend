@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 
-// import { useI18n } from 'vue-i18n'
+//import { useI18n } from 'vue-i18n'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 
@@ -14,7 +14,7 @@ export default defineComponent({
     Customcard,
   },
   setup() {
-    // const { t } = useI18n()
+    //const { t } = useI18n()
     const router = useRouter()
     const navigateToAudit = () => {
       router.push({ name: 'report.audit' })

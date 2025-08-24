@@ -11,7 +11,7 @@ import MessageTypeIcon from '@/assets/svg/message_type.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
-// import UserIcon from '@/assets/svg/user.svg?component'
+//import UserIcon from '@/assets/svg/user.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
@@ -35,7 +35,7 @@ export default defineComponent({
     StatusIcon,
     SmsIcon,
     CardFilterMessages,
-    // UserIcon,
+    //UserIcon,
   },
   setup() {
     const { t } = useI18n()

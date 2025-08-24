@@ -127,13 +127,13 @@ const saveUsers = async () => {
 
   if (hasErrors) return
 
-  // Obtener el ID de la organización del usuario actual
+  //Obtener el ID de la organización del usuario actual
   const organizationId = authStore.user?.organizationId || 1
 
   try {
     for (const user of usersWithData) {
       if (user.id) {
-        // Actualizar usuario existente
+        //Actualizar usuario existente
         await updateUser(user.id, {
           name: user.name,
           email: user.email
@@ -167,7 +167,7 @@ const saveUsers = async () => {
   }
 }
 
-// Eliminar un usuario
+//Eliminar un usuario
 const handleRemoveUser = async (index: number) => {
   const user = users.value[index]
 
@@ -191,11 +191,11 @@ const handleRemoveUser = async (index: number) => {
     }
   }
 
-  // Limpiar el usuario en la posición
+  //Limpiar el usuario en la posición
   clearUser(index)
 }
 
-// Hay algún usuario en modo de edición?
+//Hay algún usuario en modo de edición?
 const hasEditingUsers = () => {
   return users.value.some(user => user.isEditing)
 }

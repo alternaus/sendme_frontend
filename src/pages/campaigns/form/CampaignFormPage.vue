@@ -101,7 +101,7 @@ export default defineComponent({
           value: channel.id,
         }))
 
-        // Verificar si estamos en modo edición
+        //Verificar si estamos en modo edición
         if (route.params.id) {
           campaignId.value = route.params.id as string
           isEditMode.value = true
@@ -124,7 +124,7 @@ export default defineComponent({
         isLoading.value = true
         const campaign = await getCampaign(campaignId.value)
 
-        // Convertir las fechas de string a Date y time string a Date
+        //Convertir las fechas de string a Date y time string a Date
         const timeString = campaign.time || '12:00'
         const [hours, minutes] = timeString.split(':').map(Number)
         const timeDate = new Date(0, 0, 0, hours, minutes)
@@ -293,7 +293,7 @@ export default defineComponent({
       channels,
       updateFormContent,
 
-      // Stepper
+      //Stepper
       steps,
       currentStep,
       currentStepIndex,

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-// Enrollment page main component
+//Enrollment page main component
 </script>
 
 <style scoped>

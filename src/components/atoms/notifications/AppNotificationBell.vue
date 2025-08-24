@@ -92,13 +92,13 @@ export default defineComponent({
       }
     }
 
-    // Métodos para manejar jobs
+    //Métodos para manejar jobs
     const handleJobDismiss = (_jobId: string) => {
-      // Implementar si es necesario
+      //Implementar si es necesario
     }
 
     const handleJobViewReport = (_jobId: string) => {
-      // Implementar navegación a reporte
+      //Implementar navegación a reporte
     }
 
     const getJobProgressSafe = (notification: INotification) => {

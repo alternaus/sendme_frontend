@@ -1,4 +1,4 @@
-// src/services/auth/useAuthService.ts
+//src/services/auth/useAuthService.ts
 import { useApiClient } from '@/composables/useApiClient'
 
 import type { IUser } from '../user/interfaces/user.interface'
@@ -25,7 +25,7 @@ export const useAuthService = () => {
     return privateApi.post<void>('/auth/logout')
   }
 
-  // Métodos para autenticación con Google
+  //Métodos para autenticación con Google
   const getGoogleAuthUrl = async () => {
     return publicApi.get<{ url: string }>('/auth/google')
   }

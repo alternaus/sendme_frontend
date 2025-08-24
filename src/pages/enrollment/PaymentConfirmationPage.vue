@@ -156,7 +156,7 @@ const transactionInfo = ref<EpaycoPaymentData | null>(null)
 
 const EPAYCO_API_URL = 'https://secure.epayco.co/validation/v1/reference/'
 
-// Mapeo de estado → iconos/colores/textos
+//Mapeo de estado → iconos/colores/textos
 const statusProps = computed(() => {
   const info = transactionInfo.value
   if (!info) {

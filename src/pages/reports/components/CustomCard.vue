@@ -7,7 +7,7 @@ import SendingIcon from '@/assets/svg/report/sending.svg?component'
 
 import { IconTypesReports } from './enums/icon-types-reports.enum'
 
-// Map de iconos
+//Map de iconos
 export const IconComponentsReports: Record<IconTypesReports, FunctionalComponent> = {
   [IconTypesReports.MESSAGES]: MessagesIcon,
   [IconTypesReports.AUDIT]: AuditIcon,

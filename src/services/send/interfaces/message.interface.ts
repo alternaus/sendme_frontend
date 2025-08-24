@@ -12,7 +12,7 @@ export interface IBatchMessage {
   country?: string;
 }
 
-// Mantenemos la interfaz anterior para compatibilidad
+//Mantenemos la interfaz anterior para compatibilidad
 export interface IMessage {
   message: string
   contacts?: string[]

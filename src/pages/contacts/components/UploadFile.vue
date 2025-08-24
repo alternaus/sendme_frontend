@@ -74,9 +74,9 @@ const onUpload = async (event: FileUploadSelectEvent) => {
     if (response?.headers) {
       originalHeaders.value = response.headers
 
-      // Convertir sampleData en filas
+      //Convertir sampleData en filas
       if (response.sampleData) {
-        // Convertir el array plano en una matriz
+        //Convertir el array plano en una matriz
         const rowData = []
         for (let i = 0; i < response.sampleData.length; i += response.headers.length) {
           rowData.push(response.sampleData.slice(i, i + response.headers.length))
@@ -84,7 +84,7 @@ const onUpload = async (event: FileUploadSelectEvent) => {
         fileData.value = [response.headers, ...rowData]
       }
 
-      // Calcular el número total de filas basado en los datos de muestra
+      //Calcular el número total de filas basado en los datos de muestra
       totalRows.value = Math.floor(response.sampleData.length / response.headers.length) || 1
     }
   } catch {
@@ -126,7 +126,7 @@ const handleFinalUpload = async () => {
 
     await importContacts(currentFile.value, fieldMapping)
 
-    // Mostrar mensaje de éxito
+    //Mostrar mensaje de éxito
     toast.add({
       severity: 'success',
       summary: t('general.success'),
@@ -134,7 +134,7 @@ const handleFinalUpload = async () => {
       life: 3000,
     })
 
-    // Limpiar datos
+    //Limpiar datos
     handleCancel()
   } catch (error: unknown) {
     const apiError = error as ApiError

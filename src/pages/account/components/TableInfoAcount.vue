@@ -32,7 +32,7 @@ export default defineComponent({
     const { getRecharges } = useOrganizationService()
     const { startDate, endDate } = useRechargesFilter()
 
-    const optionSelected = ref('1') // Inicialmente "Movimientos"
+    const optionSelected = ref('1')
     const limit = ref(10)
     const page = ref(1)
     const recharges = ref<IRecharge[]>([])
@@ -76,7 +76,7 @@ export default defineComponent({
       optionSelected.value = value
     }
 
-    // Método para formatear moneda
+    //Método para formatear moneda
     const formatCurrency = (amount: number, _currencyCode: string) => {
       return new Intl.NumberFormat('es-CO', {
         style: 'decimal',

@@ -18,22 +18,22 @@ const privateApi: AxiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Variable para evitar múltiples solicitudes de refreshToken simultáneas
+//Variable para evitar múltiples solicitudes de refreshToken simultáneas
 let isRefreshing = false
 let refreshSubscribers: Array<(token: string) => void> = []
 
-// Función para añadir suscriptores que esperan el nuevo token
+//Función para añadir suscriptores que esperan el nuevo token
 const subscribeTokenRefresh = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback)
 }
 
-// Función para notificar a los suscriptores cuando se refresca el token
+//Función para notificar a los suscriptores cuando se refresca el token
 const onTokenRefreshed = (token: string) => {
   refreshSubscribers.forEach((callback) => callback(token))
   refreshSubscribers = []
 }
 
-// Función para rechazar todos los suscriptores en caso de error
+//Función para rechazar todos los suscriptores en caso de error
 const onRefreshError = () => {
   refreshSubscribers = []
 }
@@ -59,14 +59,14 @@ privateApi.interceptors.response.use(
     if (error.response) {
       const { status, data } = error.response
 
-      // Verificar si es un error de token expirado o inválido
+      //Verificar si es un error de token expirado o inválido
       const isTokenError = status === 401 ||
                            (data?.code && ['1008', '1009'].includes(data.code))
 
-      // Si el token ha expirado y no estamos ya intentando refrescarlo
+      //Si el token ha expirado y no estamos ya intentando refrescarlo
       if (isTokenError && !originalRequest._retry) {
         if (isRefreshing) {
-          // Si ya estamos refrescando, añadimos este request a la cola
+          //Si ya estamos refrescando, añadimos este request a la cola
           return new Promise((resolve, reject) => {
             subscribeTokenRefresh((token) => {
               if (token) {
@@ -85,33 +85,33 @@ privateApi.interceptors.response.use(
         try {
           const refreshToken = localStorage.getItem('refreshToken')
 
-          // Si no hay refresh token, hacemos logout
+          //Si no hay refresh token, hacemos logout
           if (!refreshToken) {
             throw new Error('No hay refresh token disponible')
           }
 
-          // Intentamos obtener un nuevo token
+          //Intentamos obtener un nuevo token
           const response = await publicApi.post('/auth/refresh', { refreshToken })
           const { accessToken, refreshToken: newRefreshToken } = response.data
 
-          // Guardamos los nuevos tokens
+          //Guardamos los nuevos tokens
           localStorage.setItem('token', accessToken)
           localStorage.setItem('refreshToken', newRefreshToken)
 
-          // Notificamos a todos los requests en espera
+          //Notificamos a todos los requests en espera
           onTokenRefreshed(accessToken)
 
-          // Retomamos el request original con el nuevo token
+          //Retomamos el request original con el nuevo token
           originalRequest.headers.Authorization = `Bearer ${accessToken}`
           isRefreshing = false
           return axios(originalRequest)
         } catch (refreshError) {
           isRefreshing = false
 
-          // Notificar a todos los requests en cola que hubo un error
+          //Notificar a todos los requests en cola que hubo un error
           onRefreshError()
 
-          // Limpiar tokens y redirigir al login
+          //Limpiar tokens y redirigir al login
           localStorage.removeItem('token')
           localStorage.removeItem('refreshToken')
           router.push('/auth/sign-in')

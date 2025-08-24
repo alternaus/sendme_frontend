@@ -13,7 +13,7 @@ import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
 
 import type { TableHeader } from './types/table-header.type'
 
-// Interfaz para configuración de formato de fecha
+//Interfaz para configuración de formato de fecha
 export interface DateFormatConfig {
   field: string
   format?: 'date' | 'time' | 'datetime'
@@ -72,12 +72,12 @@ export default defineComponent({
       type: String,
       default: 'general.no_data',
     },
-    // Configuración de formateo de fechas
+    //Configuración de formateo de fechas
     dateFields: {
       type: Array as PropType<DateFormatConfig[]>,
       default: () => [],
     },
-    // Detectar automáticamente campos de fecha
+    //Detectar automáticamente campos de fecha
     autoDetectDateFields: {
       type: Boolean,
       default: true,
@@ -99,7 +99,7 @@ export default defineComponent({
       },
     ])
 
-    // Detectar campos de fecha automáticamente
+    //Detectar campos de fecha automáticamente
     const detectedDateFields = computed(() => {
       if (!props.autoDetectDateFields || props.data.length === 0) {
         return props.dateFields
@@ -108,19 +108,19 @@ export default defineComponent({
       const dateFieldConfigs: DateFormatConfig[] = [...props.dateFields]
       const existingFields = dateFieldConfigs.map((config) => config.field)
 
-      // Comprueba datos para inferir campos de fecha
+      //Comprueba datos para inferir campos de fecha
       const item = props.data[0]
 
       props.headers.forEach((header) => {
         const field = header.field
         const value = item[field]
 
-        // Si ya está configurado, omitir
+        //Si ya está configurado, omitir
         if (existingFields.includes(field)) {
           return
         }
 
-        // Detectar si es una fecha por nombre del campo o por valor
+        //Detectar si es una fecha por nombre del campo o por valor
         const isDateField =
           typeof value === 'string' &&
           (field.toLowerCase().includes('date') ||
@@ -138,12 +138,12 @@ export default defineComponent({
       return dateFieldConfigs
     })
 
-    // Detectar si un campo es de fecha
+    //Detectar si un campo es de fecha
     const isDateField = (field: string): boolean => {
       return detectedDateFields.value.some((config) => config.field === field)
     }
 
-    // Obtener la configuración de formato para un campo
+    //Obtener la configuración de formato para un campo
     const getDateConfig = (field: string): DateFormatConfig | undefined => {
       return detectedDateFields.value.find((config) => config.field === field)
     }

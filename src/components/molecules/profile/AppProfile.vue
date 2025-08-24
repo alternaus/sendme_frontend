@@ -22,10 +22,10 @@ const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
 const target = ref<HTMLElement | null>(null)
 const showLogoutDialog = ref(false)
 
-// Definir items de menú de forma reactiva para que se actualicen cuando cambie el idioma
+//Definir items de menú de forma reactiva para que se actualicen cuando cambie el idioma
 const items = ref<MenuItem[]>([])
 
-// Función para actualizar los items del menú
+//Función para actualizar los items del menú
 const updateMenuItems = () => {
   items.value = [
     { label: t('general.profile') },
@@ -38,7 +38,7 @@ const updateMenuItems = () => {
   ]
 }
 
-// Observa los cambios en el idioma y actualiza los elementos del menú
+//Observa los cambios en el idioma y actualiza los elementos del menú
 watch(() => i18nStore.language, updateMenuItems, { immediate: true })
 
 const openMenu = (event: Event) => {

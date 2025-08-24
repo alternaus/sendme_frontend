@@ -29,7 +29,7 @@ export default defineComponent({
     const authStore = useAuthStore()
     const authService = useAuthService()
 
-    // Determinar la URL de callback según el entorno
+    //Determinar la URL de callback según el entorno
     const isDevelopment = import.meta.env.MODE === 'development'
     const baseUrl = isDevelopment
       ? 'http://localhost:5173'

@@ -152,7 +152,7 @@ interface EnhancedPlan extends IPlan {
   features: string[]
 }
 
-// Form data
+//Form data
 const paymentForm = ref({
   name: '',
   email: '',
@@ -169,17 +169,17 @@ const selectedPlan = ref<EnhancedPlan | null>(null)
 const route = useRoute()
 const router = useRouter()
 
-// Get the plan ID from route params
+//Get the plan ID from route params
 const planId = computed(() => route.params.planId as string)
 
-// Get plan name for display
+//Get plan name for display
 const selectedPlanName = computed(() => selectedPlan.value?.name || '')
 
 const planService = usePlanService()
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// Fetch plan details from the API
+//Fetch plan details from the API
 const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   loading.value = true
   try {
@@ -187,7 +187,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
 
     if (!plan) return null
 
-    // Generate features based on plan attributes
+    //Generate features based on plan attributes
     const features = [
       `Up to ${plan.contactLimit.toLocaleString()} contacts`,
       `Up to ${plan.campaignLimit.toLocaleString()} campaigns`,
@@ -212,18 +212,18 @@ const processPayment = async () => {
   processing.value = true
 
   try {
-    // Simulate payment processing
+    //Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // In a real app, you would call your payment API here
+    //In a real app, you would call your payment API here
 
-    // Success - redirect to success page or dashboard
+    //Success - redirect to success page or dashboard
     router.push({
       name: 'home',
       query: { enrollment: 'success' }
     })
   } catch {
-    // Handle payment error
+    //Handle payment error
     processing.value = false
   }
 }

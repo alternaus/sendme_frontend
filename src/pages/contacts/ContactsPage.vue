@@ -155,7 +155,7 @@ export default defineComponent({
             exportContacts()
             toast.add({
               severity: 'success',
-              // summary: 'Exportado',
+              //summary: 'Exportado',
               detail: t('contact.success_exported'),
               life: 3000,
             })

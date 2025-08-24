@@ -15,7 +15,7 @@ export interface CustomFieldFormRef {
 export const useCustomFieldForm = () => {
   const { t } = useI18n()
 
-  // Configurar Yup con los mensajes traducidos
+  //Configurar Yup con los mensajes traducidos
   yup.setLocale({
     mixed: {
       required: () => t('general.required_field'),

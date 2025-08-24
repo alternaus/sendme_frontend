@@ -1,19 +1,14 @@
 import { MessageChannel } from '../interfaces/message.interface'
 
-/**
- * Validador personalizado para verificar que los contactos sean requeridos
- * cuando sendToAll es false
- */
 export const validateContactsRequiredWhenSpecific = (contacts: string[], sendToAll: boolean, channel: MessageChannel): boolean => {
   if (sendToAll) {
-    return true // Si se envía a todos, no se requieren contactos específicos
+    return true
   }
 
   if (!contacts || contacts.length === 0) {
-    return false // Si no se envía a todos y no hay contactos, es inválido
+    return false
   }
 
-  // Validaciones específicas por canal
   switch (channel) {
     case MessageChannel.SMS:
     case MessageChannel.WHATSAPP:
@@ -27,9 +22,6 @@ export const validateContactsRequiredWhenSpecific = (contacts: string[], sendToA
   }
 }
 
-/**
- * Mensaje de error para el validador
- */
 export const getContactsValidationError = (channel: MessageChannel): string => {
   switch (channel) {
     case MessageChannel.SMS:

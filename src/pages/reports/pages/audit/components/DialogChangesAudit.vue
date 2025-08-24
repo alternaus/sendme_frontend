@@ -30,7 +30,7 @@ export default defineComponent({
       emit('update:visible', false)
     }
 
-    // Detectar cambios entre "before" y "after"
+    //Detectar cambios entre "before" y "after"
     const changes = computed(() => {
       const before = props.changesData.before || {}
       const after = props.changesData.after || {}

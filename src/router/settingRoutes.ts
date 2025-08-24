@@ -6,14 +6,14 @@ const baseBreadcrumb = {
   active: false,
 }
 
-// const generateBreadcrumb = (text: string, name: string) => [
-//   baseBreadcrumb,
-//   {
-//     text,
-//     to: { name },
-//     active: true
-//   }
-// ]
+//const generateBreadcrumb = (text: string, name: string) => [
+//baseBreadcrumb,
+//{
+//text,
+//to: { name },
+//active: true
+//}
+//]
 
 const settingRoutes: RouteRecordRaw = {
   path: '/settings',

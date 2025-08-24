@@ -84,7 +84,7 @@ export default defineComponent({
         if (response) {
           dashboardData.value = response
 
-          // Actualizar datos del gráfico
+          //Actualizar datos del gráfico
           chartData.value = {
             labels: [t('home.sent'), t('home.failed')],
             datasets: [
@@ -105,7 +105,7 @@ export default defineComponent({
       }
     }
 
-    // Observar cambios en el modo oscuro
+    //Observar cambios en el modo oscuro
     watch(isDark, (newValue) => {
       updateChartColors(newValue)
       chartOptions.value.plugins.legend.labels.color = newValue ? '#ffffff' : '#000000'

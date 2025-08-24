@@ -2,7 +2,7 @@ export interface IFilterMessage {
   content?: string;
   contentType?: "plain_text" | "html";
   status?: string;
-  sentAt?: string; // ISO 8601
+  sentAt?: string;
   recipientDetails?: string;
   countryCode?: string;
   messageType?: "SMS" | "WhatsApp" | string;

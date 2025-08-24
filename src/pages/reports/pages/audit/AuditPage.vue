@@ -72,7 +72,7 @@ export default defineComponent({
           table: table.value,
           startDate: startDate.value?.toISOString(),
           endDate: endDate.value?.toISOString(),
-          // search: search.value,
+          //search: search.value,
         })
         if (response?.data && response?.meta) {
           audits.value = response.data
@@ -88,7 +88,7 @@ export default defineComponent({
     const handleViewChanges = (rowData: IAudit) => {
       if (rowData.changes) {
         dataChanges.value = rowData.changes
-        isDialogVisible.value = true // Muestra el modal
+        isDialogVisible.value = true
       }
     }
 

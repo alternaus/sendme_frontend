@@ -9,7 +9,7 @@ import { IconTypesSettings } from './enums/icon-types-settings.enum'
 
 
 
-// Map de iconos
+//Map de iconos
 export const IconComponentsSettings: Record<IconTypesSettings, FunctionalComponent> = {
   [IconTypesSettings.CUSTOM_FIELDS]: InformationIcon,
   [IconTypesSettings.USERS]: AdministratorsIcon,
