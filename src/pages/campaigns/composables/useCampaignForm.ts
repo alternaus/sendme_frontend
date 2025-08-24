@@ -55,7 +55,21 @@ export function useCampaignForm() {
     campaignRules: yup.array().of(
       yup.object({
         conditionType: yup.string().required().label(t('campaign.form.condition_type')),
-        value: yup.string().required().label(t('campaign.form.condition_value')),
+        value: yup.string().when('conditionType', {
+          is: (conditionType: string) => {
+            const conditionsWithoutValue = [
+              'is_empty',
+              'not_empty',
+              'birthday_today',
+              'is_today',
+              'was_yesterday',
+              'is_tomorrow'
+            ]
+            return !conditionsWithoutValue.includes(conditionType)
+          },
+          then: (schema) => schema.required().label(t('campaign.form.condition_value')),
+          otherwise: (schema) => schema.notRequired()
+        }),
         customFieldId: yup.number().integer().required().label(t('campaign.form.custom_field_id'))
       })
     ).required()

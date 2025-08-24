@@ -76,10 +76,19 @@ export default defineComponent({
       { name: t('campaign.conditions.not_equals'), value: 'not_equals' },
       { name: t('campaign.conditions.greater_than'), value: 'greater_than' },
       { name: t('campaign.conditions.less_than'), value: 'less_than' },
+      { name: t('campaign.conditions.greater_or_equal'), value: 'greater_or_equal' },
+      { name: t('campaign.conditions.less_or_equal'), value: 'less_or_equal' },
       { name: t('campaign.conditions.between'), value: 'between' },
+      { name: t('campaign.conditions.between_dates'), value: 'between_dates' },
       { name: t('campaign.conditions.contains'), value: 'contains' },
       { name: t('campaign.conditions.starts_with'), value: 'starts_with' },
       { name: t('campaign.conditions.ends_with'), value: 'ends_with' },
+      { name: t('campaign.conditions.birthday_today'), value: 'birthday_today' },
+      { name: t('campaign.conditions.birthday_in_x_days'), value: 'birthday_in_x_days' },
+      { name: t('campaign.conditions.is_today'), value: 'is_today' },
+      { name: t('campaign.conditions.was_yesterday'), value: 'was_yesterday' },
+      { name: t('campaign.conditions.is_tomorrow'), value: 'is_tomorrow' },
+      { name: t('campaign.conditions.in_x_days'), value: 'in_x_days' },
     ]
 
     const channels = ref<SelectOption[]>([])
