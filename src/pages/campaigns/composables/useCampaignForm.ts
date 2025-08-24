@@ -28,10 +28,8 @@ export interface CampaignFormData {
   campaignRules: CampaignRule[]
 }
 
-// Tipo para el objeto form que retorna el composable
 export type CampaignFormFields = ReturnType<typeof useCampaignForm>['form']
 
-// Tipo para los errores de campo
 export type CampaignFormErrors = ReturnType<typeof useCampaignForm>['fieldErrors']
 
 export function useCampaignForm() {

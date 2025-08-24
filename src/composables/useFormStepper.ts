@@ -39,7 +39,9 @@ export function useFormStepper<T extends GenericObject>(
     resetForm,
     errors,
     setValues: _setValues,
-    values
+    values,
+    validate: _validate,
+    setFieldError
   } = useForm<Record<string, unknown>>({
     initialValues: options.initialValues as Record<string, unknown>,
     validateOnMount: options.validateOnMount ?? false
@@ -76,8 +78,25 @@ export function useFormStepper<T extends GenericObject>(
       )
 
       await stepConfig.schema.validate(stepValues, { abortEarly: false })
+
+      // Limpiar errores existentes para este step
+      stepConfig.fields.forEach(field => {
+        const errorKey = String(field)
+        if (errors.value[errorKey]) {
+          setFieldError(errorKey, undefined)
+        }
+      })
+
       return true
-    } catch {
+    } catch (validationError) {
+      // Establecer errores de validación usando yup ValidationError
+      if (validationError instanceof yup.ValidationError) {
+        validationError.inner.forEach(error => {
+          if (error.path && stepConfig.fields.includes(error.path as keyof T)) {
+            setFieldError(error.path, error.message)
+          }
+        })
+      }
       return false
     }
   }
@@ -123,6 +142,39 @@ export function useFormStepper<T extends GenericObject>(
     })
   }
 
+  const validateStep = async (stepId: string): Promise<boolean> => {
+    const stepConfig = stepMap.get(stepId)
+    if (!stepConfig) return true
+
+    try {
+      const stepValues = Object.fromEntries(
+        stepConfig.fields.map(field => [field, (values as T)[field]])
+      )
+
+      await stepConfig.schema.validate(stepValues, { abortEarly: false })
+
+      // Limpiar errores existentes para este step
+      stepConfig.fields.forEach(field => {
+        const errorKey = String(field)
+        if (errors.value[errorKey]) {
+          setFieldError(errorKey, undefined)
+        }
+      })
+
+      return true
+    } catch (validationError) {
+      // Establecer errores de validación usando yup ValidationError
+      if (validationError instanceof yup.ValidationError) {
+        validationError.inner.forEach(error => {
+          if (error.path && stepConfig.fields.includes(error.path as keyof T)) {
+            setFieldError(error.path, error.message)
+          }
+        })
+      }
+      return false
+    }
+  }
+
   const handleSubmit = (
     onSubmit: (values: T) => void | Promise<void>,
     onError?: (errors: Record<string, string>) => void
@@ -166,6 +218,7 @@ export function useFormStepper<T extends GenericObject>(
     canNavigateToStep,
     hasStepErrors,
     validateCurrentStep,
+    validateStep,
 
     // Meta
     steps: options.steps,

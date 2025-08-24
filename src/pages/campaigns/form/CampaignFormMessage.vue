@@ -61,23 +61,21 @@ const selectedField = ref<string | null>(null)
 
 const updateContent = (value: string) => {
   try {
-    console.log('🔄 CampaignFormMessage updating content:', value)
     emit('update:form', 'content', value)
-  } catch (error) {
-    console.error('❌ Error updating content in CampaignFormMessage:', error)
+  } catch {
+
   }
 }
 
 const insertPlaceholder = () => {
   try {
     if (selectedField.value) {
-      console.log('🔄 Inserting placeholder:', selectedField.value)
       const currentContent = props.form.content.value as string || ''
       const newValue = `${currentContent} ${selectedField.value}`
       updateContent(newValue)
     }
-  } catch (error) {
-    console.error('❌ Error inserting placeholder:', error)
+  } catch {
+
   }
 }
 

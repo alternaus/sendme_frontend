@@ -134,8 +134,7 @@ export default defineComponent({
         }
 
         setValues(formattedCampaign as Record<string, unknown>)
-      } catch (error) {
-        console.error('❌ Error loading campaign:', error)
+      } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
@@ -149,29 +148,13 @@ export default defineComponent({
 
     const updateFormContent = (key: string, value: unknown) => {
       try {
-        console.log(`🔄 Updating form field ${key} with:`, value)
-
-        // Actualizar el campo específico
         setValues({ [key]: value } as Record<string, unknown>)
-
-        console.log('📋 Current form state after update:', {
-          name: form.name.value,
-          description: form.description.value,
-          channelId: form.channelId.value,
-          status: form.status.value,
-          startDate: form.startDate.value,
-          endDate: form.endDate.value,
-          time: form.time.value,
-          days: form.days.value,
-        })
-      } catch (error) {
-        console.error('❌ Error updating form content:', error)
+      } catch {
       }
     }
 
     const formatCampaignData = (values: GenericObject): Record<string, unknown> => {
       try {
-        // Convertir la hora (Date) a string en formato HH:MM
         const timeString = values.time instanceof Date
           ? values.time.toTimeString().split(' ')[0].substring(0, 5)
           : '12:00'
@@ -200,8 +183,7 @@ export default defineComponent({
         })
 
         return formattedData
-      } catch (error) {
-        console.error('❌ Error formatting campaign data:', error)
+      } catch {
         return values
       }
     }
@@ -269,7 +251,15 @@ export default defineComponent({
     }
 
     const handleGoToStep = async (stepId: string): Promise<void> => {
-      await goToStep(stepId)
+      const success = await goToStep(stepId)
+      if (!success) {
+        toast.add({
+          severity: 'warn',
+          summary: t('general.validation_error'),
+          detail: t('campaign.errors.complete_current_step'),
+          life: 3000,
+        })
+      }
     }
 
     const handleFormSubmit = (): void => {
@@ -317,7 +307,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" class="hidden lg:flex" />
+  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]"  />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
     <AppFormStepper

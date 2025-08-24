@@ -46,12 +46,10 @@ const effectiveSubmitLabel = computed(() =>
 )
 
 const handleStepClick = (stepId: string) => {
-  // Prevenir navegación si el step está deshabilitado
   if (!props.canNavigateToStep(stepId)) {
     return
   }
 
-  // Solo navegar si el step es diferente al actual
   if (stepId !== props.currentStep) {
     emit('goTo', stepId)
   }
@@ -85,16 +83,18 @@ const handleCancel = () => {
           :class="{
             'cursor-pointer': canNavigateToStep(step.id),
             'cursor-not-allowed': !canNavigateToStep(step.id),
-            'step-error': hasStepErrors(step.id),
-            'step-disabled': !canNavigateToStep(step.id)
           }"
           @click="handleStepClick(step.id)"
         >
           <template #default>
-            <div class="hidden md:flex items-center gap-2">
+            <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-lg transition-all duration-200" :class="{
+              'bg-[var(--p-primary-color)] text-[var(--p-primary-contrast-color)]': step.id === currentStep,
+              'text-gray-700 dark:text-gray-600': step.id !== currentStep && canNavigateToStep(step.id),
+              'text-gray-600 dark:text-gray-500': !canNavigateToStep(step.id),
+              'border-1 border-red-400 bg-red-50 dark:bg-red-900/20 text-red-400 dark:text-red-300': hasStepErrors(step.id)
+            }">
               <i v-if="step.icon" :class="step.icon" />
               <span>{{ step.label }}</span>
-              <i v-if="hasStepErrors(step.id)" class="pi pi-exclamation-triangle text-red-500" />
             </div>
           </template>
         </Step>
@@ -165,4 +165,9 @@ const handleCancel = () => {
 
 <style scoped>
 
+/* Asegurar que el step activo tenga prioridad visual */
+[data-pc-name="step"][data-p-active="true"] {
+  position: relative;
+  z-index: 1;
+}
 </style>
