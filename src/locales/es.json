@@ -17,6 +17,7 @@
     "account_information": "Información de la cuenta",
     "full_name": "Nombre completo",
     "email": "Correo electrónico",
+    "dni": "DNI/Cédula",
     "company_name": "Nombre de la empresa",
     "payment_information": "Información de pago",
     "card_number": "Número de tarjeta",
@@ -46,11 +47,23 @@
     "go_to_dashboard": "Ir al Panel",
     "try_again": "Intentar de Nuevo",
     "complete_form_to_pay": "Por favor complete todos los campos requeridos para proceder con el pago",
+    "features": {
+      "contacts_limit": "Hasta {count} contactos",
+      "campaigns_limit": "Hasta {count} campañas",
+      "price_per_message": "${price} por mensaje",
+      "priority_support": "Soporte prioritario",
+      "standard_support": "Soporte estándar",
+      "limited_features": "Funciones limitadas",
+      "full_features": "Funciones completas"
+    },
     "validation": {
       "name_required": "El nombre completo es requerido",
       "name_min_length": "El nombre completo debe tener al menos 2 caracteres",
       "email_required": "El correo electrónico es requerido",
       "email_format": "Por favor ingrese un correo electrónico válido",
+      "dni_required": "El DNI/Cédula es requerido",
+      "dni_min_length": "El DNI/Cédula debe tener al menos 8 caracteres",
+      "dni_max_length": "El DNI/Cédula no puede tener más de 15 caracteres",
       "company_required": "El nombre de la empresa es requerido",
       "company_min_length": "El nombre de la empresa debe tener al menos 2 caracteres"
     }
@@ -65,6 +78,7 @@
     "ready_to_process": "Listo para procesar el pago",
     "configuring_provider": "Configurando {provider}...",
     "loading_scripts": "Cargando scripts de pago...",
+    "loading_providers": "Cargando proveedores de pago...",
     "no_providers_available": "No hay proveedores de pago disponibles actualmente. Por favor, inténtalo de nuevo más tarde.",
     "processing_payment": "Procesando pago...",
     "redirecting_provider": "Redirigiendo al proveedor de pago...",

@@ -9,7 +9,7 @@ import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
-import { useCampaignTriggerInputs } from '@/composables/useCampaignTriggerInputs'
+import { useCampaignTriggerInputs } from '@/pages/campaigns/composables/useCampaignTriggerInputs'
 import type { ICustomField } from '@/services/custom-field/interfaces/custom-field.interface'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 

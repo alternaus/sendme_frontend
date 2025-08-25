@@ -1,16 +1,13 @@
 <template>
-  <div class="bg-surface-50 dark:bg-surface-950 px-6 py-8 md:px-12 lg:px-20">
-    <header class="max-w-sm mx-auto text-center space-y-3">
-      <h1 class="text-surface-900 dark:text-surface-0 font-bold text-xl leading-tight">
-        {{ $t('enrollment.payment_confirmation') }}
-      </h1>
-      <p class="text-surface-500 dark:text-surface-400 text-base lg:text-lg leading-relaxed">
-        {{ $t('enrollment.payment_confirmation_description') }}
-      </p>
-    </header>
+  <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
+    <EnrollmentHeader
+      :title="$t('enrollment.payment_confirmation')"
+      :description="$t('enrollment.payment_confirmation_description')"
+    />
 
-    <section v-if="loading" class="max-w-sm mx-auto mt-10">
-      <div class="bg-surface-0 dark:bg-neutral-800 rounded-2xl p-8 shadow-sm">
+    <div class="px-6 py-4 md:px-12 lg:px-20">
+      <section v-if="loading" class="max-w-sm mx-auto mt-12">
+      <div class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
         <div class="flex flex-col items-center gap-4 py-10">
           <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]" aria-hidden="true"></i>
           <span class="text-surface-500 dark:text-surface-400">{{ $t('general.loading') }}</span>
@@ -24,8 +21,8 @@
       </div>
     </section>
 
-    <section v-else-if="error" class="max-w-sm mx-auto mt-10">
-      <div class="bg-surface-0 dark:bg-neutral-800 rounded-2xl p-8 shadow-sm">
+    <section v-else-if="error" class="max-w-sm mx-auto mt-12">
+      <div class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
         <div class="flex flex-col items-center gap-4 py-10" role="alert" aria-live="polite">
           <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
           <h2 class="text-red-500 font-semibold text-xl text-center">{{ $t(error) }}</h2>
@@ -39,12 +36,11 @@
       </div>
     </section>
 
-    <section v-else-if="transactionInfo" class="max-w-sm mx-auto mt-10">
+    <section v-else-if="transactionInfo" class="max-w-sm mx-auto mt-12">
       <article
-        class="bg-surface-0 dark:bg-neutral-800 rounded-2xl p-8 shadow-sm"
+        class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4"
         aria-live="polite"
       >
-
         <div class="flex flex-col items-center text-center">
           <div
             class="w-20 h-20 rounded-full flex items-center justify-center ring-6"
@@ -115,6 +111,7 @@
         </div>
       </article>
     </section>
+    </div>
   </div>
 </template>
 
@@ -128,6 +125,8 @@ import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
+
+import EnrollmentHeader from './components/EnrollmentHeader.vue'
 
 interface EpaycoPaymentData {
   x_response: string

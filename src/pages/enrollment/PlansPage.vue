@@ -1,26 +1,23 @@
 <template>
-  <div class="bg-surface-50 dark:bg-surface-950 px-6 py-4 md:px-12 lg:px-20">
-    <div class="flex flex-col gap-4 items-center justify-center">
-      <div class="text-surface-900 dark:text-surface-0 font-bold text-3xl lg:text-4xl text-center leading-tight">
-        {{ $t('enrollment.select_plan') }}
+  <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
+    <EnrollmentHeader
+      :title="$t('enrollment.select_plan')"
+      :description="$t('enrollment.select_plan_description')"
+    />
+
+    <div class="px-6 py-4 md:px-12 lg:px-20">
+      <div v-if="loading" class="flex justify-center items-center py-16">
+        <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]"></i>
       </div>
-      <div class="text-surface-500 dark:text-surface-400 text-md text-center leading-normal">
-        {{ $t('enrollment.select_plan_description') }}
+
+      <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
+        <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
+        <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
+        <AppButton @click="fetchPlansData" :label="$t('general.retry')" class="mt-4" />
       </div>
-    </div>
 
-    <div v-if="loading" class="flex justify-center items-center py-16">
-      <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]"></i>
-    </div>
-
-    <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
-      <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
-      <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-      <AppButton @click="fetchPlansData" :label="$t('general.retry')" class="mt-4" />
-    </div>
-
-    <Carousel v-else :value="plans" :responsiveOptions="carouselResponsiveOptions" :numVisible="3" :numScroll="1"
-      class="mt-12 flex max-w-6xl mx-auto">
+      <Carousel v-else :value="plans" :responsiveOptions="carouselResponsiveOptions" :numVisible="3" :numScroll="1"
+        class="mt-12 flex max-w-6xl mx-auto">
       <template #item="slotProps">
         <div class="flex flex-col w-full h-full p-1 box-border">
           <div :key="slotProps.data.id"
@@ -56,6 +53,7 @@
         </div>
       </template>
     </Carousel>
+    </div>
   </div>
 </template>
 
@@ -71,6 +69,8 @@ import { useI18n } from 'vue-i18n'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import type { IPlan } from '@/services/organization/interfaces/plan.interface'
 import { usePlanService } from '@/services/organization/usePlanService'
+
+import EnrollmentHeader from './components/EnrollmentHeader.vue'
 
 interface EnhancedPlan extends IPlan {
   isPopular: boolean
@@ -108,11 +108,15 @@ const plans = computed<EnhancedPlan[]>(() =>
       const lname = plan.name.toLowerCase()
       const isPopular = lname === 'standard'
       const features = [
-        `Up to ${plan.contactLimit.toLocaleString()} contacts`,
-        `Up to ${plan.campaignLimit.toLocaleString()} campaigns`,
-        `$${Number(plan.pricePerMessage).toFixed(2)} per message`,
-        lname === 'premium' ? 'Priority support' : 'Standard support',
-        lname === 'trial' ? 'Limited features' : 'Full features'
+        t('enrollment.features.contacts_limit', { count: plan.contactLimit.toLocaleString() }),
+        t('enrollment.features.campaigns_limit', { count: plan.campaignLimit.toLocaleString() }),
+        t('enrollment.features.price_per_message', { price: Number(plan.pricePerMessage).toFixed(2) }),
+        lname === 'premium'
+          ? t('enrollment.features.priority_support')
+          : t('enrollment.features.standard_support'),
+        lname === 'trial'
+          ? t('enrollment.features.limited_features')
+          : t('enrollment.features.full_features')
       ]
       return { ...plan, isPopular, features }
     })

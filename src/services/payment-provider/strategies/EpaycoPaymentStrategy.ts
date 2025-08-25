@@ -139,7 +139,7 @@ export class EpaycoPaymentStrategy extends BasePaymentStrategy {
       address_billing: paymentData.customerInfo.company || 'Sin dirección',
       type_doc_billing: "cc",
       mobilephone_billing: paymentData.customerInfo.phone || '0000000000',
-      number_doc_billing: '00000000',
+      number_doc_billing: paymentData.customerInfo.dni,
       email_billing: paymentData.customerInfo.email
     }
 

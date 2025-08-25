@@ -18,6 +18,7 @@ export interface PaymentData {
   customerInfo: {
     name: string
     email: string
+    dni: string
     company?: string
     phone?: string
   }
@@ -28,4 +29,5 @@ export interface PaymentResult {
   transactionId: string
   provider: string
   message?: string
+  redirectUrl?: string
 }

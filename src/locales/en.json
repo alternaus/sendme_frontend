@@ -17,6 +17,7 @@
     "account_information": "Account information",
     "full_name": "Full name",
     "email": "Email address",
+    "dni": "ID Number",
     "company_name": "Company name",
     "payment_information": "Payment information",
     "card_number": "Card number",
@@ -46,11 +47,23 @@
     "go_to_dashboard": "Go to Dashboard",
     "try_again": "Try Again",
     "complete_form_to_pay": "Please complete all required fields to proceed with payment",
+    "features": {
+      "contacts_limit": "Up to {count} contacts",
+      "campaigns_limit": "Up to {count} campaigns",
+      "price_per_message": "${price} per message",
+      "priority_support": "Priority support",
+      "standard_support": "Standard support",
+      "limited_features": "Limited features",
+      "full_features": "Full features"
+    },
     "validation": {
       "name_required": "Full name is required",
       "name_min_length": "Full name must be at least 2 characters",
       "email_required": "Email address is required",
       "email_format": "Please enter a valid email address",
+      "dni_required": "ID Number is required",
+      "dni_min_length": "ID Number must be at least 8 characters",
+      "dni_max_length": "ID Number cannot be more than 15 characters",
       "company_required": "Company name is required",
       "company_min_length": "Company name must be at least 2 characters"
     }
@@ -65,6 +78,7 @@
     "ready_to_process": "Ready to process payment",
     "configuring_provider": "Configuring {provider}...",
     "loading_scripts": "Loading payment scripts...",
+    "loading_providers": "Loading payment providers...",
     "no_providers_available": "No payment providers are currently available. Please try again later.",
     "processing_payment": "Processing payment...",
     "redirecting_provider": "Redirecting to payment provider...",
