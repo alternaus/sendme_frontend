@@ -22,12 +22,16 @@ export default defineComponent({
     const navigateToMessages = () => {
       router.push({ name: 'report.message' })
     }
+    const navigateToDispatches = () => {
+      router.push({ name: 'report.dispatches' })
+    }
     return {
       router,
       IconTypes,
       IconTypesReports,
       navigateToAudit,
       navigateToMessages,
+      navigateToDispatches,
     }
   },
 })
@@ -40,7 +44,11 @@ export default defineComponent({
       :text="$t('general.messages')"
       @click="navigateToMessages"
     />
-    <Customcard :icon="IconTypesReports.SENDING" :text="$t('report.sending_by_campaign')" />
+    <Customcard
+      :icon="IconTypesReports.SENDING"
+      :text="$t('report.sending_by_campaign')"
+      @click="navigateToDispatches"
+    />
     <Customcard
       :icon="IconTypesReports.AUDIT"
       :text="$t('report.audit')"

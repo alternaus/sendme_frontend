@@ -35,6 +35,14 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    showToolbar: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -93,13 +101,15 @@ export default defineComponent({
       v-else
       v-model="editorContent"
       editorStyle="height: 200px"
+      :readonly="readonly"
       class="w-full !rounded-xl transition-all duration-300"
       :class="{
         'p-invalid border-1 border-red-400  dark:border-red-300': errorMessage.length > 0,
+        'readonly-editor': readonly,
       }"
       @text-change="handleTextChange"
     >
-      <template v-slot:toolbar>
+      <template v-if="showToolbar && !readonly" v-slot:toolbar>
         <span class="ql-formats">
           <button v-tooltip.bottom="'Bold'" class="ql-bold"></button>
           <button v-tooltip.bottom="'Italic'" class="ql-italic"></button>
@@ -198,5 +208,24 @@ export default defineComponent({
   align-items: center;
   vertical-align: middle;
   margin: 0 1px;
+}
+
+// Estilos para modo readonly
+:deep(.readonly-editor) {
+  .ql-toolbar {
+    display: none !important;
+  }
+
+  .ql-container {
+    border-radius: var(--radius-xl) !important;
+    border: 1px solid var(--p-select-border-color) !important;
+  }
+
+  .ql-editor {
+    border-radius: var(--radius-xl) !important;
+    border: 1px solid var(--p-select-border-color) !important;
+    background-color: var(--p-surface-50) !important;
+    cursor: default !important;
+  }
 }
 </style>

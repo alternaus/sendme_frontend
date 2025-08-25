@@ -11,16 +11,26 @@ import MessageTypeIcon from '@/assets/svg/message_type.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
-//import UserIcon from '@/assets/svg/user.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
-import type { IMessage } from '@/services/report/interfaces/message.interface'
+// Interfaz para mensajes de reporte con contenido
+interface IReportMessage {
+  id: number
+  content: string
+  type: string
+  status: string
+  timestamp: Date
+  createdAt: Date
+  updatedAt: Date
+  // Otras propiedades que pueda tener el mensaje
+}
 import { useReportService } from '@/services/report/useReportServices'
 
 import CardFilterMessages from './components/CardFilterMessages.vue'
+import HtmlViewerDialog from './components/HtmlViewerDialog.vue'
 import { useMessageFilter } from './composables/useMessageFilter'
 import { TypeMessageTypes } from './enums/message-types.enum.ts'
 import { StatusMessageTypes } from './enums/status-types.enum'
@@ -29,13 +39,13 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    HtmlViewerDialog,
     NumberIcon,
     MessageTypeIcon,
     DateSendIcon,
     StatusIcon,
     SmsIcon,
     CardFilterMessages,
-    //UserIcon,
   },
   setup() {
     const { t } = useI18n()
@@ -46,7 +56,7 @@ export default defineComponent({
 
     const page = ref(1)
     const limit = ref(10)
-    const messages = ref<IMessage[]>([])
+    const messages = ref<IReportMessage[]>([])
     const messageMeta = ref<IPaginationMeta>({
       currentPage: 1,
       hasNextPage: false,
@@ -56,6 +66,9 @@ export default defineComponent({
       totalRecords: 0,
     })
     const loading = ref(false)
+    const isHtmlViewerVisible = ref(false)
+    const htmlContent = ref('')
+
     watch([content, status, messageType, startDate, endDate], () => {
       fetchMessages()
     })
@@ -74,7 +87,7 @@ export default defineComponent({
           endDate: endDate.value?.toISOString(),
         })
         if (response?.data && response?.meta) {
-          messages.value = response.data
+          messages.value = response.data as unknown as IReportMessage[]
           messageMeta.value = response.meta
         } else {
         }
@@ -126,6 +139,11 @@ export default defineComponent({
       return translationKey ? t(translationKey) : type
     }
 
+    const handleViewHtmlContent = (message: IReportMessage) => {
+      htmlContent.value = message.content
+      isHtmlViewerVisible.value = true
+    }
+
     const startDateString = computed({
       get: () => startDate.value?.toISOString() || '',
       set: (value: string) => {
@@ -155,6 +173,9 @@ export default defineComponent({
       getStatusTranslation,
       getTypeMessageTranslation,
       loading,
+      isHtmlViewerVisible,
+      htmlContent,
+      handleViewHtmlContent,
     }
   },
 })
@@ -177,6 +198,7 @@ export default defineComponent({
       { field: 'contentType', header: 'Type' },
       { field: 'content', header: 'Content' },
       { field: 'status', header: 'Status' },
+      { field: 'actions', header: 'Actions' },
     ]"
     :pageSize="messageMeta.limit"
     :pageCurrent="messageMeta.currentPage"
@@ -243,7 +265,26 @@ export default defineComponent({
         {{ getStatusTranslation(data.status) }}
       </div>
     </template>
+    <template #custom-actions="{ data }">
+      <div class="flex justify-center">
+         <div
+          v-if="data.contentType === 'html'"
+          class="flex items-center justify-center w-6 h-6 rounded-full border-gray-400 border"
+           @click="handleViewHtmlContent(data)"
+        >
+          <i class="pi pi-eye"></i>
+        </div>
+        <small v-else>--</small>
+
+      </div>
+    </template>
   </AppTable>
+
+  <!-- Modal para visualizar contenido HTML -->
+  <HtmlViewerDialog
+    v-model:visible="isHtmlViewerVisible"
+    :html-content="htmlContent"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -280,12 +321,16 @@ export default defineComponent({
   a {
     color: inherit;
     text-decoration: none;
-    pointer-events: none;
   }
 
   // Ocultar imágenes en la vista de tabla
   img {
     display: none;
+  }
+
+  // Evitar que los elementos interactivos interfieran
+  button, a, input {
+    pointer-events: none;
   }
 }
 </style>

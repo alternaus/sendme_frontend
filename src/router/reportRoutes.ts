@@ -49,6 +49,15 @@ const sendRoutes: RouteRecordRaw = {
         title: 'messages_report'
       },
     },
+    {
+      path: 'dispatches',
+      name: 'report.dispatches',
+      component: () => import('@/pages/reports/pages/dispatches/DispatchesPage.vue'),
+      meta: {
+        breadcrumb: generateBreadcrumb('general.dispatches', 'report.dispatches'),
+        title: 'dispatches_report'
+      },
+    },
   ],
 }
 export default sendRoutes

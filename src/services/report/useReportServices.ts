@@ -4,7 +4,9 @@ import { useI18n } from 'vue-i18n'
 
 import { useApiClient } from '@/composables/useApiClient'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
+import type { ICampaignDispatch } from '@/services/report/interfaces/dispatch.interface'
 import type { IFilterAudit } from '@/services/report/interfaces/filter-audit.interface'
+import type { ICampaignDispatchFilter } from '@/services/report/interfaces/filter-dispatch.interface'
 import type { IFilterMessage } from '@/services/report/interfaces/filter-message.interface'
 import type { IMessage } from '@/services/report/interfaces/message.interface'
 
@@ -123,10 +125,56 @@ export const useReportService = () => {
     }
   }
 
+  //Campaign Dispatches 📤
+  const getDispatches = async (query?: ICampaignDispatchFilter) => {
+    try {
+      const filteredQuery = Object.fromEntries(
+        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
+      )
+      return await privateApi.get<IPaginationResponse<ICampaignDispatch>>('/campaign-dispatches', {
+        params: filteredQuery,
+      })
+    } catch (error) {
+      handleError(error, 'report.error_getting_dispatches')
+      return null
+    }
+  }
+
+  const exportDispatches = async (query?: ICampaignDispatchFilter) => {
+    try {
+      const filteredQuery = Object.fromEntries(
+        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
+      )
+      const response: Blob = await privateApi.get('/campaign-dispatches/export', {
+        responseType: 'blob',
+        params: filteredQuery,
+      })
+
+      if (!response) throw new Error('No response data received')
+
+      const blob = new Blob([response], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.setAttribute('download', generateFileName('dispatches_report'))
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      showToast('success', 'report.dispatches_success_exported')
+    } catch (error) {
+      handleError(error, 'report.error_exporting_dispatches')
+    }
+  }
+
   return {
     getAudits,
     exportAudits,
     getMessages,
     exportMessages,
+    getDispatches,
+    exportDispatches,
   }
 }

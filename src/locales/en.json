@@ -117,6 +117,7 @@
     "reports_list": "Reports List",
     "audit_report": "Audit Report",
     "messages_report": "Messages Report",
+    "dispatches_report": "Dispatches Report",
     "account": "My Account",
     "account_settings": "Account Settings",
     "buy_credits": "Buy Credits",
@@ -364,6 +365,9 @@
     "error_getting_messages": "Error getting messages",
     "messages_success_exported": "Messages exported successfully",
     "messages_error_exported": "Error exporting messages",
+    "error_getting_dispatches": "Error getting dispatches",
+    "dispatches_success_exported": "Dispatches exported successfully",
+    "error_exporting_dispatches": "Error exporting dispatches",
     "message_status": {
       "queued": "Queued",
       "sending": "Sending",
@@ -375,6 +379,15 @@
       "scheduled": "Scheduled",
       "canceled": "Canceled",
       "read": "Read"
+    },
+    "dispatch_status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "scheduled": "Scheduled"
     }
   },
   "whatsapp": {
@@ -478,11 +491,23 @@
     "send_all_contacts": "Send all contacts",
     "characters": "characters",
     "message_send_success": "Message sent successfully",
+    "view_content": "View content",
+    "html_content": "HTML Content",
     "error_sending_message": "Error sending message",
     "enter_all_fields_send_message": "Enter all fields to send the message",
     "warning": "Warning",
     "message": "Message",
     "messages": "Messages",
+    "dispatches": "Dispatches",
+    "channel": "Channel",
+    "priority_label": "Priority",
+    "campaign": "Campaign",
+    "recipient": "Recipient",
+    "provider": "Provider",
+    "total_sent": "Total Sent",
+    "total_delivered": "Total Delivered",
+    "total_failed": "Total Failed",
+    "push_notifications": "Push Notifications",
     "country": "Country",
     "city": "City",
     "invalid_phone": "Invalid phone",
@@ -534,7 +559,13 @@
     "error_loading_file": "Error loading file",
     "disconnected": "Disconnected",
     "connection_error": "Connection error",
-    "contacts_required": "Contacts are required"
+    "contacts_required": "Contacts are required",
+    "priority": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "urgent": "Urgent"
+    }
   },
   "customFields": {
     "title": "Custom Fields",
