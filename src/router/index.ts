@@ -42,6 +42,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log({from,to})
   const token = localStorage.getItem('token')
   const breadcrumbStore = useBreadcrumbStore();
   const breadcrumbs = Array.isArray(to.meta.breadcrumb) ? to.meta.breadcrumb : [];
@@ -61,7 +62,8 @@ router.beforeEach((to, from, next) => {
     return next('/auth/sign-in')
   }
 
-  if (!to.meta.requiresAuth && token) {
+  // Permitir acceso a rutas de enrollment incluso si el usuario está autenticado
+  if (!to.meta.requiresAuth && token && !to.path.startsWith('/enrollment')) {
     return next('/')
   }
 

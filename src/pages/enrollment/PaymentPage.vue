@@ -16,7 +16,7 @@
     <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
       <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
       <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-      <Button @click="fetchPlanDetails(planId)" :label="$t('general.retry')" size="small" class="mt-4" />
+      <AppButton @click="fetchPlanDetails(planId)" :label="$t('general.retry')" variant="secondary" class="mt-4" />
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -60,39 +60,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div class="flex flex-col gap-2">
                 <label for="name" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.full_name') }}</label>
-                <InputText
+                <AppInput
                   id="name"
-                  v-model="paymentForm.name"
+                  v-model="paymentForm.name.value"
                   type="text"
-                  required
                   size="small"
-                  class="w-full"
                   :placeholder="$t('enrollment.full_name')"
+                  :error-message="paymentForm.nameError?.value || ''"
                 />
               </div>
               <div class="flex flex-col gap-2">
                 <label for="email" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.email') }}</label>
-                <InputText
+                <AppInput
                   id="email"
-                  v-model="paymentForm.email"
+                  v-model="paymentForm.email.value"
                   type="email"
-                  required
                   size="small"
-                  class="w-full"
                   :placeholder="$t('enrollment.email')"
+                  :error-message="paymentForm.emailError?.value || ''"
                 />
               </div>
             </div>
             <div class="flex flex-col gap-2 mb-4">
               <label for="company" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.company_name') }}</label>
-              <InputText
+              <AppInput
                 id="company"
-                v-model="paymentForm.company"
+                v-model="paymentForm.company.value"
                 type="text"
-                required
                 size="small"
-                class="w-full"
                 :placeholder="$t('enrollment.company_name')"
+                :error-message="paymentForm.companyError?.value || ''"
               />
             </div>
           </div>
@@ -101,14 +98,24 @@
 
           <div class="mt-8">
             <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{ $t('enrollment.payment_information') }}</h3>
+
+            <div v-if="!paymentForm.isFormValid" class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-exclamation-triangle text-yellow-600 dark:text-yellow-400"></i>
+                <p class="text-yellow-800 dark:text-yellow-200 text-sm">
+                  {{ $t('enrollment.complete_form_to_pay') }}
+                </p>
+              </div>
+            </div>
+
             <PaymentProviderSelector
-              v-if="selectedPlan"
+              v-if="selectedPlan && paymentForm.isFormValid"
               :amount="selectedPlan.cost"
               :currency="'USD'"
               :customer-info="{
-                name: paymentForm.name,
-                email: paymentForm.email,
-                company: paymentForm.company
+                name: paymentForm.name.value,
+                email: paymentForm.email.value,
+                company: paymentForm.company.value
               }"
               :plan-info="{
                 id: planId,
@@ -129,14 +136,16 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Divider from 'primevue/divider'
-import InputText from 'primevue/inputtext'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import PaymentProviderSelector from '@/components/organisms/PaymentProviderSelector.vue'
 import type { IPlan } from '@/services/organization/interfaces/plan.interface'
 import { usePlanService } from '@/services/organization/usePlanService'
+
+import { usePaymentForm } from './composables/usePaymentForm'
 
 interface EnhancedPlan extends IPlan {
   features: string[]
@@ -156,16 +165,8 @@ interface PaymentErrorData {
   provider?: string
 }
 
-const paymentForm = ref({
-  name: '',
-  email: '',
-  company: '',
-  cardNumber: '',
-  expiryDate: '',
-  cvc: '',
-  billingAddress: ''
-})
 
+const paymentForm = usePaymentForm()
 const selectedPlan = ref<EnhancedPlan | null>(null)
 const route = useRoute()
 const router = useRouter()
@@ -209,13 +210,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
 }
 
 const handlePaymentSuccess = (data: PaymentSuccessData) => {
-  router.push({
-    name: 'home',
-    query: {
-      enrollment: 'success',
-      transactionId: data.transactionId || data.id
-    }
-  })
+  console.log('Payment successful:', data)
 }
 
 const handlePaymentError = (_error: PaymentErrorData) => {

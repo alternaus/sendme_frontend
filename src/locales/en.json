@@ -44,7 +44,16 @@
     "transaction_amount": "Amount",
     "transaction_message": "Message",
     "go_to_dashboard": "Go to Dashboard",
-    "try_again": "Try Again"
+    "try_again": "Try Again",
+    "complete_form_to_pay": "Please complete all required fields to proceed with payment",
+    "validation": {
+      "name_required": "Full name is required",
+      "name_min_length": "Full name must be at least 2 characters",
+      "email_required": "Email address is required",
+      "email_format": "Please enter a valid email address",
+      "company_required": "Company name is required",
+      "company_min_length": "Company name must be at least 2 characters"
+    }
   },
   "payment": {
     "select_provider": "Select Payment Method",
@@ -61,7 +70,8 @@
     "redirecting_provider": "Redirecting to payment provider...",
     "process_payment": "Process Payment",
     "processing": "Processing",
-    "pay_now": "Pay Now"
+    "pay_now": "Pay Now",
+    "pay_with": "Pay with {provider}"
   },
   "titles": {
     "home": "Home",

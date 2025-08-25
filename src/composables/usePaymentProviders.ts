@@ -21,7 +21,7 @@ export function usePaymentProviders() {
       error.value = ''
 
       const providers = await getPublicPaymentProviders()
-      const implementedProviders = providers.filter(provider => 
+      const implementedProviders = providers.filter(provider =>
         strategyManager.hasStrategy(provider.name)
       )
 

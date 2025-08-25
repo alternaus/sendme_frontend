@@ -242,7 +242,3 @@ async function copy(text: string) {
 
 onMounted(checkTransactionStatus)
 </script>
-
-<style scoped>
-/* sin estilos extra: Tailwind + PrimeIcons manejan el diseño */
-</style>

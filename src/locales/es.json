@@ -44,7 +44,16 @@
     "transaction_amount": "Monto",
     "transaction_message": "Mensaje",
     "go_to_dashboard": "Ir al Panel",
-    "try_again": "Intentar de Nuevo"
+    "try_again": "Intentar de Nuevo",
+    "complete_form_to_pay": "Por favor complete todos los campos requeridos para proceder con el pago",
+    "validation": {
+      "name_required": "El nombre completo es requerido",
+      "name_min_length": "El nombre completo debe tener al menos 2 caracteres",
+      "email_required": "El correo electrónico es requerido",
+      "email_format": "Por favor ingrese un correo electrónico válido",
+      "company_required": "El nombre de la empresa es requerido",
+      "company_min_length": "El nombre de la empresa debe tener al menos 2 caracteres"
+    }
   },
   "payment": {
     "select_provider": "Seleccionar Método de Pago",
@@ -61,7 +70,8 @@
     "redirecting_provider": "Redirigiendo al proveedor de pago...",
     "process_payment": "Procesar Pago",
     "processing": "Procesando",
-    "pay_now": "Pagar Ahora"
+    "pay_now": "Pagar Ahora",
+    "pay_with": "Pagar con {provider}"
   },
   "titles": {
     "home": "Inicio",
