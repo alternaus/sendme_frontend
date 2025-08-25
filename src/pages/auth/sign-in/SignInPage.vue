@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import { useScriptTag } from '@vueuse/core'
 
 import { useForm } from 'vee-validate'
@@ -26,6 +27,7 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n()
+    const router = useRouter()
     const authStore = useAuthStore()
     const authService = useAuthService()
 
@@ -80,12 +82,17 @@ export default defineComponent({
       }
     }
 
+    function goToForgotPassword() {
+      router.push('/auth/forgot-password')
+    }
+
     return {
       email,
       password,
       errors,
       onSubmit,
       handleGoogleLogin,
+      goToForgotPassword,
       callbackUrl
     }
   },
@@ -100,7 +107,7 @@ export default defineComponent({
 
     <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
 
-    <AppLink :label="$t('auth.forgot_password')" />
+    <AppLink :label="$t('auth.forgot_password')" @click="goToForgotPassword" />
 
     <AppDivider />
 

@@ -25,6 +25,18 @@ const authRoutes: RouteRecordRaw = {
       component: () => import('@/pages/auth/sign-in/SignInGooglePage.vue'),
       meta: { layout: 'AuthLayout', requiresAuth: false, title: 'sign_in_with_google' },
     },
+    {
+      path: 'forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/pages/auth/forgot-password/ForgotPasswordPage.vue'),
+      meta: { title: 'forgot_password' },
+    },
+    {
+      path: 'reset-password',
+      name: 'reset-password',
+      component: () => import('@/pages/auth/reset-password/ResetPasswordPage.vue'),
+      meta: { title: 'reset_password' },
+    },
   ],
 }
 

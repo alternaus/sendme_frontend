@@ -21,14 +21,14 @@ function toggleTheme() {
 
 <template>
   <div class="flex items-center space-x-2">
-    <PrimeButton 
-      rounded 
-      size="large" 
-      :severity="buttonSeverity" 
-      variant="text" 
+    <PrimeButton
+      rounded
+      size="large"
+      :severity="buttonSeverity"
+      variant="text"
       :icon="buttonIcon"
-      v-tooltip.bottom="tooltipText" 
-      @click="toggleTheme" 
+      v-tooltip.bottom="tooltipText"
+      @click="toggleTheme"
     />
   </div>
 </template>

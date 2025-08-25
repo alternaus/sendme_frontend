@@ -34,12 +34,24 @@ export const useAuthService = () => {
     return publicApi.get<IAuthResponse>(`/auth/google/callback?code=${code}`)
   }
 
+  // Método para recuperación de contraseña
+  const forgotPassword = async (data: { email: string }) => {
+    return publicApi.post<{ message: string }>('/auth/forgot-password', data)
+  }
+
+  // Método para restablecer contraseña
+  const resetPassword = async (data: { token: string; email: string; password: string }) => {
+    return publicApi.post<{ message: string }>('/auth/reset-password', data)
+  }
+
   return {
     login,
     refreshAuthToken,
     me,
     logout,
     getGoogleAuthUrl,
-    handleGoogleCallback
+    handleGoogleCallback,
+    forgotPassword,
+    resetPassword
   }
 }
