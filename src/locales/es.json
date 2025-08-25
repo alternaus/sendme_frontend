@@ -508,7 +508,8 @@
     "select_valid_recharge_value": "Selecciona un valor de recarga válido",
     "error_loading_file": "Error al cargar el archivo",
     "disconnected": "Desconectado",
-    "connection_error": "Error de conexión"
+    "connection_error": "Error de conexión",
+    "contacts_required": "Los contactos son requeridos"
   },
   "customFields": {
     "title": "Campos Personalizados",
@@ -560,6 +561,35 @@
       "total": "Total",
       "view_errors": "Ver errores",
       "started_at": "Iniciado el"
+    }
+  },
+  "ai": {
+    "title": "Asistente de IA",
+    "tabs": {
+      "generate": "Generar",
+      "translate": "Traducir"
+    },
+    "labels": {
+      "prompt": "Instrucción",
+      "result": "Resultado generado",
+      "target_language": "Idioma destino",
+      "text_to_translate": "Texto a traducir",
+      "translation": "Traducción"
+    },
+    "placeholders": {
+      "prompt": "Describe lo que quieres generar...",
+      "result": "El contenido generado aparecerá aquí...",
+      "text_to_translate": "Ingresa el texto que quieres traducir..."
+    },
+    "buttons": {
+      "generate": "Generar",
+      "generating": "Generando...",
+      "translate": "Traducir",
+      "translating": "Traduciendo...",
+      "insert": "Insertar"
+    },
+    "errors": {
+      "translate_failed": "Error en la traducción. Por favor intenta de nuevo."
     }
   }
 }

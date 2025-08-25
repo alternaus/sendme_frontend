@@ -1,7 +1,7 @@
 <template>
   <header class="flex items-center justify-between w-full px-6 py-4 md:px-12 lg:px-20">
     <!-- Logo -->
-    <div class="flex items-center">
+    <div class="flex items-center cursor-pointer" @click="$router.push('/')">
       <Logo class="w-18 dark:fill-[var(--p-primary-color)]" />
     </div>
 

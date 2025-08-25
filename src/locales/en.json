@@ -507,7 +507,8 @@
     "select_valid_recharge_value": "Select a valid recharge value",
     "error_loading_file": "Error loading file",
     "disconnected": "Disconnected",
-    "connection_error": "Connection error"
+    "connection_error": "Connection error",
+    "contacts_required": "Contacts are required"
   },
   "customFields": {
     "title": "Custom Fields",
@@ -559,6 +560,35 @@
       "total": "Total",
       "view_errors": "View errors",
       "started_at": "Started at"
+    }
+  },
+  "ai": {
+    "title": "AI Assistant",
+    "tabs": {
+      "generate": "Generate",
+      "translate": "Translate"
+    },
+    "labels": {
+      "prompt": "Prompt",
+      "result": "Generated result",
+      "target_language": "Target language",
+      "text_to_translate": "Text to translate",
+      "translation": "Translation"
+    },
+    "placeholders": {
+      "prompt": "Describe what you want to generate...",
+      "result": "The generated content will appear here...",
+      "text_to_translate": "Enter the text you want to translate..."
+    },
+    "buttons": {
+      "generate": "Generate",
+      "generating": "Generating...",
+      "translate": "Translate",
+      "translating": "Translating...",
+      "insert": "Insert"
+    },
+    "errors": {
+      "translate_failed": "Translation failed. Please try again."
     }
   }
 }

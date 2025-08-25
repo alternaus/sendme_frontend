@@ -1,93 +1,157 @@
-<script lang="ts">
-import { defineComponent, type PropType, ref, toRefs, watch } from 'vue'
+<script setup lang="ts">
+import { type PropType, ref, watch } from 'vue'
 
-import { IconField, InputIcon } from 'primevue';
+import { IconField, InputIcon } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
-import PrimeTextarea from 'primevue/textarea';
+import PrimeTextarea from 'primevue/textarea'
 
-export default defineComponent({
-  name: 'AppTextarea',
-  components: {
-    PrimeTextarea,
-    FloatLabel,
-    IconField,
-    InputIcon
+import AppAIGenerate from '@/components/atoms/editor/AppAIGenerate.vue'
+
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
   },
-  props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    size: {
-      type: String as PropType<'small' | 'large'>,
-      default: 'small',
-    },
-    rows: {
-      type: Number,
-      default: 3,
-    },
-
-    errorMessage: {
-      type: String,
-      default: '',
-    },
-    showErrorMessage: {
-      type: Boolean,
-      default: true,
-    },
-    maxlength: {
-      type: Number,
-    },
+  label: {
+    type: String,
+    default: '',
   },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const { modelValue } = toRefs(props)
-    const internalValue = ref(modelValue.value)
-    watch(
-      () => props.modelValue,
-      (value) => {
-        internalValue.value = value
-      }
-    )
-
-    watch(internalValue, (value) => {
-      emit('update:modelValue', value)
-    })
-
-    return {
-      internalValue,
-    }
+  placeholder: {
+    type: String,
+    default: '',
   },
+  size: {
+    type: String as PropType<'small' | 'large'>,
+    default: 'small',
+  },
+  rows: {
+    type: Number,
+    default: 3,
+  },
+  errorMessage: {
+    type: String,
+    default: '',
+  },
+  showErrorMessage: {
+    type: Boolean,
+    default: true,
+  },
+  maxlength: {
+    type: Number,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+  variant: {
+    type: String as PropType<'filled' | 'outlined'>,
+    default: 'outlined',
+  },
+  useFloatLabel: {
+    type: Boolean,
+    default: true,
+  },
+  autoResize: {
+    type: Boolean,
+    default: false,
+  },
+  aiAttach: {
+    type: Boolean,
+    default: false,
+  },
+  aiInsertMode: {
+    type: String as PropType<'replace' | 'append'>,
+    default: 'replace',
+  },
+})
+const emit = defineEmits(['update:modelValue'])
+const internalValue = ref('')
+
+watch(
+  () => props.modelValue,
+  value => {
+    internalValue.value = value
+  }
+)
+
+watch(internalValue, value => {
+  emit('update:modelValue', value)
 })
 </script>
 <template>
   <div class="w-full">
-    <FloatLabel v-if="$slots.icon">
-      <IconField>
-        <InputIcon>
-          <slot name="icon" />
-        </InputIcon>
-        <PrimeTextarea v-model="internalValue" :placeholder="placeholder" :size="size" :rows="rows"
-          class="!w-full !pl-10 !rounded-xl" :class="{ 'p-invalid': errorMessage.length > 0 }" />
-      </IconField>
-      <label class="text-sm">{{ label }}</label>
-    </FloatLabel>
+    <template v-if="useFloatLabel">
+      <FloatLabel v-if="$slots.icon || aiAttach">
+        <IconField>
+          <InputIcon>
+            <slot name="icon" />
+            <template v-if="aiAttach">
+              <AppAIGenerate
+                :currentText="String(internalValue ?? '')"
+                @insert="
+                  val =>
+                    (internalValue =
+                      aiInsertMode === 'append'
+                        ? `${internalValue}${internalValue ? '\n' : ''}${String(val)}`
+                        : String(val))
+                "
+              />
+            </template>
+          </InputIcon>
+          <PrimeTextarea
+            v-model="internalValue"
+            v-bind="$attrs"
+            :placeholder="placeholder"
+            :size="size"
+            :rows="rows"
+            :readonly="readonly"
+            :variant="variant"
+            :autoResize="autoResize"
+            class="!w-full !pl-10 !rounded-xl"
+            :class="{ 'p-invalid': errorMessage.length > 0 }"
+          />
+        </IconField>
+        <label class="text-sm">{{ label }}</label>
+      </FloatLabel>
 
-    <FloatLabel v-else>
-      <PrimeTextarea v-model="internalValue" :placeholder="placeholder" :size="size" :rows="rows"
-        class="!w-full !rounded-xl" :class="{ 'p-invalid': errorMessage.length > 0 }" />
-      <label class="text-sm">{{ label }}</label>
-    </FloatLabel>
+      <FloatLabel v-else>
+        <PrimeTextarea
+          v-model="internalValue"
+          v-bind="$attrs"
+          :placeholder="placeholder"
+          :size="size"
+          :rows="rows"
+          :readonly="readonly"
+          :variant="variant"
+          :autoResize="autoResize"
+          class="!w-full !rounded-xl"
+          :class="{ 'p-invalid': errorMessage.length > 0 }"
+        />
+        <label class="text-sm">{{ label }}</label>
+      </FloatLabel>
+    </template>
 
-    <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <template v-else>
+      <PrimeTextarea
+        v-model="internalValue"
+        v-bind="$attrs"
+        :placeholder="placeholder"
+        :size="size"
+        :rows="rows"
+        :readonly="readonly"
+        :variant="variant"
+        :autoResize="autoResize"
+        class="!w-full !rounded-xl"
+        :class="{ 'p-invalid': errorMessage.length > 0 }"
+      />
+    </template>
+
+    <div
+      v-if="showErrorMessage && errorMessage.length"
+      class="text-red-500 dark:text-red-400 p-0 m-0"
+    >
       <small>{{ errorMessage }}</small>
     </div>
   </div>

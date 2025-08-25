@@ -130,6 +130,7 @@ export default defineComponent({
       v-model="contactsInput"
       :rows="2"
       :placeholder="$t('general.enter_numbers_separated_by_commas')"
+
       class="w-full mb-4"
     >
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -138,6 +139,7 @@ export default defineComponent({
     <AppTextarea
       v-model="form.message.value"
       :rows="12"
+      ai-attach
       :placeholder="$t('general.write_message')"
       :maxlength="MAX_CHARACTERS"
       class="w-full mb-2"
