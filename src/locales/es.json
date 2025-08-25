@@ -46,6 +46,23 @@
     "go_to_dashboard": "Ir al Panel",
     "try_again": "Intentar de Nuevo"
   },
+  "payment": {
+    "select_provider": "Seleccionar Método de Pago",
+    "select_provider_description": "Elige tu proveedor de pago preferido para completar la transacción",
+    "click_to_pay": "Haz clic en un método de pago para continuar",
+    "click_to_continue": "Haz clic para continuar",
+    "test_mode": "Modo de Prueba",
+    "selected_provider": "Proveedor Seleccionado: {provider}",
+    "ready_to_process": "Listo para procesar el pago",
+    "configuring_provider": "Configurando {provider}...",
+    "loading_scripts": "Cargando scripts de pago...",
+    "no_providers_available": "No hay proveedores de pago disponibles actualmente. Por favor, inténtalo de nuevo más tarde.",
+    "processing_payment": "Procesando pago...",
+    "redirecting_provider": "Redirigiendo al proveedor de pago...",
+    "process_payment": "Procesar Pago",
+    "processing": "Procesando",
+    "pay_now": "Pagar Ahora"
+  },
   "titles": {
     "home": "Inicio",
     "auth": "Autenticación",
@@ -78,6 +95,8 @@
     "account_settings": "Configuración de Cuenta",
     "buy_credits": "Comprar Créditos",
     "plans_and_pricing": "Planes y Precios",
+    "enrollment_plans": "Elige tu Plan",
+    "enrollment_payment": "Completar Pago",
     "enrollment_confirmation": "Confirmación de Pago",
     "app_name": "SendMe"
   },

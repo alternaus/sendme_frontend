@@ -1,140 +1,126 @@
 <template>
-  <div class="w-full max-w-6xl mx-auto px-4">
-    <h1 class="text-4xl text-center mb-4">{{ $t('enrollment.payment_title') }}</h1>
-    <p class="text-center text-gray-600 mb-12 text-lg">{{ $t('enrollment.payment_description', { plan: selectedPlanName }) }}</p>
+  <div class="bg-surface-50 dark:bg-surface-950 px-6 py-4 md:px-12 lg:px-20">
+    <div class="flex flex-col gap-4 items-center justify-center mb-12">
+      <div class="text-surface-900 dark:text-surface-0 font-bold text-3xl lg:text-4xl text-center leading-tight">
+        {{ $t('enrollment.payment_title') }}
+      </div>
+      <div class="text-surface-500 dark:text-surface-400 text-md text-center leading-normal">
+        {{ $t('enrollment.payment_description', { plan: selectedPlanName }) }}
+      </div>
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Plan Summary -->
-      <AppCard class="lg:col-span-1">
+    <div v-if="loading" class="flex justify-center items-center py-16">
+      <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]"></i>
+    </div>
+
+    <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
+      <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
+      <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
+      <Button @click="fetchPlanDetails(planId)" :label="$t('general.retry')" size="small" class="mt-4" />
+    </div>
+
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <Card class="lg:col-span-1">
         <template #title>
-          <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200">{{ $t('enrollment.plan_summary') }}</h2>
+          <div class="text-surface-900 dark:text-surface-0 font-bold text-xl mb-4 pb-2 border-b border-surface-200 dark:bg-surface-700">
+            {{ $t('enrollment.plan_summary') }}
+          </div>
         </template>
         <template #content>
           <div v-if="selectedPlan" class="flex flex-col gap-4">
-            <div class="text-xl font-bold">{{ selectedPlan.name }}</div>
+            <div class="text-surface-900 dark:text-surface-0 font-bold text-xl">{{ selectedPlan.name }}</div>
             <div class="flex items-baseline">
-              <span class="text-gray-500 text-base">$</span>
-              <span class="text-3xl font-bold">{{ selectedPlan.cost }}</span>
-              <span class="text-gray-500 text-base">/{{ $t('enrollment.month') }}</span>
+              <span class="text-surface-500 dark:text-surface-400 text-base">$</span>
+              <span class="text-surface-900 dark:text-surface-0 text-3xl font-bold">{{ selectedPlan.cost }}</span>
+              <span class="text-surface-500 dark:text-surface-400 text-base">/{{ $t('enrollment.month') }}</span>
             </div>
-            <div class="mt-4">
-              <ul class="space-y-2">
-                <li v-for="(feature, index) in selectedPlan.features" :key="index" class="flex items-center">
-                  <span class="feature-check font-bold mr-2">✓</span> {{ feature }}
-                </li>
-              </ul>
-            </div>
+            <Divider />
+            <ul class="list-none flex flex-col gap-3">
+              <li v-for="(feature, index) in selectedPlan.features" :key="index" class="flex items-center gap-2">
+                <i class="pi pi-check-circle text-md! text-[var(--p-primary-color)]" />
+                <span class="text-surface-800 text-sm dark:text-surface-100 leading-tight">{{ feature }}</span>
+              </li>
+            </ul>
           </div>
-          <div v-else class="py-4 text-center text-gray-500">
+          <div v-else class="py-4 text-center text-surface-500 dark:text-surface-400">
             {{ $t('enrollment.loading_plan') }}
           </div>
         </template>
-      </AppCard>
+      </Card>
 
-      <!-- Payment Details -->
-      <AppCard class="lg:col-span-2">
+      <Card class="lg:col-span-2">
         <template #title>
-          <h2 class="text-xl font-bold mb-6 pb-2 border-b border-gray-200">{{ $t('enrollment.payment_details') }}</h2>
+          <div class="text-surface-900 dark:text-surface-0 font-bold text-xl mb-4 pb-2 border-b border-surface-200 dark:bg-surface-700">
+            {{ $t('enrollment.payment_details') }}
+          </div>
         </template>
         <template #content>
-          <form @submit.prevent="processPayment">
-            <!-- User Information -->
-            <div class="mb-8">
-              <h3 class="text-lg font-medium mb-4">{{ $t('enrollment.account_information') }}</h3>
-              <div class="mb-4">
-                <label for="name" class="block mb-2 font-medium">{{ $t('enrollment.full_name') }}</label>
-                <input
+          <div class="mb-8">
+            <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{ $t('enrollment.account_information') }}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="flex flex-col gap-2">
+                <label for="name" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.full_name') }}</label>
+                <InputText
                   id="name"
                   v-model="paymentForm.name"
                   type="text"
                   required
-                  class="form-input w-full"
+                  size="small"
+                  class="w-full"
+                  :placeholder="$t('enrollment.full_name')"
                 />
               </div>
-              <div class="mb-4">
-                <label for="email" class="block mb-2 font-medium">{{ $t('enrollment.email') }}</label>
-                <input
+              <div class="flex flex-col gap-2">
+                <label for="email" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.email') }}</label>
+                <InputText
                   id="email"
                   v-model="paymentForm.email"
                   type="email"
                   required
-                  class="form-input w-full"
-                />
-              </div>
-              <div class="mb-4">
-                <label for="company" class="block mb-2 font-medium">{{ $t('enrollment.company_name') }}</label>
-                <input
-                  id="company"
-                  v-model="paymentForm.company"
-                  type="text"
-                  required
-                  class="form-input w-full"
+                  size="small"
+                  class="w-full"
+                  :placeholder="$t('enrollment.email')"
                 />
               </div>
             </div>
-
-            <!-- Credit Card Information -->
-            <div class="mb-8">
-              <h3 class="text-lg font-medium mb-4">{{ $t('enrollment.payment_information') }}</h3>
-              <div class="mb-4">
-                <label for="cardNumber" class="block mb-2 font-medium">{{ $t('enrollment.card_number') }}</label>
-                <input
-                  id="cardNumber"
-                  v-model="paymentForm.cardNumber"
-                  type="text"
-                  placeholder="XXXX XXXX XXXX XXXX"
-                  required
-                  class="form-input w-full"
-                />
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label for="expiry" class="block mb-2 font-medium">{{ $t('enrollment.expiry_date') }}</label>
-                  <input
-                    id="expiry"
-                    v-model="paymentForm.expiryDate"
-                    type="text"
-                    placeholder="MM/YY"
-                    required
-                    class="form-input w-full"
-                  />
-                </div>
-                <div>
-                  <label for="cvc" class="block mb-2 font-medium">{{ $t('enrollment.cvc') }}</label>
-                  <input
-                    id="cvc"
-                    v-model="paymentForm.cvc"
-                    type="text"
-                    placeholder="CVC"
-                    required
-                    class="form-input w-full"
-                  />
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="address" class="block mb-2 font-medium">{{ $t('enrollment.billing_address') }}</label>
-                <input
-                  id="address"
-                  v-model="paymentForm.billingAddress"
-                  type="text"
-                  required
-                  class="form-input w-full"
-                />
-              </div>
-            </div>
-
-            <div class="mt-8">
-              <AppButton
-                type="submit"
-                :label="processing ? $t('enrollment.processing') : $t('enrollment.complete_payment')"
-                :loading="processing"
+            <div class="flex flex-col gap-2 mb-4">
+              <label for="company" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{ $t('enrollment.company_name') }}</label>
+              <InputText
+                id="company"
+                v-model="paymentForm.company"
+                type="text"
+                required
+                size="small"
+                class="w-full"
+                :placeholder="$t('enrollment.company_name')"
               />
             </div>
-          </form>
+          </div>
+
+          <Divider />
+
+          <div class="mt-8">
+            <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{ $t('enrollment.payment_information') }}</h3>
+            <PaymentProviderSelector
+              v-if="selectedPlan"
+              :amount="selectedPlan.cost"
+              :currency="'USD'"
+              :customer-info="{
+                name: paymentForm.name,
+                email: paymentForm.email,
+                company: paymentForm.company
+              }"
+              :plan-info="{
+                id: planId,
+                name: selectedPlanName,
+                features: selectedPlan.features
+              }"
+              @payment-success="handlePaymentSuccess"
+              @payment-error="handlePaymentError"
+            />
+          </div>
         </template>
-      </AppCard>
+      </Card>
     </div>
   </div>
 </template>
@@ -143,8 +129,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppCard from '@/components/atoms/cards/AppCard.vue'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Divider from 'primevue/divider'
+import InputText from 'primevue/inputtext'
+
+import PaymentProviderSelector from '@/components/organisms/PaymentProviderSelector.vue'
 import type { IPlan } from '@/services/organization/interfaces/plan.interface'
 import { usePlanService } from '@/services/organization/usePlanService'
 
@@ -152,7 +142,20 @@ interface EnhancedPlan extends IPlan {
   features: string[]
 }
 
-//Form data
+interface PaymentSuccessData {
+  transactionId?: string
+  id?: string
+  provider?: string
+  amount?: number
+  currency?: string
+}
+
+interface PaymentErrorData {
+  message?: string
+  code?: string
+  provider?: string
+}
+
 const paymentForm = ref({
   name: '',
   email: '',
@@ -163,31 +166,28 @@ const paymentForm = ref({
   billingAddress: ''
 })
 
-const processing = ref(false)
 const selectedPlan = ref<EnhancedPlan | null>(null)
-
 const route = useRoute()
 const router = useRouter()
 
-//Get the plan ID from route params
 const planId = computed(() => route.params.planId as string)
-
-//Get plan name for display
 const selectedPlanName = computed(() => selectedPlan.value?.name || '')
 
 const planService = usePlanService()
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-//Fetch plan details from the API
 const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   loading.value = true
+  error.value = null
   try {
     const plan = await planService.getPlanById(parseInt(id))
 
-    if (!plan) return null
+    if (!plan) {
+      error.value = 'enrollment.plan_not_found'
+      return null
+    }
 
-    //Generate features based on plan attributes
     const features = [
       `Up to ${plan.contactLimit.toLocaleString()} contacts`,
       `Up to ${plan.campaignLimit.toLocaleString()} campaigns`,
@@ -208,24 +208,18 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   }
 }
 
-const processPayment = async () => {
-  processing.value = true
+const handlePaymentSuccess = (data: PaymentSuccessData) => {
+  router.push({
+    name: 'home',
+    query: {
+      enrollment: 'success',
+      transactionId: data.transactionId || data.id
+    }
+  })
+}
 
-  try {
-    //Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    //In a real app, you would call your payment API here
-
-    //Success - redirect to success page or dashboard
-    router.push({
-      name: 'home',
-      query: { enrollment: 'success' }
-    })
-  } catch {
-    //Handle payment error
-    processing.value = false
-  }
+const handlePaymentError = (_error: PaymentErrorData) => {
+  // Error handling by PaymentProviderSelector component
 }
 
 onMounted(async () => {
@@ -234,44 +228,53 @@ onMounted(async () => {
     return
   }
 
-  try {
-    selectedPlan.value = await fetchPlanDetails(planId.value)
+  selectedPlan.value = await fetchPlanDetails(planId.value)
 
-    if (!selectedPlan.value) {
-      router.push({ name: 'enrollment-plans' })
-    }
-  } catch {
+  if (!selectedPlan.value && !error.value) {
     router.push({ name: 'enrollment-plans' })
   }
 })
 </script>
 
 <style scoped>
-.feature-check {
-  color: var(--p-primary-color);
-}
-
-.form-input {
-  padding: 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-/* Make sure the card height is consistent */
 :deep(.p-card) {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  background-color: var(--surface-0);
+  color: var(--surface-900);
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 :deep(.p-card-body) {
-  flex: 1;
+  padding: 1.5rem;
+}
+
+:deep(.p-card-title) {
+  margin-bottom: 1rem;
 }
 
 :deep(.p-card-content) {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  padding-top: 0;
+}
+
+.dark :deep(.p-card) {
+  background-color: var(--surface-800);
+  color: var(--surface-0);
+}
+
+:deep(.p-inputtext) {
+  font-size: 0.875rem;
+}
+
+:deep(.p-inputtext.p-inputtext-sm) {
+  padding: 0.5rem 0.75rem;
+}
+
+:deep(.p-button.p-button-sm) {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+:deep(.p-divider) {
+  margin: 1rem 0;
 }
 </style>
