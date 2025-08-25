@@ -1,5 +1,5 @@
-<script lang="ts">
-import { computed, defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import PrimeButton from 'primevue/button'
 
@@ -7,28 +7,28 @@ import { useI18n } from 'vue-i18n'
 
 import { useThemeStore } from '@/stores/themeStore'
 
-export default defineComponent({
-  components: {
-    PrimeButton,
-  },
-  setup() {
-    const { t } = useI18n()
-    const themeStore = useThemeStore()
-    const buttonIcon = computed(() => (themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'))
+const { t } = useI18n()
+const themeStore = useThemeStore()
 
-    return {
-      t,
-      isDark: themeStore.isDark,
-      toggleDark: themeStore.toggleDark,
-      buttonIcon,
-    }
-  },
-})
+const buttonIcon = computed(() => (themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'))
+const buttonSeverity = computed(() => (themeStore.isDark ? 'primary' : 'secondary'))
+const tooltipText = computed(() => (themeStore.isDark ? t('theme.light') : t('theme.dark')))
+
+function toggleTheme() {
+  themeStore.toggleDark()
+}
 </script>
 
 <template>
   <div class="flex items-center space-x-2">
-    <PrimeButton ref="target" rounded size="large" severity="secondary" variant="text" :icon="buttonIcon"
-      v-tooltip.bottom="isDark ? $t('theme.light') : $t('theme.dark')" @click="toggleDark()" />
+    <PrimeButton 
+      rounded 
+      size="large" 
+      :severity="buttonSeverity" 
+      variant="text" 
+      :icon="buttonIcon"
+      v-tooltip.bottom="tooltipText" 
+      @click="toggleTheme" 
+    />
   </div>
 </template>

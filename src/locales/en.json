@@ -147,7 +147,9 @@
     "enter": "Enter",
     "forgot_password": "Forgot your password?",
     "authentication_error": "Authentication error",
-    "processing_login": "Processing login..."
+    "processing_login": "Processing login...",
+    "no_account": "Don't have an account?",
+    "register_here": "Register here"
   },
   "contact": {
     "contact": "Contact",

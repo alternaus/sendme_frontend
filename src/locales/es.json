@@ -147,7 +147,9 @@
     "enter": "Ingresar",
     "forgot_password": "¿Olvidaste tu contraseña?",
     "authentication_error": "Error de autenticación",
-    "processing_login": "Procesando inicio de sesión..."
+    "processing_login": "Procesando inicio de sesión...",
+    "no_account": "¿No tienes una cuenta?",
+    "register_here": "Regístrate aquí"
   },
   "contact": {
     "contact": "Contacto",
