@@ -4,11 +4,13 @@ import { useRouter } from 'vue-router'
 
 import { useI18n } from 'vue-i18n'
 
+import EmailIcon from '@/assets/svg/email.svg?component'
 import SendIcon from '@/assets/svg/send.svg?component'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 
+import SendEmailFormPage from './form/SendEmailFormPage.vue'
 import SendSmsFormPage from './form/SendSmsFormPage.vue'
 import SendWhatsappFormPage from './form/SendWhatsappFormPage.vue'
 export default defineComponent({
@@ -16,8 +18,10 @@ export default defineComponent({
     AppHeader,
     AppSelect,
     SendIcon,
+    EmailIcon,
     SendSmsFormPage,
     SendWhatsappFormPage,
+    SendEmailFormPage,
   },
   setup() {
     const { t } = useI18n()
@@ -25,6 +29,7 @@ export default defineComponent({
     const sendOptions = [
       { name: t('whatsapp.whatsapp'), value: 'whatsapp' },
       { name: t('general.sms'), value: 'sms' },
+      { name: t('general.email_channel'), value: 'email' },
     ]
 
     const selectedOption = ref('sms')
@@ -40,7 +45,9 @@ export default defineComponent({
 
 <template>
   <AppHeader :icon="IconTypes.SEND" :text="$t('general.send_instant_message')" :actions="[]" />
-  <div class="container-phone ml-4">
+
+  <!-- Diseño de teléfono para SMS y WhatsApp -->
+  <div v-if="selectedOption !== 'email'" class="container-phone ml-4">
     <div class="container-phone-inner">
       <div class="flex justify-center items-center text-center mb-4">
         <small class="text-base font-semibold">{{
@@ -56,9 +63,24 @@ export default defineComponent({
       <div v-if="selectedOption === 'sms'">
         <SendSmsFormPage />
       </div>
-      <div v-else>
+      <div v-else-if="selectedOption === 'whatsapp'">
         <SendWhatsappFormPage />
       </div>
+    </div>
+  </div>
+
+  <!-- Diseño de escritorio para Email -->
+  <div v-else class="container-email ml-4">
+    <div class="container-email-inner">
+      <div class="flex justify-center items-center text-center mb-4">
+        <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
+        <small class="text-base font-semibold">{{ $t('general.email_instant_message') }}</small>
+      </div>
+      <AppSelect v-model="selectedOption" :options="sendOptions" class="w-full mb-4">
+        <template #icon><SendIcon class="w-4 h-4 dark:fill-white" /></template>
+      </AppSelect>
+
+      <SendEmailFormPage />
     </div>
   </div>
 </template>
@@ -76,23 +98,66 @@ export default defineComponent({
   flex-direction: column;
   padding: 15px;
   .dark & {
-    background: #1e1e1e; 
+    background: #1e1e1e;
     border-color: #555;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
   }
 }
 
 .container-phone-inner {
-  flex: 1; 
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(75vh - 50px); 
+  max-height: calc(75vh - 50px);
 
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 10px;
+  }
+}
+
+.container-email {
+  width: 90vw;
+  max-width: 600px;
+  height: 75vh;
+  border-radius: 20px;
+  background: #f6f6f6;
+  border: 3px solid #333;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  .dark & {
+    background: #1e1e1e;
+    border-color: #555;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.container-email-inner {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(75vh - 60px);
+
+  scrollbar-width: thin;
+  scrollbar-color: #aaa transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
   }
 
   &::-webkit-scrollbar-track {

@@ -131,9 +131,6 @@ function goBackToLogin() {
     <div v-else>
       <!-- Header -->
       <div class="text-center">
-        <h1 class="text-2xl font-semibold text-surface-900 dark:text-surface-0 mb-2">
-          {{ t('auth.reset_password_title') }}
-        </h1>
         <p class="text-surface-600 dark:text-surface-400">
           {{ t('auth.reset_password_description') }}
         </p>
@@ -143,18 +140,16 @@ function goBackToLogin() {
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="onSubmit" class="flex flex-col gap-4">
+      <form @submit.prevent="onSubmit" class="flex flex-col gap-6 mt-6">
         <AppInputPassword
           v-model="password"
           :error-message="errors.password"
-          :placeholder="t('auth.new_password')"
           :label="t('auth.new_password')"
         />
 
         <AppInputPassword
           v-model="confirmPassword"
           :error-message="errors.confirmPassword"
-          :placeholder="t('auth.confirm_password')"
           :label="t('auth.confirm_password')"
         />
 

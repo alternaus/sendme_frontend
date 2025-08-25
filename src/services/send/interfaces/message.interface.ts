@@ -10,6 +10,7 @@ export interface IBatchMessage {
   sendToAll?: boolean;
   contacts?: string[];
   country?: string;
+  subject?: string; // Para emails
 }
 
 //Mantenemos la interfaz anterior para compatibilidad

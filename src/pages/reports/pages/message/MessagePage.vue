@@ -113,6 +113,15 @@ export default defineComponent({
       return translationKey ? t(translationKey) : status
     }
     const getTypeMessageTranslation = (type: string) => {
+      // Manejar los tipos específicos de contenido
+      if (type === 'plain_text') {
+        return t('general.sms')
+      }
+      if (type === 'html') {
+        return t('general.email_channel')
+      }
+
+      // Fallback para otros tipos usando el enum existente
       const translationKey = TypeMessageTypes[type as keyof typeof TypeMessageTypes]
       return translationKey ? t(translationKey) : type
     }
@@ -165,7 +174,7 @@ export default defineComponent({
     :headers="[
       { field: 'sentAt', header: 'Date' },
       { field: 'recipientDetails', header: 'Number' },
-      { field: 'messageType', header: 'Type' },
+      { field: 'contentType', header: 'Type' },
       { field: 'content', header: 'Content' },
       { field: 'status', header: 'Status' },
     ]"
@@ -207,14 +216,20 @@ export default defineComponent({
         <span> {{ $t('general.status') }} </span>
       </div>
     </template>
-    <template #custom-messageType="{ data }">
+    <template #custom-contentType="{ data }">
       <div class="flex justify-center">
-        {{ getTypeMessageTranslation(data.messageType) }}
+        {{ getTypeMessageTranslation(data.contentType) }}
       </div>
     </template>
     <template #custom-content="{ data }">
       <div class="flex justify-center">
+        <div
+          v-if="data.contentType === 'html'"
+          class="line-clamp-1 max-w-[200px] cursor-pointer"
+          v-html="data.content"
+        ></div>
         <span
+          v-else
           v-tooltip.left="data.content"
           class="line-clamp-1 max-w-[200px] cursor-pointer"
           :title="data.content"
@@ -230,3 +245,47 @@ export default defineComponent({
     </template>
   </AppTable>
 </template>
+
+<style scoped lang="scss">
+// Estilos para el contenido HTML en la tabla
+:deep(.line-clamp-1) {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  // Estilos para elementos HTML dentro del contenido
+  p, div, span {
+    display: inline;
+    margin: 0;
+    padding: 0;
+  }
+
+  // Limitar el estilo de elementos de formato
+  b, strong {
+    font-weight: 600;
+  }
+
+  i, em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  // Ocultar enlaces para evitar problemas en la tabla
+  a {
+    color: inherit;
+    text-decoration: none;
+    pointer-events: none;
+  }
+
+  // Ocultar imágenes en la vista de tabla
+  img {
+    display: none;
+  }
+}
+</style>

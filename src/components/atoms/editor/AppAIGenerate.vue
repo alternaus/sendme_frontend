@@ -2,8 +2,11 @@
 import { ref } from 'vue'
 
 import Popover from 'primevue/popover'
+import Tab from 'primevue/tab'
+import TabList from 'primevue/tablist'
 import TabPanel from 'primevue/tabpanel'
-import TabView from 'primevue/tabview'
+import TabPanels from 'primevue/tabpanels'
+import Tabs from 'primevue/tabs'
 
 import { useI18n } from 'vue-i18n'
 
@@ -110,107 +113,113 @@ async function translate() {
           <span class="text-sm font-medium">{{ t('ai.title') }}</span>
         </div>
 
-        <TabView v-model:value="activeTab">
-          <TabPanel value="generate" :header="t('ai.tabs.generate')">
-            <div class="flex flex-col gap-3">
-              <AppTextarea
-                v-model="prompt"
-                :label="t('ai.labels.prompt')"
-                :rows="4"
-                :placeholder="t('ai.placeholders.prompt')"
-                :useFloatLabel="false"
-              />
-
-              <div class="flex items-center gap-2">
-                <AppButton
-                  :label="isGenerating ? t('ai.buttons.generating') : t('ai.buttons.generate')"
-                  :loading="isGenerating"
-                  variant="primary"
-                  :disabled="isGenerating || !prompt.trim()"
-                  :block="false"
-                  :disable-when-loading="false"
-                  @click="generate()"
+        <Tabs v-model:value="activeTab">
+          <TabList>
+            <Tab value="generate">{{ t('ai.tabs.generate') }}</Tab>
+            <Tab value="translate">{{ t('ai.tabs.translate') }}</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel value="generate">
+              <div class="flex flex-col gap-3">
+                <AppTextarea
+                  v-model="prompt"
+                  :label="t('ai.labels.prompt')"
+                  :rows="4"
+                  :placeholder="t('ai.placeholders.prompt')"
+                  :useFloatLabel="false"
                 />
 
-                <AppButton
-                  class="ml-auto"
-                  :label="t('ai.buttons.insert')"
-                  variant="success"
-                  :disabled="!result.length"
-                  :block="false"
-                  :disable-when-loading="false"
-                  @click="insertToParent"
-                />
-              </div>
+                <div class="flex items-center gap-2">
+                  <AppButton
+                    :label="isGenerating ? t('ai.buttons.generating') : t('ai.buttons.generate')"
+                    :loading="isGenerating"
+                    variant="primary"
+                    :disabled="isGenerating || !prompt.trim()"
+                    :block="false"
+                    :disable-when-loading="false"
+                    @click="generate()"
+                  />
 
-              <AppTextarea
-                v-model="result"
-                :label="t('ai.labels.result')"
-                :readonly="true"
-                :rows="Math.max(4, Math.ceil(result.length / 120))"
-                :placeholder="t('ai.placeholders.result')"
-                :useFloatLabel="false"
-              />
-            </div>
-          </TabPanel>
-          <TabPanel value="translate" :header="t('ai.tabs.translate')">
-            <div class="flex flex-col gap-3">
-              <div class="grid grid-cols-1 gap-2">
-                <AppSelect
-                  v-model="translateTargetLanguage"
-                  :options="[
-                    { name: 'English', value: 'en' },
-                    { name: 'Español', value: 'es' },
-                    { name: 'Português', value: 'pt' },
-                    { name: 'Français', value: 'fr' },
-                    { name: 'Deutsch', value: 'de' },
-                    { name: 'Italiano', value: 'it' },
-                  ]"
-                  :label="t('ai.labels.target_language')"
+                  <AppButton
+                    class="ml-auto"
+                    :label="t('ai.buttons.insert')"
+                    variant="success"
+                    :disabled="!result.length"
+                    :block="false"
+                    :disable-when-loading="false"
+                    @click="insertToParent"
+                  />
+                </div>
+
+                <AppTextarea
+                  v-model="result"
+                  :label="t('ai.labels.result')"
+                  :readonly="true"
+                  :rows="Math.max(4, Math.ceil(result.length / 120))"
+                  :placeholder="t('ai.placeholders.result')"
+                  :useFloatLabel="false"
                 />
               </div>
+            </TabPanel>
+            <TabPanel value="translate">
+              <div class="flex flex-col gap-3">
+                <div class="grid grid-cols-1 gap-2">
+                  <AppSelect
+                    v-model="translateTargetLanguage"
+                    :options="[
+                      { name: 'English', value: 'en' },
+                      { name: 'Español', value: 'es' },
+                      { name: 'Português', value: 'pt' },
+                      { name: 'Français', value: 'fr' },
+                      { name: 'Deutsch', value: 'de' },
+                      { name: 'Italiano', value: 'it' },
+                    ]"
+                    :label="t('ai.labels.target_language')"
+                  />
+                </div>
 
-              <AppTextarea
-                v-model="translateSource"
-                :label="t('ai.labels.text_to_translate')"
-                :rows="4"
-                :placeholder="t('ai.placeholders.text_to_translate')"
-                :useFloatLabel="false"
-              />
-
-              <div class="flex items-center gap-2">
-                <AppButton
-                  :label="isTranslating ? t('ai.buttons.translating') : t('ai.buttons.translate')"
-                  :loading="isTranslating"
-                  variant="primary"
-                  :disabled="!translateSource.trim()"
-                  :block="false"
-                  :disable-when-loading="false"
-                  @click="translate"
+                <AppTextarea
+                  v-model="translateSource"
+                  :label="t('ai.labels.text_to_translate')"
+                  :rows="4"
+                  :placeholder="t('ai.placeholders.text_to_translate')"
+                  :useFloatLabel="false"
                 />
 
-                <AppButton
-                  class="ml-auto"
-                  :label="t('ai.buttons.insert')"
-                  variant="success"
-                  :disabled="!translateResult.length"
-                  :block="false"
-                  :disable-when-loading="false"
-                  @click="() => emit('insert', translateResult)"
+                <div class="flex items-center gap-2">
+                  <AppButton
+                    :label="isTranslating ? t('ai.buttons.translating') : t('ai.buttons.translate')"
+                    :loading="isTranslating"
+                    variant="primary"
+                    :disabled="!translateSource.trim()"
+                    :block="false"
+                    :disable-when-loading="false"
+                    @click="translate"
+                  />
+
+                  <AppButton
+                    class="ml-auto"
+                    :label="t('ai.buttons.insert')"
+                    variant="success"
+                    :disabled="!translateResult.length"
+                    :block="false"
+                    :disable-when-loading="false"
+                    @click="() => emit('insert', translateResult)"
+                  />
+                </div>
+
+                <AppTextarea
+                  v-model="translateResult"
+                  :label="t('ai.labels.translation')"
+                  :readonly="true"
+                  :rows="Math.max(4, Math.ceil(translateResult.length / 120))"
+                  :placeholder="t('ai.placeholders.result')"
+                  :useFloatLabel="false"
                 />
               </div>
-
-              <AppTextarea
-                v-model="translateResult"
-                :label="t('ai.labels.translation')"
-                :readonly="true"
-                :rows="Math.max(4, Math.ceil(translateResult.length / 120))"
-                :placeholder="t('ai.placeholders.result')"
-                :useFloatLabel="false"
-              />
-            </div>
-          </TabPanel>
-        </TabView>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </div>
     </Popover>
   </div>

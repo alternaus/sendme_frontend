@@ -12,6 +12,7 @@ export interface SendMessageForm {
   sendToAll?: boolean;
   contacts: string[];
   country: string;
+  subject?: string; // Para emails
 }
 
 export interface SendMessageFormRef {
@@ -20,6 +21,7 @@ export interface SendMessageFormRef {
   sendToAll: Ref<boolean>;
   contacts: Ref<string[]>;
   country: Ref<string>;
+  subject: Ref<string>;
 }
 
 export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChannel.SMS) => {
@@ -46,6 +48,11 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       otherwise: (schema) => schema.optional(),
     }),
     country: yup.string(),
+    subject: yup.string().when('channel', {
+      is: MessageChannel.EMAIL,
+      then: (schema) => schema.required(t('general.required_field')),
+      otherwise: (schema) => schema.optional(),
+    }),
   })
 
 
@@ -57,6 +64,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       sendToAll: false,
       contacts: [],
       country: 'CO',
+      subject: '',
     },
     validateOnMount: false,
   })
@@ -66,6 +74,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
   const [sendToAll] = defineField('sendToAll')
   const [contacts] = defineField('contacts')
   const [country] = defineField('country')
+  const [subject] = defineField('subject')
 
 
   return {
@@ -75,6 +84,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       sendToAll,
       contacts,
       country,
+      subject,
     },
     handleSubmit,
     resetForm,
