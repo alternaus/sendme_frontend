@@ -445,6 +445,7 @@
   "general": {
     "home": "Inicio",
     "name": "Nombre",
+    "copied": "Copiado",
     "last_name": "Apellido",
     "phone": "Teléfono",
     "email": "Correo electrónico",
