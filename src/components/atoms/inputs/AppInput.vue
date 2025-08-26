@@ -13,7 +13,7 @@ export default defineComponent({
   components: { InputText, InputNumber, IconField, InputIcon, FloatLabel },
   props: {
     modelValue: { type: [String, Number] as PropType<string | number | null>, default: '' },
-    type: { type: String as PropType<'text' | 'email' | 'password' | 'number'>, default: 'text' },
+    type: { type: String as PropType<'text' | 'email' | 'password' | 'number' | 'tel'>, default: 'text' },
     label: { type: String, default: '' },
     placeholder: { type: String, default: '' },
     size: { type: String as PropType<'small' | 'large'>, default: 'small' },
