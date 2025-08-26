@@ -61,7 +61,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           source: 'infra/nginx/*.conf'
-          strip_components: 2 
+          strip_components: 2
           target: '/tmp/nginx/'
 
       - name: Configure Nginx, SSL and release
@@ -78,10 +78,10 @@ jobs:
             BASE="${{ env.FRONTEND_PATH }}"
             SITE="${{ env.SITE_BASENAME }}"
             TS=$(date +%Y%m%d%H%M%S)
-        
+
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
-        
+
             mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
             chown -R www-data:www-data "$BASE"
             chmod -R 755 "$BASE"
@@ -90,8 +90,7 @@ jobs:
             cp -f /tmp/nginx/sendme123.https.conf /etc/nginx/sites-available/
             rm -f /etc/nginx/sites-enabled/sendme123 /etc/nginx/sites-enabled/sendme123.conf
             ln -sfn /etc/nginx/sites-available/sendme123.http.conf /etc/nginx/sites-enabled/sendme123.conf
-        
-            # Verificar que los .conf existen antes de linkear
+
             for f in "/etc/nginx/sites-available/${SITE}.http.conf" "/etc/nginx/sites-available/${SITE}.https.conf"; do
               if [ ! -f "$f" ]; then
                 echo "Falta $f"
@@ -99,34 +98,52 @@ jobs:
                 exit 1
               fi
             done
-        
-            # Fase HTTP (symlink con .conf para incluir *.conf)
+
             ln -sfn /etc/nginx/sites-available/${SITE}.http.conf /etc/nginx/sites-enabled/${SITE}.conf
             rm -f /etc/nginx/sites-enabled/default
             nginx -t
             systemctl reload nginx
-        
-            # Emitir cert si no existe
+
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
             fi
-        
-            # Activar HTTPS definitivo (mismo nombre en enabled)
+
             ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}.conf
             nginx -t
             systemctl reload nginx
-        
-            # Despliegue atómico
+
+            # === Despliegue atómico con borrado en servidor ===
+            # Guardar release previo si current es symlink
+            PREV=""
+            if [ -L "$BASE/current" ]; then
+              PREV="$(readlink -f "$BASE/current" || true)"
+            fi
+            # Si current es carpeta real, eliminarla
+            if [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ]; then
+              rm -rf "$BASE/current"
+            fi
+
+            # Crear nuevo release y extraer build
             mkdir -p "$BASE/releases/${TS}"
             tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
+
+            # Apuntar current al nuevo release
             ln -sfn "$BASE/releases/${TS}" "$BASE/current"
             chown -R www-data:www-data "$BASE"
             rm -f /tmp/dist.tgz
-        
-            # Retención
+
+            # Borrar release anterior ya no apuntado
+            if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then
+              rm -rf "$PREV"
+            fi
+
+            # Borrar dist legados si existieran
+            rm -rf "$BASE/dist" "$BASE/public/dist" "$BASE/www/dist" 2>/dev/null || true
+
+            # Retención de releases (mantener 5)
             find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
-        
-            # Renovación
+
+            # Renovación automática de certificados
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
