@@ -32,10 +32,8 @@ export default defineComponent({
     const authService = useAuthService()
 
     //Determinar la URL de callback según el entorno
-    const isDevelopment = import.meta.env.MODE === 'development'
-    const baseUrl = isDevelopment
-      ? 'http://localhost:5173'
-      : import.meta.env.VITE_API_URL || window.location.origin
+
+    const baseUrl = window.location.origin
     const callbackUrl = `${baseUrl}/auth/google/callback`
 
     useScriptTag(
