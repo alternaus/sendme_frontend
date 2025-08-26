@@ -159,16 +159,45 @@ const EPAYCO_API_URL = 'https://secure.epayco.co/validation/v1/reference/'
 const statusProps = computed(() => {
   const info = transactionInfo.value
   if (!info) {
-    return { state: 'idle', icon: 'pi-info-circle', fg: 'text-surface-500', bgSoft: 'bg-surface-100 dark:bg-surface-900', bgRing: 'ring-surface-100 dark:ring-surface-900', titleKey: 'general.status' } as const
+    return {
+      state: 'idle',
+      icon: 'pi-info-circle',
+      fg: 'text-surface-500 dark:text-surface-400',
+      bgSoft: 'bg-surface-100 dark:bg-surface-900',
+      bgRing: 'ring-surface-100 dark:ring-surface-900',
+      titleKey: 'general.status',
+    } as const
   }
   if (info.success || info.x_response === 'Aceptada') {
-    return { state: 'success', icon: 'pi-check-circle', fg: 'text-green-600', bgSoft: 'bg-green-50 dark:bg-green-900/30', bgRing: 'ring-green-100 dark:ring-green-900/30', titleKey: 'enrollment.payment_success' } as const
+    return {
+      state: 'success',
+      icon: 'pi-check-circle',
+      fg: 'text-green-600 dark:text-green-300',
+      bgSoft: 'bg-green-50 dark:bg-green-900/30',
+      bgRing: 'ring-green-100 dark:ring-green-900/30',
+      titleKey: 'enrollment.payment_success',
+    } as const
   }
   if (info.x_transaction_state === 'Pendiente') {
-    return { state: 'pending', icon: 'pi-clock', fg: 'text-blue-600', bgSoft: 'bg-blue-50 dark:bg-blue-900/30', bgRing: 'ring-blue-100 dark:ring-blue-900/30', titleKey: 'enrollment.payment_pending' } as const
+    return {
+      state: 'pending',
+      icon: 'pi-clock',
+      fg: 'text-blue-600 dark:text-blue-300',
+      bgSoft: 'bg-blue-50 dark:bg-blue-900/30',
+      bgRing: 'ring-blue-100 dark:ring-blue-900/30',
+      titleKey: 'enrollment.payment_pending',
+    } as const
   }
-  return { state: 'failed', icon: 'pi-times-circle', fg: 'text-red-600', bgSoft: 'bg-red-50 dark:bg-red-900/30', bgRing: 'ring-red-100 dark:ring-red-900/30', titleKey: 'enrollment.payment_failed' } as const
+  return {
+    state: 'failed',
+    icon: 'pi-times-circle',
+    fg: 'text-red-600 dark:text-red-300',
+    bgSoft: 'bg-red-50 dark:bg-red-900/30',
+    bgRing: 'ring-red-100 dark:ring-red-900/30',
+    titleKey: 'enrollment.payment_failed',
+  } as const
 })
+
 
 const formattedDate = computed(() => {
   const raw = transactionInfo.value?.x_transaction_date
