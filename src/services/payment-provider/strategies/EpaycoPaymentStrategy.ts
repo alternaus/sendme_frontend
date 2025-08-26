@@ -97,7 +97,7 @@ export class EpaycoPaymentStrategy extends BasePaymentStrategy {
       extra2: data.extras.extra2,
       extra3: data.extras.extra3,
       confirmation: '',
-      response: `${window.location.origin}/enrollment/payment-confirmation?invoice=${invoice}`,
+      response: `${window.location.origin}/enrollment/confirmation`,
       name_billing: data.customerInfo.name,
       address_billing: data.customerInfo.company || 'Sin dirección',
       type_doc_billing: 'cc',
