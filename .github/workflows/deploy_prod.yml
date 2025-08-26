@@ -13,6 +13,7 @@ jobs:
       DOMAIN: new.sendme123.com
       EMAIL: admin@sendme123.com
       FRONTEND_PATH: /var/www/vhosts/new.sendme123.com
+      SITE_BASENAME: sendme123
       SERVER_HOST: ${{ secrets.IP }}
       SERVER_USER: ${{ secrets.USER }}
 
@@ -26,7 +27,7 @@ jobs:
           node-version: 20.x
           cache: npm
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           if [ -f package-lock.json ]; then
             npm ci
@@ -39,67 +40,82 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Upload dist
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.SERVER_HOST }}
-          username: ${{ env.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: 'dist/*'
-          strip_components: 1
-          target: '${{ env.FRONTEND_PATH }}/'
+      - name: Package dist
+        run: tar -C dist -czf dist.tgz .
 
-      - name: Upload Nginx configs
+      - name: Upload dist.tgz to server (/tmp)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.SERVER_HOST }}
           username: ${{ env.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'dist.tgz'
+          target: '/tmp/'
+
+      - name: Upload Nginx configs to server (/tmp/nginx)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           source: 'infra/nginx/*'
-          target: '/etc/nginx/sites-available/'
+          target: '/tmp/nginx/'
 
-      - name: Configure Nginx and SSL
+      - name: Configure Nginx, SSL and release
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ env.SERVER_HOST }}
           username: ${{ env.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
             set -euo pipefail
             DOMAIN="${DOMAIN}"
             EMAIL="${EMAIL}"
-            WEBROOT="${FRONTEND_PATH}"
-            SITE_BASENAME="sendme123"
-            HTTP_CONF="/etc/nginx/sites-available/${SITE_BASENAME}.http.conf"
-            HTTPS_CONF="/etc/nginx/sites-available/${SITE_BASENAME}.https.conf"
+            BASE="${FRONTEND_PATH}"
+            SITE="${SITE_BASENAME}"
+            TS=$(date +%Y%m%d%H%M%S)
 
             # Paquetes
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
 
-            # Directorios
-            mkdir -p "$WEBROOT" /var/www/html
-            chown -R www-data:www-data "$WEBROOT"
-            chmod -R 755 "$WEBROOT"
+            # Directorios app y webroot ACME
+            mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html
+            chown -R www-data:www-data "$BASE"
+            chmod -R 755 "$BASE"
 
-            # Fase 1: habilitar HTTP para challenge
-            ln -sf "$HTTP_CONF" "/etc/nginx/sites-enabled/${SITE_BASENAME}"
+            # Instalar configs Nginx desde /tmp/nginx
+            mv -f /tmp/nginx/${SITE}.http.conf /etc/nginx/sites-available/${SITE}.http.conf
+            mv -f /tmp/nginx/${SITE}.https.conf /etc/nginx/sites-available/${SITE}.https.conf
+
+            # Fase HTTP para ACME
+            ln -sfn /etc/nginx/sites-available/${SITE}.http.conf /etc/nginx/sites-enabled/${SITE}
             rm -f /etc/nginx/sites-enabled/default
             nginx -t
             systemctl reload nginx
 
-            # Emitir certificado si no existe
+            # Certificado si no existe
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
             fi
 
-            # Fase 2: habilitar HTTPS definitivo
-            ln -sf "$HTTPS_CONF" "/etc/nginx/sites-enabled/${SITE_BASENAME}"
+            # Activar HTTPS definitivo
+            ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}
             nginx -t
             systemctl reload nginx
+
+            # Desplegar release atómico
+            mkdir -p "$BASE/releases/${TS}"
+            tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
+            ln -sfn "$BASE/releases/${TS}" "$BASE/current"
+            chown -R www-data:www-data "$BASE"
+            rm -f /tmp/dist.tgz
+
+            # Retención de releases (mantener 5)
+            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
 
             # Renovación automática
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
