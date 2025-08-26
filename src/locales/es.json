@@ -667,5 +667,12 @@
     "reset": "Restablecer",
     "saved": "Configuración guardada",
     "error": "No se pudo guardar la configuración"
+  }, "settings": {
+    "tab_header":"Fecha y Hora",
+    "date_format": "Formato de fecha",
+    "time_format": "Formato de hora",
+    "timezone": "Zona horaria",
+    "save": "Guardar",
+    "reset": "Restablecer"
   }
 }

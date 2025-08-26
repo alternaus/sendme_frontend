@@ -9,6 +9,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 
 import MailProviderTab from './components/email-configuration/MailProviderTab.vue'
+import SettingTab from './components/organization-configuration/SettingTab.vue'
 </script>
 
 <template>
@@ -19,11 +20,17 @@ import MailProviderTab from './components/email-configuration/MailProviderTab.vu
       <Tab value="0" class="px-3 py-2">
         <span class="font-bold whitespace-nowrap">{{ $t('email_configuration.tab_header') }}</span>
       </Tab>
+      <Tab value="1" class="px-3 py-2">
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.tab_header') }}</span>
+      </Tab>
     </TabList>
 
     <TabPanels class="rounded-b-lg">
       <TabPanel value="0" as="p" class="m-0">
         <MailProviderTab />
+      </TabPanel>
+      <TabPanel value="1" as="p" class="m-0">
+        <SettingTab />
       </TabPanel>
     </TabPanels>
   </Tabs>

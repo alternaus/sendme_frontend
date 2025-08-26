@@ -203,12 +203,10 @@ export default defineComponent({
   border-radius: var(--radius-md);
 }
 
-:deep(.ql-formats .relative) {
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
-  margin: 0 1px;
+:deep(.ql-snow .ql-tooltip){
+  position: sticky;
 }
+
 
 // Estilos para modo readonly
 :deep(.readonly-editor) {

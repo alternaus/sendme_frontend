@@ -666,5 +666,13 @@
     "reset": "Reset",
     "saved": "Configuration saved",
     "error": "Could not save configuration"
+  },
+  "settings": {
+    "tab_header":"Date and Time",
+    "date_format": "Date format",
+    "time_format": "Time format",
+    "timezone": "Timezone",
+    "save": "Save",
+    "reset": "Reset"
   }
 }
