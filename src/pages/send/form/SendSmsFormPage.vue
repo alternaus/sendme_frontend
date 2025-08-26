@@ -109,14 +109,14 @@ export default defineComponent({
         "
         @click="form.sendToAll.value = false"
       >
-        <PhoneIcon class="w-6 h-6 dark:fill-white" />
+        <PhoneIcon class="w-6 h-6 fill-current" />
       </div>
       <div
         class="p-2 mx-2 cursor-pointer"
-        :class="form.sendToAll.value ? 'bg-white border rounded-lg border-slate-300' : ''"
+        :class="form.sendToAll.value ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300' : ''"
         @click="form.sendToAll.value = true"
       >
-        <ContactsIcon class="w-6 h-6 dark:fill-white" />
+        <ContactsIcon class="w-6 h-6 fill-current" />
       </div>
     </div>
     <div class="flex flex-col mb-2" v-if="form.sendToAll.value">
