@@ -117,10 +117,6 @@ import Tag from 'primevue/tag'
 
 import type { JobProgress } from '@/composables/useNotifications'
 
-//===============================================
-//PROPS Y EVENTOS
-//===============================================
-
 interface Props {
   job: JobProgress
 }
@@ -133,11 +129,6 @@ interface Emits {
 const props = defineProps<Props>()
 defineEmits<Emits>()
 
-//===============================================
-//COMPUTED PROPERTIES
-//===============================================
-
-//Obtener título del job basado en el tipo y estado
 const getJobTitle = (): string => {
   const jobType = props.job.jobType || 'unknown'
 
@@ -188,7 +179,6 @@ const getJobTypeLabel = (): string => {
   }
 }
 
-//Obtener severidad del tipo de job
 const getJobTypeSeverity = (): string => {
   switch (props.job.jobType) {
     case 'contact_import':
@@ -202,14 +192,12 @@ const getJobTypeSeverity = (): string => {
   }
 }
 
-//Obtener severidad de la barra de progreso
 const getProgressSeverity = (): string => {
   if (props.job.errors > 0) return 'danger'
   if (props.job.progress < 50) return 'info'
   return 'success'
 }
 
-//Formatear tiempo transcurrido
 const formatElapsedTime = (): string => {
   if (!props.job.startTime) return '00:00'
 

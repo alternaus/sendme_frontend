@@ -28,9 +28,11 @@ const items = ref<MenuItem[]>([])
 //Función para actualizar los items del menú
 const updateMenuItems = () => {
   items.value = [
-    { label: t('general.profile') },
     { label: t('general.account'), command: () => router.push({ name: 'account.index' }) },
-    { label: t('general.settings') },
+    {
+      label: t('general.settings'),
+      command: () => router.push({ name: 'settings.general' }) // Ahora lleva a la página principal de settings
+    },
     {
       label: t('auth.logout'),
       command: () => (showLogoutDialog.value = true),

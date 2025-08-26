@@ -15,7 +15,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: [String, Number, null],
+      type: [String, Number,Boolean, null],
       default: null,
     },
     options: {

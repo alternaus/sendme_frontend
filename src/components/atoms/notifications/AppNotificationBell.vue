@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 
 import PrimeBadge from 'primevue/badge'
 import PrimeButton from 'primevue/button'
@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 
 import JobNotification from '@/components/molecules/notifications/JobNotification.vue'
 import { type INotification, useNotifications } from '@/composables/useNotifications'
+import { useThemeStore } from '@/stores/themeStore'
 
 type NotificationType = INotification['type']
 
@@ -23,6 +24,10 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
+
+      const themeStore = useThemeStore()
+
+      const buttonSeverity = computed(() => (themeStore.isDark ? 'primary' : 'secondary'))
 
     const {
       notifications,
@@ -119,7 +124,8 @@ export default defineComponent({
       isJobNotification,
       getJobProgressSafe,
       handleJobDismiss,
-      handleJobViewReport
+      handleJobViewReport,
+      buttonSeverity
     }
   }
 })
@@ -133,7 +139,7 @@ export default defineComponent({
       text
       rounded
       size="large"
-      severity="secondary"
+      :severity="buttonSeverity"
       variant="text"
       @click="menu?.toggle($event)"
       class="relative"

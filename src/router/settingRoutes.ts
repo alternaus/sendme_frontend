@@ -6,15 +6,6 @@ const baseBreadcrumb = {
   active: false,
 }
 
-//const generateBreadcrumb = (text: string, name: string) => [
-//baseBreadcrumb,
-//{
-//text,
-//to: { name },
-//active: true
-//}
-//]
-
 const settingRoutes: RouteRecordRaw = {
   path: '/settings',
   name: 'settings',
@@ -49,6 +40,12 @@ const settingRoutes: RouteRecordRaw = {
       component: () => import('@/pages/settings/pages/integrations/IntegrationsPage.vue'),
       meta: { title: 'integrations' }
     },
+    {
+      path: 'general',
+      name: 'settings.general',
+      component: () => import('@/pages/settings/pages/general/ConfigGeneralPage.vue'),
+      meta: { title: 'general' }
+    }
   ],
 }
 export default settingRoutes

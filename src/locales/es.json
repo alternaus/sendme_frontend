@@ -125,7 +125,8 @@
     "enrollment_plans": "Elige tu Plan",
     "enrollment_payment": "Completar Pago",
     "enrollment_confirmation": "Confirmación de Pago",
-    "app_name": "SendMe"
+    "app_name": "SendMe",
+    "general": "Configuración General"
   },
   "languages": {
     "language": "Idioma",
