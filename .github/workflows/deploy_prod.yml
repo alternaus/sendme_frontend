@@ -72,12 +72,11 @@ jobs:
           port: 22
           script: |
             set -euo pipefail
-            DOMAIN="${DOMAIN}"
-            EMAIL="${EMAIL}"
-            BASE="${FRONTEND_PATH}"
-            SITE="${SITE_BASENAME}"
+            DOMAIN="${{ env.DOMAIN }}"
+            EMAIL="${{ env.EMAIL }}"
+            BASE="${{ env.FRONTEND_PATH }}"
+            SITE="${{ env.SITE_BASENAME }}"
             TS=$(date +%Y%m%d%H%M%S)
-
             # Paquetes
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
