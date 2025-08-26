@@ -554,7 +554,7 @@
     "no_records_found": "No se encontraron registros",
     "choose_value_recharge": "Selecciona el valor de tu recarga",
     "info_remember_recharge": "Recuerda que mientras tengas activo el plan tus mensajes no vencen, la recarga se aplicará de forma inmediata a tu cuenta.",
-    "pay" : "Pagar",
+    "pay": "Pagar",
     "enter_value": "Ingresa el valor",
     "buy_messages": "Comprar mensajes",
     "select_valid_recharge_value": "Selecciona un valor de recarga válido",
@@ -667,12 +667,39 @@
     "reset": "Restablecer",
     "saved": "Configuración guardada",
     "error": "No se pudo guardar la configuración"
-  }, "settings": {
-    "tab_header":"Fecha y Hora",
+  },
+  "settings": {
+    "tab_header": "Fecha y Hora",
     "date_format": "Formato de fecha",
     "time_format": "Formato de hora",
     "timezone": "Zona horaria",
     "save": "Guardar",
     "reset": "Restablecer"
+  },
+  "api_keys": {
+    "tab_header": "API Keys  ",
+    "name": "Nombre",
+    "placeholder": "p. ej., backoffice",
+    "create": "Crear",
+    "copied": "API key copiada al portapapeles",
+    "created": "API key generada",
+    "error_create": "No se pudo crear la API key",
+    "delete_confirm": "Eliminar API key \"{name}\"?",
+    "delete_header": "Confirmar",
+    "delete_success": "API key eliminada",
+    "error_delete": "No se pudo eliminar",
+    "id": "ID",
+    "key": "Key",
+    "active": "Activa",
+    "inactive": "Inactiva",
+    "yes": "Si",
+    "no": "Cancelar",
+    "created_at": "Creada",
+    "actions": "Acciones",
+    "empty": "No se encontraron claves API",
+    "copy_now": "Copia y guarda tu API key ahora. No se mostrará nuevamente.",
+    "copy_warning": "Por razones de seguridad, la API key solo se muestra una vez. Por favor, cópiala ahora.",
+    "copy": "Copiar",
+    "delete": "Eliminar"
   }
 }

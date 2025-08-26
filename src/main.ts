@@ -2,7 +2,7 @@ import './assets/scss/main.css'
 
 import { createApp } from 'vue'
 
-import { Ripple, ToastService, Tooltip } from 'primevue'
+import { ConfirmationService, Ripple, ToastService, Tooltip } from 'primevue'
 import PrimeVue from 'primevue/config'
 
 import { createHead } from '@unhead/vue/client'
@@ -38,6 +38,8 @@ app.use(PrimeVue, {
   },
 })
 app.use(instanceI18n)
+
+app.use(ConfirmationService)
 
 app.directive('tooltip', Tooltip)
 app.directive('ripple', Ripple)

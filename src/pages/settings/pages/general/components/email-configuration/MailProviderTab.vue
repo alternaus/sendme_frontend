@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
+import ToggleSwitch from 'primevue/toggleswitch'
 import { useToast } from 'primevue/usetoast'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type {
   CreateEmailConfigurationDto,
   EmailConfigurationResponseDto,
@@ -49,7 +49,11 @@ onMounted(async () => {
   }
 })
 
-const boolOpts = [{ name: 'Yes', value: true }, { name: 'No', value: false }]
+
+watch(() => form.secure.value, (tls) => {
+  const p = form.port.value
+  if (p == null || p === 465 || p === 587) form.port.value = tls ? 465 : 587
+})
 
 const onSubmit = handleSubmit(async (values) => {
   saving.value = true
@@ -98,25 +102,30 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-
   <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-    <!-- Datos básicos -->
     <AppInput v-model="form.name.value" :error-message="errors.name" :label="$t('email_configuration.name')" />
     <AppInput v-model="form.fromName.value" :error-message="errors.fromName" :label="$t('email_configuration.from_name')" />
     <AppInput v-model="form.fromEmail.value" :error-message="errors.fromEmail" type="email" :label="$t('email_configuration.from_email')" />
     <AppInput v-model="form.username.value" :error-message="errors.username" :label="$t('email_configuration.username')" />
     <AppInput v-model="form.password.value" :error-message="errors.password" type="password" :label="$t('email_configuration.password')" />
 
-    <!-- SMTP -->
     <AppInput v-model="form.host.value" :error-message="errors.host" :label="$t('email_configuration.smtp_host')" />
     <AppInput v-model="form.port.value" :error-message="errors.port" type="number" :label="$t('email_configuration.port')" />
-    <AppSelect v-model="form.secure.value" :options="boolOpts" optionLabel="name" optionValue="value"
-      :error-message="errors.secure" :label="$t('email_configuration.secure')" />
 
-    <AppSelect v-model="form.isDefault.value" :options="boolOpts" optionLabel="name" optionValue="value"
-      :error-message="errors.isDefault" :label="$t('email_configuration.default')" />
-    <AppSelect v-model="form.isActive.value" :options="boolOpts" optionLabel="name" optionValue="value"
-      :error-message="errors.isActive" :label="$t('email_configuration.active')" />
+    <div class="flex items-center justify-between gap-3">
+      <label for="secure" class="text-sm font-medium">{{ $t('email_configuration.secure') }}</label>
+      <ToggleSwitch inputId="secure" v-model="form.secure.value" :disabled="saving || loading" />
+    </div>
+
+    <div class="flex items-center justify-between gap-3">
+      <label for="isDefault" class="text-sm font-medium">{{ $t('email_configuration.default') }}</label>
+      <ToggleSwitch inputId="isDefault" v-model="form.isDefault.value" :disabled="saving || loading" />
+    </div>
+
+    <div class="flex items-center justify-between gap-3">
+      <label for="isActive" class="text-sm font-medium">{{ $t('email_configuration.active') }}</label>
+      <ToggleSwitch inputId="isActive" v-model="form.isActive.value" :disabled="saving || loading" />
+    </div>
 
     <div class="flex gap-3 pt-2 md:col-span-2">
       <AppButton type="submit" :disabled="saving || loading" severity="primary"
@@ -125,6 +134,7 @@ const onSubmit = handleSubmit(async (values) => {
     </div>
   </form>
 </template>
+
 
 <style scoped>
 :deep([data-pc-name="tablist"]) {

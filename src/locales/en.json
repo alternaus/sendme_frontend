@@ -668,11 +668,37 @@
     "error": "Could not save configuration"
   },
   "settings": {
-    "tab_header":"Date and Time",
+    "tab_header": "Date and Time",
     "date_format": "Date format",
     "time_format": "Time format",
     "timezone": "Timezone",
     "save": "Save",
     "reset": "Reset"
+  },
+  "api_keys": {
+    "tab_header": "API Keys",
+    "name": "Name",
+    "placeholder": "e.g., backoffice",
+    "create": "Create",
+    "copied": "API key copied to clipboard",
+    "created": "API key generated",
+    "error_create": "Could not create API key",
+    "delete_confirm": "Delete API key \"{name}\"?",
+    "delete_header": "Confirm",
+    "delete_success": "API key deleted",
+    "error_delete": "Could not delete",
+    "id": "ID",
+    "key": "Key",
+    "active": "Active",
+    "inactive": "Inactive",
+    "yes": "yes",
+    "no": "Cancel",
+    "created_at": "Created",
+    "actions": "Actions",
+    "empty": "No API keys found",
+    "copy_now": "Copy and save your API key now. It will not be shown again.",
+    "copy_warning": "For security reasons, the API key is only shown once. Please copy it now.",
+    "copy": "Copy",
+    "delete": "Delete"
   }
 }
