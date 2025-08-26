@@ -17,12 +17,12 @@ import MailProviderTab from './components/email-configuration/MailProviderTab.vu
   <Tabs value="0" class="rounded-xl overflow-hidden mt-4">
     <TabList class="rounded-t-lg text-sm">
       <Tab value="0" class="px-3 py-2">
-        <span class="font-bold whitespace-nowrap">Configuracion de email</span>
+        <span class="font-bold whitespace-nowrap">{{ $t('email_configuration.tab_header') }}</span>
       </Tab>
     </TabList>
 
     <TabPanels class="rounded-b-lg">
-      <TabPanel value="0" class="m-0">
+      <TabPanel value="0" as="p" class="m-0">
         <MailProviderTab />
       </TabPanel>
     </TabPanels>
@@ -45,7 +45,7 @@ import MailProviderTab from './components/email-configuration/MailProviderTab.vu
   background: var(--p-content-background);
   color: var(--p-text-color);
   border-radius: 0.5rem;
-  margin: 0.25rem 0.5rem;
+  margin: 0.5rem 0.75rem;
   padding: .5rem .75rem;
   line-height: 1;
   transition: background-color .15s, color .15s, border-color .15s, box-shadow .15s;
@@ -55,7 +55,6 @@ import MailProviderTab from './components/email-configuration/MailProviderTab.vu
   background: var(--p-primary-color);
   color: var(--p-primary-contrast-color);
   border-color: var(--p-primary-color);
-  font-weight: 600;
 }
 
 :deep([data-pc-name="tabpanels"]) {

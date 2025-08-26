@@ -648,5 +648,23 @@
     "errors": {
       "translate_failed": "Translation failed. Please try again."
     }
+  },
+  "email_configuration": {
+    "tab_header": "Email configuration",
+    "name": "Name",
+    "from_name": "From Name",
+    "from_email": "From Email",
+    "username": "Username",
+    "password": "Password",
+    "smtp_host": "SMTP Host",
+    "port": "Port",
+    "secure": "Secure",
+    "default": "Default",
+    "active": "Active",
+    "update": "Update",
+    "create": "Create",
+    "reset": "Reset",
+    "saved": "Configuration saved",
+    "error": "Could not save configuration"
   }
 }

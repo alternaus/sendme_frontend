@@ -89,6 +89,7 @@ export default defineComponent({
         <!-- Number -->
         <InputNumber
           v-if="isNumber"
+          :size="size"
           v-model="internalNumber"
           :inputId="id"
           :placeholder="placeholder"
@@ -119,6 +120,7 @@ export default defineComponent({
         v-if="isNumber"
         v-model="internalNumber"
         :inputId="id"
+         :size="size"
         :placeholder="placeholder"
         :useGrouping="numberUseGrouping"
         :minFractionDigits="numberMinFractionDigits"

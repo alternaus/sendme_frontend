@@ -4,7 +4,6 @@ import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type {
@@ -99,36 +98,32 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <AppCard class="w-full p-4">
-    <template #content>
-      <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Datos básicos -->
-        <AppInput v-model="form.name.value" :error-message="errors.name" label="Name" />
-        <AppInput v-model="form.fromName.value" :error-message="errors.fromName" label="From Name" />
-        <AppInput v-model="form.fromEmail.value" :error-message="errors.fromEmail" type="email" label="From Email" />
-        <AppInput v-model="form.username.value" :error-message="errors.username" label="Username" />
-        <AppInput v-model="form.password.value" :error-message="errors.password" type="password" label="Password" />
 
-        <!-- SMTP -->
-        <AppInput v-model="form.host.value" :error-message="errors.host" label="SMTP Host" />
-        <AppInput v-model="form.port.value" :error-message="errors.port" type="number" label="Port" />
-        <AppSelect v-model="form.secure.value" :options="boolOpts" optionLabel="name" optionValue="value"
-          :error-message="errors.secure" label="Secure" />
+  <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+    <!-- Datos básicos -->
+    <AppInput v-model="form.name.value" :error-message="errors.name" :label="$t('email_configuration.name')" />
+    <AppInput v-model="form.fromName.value" :error-message="errors.fromName" :label="$t('email_configuration.from_name')" />
+    <AppInput v-model="form.fromEmail.value" :error-message="errors.fromEmail" type="email" :label="$t('email_configuration.from_email')" />
+    <AppInput v-model="form.username.value" :error-message="errors.username" :label="$t('email_configuration.username')" />
+    <AppInput v-model="form.password.value" :error-message="errors.password" type="password" :label="$t('email_configuration.password')" />
 
-        <AppSelect v-model="form.isDefault.value" :options="boolOpts" optionLabel="name" optionValue="value"
-          :error-message="errors.isDefault" label="Default" />
-        <AppSelect v-model="form.isActive.value" :options="boolOpts" optionLabel="name" optionValue="value"
-          :error-message="errors.isActive" label="Active" />
+    <!-- SMTP -->
+    <AppInput v-model="form.host.value" :error-message="errors.host" :label="$t('email_configuration.smtp_host')" />
+    <AppInput v-model="form.port.value" :error-message="errors.port" type="number" :label="$t('email_configuration.port')" />
+    <AppSelect v-model="form.secure.value" :options="boolOpts" optionLabel="name" optionValue="value"
+      :error-message="errors.secure" :label="$t('email_configuration.secure')" />
 
-        <div class="flex gap-3 pt-2 md:col-span-2">
-          <AppButton type="submit" :disabled="saving || loading" severity="primary"
-            :label="currentId ? 'Update' : 'Create'" />
-          <AppButton type="button" severity="secondary" :disabled="saving" label="Reset" @click="resetForm()" />
-        </div>
-      </form>
+    <AppSelect v-model="form.isDefault.value" :options="boolOpts" optionLabel="name" optionValue="value"
+      :error-message="errors.isDefault" :label="$t('email_configuration.default')" />
+    <AppSelect v-model="form.isActive.value" :options="boolOpts" optionLabel="name" optionValue="value"
+      :error-message="errors.isActive" :label="$t('email_configuration.active')" />
 
-    </template>
-  </AppCard>
+    <div class="flex gap-3 pt-2 md:col-span-2">
+      <AppButton type="submit" :disabled="saving || loading" severity="primary"
+        :label="currentId ? $t('email_configuration.update') : $t('email_configuration.create')" />
+      <AppButton type="button" severity="secondary" :disabled="saving" :label="$t('email_configuration.reset')" @click="resetForm()" />
+    </div>
+  </form>
 </template>
 
 <style scoped>

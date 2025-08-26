@@ -649,5 +649,23 @@
     "errors": {
       "translate_failed": "Error en la traducción. Por favor intenta de nuevo."
     }
+  },
+  "email_configuration": {
+    "tab_header": "Configuración de Email",
+    "name": "Nombre",
+    "from_name": "Nombre del Remitente",
+    "from_email": "Email del Remitente",
+    "username": "Nombre de Usuario",
+    "password": "Contraseña",
+    "smtp_host": "Servidor SMTP",
+    "port": "Puerto",
+    "secure": "Seguro",
+    "default": "Predeterminado",
+    "active": "Activo",
+    "update": "Actualizar",
+    "create": "Crear",
+    "reset": "Restablecer",
+    "saved": "Configuración guardada",
+    "error": "No se pudo guardar la configuración"
   }
 }
