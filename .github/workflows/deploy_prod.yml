@@ -40,6 +40,10 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Stamp build version
+        run: |
+          echo "${GITHUB_SHA::7} $(date -u +%FT%TZ)" > dist/version.txt
+
       - name: Package dist
         run: tar -C dist -czf dist.tgz .
 
@@ -78,72 +82,61 @@ jobs:
             BASE="${{ env.FRONTEND_PATH }}"
             SITE="${{ env.SITE_BASENAME }}"
             TS=$(date +%Y%m%d%H%M%S)
-
+        
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
-
+        
             mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
-            chown -R www-data:www-data "$BASE"
-            chmod -R 755 "$BASE"
-
-            cp -f /tmp/nginx/sendme123.http.conf /etc/nginx/sites-available/
+            chown -R www-data:www-data "$BASE"; chmod -R 755 "$BASE"
+        
+            cp -f /tmp/nginx/sendme123.http.conf  /etc/nginx/sites-available/
             cp -f /tmp/nginx/sendme123.https.conf /etc/nginx/sites-available/
             rm -f /etc/nginx/sites-enabled/sendme123 /etc/nginx/sites-enabled/sendme123.conf
-            ln -sfn /etc/nginx/sites-available/sendme123.http.conf /etc/nginx/sites-enabled/sendme123.conf
-
+        
             for f in "/etc/nginx/sites-available/${SITE}.http.conf" "/etc/nginx/sites-available/${SITE}.https.conf"; do
-              if [ ! -f "$f" ]; then
-                echo "Falta $f"
-                ls -l /etc/nginx/sites-available || true
-                exit 1
-              fi
+              [ -f "$f" ] || { echo "Falta $f"; ls -l /etc/nginx/sites-available || true; exit 1; }
             done
-
+        
             ln -sfn /etc/nginx/sites-available/${SITE}.http.conf /etc/nginx/sites-enabled/${SITE}.conf
             rm -f /etc/nginx/sites-enabled/default
-            nginx -t
-            systemctl reload nginx
-
+            nginx -t && systemctl reload nginx
+        
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
             fi
-
+        
             ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}.conf
-            nginx -t
-            systemctl reload nginx
-
-            # === Despliegue atómico con borrado en servidor ===
-            # Guardar release previo si current es symlink
+            nginx -t && systemctl reload nginx
+        
+            # ===== Deploy atómico con limpieza =====
             PREV=""
-            if [ -L "$BASE/current" ]; then
-              PREV="$(readlink -f "$BASE/current" || true)"
-            fi
-            # Si current es carpeta real, eliminarla
-            if [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ]; then
-              rm -rf "$BASE/current"
-            fi
-
-            # Crear nuevo release y extraer build
+            [ -L "$BASE/current" ] && PREV="$(readlink -f "$BASE/current" || true)"
+            [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ] && rm -rf "$BASE/current"
+        
             mkdir -p "$BASE/releases/${TS}"
             tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
-
-            # Apuntar current al nuevo release
             ln -sfn "$BASE/releases/${TS}" "$BASE/current"
             chown -R www-data:www-data "$BASE"
             rm -f /tmp/dist.tgz
-
-            # Borrar release anterior ya no apuntado
+        
+            # Borra release anterior no apuntado
             if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then
               rm -rf "$PREV"
             fi
-
-            # Borrar dist legados si existieran
+        
+            # Limpia caché Nginx y posibles dist legados
+            rm -rf /var/cache/nginx/* || true
             rm -rf "$BASE/dist" "$BASE/public/dist" "$BASE/www/dist" 2>/dev/null || true
-
-            # Retención de releases (mantener 5)
-            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
-
-            # Renovación automática de certificados
+            systemctl reload nginx
+        
+            # Retención
+            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" \
+            | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
+        
+            # Renovación
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
+              
+            # Verificación rápida
+            cat "$BASE/current/version.txt" || true
