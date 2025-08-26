@@ -48,12 +48,10 @@ const { defineField, errors, handleSubmit } = useForm({
 const [password] = defineField('password')
 const [confirmPassword] = defineField('confirmPassword')
 
-// Obtener token y email de los query parameters
 onMounted(() => {
   token.value = route.query.token as string || ''
-  email.value = route.query.email as string || ''
 
-  if (!token.value || !email.value) {
+  if (!token.value) {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
@@ -70,8 +68,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await authService.resetPassword({
       token: token.value,
-      email: email.value,
-      password: values.password,
+      newPassword: values.password,
     })
 
     // Mostrar estado de éxito

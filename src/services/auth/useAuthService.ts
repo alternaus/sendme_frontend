@@ -2,8 +2,14 @@
 import { useApiClient } from '@/composables/useApiClient'
 
 import type { IUser } from '../user/interfaces/user.interface'
-import type { IAuthResponse } from './interfaces/auth-response.interface'
-import type { ILogin } from './interfaces/login.interface'
+import type {
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  IAuthResponse,
+  IGoogleAuthUrl,
+  ILogin,
+  ISignUp,
+  ResetPasswordDto} from './interfaces'
 
 export const useAuthService = () => {
   const publicApi = useApiClient(false)
@@ -11,6 +17,10 @@ export const useAuthService = () => {
 
   const login = async (credentials: ILogin) => {
     return publicApi.post<IAuthResponse>('/auth/sign-in', credentials)
+  }
+
+  const signUp = async (userData: ISignUp) => {
+    return publicApi.post<IAuthResponse>('/auth/sign-up', userData)
   }
 
   const refreshAuthToken = async (refreshToken: string) => {
@@ -27,7 +37,7 @@ export const useAuthService = () => {
 
   //Métodos para autenticación con Google
   const getGoogleAuthUrl = async () => {
-    return publicApi.get<{ url: string }>('/auth/google')
+    return publicApi.get<IGoogleAuthUrl>('/auth/google')
   }
 
   const handleGoogleCallback = async (code: string) => {
@@ -35,23 +45,30 @@ export const useAuthService = () => {
   }
 
   // Método para recuperación de contraseña
-  const forgotPassword = async (data: { email: string }) => {
+  const forgotPassword = async (data: ForgotPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/forgot-password', data)
   }
 
   // Método para restablecer contraseña
-  const resetPassword = async (data: { token: string; email: string; password: string }) => {
+  const resetPassword = async (data: ResetPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/reset-password', data)
+  }
+
+  // Método para cambiar contraseña
+  const changePassword = async (data: ChangePasswordDto) => {
+    return privateApi.post<{ message: string }>('/auth/change-password', data)
   }
 
   return {
     login,
+    signUp,
     refreshAuthToken,
     me,
     logout,
     getGoogleAuthUrl,
     handleGoogleCallback,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    changePassword
   }
 }
