@@ -60,7 +60,8 @@ jobs:
           username: ${{ env.SERVER_USER }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: 'infra/nginx/*'
+          source: 'infra/nginx/*.conf'
+          strip_components: 2 
           target: '/tmp/nginx/'
 
       - name: Configure Nginx, SSL and release
@@ -84,6 +85,11 @@ jobs:
             mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
             chown -R www-data:www-data "$BASE"
             chmod -R 755 "$BASE"
+
+            cp -f /tmp/nginx/sendme123.http.conf /etc/nginx/sites-available/
+            cp -f /tmp/nginx/sendme123.https.conf /etc/nginx/sites-available/
+            rm -f /etc/nginx/sites-enabled/sendme123 /etc/nginx/sites-enabled/sendme123.conf
+            ln -sfn /etc/nginx/sites-available/sendme123.http.conf /etc/nginx/sites-enabled/sendme123.conf
         
             # Verificar que los .conf existen antes de linkear
             for f in "/etc/nginx/sites-available/${SITE}.http.conf" "/etc/nginx/sites-available/${SITE}.https.conf"; do
