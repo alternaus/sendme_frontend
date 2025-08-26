@@ -77,46 +77,41 @@ jobs:
             BASE="${{ env.FRONTEND_PATH }}"
             SITE="${{ env.SITE_BASENAME }}"
             TS=$(date +%Y%m%d%H%M%S)
-            # Paquetes
+        
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
-
-            # Directorios app y webroot ACME
+        
             mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html
             chown -R www-data:www-data "$BASE"
             chmod -R 755 "$BASE"
-
-            # Instalar configs Nginx desde /tmp/nginx
-            mv -f /tmp/nginx/${SITE}.http.conf /etc/nginx/sites-available/${SITE}.http.conf
-            mv -f /tmp/nginx/${SITE}.https.conf /etc/nginx/sites-available/${SITE}.https.conf
-
-            # Fase HTTP para ACME
+        
+            # Habilitar HTTP para ACME
             ln -sfn /etc/nginx/sites-available/${SITE}.http.conf /etc/nginx/sites-enabled/${SITE}
             rm -f /etc/nginx/sites-enabled/default
             nginx -t
             systemctl reload nginx
-
-            # Certificado si no existe
+        
+            # Emitir cert si no existe
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
             fi
-
-            # Activar HTTPS definitivo
+        
+            # Habilitar HTTPS definitivo
             ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}
             nginx -t
             systemctl reload nginx
-
-            # Desplegar release atómico
+        
+            # Despliegue atómico
             mkdir -p "$BASE/releases/${TS}"
             tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
             ln -sfn "$BASE/releases/${TS}" "$BASE/current"
             chown -R www-data:www-data "$BASE"
             rm -f /tmp/dist.tgz
-
-            # Retención de releases (mantener 5)
+        
+            # Retención
             find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
-
-            # Renovación automática
+        
+            # Renovación
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
