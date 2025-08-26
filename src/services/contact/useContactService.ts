@@ -4,6 +4,7 @@ import type { IPaginationResponse } from '../interfaces/pagination-response.inte
 import type { IContact } from './interfaces/contact.interface'
 import type { ICreateContact } from './interfaces/create-contact.interface'
 import type { IFilterContact } from './interfaces/filter-contact.interface'
+import type { ISyncGoogleContact } from './interfaces/sync-google-contact.interface'
 import type { IUpdateContact } from './interfaces/update-contact.interface'
 
 export const useContactService = () => {
@@ -87,6 +88,10 @@ export const useContactService = () => {
     }>(`/contacts/import/${jobId}/status`)
   }
 
+  const syncGoogleContacts = async () => {
+    return privateApi.post<ISyncGoogleContact>('/contacts/google/sync')
+  }
+
   return {
     getContacts,
     getContact,
@@ -98,5 +103,6 @@ export const useContactService = () => {
     getImportPreview,
     importContacts,
     getImportStatus,
+    syncGoogleContacts
   }
 }
