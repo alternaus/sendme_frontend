@@ -27,120 +27,83 @@ interface EpaycoCheckoutData {
   email_billing: string
 }
 
-interface EpaycoConfig {
-  publicKey: string
-  testMode: boolean
-}
+interface EpaycoConfig { publicKey: string; testMode: boolean }
 
 interface EpaycoCheckout {
   checkout: {
     configure: (options: { key: string; test: boolean }) => {
-      open: (data: EpaycoCheckoutData) => void;
-    };
-  };
-}
-
-declare global {
-  interface Window {
-    ePayco?: EpaycoCheckout;
+      open: (data: EpaycoCheckoutData) => void
+    }
   }
 }
+
+declare global { interface Window { ePayco?: EpaycoCheckout } }
 
 export class EpaycoPaymentStrategy extends BasePaymentStrategy {
   private config: EpaycoConfig | null = null
-
-  constructor() {
-    super('epayco', 'https://checkout.epayco.co/checkout.js')
-  }
+  constructor() { super('epayco', 'https://checkout.epayco.co/checkout.js') }
 
   async loadScript(): Promise<boolean> {
-    if (this.isScriptLoaded && window.ePayco) {
-      return true
-    }
-
-    const scriptLoaded = await super.loadScript()
-    if (!scriptLoaded) {
-      return false
-    }
-
-    const maxWaitTime = 10000
-    const checkInterval = 100
-    let waitTime = 0
-
-    while (!window.ePayco && waitTime < maxWaitTime) {
-      await new Promise(resolve => setTimeout(resolve, checkInterval))
-      waitTime += checkInterval
-    }
-
-    if (window.ePayco?.checkout?.configure) {
-      this.isScriptLoaded = true
-      return true
-    }
-
-    return false
+    if (this.isScriptLoaded && window.ePayco) return true
+    const ok = await super.loadScript()
+    if (!ok) return false
+    const ready = await this.waitFor(() => !!window.ePayco?.checkout?.configure)
+    if (ready) this.isScriptLoaded = true
+    return ready
   }
 
   async configure(config: Record<string, unknown>): Promise<void> {
-    const epaycoConfig: EpaycoConfig = {
-      publicKey: config.publicKey as string,
-      testMode: config.testMode as boolean
-    }
-
-    if (!epaycoConfig.publicKey || epaycoConfig.publicKey === 'undefined' || epaycoConfig.publicKey === 'null') {
-      throw new Error(`ePayco public key is required. Received: ${epaycoConfig.publicKey}`)
-    }
-
-    if (epaycoConfig.testMode === undefined || epaycoConfig.testMode === null) {
-      epaycoConfig.testMode = true
-    }
-
-    this.config = epaycoConfig
+    const publicKey = String(config.publicKey ?? '')
+    const testMode = Boolean(config.testMode ?? true)
+    if (!publicKey) throw new Error('ePayco public key is required')
+    this.config = { publicKey, testMode }
     this.isConfigured = true
   }
 
-  async processPayment(paymentData: PaymentData): Promise<PaymentResult> {
-    if (!this.isConfigured || !this.config) {
-      throw new Error('ePayco not configured. Call configure() first')
-    }
+  protected async processWithExtras(
+    data: PaymentData & { extras: { extra1?: string; extra2?: string; extra3?: string } }
+  ): Promise<PaymentResult> {
+    if (!this.isConfigured || !this.config) throw new Error('ePayco not configured. Call configure() first')
+    const ready = await this.waitFor(() => !!window.ePayco?.checkout?.configure)
+    if (!ready) throw new Error('ePayco script not loaded properly')
 
-    if (!this.isScriptLoaded || !window.ePayco?.checkout?.configure) {
-      throw new Error('ePayco script not loaded properly')
-    }
+    const invoice = `INV_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`
+    const amount = data.amount
+    const baseAmount = Math.round(amount / 1.19)
+    const taxAmount = amount - baseAmount
+    const currency = String(data.currency || 'COP').toLowerCase()
+    const lang = 'es'
+    const country = 'co'
 
-    const invoice = `INV_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    const copAmount = paymentData.amount
-    const baseAmount = Math.round(copAmount / 1.19)
-    const taxAmount = copAmount - baseAmount
-
-    const epayco = window.ePayco.checkout.configure({
+    const epayco = window.ePayco!.checkout.configure({
       key: this.config.publicKey,
-      test: this.config.testMode
+      test: this.config.testMode,
     })
 
-    const epaycoData = {
+    const epaycoData: EpaycoCheckoutData = {
       key: this.config.publicKey,
       test: this.config.testMode,
       external: false,
-      name: `Plan ${paymentData.planName}`,
-      description: `Suscripción al plan ${paymentData.planName} - ${paymentData.customerInfo.company || 'SendMe'}`,
-      currency: "cop",
-      amount: copAmount.toString(),
-      tax_base: baseAmount.toString(),
-      tax: taxAmount.toString(),
-      country: 'co',
-      lang: "es",
-      invoice: invoice,
-      extra1: "enrollment",
-      extra2: paymentData.customerInfo.company || '',
-      extra3: paymentData.planId,
-      confirmation: `${window.location.origin}/api/webhooks/epayco/confirmation`,
+      name: `Plan ${data.planName}`,
+      description: `Pago ${data.planName} - ${data.customerInfo.company || 'SendMe'}`,
+      currency,
+      amount: String(amount),
+      tax_base: String(baseAmount),
+      tax: String(taxAmount),
+      country,
+      lang,
+      invoice,
+      extra1: data.extras.extra1,
+      extra2: data.extras.extra2,
+      extra3: data.extras.extra3,
+      confirmation: '',
       response: `${window.location.origin}/enrollment/payment-confirmation?invoice=${invoice}`,
-      name_billing: paymentData.customerInfo.name,
-      address_billing: paymentData.customerInfo.company || 'Sin dirección',
-      type_doc_billing: "cc",
-      mobilephone_billing: paymentData.customerInfo.phone || '0000000000',
-      number_doc_billing: paymentData.customerInfo.dni,
-      email_billing: paymentData.customerInfo.email
+      name_billing: data.customerInfo.name,
+      address_billing: data.customerInfo.company || 'Sin dirección',
+      type_doc_billing: 'cc',
+      mobilephone_billing: data.customerInfo.phone || '0000000000',
+      number_doc_billing: data.customerInfo.dni,
+      email_billing: data.customerInfo.email,
     }
 
     epayco.open(epaycoData)
@@ -149,12 +112,9 @@ export class EpaycoPaymentStrategy extends BasePaymentStrategy {
       success: true,
       transactionId: invoice,
       provider: this.providerName,
-      message: 'Checkout abierto exitosamente'
+      message: 'Checkout abierto exitosamente',
     }
   }
 
-  destroy(): void {
-    this.config = null
-    super.destroy()
-  }
+  destroy(): void { this.config = null; super.destroy() }
 }

@@ -1,7 +1,9 @@
+// usePaymentProviders.ts
 import { computed, ref } from 'vue'
 
 import { usePaymentProviderService } from '@/services/payment-provider'
 import type { IPaymentProvider } from '@/services/payment-provider/interfaces/payment-provider.interface'
+import type { EnrollmentPaymentData, RechargePaymentData } from '@/services/payment-provider/strategies/BasePaymentStrategy'
 import type { PaymentData, PaymentResult } from '@/services/payment-provider/strategies/PaymentStrategy.interface'
 import { PaymentStrategyManager } from '@/services/payment-provider/strategies/PaymentStrategyManager'
 
@@ -10,8 +12,10 @@ export function usePaymentProviders() {
 
   const availableProviders = ref<IPaymentProvider[]>([])
   const selectedProvider = ref<IPaymentProvider | null>(null)
+  const providerConfig = ref<Record<string, unknown> | null>(null)
+
   const loading = ref(false)
-  const error = ref<string>('')
+  const error = ref('')
 
   const strategyManager = new PaymentStrategyManager()
 
@@ -19,13 +23,8 @@ export function usePaymentProviders() {
     try {
       loading.value = true
       error.value = ''
-
       const providers = await getPublicPaymentProviders()
-      const implementedProviders = providers.filter(provider =>
-        strategyManager.hasStrategy(provider.name)
-      )
-
-      availableProviders.value = implementedProviders
+      availableProviders.value = providers.filter(p => strategyManager.hasStrategy(p.name))
     } catch (err) {
       error.value = 'Error al cargar los proveedores de pago'
       throw err
@@ -43,46 +42,31 @@ export function usePaymentProviders() {
         throw new Error(`Strategy not implemented for ${provider.name}`)
       }
 
-      const config = await getPaymentProviderConfig(provider.name)
+      const cfg = await getPaymentProviderConfig(provider.name)
 
-      const scriptLoaded = await strategyManager.loadProviderScript(provider.name)
-      if (!scriptLoaded) {
-        throw new Error(`Failed to load script for ${provider.name}`)
-      }
+      const ok = await strategyManager.loadProviderScript(provider.name)
+      if (!ok) throw new Error(`Failed to load script for ${provider.name}`)
 
-      const providerConfig = {
-        publicKey: config.publicKey,
-        testMode: config.testMode
-      }
+      const normalizedCfg = { publicKey: cfg.publicKey, testMode: cfg.testMode }
+      await strategyManager.configureProvider(provider.name, normalizedCfg)
 
-      await strategyManager.configureProvider(provider.name, providerConfig)
-
-      selectedProvider.value = config
-      return config
+      selectedProvider.value = provider
+      providerConfig.value = normalizedCfg
+      return provider
     } catch (err) {
-      const errorMsg = `Error al configurar el proveedor ${provider.displayName}: ${err instanceof Error ? err.message : 'Error desconocido'}`
-      error.value = errorMsg
+      error.value = `Error al configurar el proveedor ${provider.displayName}: ${err instanceof Error ? err.message : 'Error desconocido'}`
       throw err
     } finally {
       loading.value = false
     }
   }
 
+  // Compat: ruta genérica legacy
   const processPayment = async (paymentData: PaymentData): Promise<PaymentResult> => {
-    if (!selectedProvider.value) {
-      throw new Error('No payment provider selected')
-    }
-
+    if (!selectedProvider.value || !providerConfig.value) throw new Error('No payment provider selected')
     try {
       loading.value = true
-
-      const result = await strategyManager.processPayment(
-        selectedProvider.value.name,
-        selectedProvider.value,
-        paymentData
-      )
-
-      return result
+      return await strategyManager.processPayment(selectedProvider.value.name, providerConfig.value, paymentData)
     } catch (err) {
       error.value = 'Error al procesar el pago'
       throw err
@@ -91,9 +75,39 @@ export function usePaymentProviders() {
     }
   }
 
-  const canProcessPayment = computed(() => {
-    return selectedProvider.value && !loading.value
-  })
+  // Nuevo: APIs simples
+  const processEnrollment = async (data: EnrollmentPaymentData): Promise<PaymentResult> => {
+    if (!selectedProvider.value || !providerConfig.value) throw new Error('No payment provider selected')
+    try {
+      loading.value = true
+      return await strategyManager.processEnrollment(selectedProvider.value.name, providerConfig.value, data)
+    } catch (err) {
+      error.value = 'Error al procesar el pago'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const processRecharge = async (data: RechargePaymentData, organizationId: string): Promise<PaymentResult> => {
+    if (!selectedProvider.value || !providerConfig.value) throw new Error('No payment provider selected')
+    if (!organizationId) throw new Error('organizationId es requerido')
+    try {
+      loading.value = true
+      return await strategyManager.processRecharge(
+        selectedProvider.value.name,
+        providerConfig.value,
+        { ...data, organizationId }
+      )
+    } catch (err) {
+      error.value = 'Error al procesar el pago'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const canProcessPayment = computed(() => Boolean(selectedProvider.value && providerConfig.value && !loading.value))
 
   return {
     availableProviders,
@@ -103,7 +117,11 @@ export function usePaymentProviders() {
     canProcessPayment,
     loadAvailableProviders,
     selectProvider,
+    // nuevas APIs
+    processEnrollment,
+    processRecharge,
+    // compat
     processPayment,
-    destroy: () => strategyManager.destroy()
+    destroy: () => strategyManager.destroy(),
   }
 }

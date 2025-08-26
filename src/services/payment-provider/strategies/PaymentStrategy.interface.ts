@@ -21,6 +21,11 @@ export interface PaymentData {
     dni: string
     company?: string
     phone?: string
+  },
+  extra?: {
+    extra_1: string
+    extra_2: string
+    extra_3: string
   }
 }
 
@@ -30,4 +35,5 @@ export interface PaymentResult {
   provider: string
   message?: string
   redirectUrl?: string
+  [key: string]: unknown
 }

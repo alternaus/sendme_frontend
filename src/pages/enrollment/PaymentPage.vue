@@ -89,16 +89,14 @@
               </div>
 
               <PaymentProviderSelector v-if="selectedPlan && paymentForm.isFormValid" :amount="selectedPlan.cost"
-                :currency="'USD'" :customer-info="{
+                currency="COP" :customer-info="{
                   name: paymentForm.name.value,
                   email: paymentForm.email.value,
                   dni: paymentForm.dni.value,
                   company: paymentForm.company.value
-                }" :plan-info="{
-                  id: planId,
-                  name: selectedPlanName,
-                  features: selectedPlan.features
-                }" @payment-success="handlePaymentSuccess" @payment-error="handlePaymentError" />
+                }" :plan-info="{ id: planId, name: selectedPlanName, features: selectedPlan.features }" transaction-type="enrollment"
+                @payment-success="handlePaymentSuccess" @payment-error="handlePaymentError" />
+
             </div>
           </div>
         </div>
@@ -117,7 +115,7 @@ import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import PaymentProviderSelector from '@/components/organisms/PaymentProviderSelector.vue'
+import PaymentProviderSelector from '@/pages/enrollment/components/PaymentProviderSelector.vue'
 import type { IPlan } from '@/services/organization/interfaces/plan.interface'
 import { usePlanService } from '@/services/organization/usePlanService'
 
@@ -199,5 +197,4 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
