@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { io, type Socket } from 'socket.io-client'
 
 import { useApiClient } from '@/composables/useApiClient'
+import { BASE_URL } from '@/helpers/api-url.helper'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 //Interfaces simplificadas
@@ -205,11 +206,7 @@ export const useNotifications = () => {
   const connectWebSocket = () => {
     if (!authStore.token || socket.value) return
 
-    const base = import.meta.env.MODE === 'development'
-      ? 'http://localhost:4000'
-      : (import.meta.env.VITE_API_URL ?? window.location.origin)
-
-    socket.value = io(`${base}/notifications`, {
+    socket.value = io(`${BASE_URL}/notifications`, {
       transports: ['websocket'],
       auth: { token: authStore.token },
       reconnectionAttempts: 5,

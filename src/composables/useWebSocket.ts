@@ -5,6 +5,7 @@ import { useToast } from 'primevue/usetoast'
 import { io, type Socket } from 'socket.io-client'
 import { useI18n } from 'vue-i18n'
 
+import { BASE_URL } from '@/helpers/api-url.helper'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface NotificationData {
@@ -45,10 +46,7 @@ export const useWebSocket = () => {
       return
     }
 
-    const base = import.meta.env.MODE === 'development'
-    ? 'http://localhost:4000'
-    : import.meta.env.VITE_API_URL ?? window.location.origin
-    const url = `${base}/notifications`
+    const url = `${BASE_URL}/notifications`
 
     socket.value = io(url, {
       transports: ['websocket'],

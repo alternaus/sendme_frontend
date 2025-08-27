@@ -35,7 +35,6 @@ export const useAuthService = () => {
     return privateApi.post<void>('/auth/logout')
   }
 
-  //Métodos para autenticación con Google
   const getGoogleAuthUrl = async () => {
     return publicApi.get<IGoogleAuthUrl>('/auth/google')
   }
@@ -44,17 +43,14 @@ export const useAuthService = () => {
     return publicApi.get<IAuthResponse>(`/auth/google/callback?code=${code}`)
   }
 
-  // Método para recuperación de contraseña
   const forgotPassword = async (data: ForgotPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/forgot-password', data)
   }
 
-  // Método para restablecer contraseña
   const resetPassword = async (data: ResetPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/reset-password', data)
   }
 
-  // Método para cambiar contraseña
   const changePassword = async (data: ChangePasswordDto) => {
     return privateApi.post<{ message: string }>('/auth/change-password', data)
   }

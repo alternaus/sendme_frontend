@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useScriptTag } from '@vueuse/core'
 
@@ -31,14 +31,22 @@ export default defineComponent({
     const authStore = useAuthStore()
     const authService = useAuthService()
 
-    //Determinar la URL de callback según el entorno
-
     const baseUrl = window.location.origin
     const callbackUrl = `${baseUrl}/auth/google/callback`
 
-    useScriptTag(
-      'https://accounts.google.com/gsi/client',
-    )
+
+    console.log(window.location.origin)
+
+
+
+
+    // 181993271539-7v2s7ebbp2j75mqjk5c7j4hmh8eos8p1.apps.googleusercontent.com
+    const { load } = useScriptTag('https://accounts.google.com/gsi/client')
+    onMounted(async () => {
+      await load()
+    })
+
+
 
     yup.setLocale({
       mixed: {
