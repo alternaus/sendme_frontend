@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config'
 
 import { createHead } from '@unhead/vue/client'
 import { createPinia } from 'pinia'
+import vue3GoogleLogin from 'vue3-google-login'
 
 import { instanceI18n } from '@/plugins/i18n'
 import { useThemeStore } from '@/stores/themeStore'
@@ -27,6 +28,10 @@ app.use(pinia)
 useThemeStore(pinia)
 
 app.use(router)
+
+app.use(vue3GoogleLogin, {
+  clientId: '916028257398-48219o2n9561ggv5kf7qf70sihe82lvd.apps.googleusercontent.com'
+})
 
 app.use(PrimeVue, {
   theme: {

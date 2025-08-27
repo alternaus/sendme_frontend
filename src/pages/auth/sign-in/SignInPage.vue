@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useScriptTag } from '@vueuse/core'
 
 import { useForm } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
+import { googleOneTap } from "vue3-google-login"
 import * as yup from 'yup'
 
 import GoogleIcon from '@/assets/svg/google.svg?component'
@@ -13,7 +13,6 @@ import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputPassword from '@/components/atoms/inputs/AppInputPassword.vue'
 import AppLink from '@/components/atoms/links/AppLink.vue'
-import { useGoogleOneTap } from '@/composables/useOneTap'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -28,6 +27,17 @@ export default defineComponent({
     GoogleIcon
   },
   setup() {
+
+    onMounted(() => {
+      googleOneTap()
+        .then((response) => {
+          oneTapCallback(response)
+        })
+        .catch((error) => {
+          console.log("Handle the error", error)
+        })
+    })
+
     const { t } = useI18n()
     const router = useRouter()
     const authStore = useAuthStore()
@@ -35,42 +45,6 @@ export default defineComponent({
 
     const baseUrl = window.location.origin
     const callbackUrl = `${baseUrl}/auth/google/callback`
-
-
-    console.log(window.location.origin)
-
-    const btnRef = ref<HTMLDivElement | null>(null)
-    const { initialize, prompt, renderButton, error } = useGoogleOneTap()
-
-
-
-    const { load } = useScriptTag('https://accounts.google.com/gsi/client')
-    onMounted(async () => {
-      await load()
-    })
-
-    onMounted(async () => {
-      await initialize({
-        clientId:
-          '181993271539-7v2s7ebbp2j75mqjk5c7j4hmh8eos8p1.apps.googleusercontent.com',
-        cancelOnUnmount: true,
-        onCredential: async (credential) => {
-          const r = await fetch('/api/auth/google/onetap', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ credential })
-          })
-          if (!r.ok) throw new Error(`Auth ${r.status}`)
-          // redirige o guarda token según tu estrategia
-          location.href = '/app'
-        }
-      })
-      prompt()
-      if (btnRef.value) renderButton(btnRef.value, { size: 'large', shape: 'pill' })
-    })
-
-
 
     yup.setLocale({
       mixed: {
@@ -116,6 +90,10 @@ export default defineComponent({
       router.push('/auth/forgot-password')
     }
 
+    const oneTapCallback = (response: unknown) => {
+
+      console.log("Handle the response", response)
+    }
     return {
       email,
       password,
@@ -124,7 +102,7 @@ export default defineComponent({
       handleGoogleLogin,
       goToForgotPassword,
       callbackUrl,
-      error
+      oneTapCallback
     }
   },
 })
@@ -151,8 +129,6 @@ export default defineComponent({
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
-  <div ref="btnRef" />
-  <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
 
 
 </template>
