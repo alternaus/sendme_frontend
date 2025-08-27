@@ -54,8 +54,7 @@ jobs:
           username: ${{ env.SERVER_USER }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: 'infra/nginx/*.conf'
-          strip_components: 2
+          source: 'infra/nginx/*'
           target: '/tmp/nginx/'
 
 
