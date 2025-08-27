@@ -43,6 +43,10 @@ export const useAuthService = () => {
     return publicApi.get<IAuthResponse>(`/auth/google/callback?code=${code}`)
   }
 
+  const handleGoogleOneTap = async (credential: string) => {
+    return publicApi.post<IAuthResponse>('/auth/google/one-tap', { credential })
+  }
+
   const forgotPassword = async (data: ForgotPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/forgot-password', data)
   }
@@ -65,6 +69,7 @@ export const useAuthService = () => {
     handleGoogleCallback,
     forgotPassword,
     resetPassword,
-    changePassword
+    changePassword,
+    handleGoogleOneTap
   }
 }

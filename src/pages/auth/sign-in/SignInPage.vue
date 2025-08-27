@@ -13,6 +13,7 @@ import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputPassword from '@/components/atoms/inputs/AppInputPassword.vue'
 import AppLink from '@/components/atoms/links/AppLink.vue'
+import { BASE_URL } from '@/helpers/api-url.helper'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -28,14 +29,10 @@ export default defineComponent({
   },
   setup() {
 
-    onMounted(() => {
-      googleOneTap()
-        .then((response) => {
-          oneTapCallback(response)
-        })
-        .catch((error) => {
-          console.log("Handle the error", error)
-        })
+    onMounted(async () => {
+      const res = await googleOneTap()
+      oneTapCallback(res)
+
     })
 
     const { t } = useI18n()
@@ -43,8 +40,8 @@ export default defineComponent({
     const authStore = useAuthStore()
     const authService = useAuthService()
 
-    const baseUrl = window.location.origin
-    const callbackUrl = `${baseUrl}/auth/google/callback`
+
+    const callbackUrl = `${BASE_URL}/auth/google/callback`
 
     yup.setLocale({
       mixed: {
@@ -90,9 +87,13 @@ export default defineComponent({
       router.push('/auth/forgot-password')
     }
 
-    const oneTapCallback = (response: unknown) => {
+    const oneTapCallback = async (response: { credential: string }) => {
 
-      console.log("Handle the response", response)
+      const data = await authService.handleGoogleOneTap(response.credential)
+
+      authStore.setAuthData(data.accessToken, data.refreshToken)
+      router.push('/')
+
     }
     return {
       email,
@@ -120,13 +121,13 @@ export default defineComponent({
 
     <AppDivider />
 
-    <div class="w-full grid grid-cols-2 gap-4">
+    <div class="w-full grid grid-cols-1 gap-4">
       <AppButton label="Google" :variant="'contrast'" outlined @click="handleGoogleLogin">
         <template #icon-start>
           <GoogleIcon class="w-4 h-4" />
         </template>
       </AppButton>
-      <AppButton label="Facebook" variant="white" />
+
     </div>
   </form>
 
