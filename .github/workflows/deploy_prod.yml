@@ -47,6 +47,17 @@ jobs:
       - name: Package dist
         run: tar -C dist -czf dist.tgz .
 
+      - name: Upload Nginx confs to server (/tmp/nginx)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          source: 'infra/nginx/*'
+          target: '/tmp/nginx/'
+
+
       - name: Upload dist.tgz to server (/tmp)
         uses: appleboy/scp-action@v0.1.7
         with:
