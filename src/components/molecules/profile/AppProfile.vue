@@ -58,7 +58,8 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
 <template>
   <div class="flex items-center space-x-2">
     <!-- Avatar con menú -->
-    <AppAvatar ref="target" :image="user?.avatarUrl" :label="firstLetter" @click="openMenu"  class="cursor-pointer" />
+    <AppAvatar v-if="user?.avatarUrl" ref="target"  :image="user?.avatarUrl" @click="openMenu"  class="cursor-pointer" />
+    <AppAvatar v-else ref="target"  :label="firstLetter" @click="openMenu"  class="cursor-pointer" />
     <PrimeMenu ref="menu" :model="items" popup />
 
     <!-- Diálogo de confirmación de cierre de sesión -->

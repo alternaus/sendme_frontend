@@ -11,7 +11,6 @@ export default defineComponent({
   props: {
     image: {
       type: String,
-      default: '',
       required: false,
     },
     shape: {
@@ -20,7 +19,7 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: '',
+      required: false,
     },
   },
   setup(props) {
