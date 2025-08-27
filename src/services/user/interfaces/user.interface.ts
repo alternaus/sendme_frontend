@@ -9,6 +9,7 @@ export interface IRole {
 export interface IUser {
   id: number
   roleId: number
+  avatarUrl: string
   organizationId: number
   name: string
   email: string

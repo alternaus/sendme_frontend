@@ -9,6 +9,11 @@ export default defineComponent({
     Avatar,
   },
   props: {
+    image: {
+      type: String,
+      default: '',
+      required: false,
+    },
     shape: {
       type: String as () => 'circle' | 'square',
       default: 'circle',
@@ -25,7 +30,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <avatar class="!w-14 !h-14" :shape="shape" :label="label" />
+  <avatar :image="image"  class="!w-14 !h-14" :shape="shape" :label="label" />
 </template>
 
 <style lang="scss"></style>
