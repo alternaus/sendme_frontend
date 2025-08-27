@@ -74,22 +74,23 @@ jobs:
             apt-get update -y
             DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx curl
 
-            # --- Estructura limpia + placeholder si se borró todo ---
-            sudo mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
-            if [ ! -e "$BASE/current/index.html" ]; then
-              sudo mkdir -p "$BASE/releases/placeholder"
-              echo "<!doctype html><title>Deploy</title><h1>Deploy en curso</h1>" | sudo tee "$BASE/releases/placeholder/index.html" >/dev/null
-              sudo ln -sfn "$BASE/releases/placeholder" "$BASE/current"
+            # Estructura + placeholder si no hay index
+            mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
+            if [ ! -f "$BASE/current/index.html" ]; then
+              mkdir -p "$BASE/releases/placeholder"
+              echo "<!doctype html><h1>Deploy en curso</h1>" > "$BASE/releases/placeholder/index.html"
+              ln -sfn "$BASE/releases/placeholder" "$BASE/current"
             fi
-            sudo chown -R www-data:www-data "$BASE"; sudo chmod 755 /var /var/www /var/www/vhosts "$BASE" "$BASE/releases" "$BASE/current"
+            chown -R www-data:www-data "$BASE"; chmod 755 /var /var/www /var/www/vhosts "$BASE" "$BASE/releases" "$BASE/current"
 
-            # --- Nginx conf saneado (evita loops y 403) ---
-            cat >/etc/nginx/sites-available/${{ env.SITE_BASENAME }}.http.conf <<EOF
+            # CONF LIMPIO: sin error_page ni rewrites a /index.html
+            rm -f /etc/nginx/sites-enabled/*
+            cat >/etc/nginx/sites-available/sendme123.http.conf <<'HTTP'
             server {
               listen 80;
-              server_name ${DOMAIN};
+              server_name new.sendme123.com;
 
-              root ${BASE}/current;
+              root /var/www/vhosts/new.sendme123.com/current;
               index index.html;
 
               location ^~ /.well-known/acme-challenge/ {
@@ -98,48 +99,47 @@ jobs:
               }
 
               location / {
-                try_files \$uri \$uri/ /index.html;
+                try_files $uri $uri/ /index.html;
               }
 
-              return 301 https://\$host\$request_uri;
+              return 301 https://$host$request_uri;
             }
-            EOF
+            HTTP
 
-            cat >/etc/nginx/sites-available/${{ env.SITE_BASENAME }}.https.conf <<EOF
+            cat >/etc/nginx/sites-available/sendme123.https.conf <<'HTTPS'
             server {
               listen 443 ssl http2;
-              server_name ${DOMAIN};
+              server_name new.sendme123.com;
 
-              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
-              include /etc/letsencrypt/options-ssl-nginx.conf;
-              ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+              ssl_certificate /etc/letsencrypt/live/new.sendme123.com/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/new.sendme123.com/privkey.pem;
 
-              root ${BASE}/current;
+              root /var/www/vhosts/new.sendme123.com/current;
               index index.html;
 
+              # SPA fallback, sin bucles
               location / {
-                try_files \$uri \$uri/ /index.html;
+                try_files $uri $uri/ /index.html;
               }
 
+              # Evita re-try_files aquí
               location = /index.html {
                 add_header Cache-Control "no-cache, no-store, must-revalidate";
               }
             }
-            EOF
+            HTTPS
 
-            ln -sfn /etc/nginx/sites-available/${{ env.SITE_BASENAME }}.http.conf  /etc/nginx/sites-enabled/${{ env.SITE_BASENAME }}.conf
+            ln -sfn /etc/nginx/sites-available/sendme123.http.conf  /etc/nginx/sites-enabled/sendme123.conf
             nginx -t && systemctl reload nginx
 
-            # --- Certificado si falta ---
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
-              certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
+              certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" -m "${EMAIL}" --agree-tos --non-interactive
             fi
 
-            ln -sfn /etc/nginx/sites-available/${{ env.SITE_BASENAME }}.https.conf /etc/nginx/sites-enabled/${{ env.SITE_BASENAME }}.conf
+            ln -sfn /etc/nginx/sites-available/sendme123.https.conf /etc/nginx/sites-enabled/sendme123.conf
             nginx -t && systemctl reload nginx
 
-            # --- Deploy atómico ---
+            # Deploy atómico
             PREV=""
             [ -L "$BASE/current" ] && PREV="$(readlink -f "$BASE/current" || true)"
             [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ] && rm -rf "$BASE/current"
@@ -150,19 +150,22 @@ jobs:
             chown -R www-data:www-data "$BASE"
             rm -f /tmp/dist.tgz
 
-            # Verificación build
-            test -f "$BASE/current/index.html" || { echo "Falta index.html en el release"; exit 1; }
+            # Sanidad: debe existir index.html
+            test -f "$BASE/current/index.html" || { echo "Falta index.html en release"; exit 1; }
 
-            # Limpieza y retención
+            # Limpieza
             if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then rm -rf "$PREV"; fi
             rm -rf /var/cache/nginx/* || true
             find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
 
-            # Cron renew
+            # Renew diario
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
 
-            # Smoke test
+            # Debug mínimo
+            echo "ROOT -> $(readlink -f $BASE/current)"; ls -la "$BASE/current" | head
             nginx -t && systemctl reload nginx
-            curl -skI "https://${DOMAIN}/" | head -n1 || true
+            curl -skI "https://${DOMAIN}/" | head -n1
+            curl -skI "https://${DOMAIN}/index.html" | head -n1
+            curl -skI "https://${DOMAIN}/auth/sign-in" | head -n1
