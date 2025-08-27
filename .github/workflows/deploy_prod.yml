@@ -57,17 +57,6 @@ jobs:
           source: 'dist.tgz'
           target: '/tmp/'
 
-      - name: Upload Nginx configs to server (/tmp/nginx)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.SERVER_HOST }}
-          username: ${{ env.SERVER_USER }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          source: 'infra/nginx/*.conf'
-          strip_components: 2
-          target: '/tmp/nginx/'
-
       - name: Configure Nginx, SSL and release
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -80,63 +69,100 @@ jobs:
             DOMAIN="${{ env.DOMAIN }}"
             EMAIL="${{ env.EMAIL }}"
             BASE="${{ env.FRONTEND_PATH }}"
-            SITE="${{ env.SITE_BASENAME }}"
             TS=$(date +%Y%m%d%H%M%S)
-        
+
             apt-get update -y
-            DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
-        
-            mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
-            chown -R www-data:www-data "$BASE"; chmod -R 755 "$BASE"
-        
-            cp -f /tmp/nginx/sendme123.http.conf  /etc/nginx/sites-available/
-            cp -f /tmp/nginx/sendme123.https.conf /etc/nginx/sites-available/
-            rm -f /etc/nginx/sites-enabled/sendme123 /etc/nginx/sites-enabled/sendme123.conf
-        
-            for f in "/etc/nginx/sites-available/${SITE}.http.conf" "/etc/nginx/sites-available/${SITE}.https.conf"; do
-              [ -f "$f" ] || { echo "Falta $f"; ls -l /etc/nginx/sites-available || true; exit 1; }
-            done
-        
-            ln -sfn /etc/nginx/sites-available/${SITE}.http.conf /etc/nginx/sites-enabled/${SITE}.conf
-            rm -f /etc/nginx/sites-enabled/default
+            DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx curl
+
+            # --- Estructura limpia + placeholder si se borró todo ---
+            sudo mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
+            if [ ! -e "$BASE/current/index.html" ]; then
+              sudo mkdir -p "$BASE/releases/placeholder"
+              echo "<!doctype html><title>Deploy</title><h1>Deploy en curso</h1>" | sudo tee "$BASE/releases/placeholder/index.html" >/dev/null
+              sudo ln -sfn "$BASE/releases/placeholder" "$BASE/current"
+            fi
+            sudo chown -R www-data:www-data "$BASE"; sudo chmod 755 /var /var/www /var/www/vhosts "$BASE" "$BASE/releases" "$BASE/current"
+
+            # --- Nginx conf saneado (evita loops y 403) ---
+            cat >/etc/nginx/sites-available/${{ env.SITE_BASENAME }}.http.conf <<EOF
+            server {
+              listen 80;
+              server_name ${DOMAIN};
+
+              root ${BASE}/current;
+              index index.html;
+
+              location ^~ /.well-known/acme-challenge/ {
+                root /var/www/html;
+                default_type "text/plain";
+              }
+
+              location / {
+                try_files \$uri \$uri/ /index.html;
+              }
+
+              return 301 https://\$host\$request_uri;
+            }
+            EOF
+
+            cat >/etc/nginx/sites-available/${{ env.SITE_BASENAME }}.https.conf <<EOF
+            server {
+              listen 443 ssl http2;
+              server_name ${DOMAIN};
+
+              ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+              include /etc/letsencrypt/options-ssl-nginx.conf;
+              ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+              root ${BASE}/current;
+              index index.html;
+
+              location / {
+                try_files \$uri \$uri/ /index.html;
+              }
+
+              location = /index.html {
+                add_header Cache-Control "no-cache, no-store, must-revalidate";
+              }
+            }
+            EOF
+
+            ln -sfn /etc/nginx/sites-available/${{ env.SITE_BASENAME }}.http.conf  /etc/nginx/sites-enabled/${{ env.SITE_BASENAME }}.conf
             nginx -t && systemctl reload nginx
-        
+
+            # --- Certificado si falta ---
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" --non-interactive --agree-tos -m "${EMAIL}"
             fi
-        
-            ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}.conf
+
+            ln -sfn /etc/nginx/sites-available/${{ env.SITE_BASENAME }}.https.conf /etc/nginx/sites-enabled/${{ env.SITE_BASENAME }}.conf
             nginx -t && systemctl reload nginx
-        
-            # ===== Deploy atómico con limpieza =====
+
+            # --- Deploy atómico ---
             PREV=""
             [ -L "$BASE/current" ] && PREV="$(readlink -f "$BASE/current" || true)"
             [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ] && rm -rf "$BASE/current"
-        
+
             mkdir -p "$BASE/releases/${TS}"
             tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
             ln -sfn "$BASE/releases/${TS}" "$BASE/current"
             chown -R www-data:www-data "$BASE"
             rm -f /tmp/dist.tgz
-        
-            # Borra release anterior no apuntado
-            if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then
-              rm -rf "$PREV"
-            fi
-        
-            # Limpia caché Nginx y posibles dist legados
+
+            # Verificación build
+            test -f "$BASE/current/index.html" || { echo "Falta index.html en el release"; exit 1; }
+
+            # Limpieza y retención
+            if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then rm -rf "$PREV"; fi
             rm -rf /var/cache/nginx/* || true
-            rm -rf "$BASE/dist" "$BASE/public/dist" "$BASE/www/dist" 2>/dev/null || true
-            systemctl reload nginx
-        
-            # Retención
-            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" \
-            | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
-        
-            # Renovación
+            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
+
+            # Cron renew
             if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
-              
-            # Verificación rápida
-            cat "$BASE/current/version.txt" || true
+
+            # Smoke test
+            nginx -t && systemctl reload nginx
+            curl -skI "https://${DOMAIN}/" | head -n1 || true
