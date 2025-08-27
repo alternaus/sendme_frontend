@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useScriptTag } from '@vueuse/core'
 
@@ -13,8 +13,10 @@ import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputPassword from '@/components/atoms/inputs/AppInputPassword.vue'
 import AppLink from '@/components/atoms/links/AppLink.vue'
+import { useGoogleOneTap } from '@/composables/useOneTap'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
+
 
 export default defineComponent({
   components: {
@@ -37,13 +39,35 @@ export default defineComponent({
 
     console.log(window.location.origin)
 
+    const btnRef = ref<HTMLDivElement | null>(null)
+    const { initialize, prompt, renderButton, error } = useGoogleOneTap()
 
 
 
-    // 181993271539-7v2s7ebbp2j75mqjk5c7j4hmh8eos8p1.apps.googleusercontent.com
     const { load } = useScriptTag('https://accounts.google.com/gsi/client')
     onMounted(async () => {
       await load()
+    })
+
+    onMounted(async () => {
+      await initialize({
+        clientId:
+          '181993271539-7v2s7ebbp2j75mqjk5c7j4hmh8eos8p1.apps.googleusercontent.com',
+        cancelOnUnmount: true,
+        onCredential: async (credential) => {
+          const r = await fetch('/api/auth/google/onetap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ credential })
+          })
+          if (!r.ok) throw new Error(`Auth ${r.status}`)
+          // redirige o guarda token según tu estrategia
+          location.href = '/app'
+        }
+      })
+      prompt()
+      if (btnRef.value) renderButton(btnRef.value, { size: 'large', shape: 'pill' })
     })
 
 
@@ -99,7 +123,8 @@ export default defineComponent({
       onSubmit,
       handleGoogleLogin,
       goToForgotPassword,
-      callbackUrl
+      callbackUrl,
+      error
     }
   },
 })
@@ -126,6 +151,8 @@ export default defineComponent({
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
+  <div ref="btnRef" />
+  <p v-if="error" class="text-red-600 text-sm">{{ error }}</p>
 
 
 </template>
