@@ -118,13 +118,6 @@ export default defineComponent({
       <AppButton label="Facebook" variant="white" />
     </div>
   </form>
- <!--  <div id="g_id_onload"
-    data-client_id="916028257398-48219o2n9561ggv5kf7qf70sihe82lvd.apps.googleusercontent.com"
-    data-context="signin"
-    :data-login_uri="callbackUrl"
-    data-auto_select="false"
-    data-itp_support="true"
-    > </div>-->
 
 
 </template>
