@@ -55,6 +55,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           source: 'infra/nginx/*'
+          strip_components: 2
           target: '/tmp/nginx/'
 
 
