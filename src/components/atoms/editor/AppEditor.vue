@@ -144,6 +144,7 @@ export default defineComponent({
         </span>
         <span v-if="aiAttach" class="ql-formats">
           <AppAIGenerate
+            type="email"
             :current-text="editorContent"
             append-mode="append"
             button-title="Generar con IA"

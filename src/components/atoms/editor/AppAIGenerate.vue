@@ -17,6 +17,7 @@ const props = defineProps({
   appendMode: { type: String as () => 'replace' | 'append', default: 'replace' },
   buttonTitle: { type: String, default: 'Generar con IA' },
   currentText: { type: String, default: '' },
+  type: { type: String as () => 'sms' | 'email',required:true },
 })
 const emit = defineEmits<{ (e: 'insert', value: string): void }>()
 
@@ -46,7 +47,7 @@ async function generate() {
   isGenerating.value = true
   result.value = ''
   try {
-    const res = await aiService.generateSms({ context: prompt.value })
+    const res = await aiService.generateSms({ context: prompt.value,type:props.type })
     result.value = res.generatedText
   } catch {
     result.value = t('ai.errors.generate_failed') || 'No se pudo generar el contenido.'

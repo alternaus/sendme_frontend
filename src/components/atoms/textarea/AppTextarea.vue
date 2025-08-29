@@ -89,6 +89,7 @@ watch(internalValue, value => {
             <slot name="icon" />
             <template v-if="aiAttach">
               <AppAIGenerate
+                type="sms"
                 :currentText="String(internalValue ?? '')"
                 @insert="
                   val =>

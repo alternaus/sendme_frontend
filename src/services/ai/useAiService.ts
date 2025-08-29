@@ -7,7 +7,7 @@ export const useAiService = () => {
   const privateApi = useApiClient(true)
 
   const generateSms = async (request: IGenerateSmsRequest): Promise<IGenerateSmsResponse> => {
-    return privateApi.post<IGenerateSmsResponse, IGenerateSmsRequest>('/ai/generate-sms', request)
+    return privateApi.post<IGenerateSmsResponse, IGenerateSmsRequest>('/ai/generate-content', request)
   }
 
   const translate = async (request: ITranslateRequest): Promise<ITranslateResponse> => {
