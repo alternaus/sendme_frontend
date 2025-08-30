@@ -3,7 +3,6 @@ import { computed, onMounted, ref } from 'vue'
 
 import { useToast } from 'primevue/usetoast'
 
-import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
@@ -21,20 +20,6 @@ const { form, handleSubmit, setValues, resetForm, errors } = useSettingsForm()
 
 const loading = ref(false)
 const saving = ref(false)
-
-/**
- * Genera una vista previa de cómo se verán las fechas con la configuración actual
- */
-const datePreview = computed(() => {
-  if (!form.dateFormat.value || !form.timeFormat.value) return null
-
-  const now = dayjs()
-  return {
-    date: now.format(form.dateFormat.value),
-    time: now.format(form.timeFormat.value),
-    dateTime: now.format(`${form.dateFormat.value} ${form.timeFormat.value}`)
-  }
-})
 
 
 
@@ -115,9 +100,9 @@ const timeFormatOpts = computed(() => [
 ])
 
 const timezoneOpts = [
+  { name: 'México (GMT-6)', value: 'America/Mexico_City' },
   { name: 'UTC (Tiempo Universal Coordinado)', value: 'UTC' },
   { name: 'America/Bogotá (COT -5)', value: 'America/Bogota' },
-  { name: 'America/Mexico_City (CST/CDT -6/-5)', value: 'America/Mexico_City' },
   { name: 'America/New_York (EST/EDT -5/-4)', value: 'America/New_York' },
   { name: 'America/Chicago (CST/CDT -6/-5)', value: 'America/Chicago' },
   { name: 'America/Los_Angeles (PST/PDT -8/-7)', value: 'America/Los_Angeles' },
@@ -181,55 +166,85 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-    <div>
-      <AppSelect v-model="form.dateFormat.value" :options="dateFormatOpts" optionLabel="name" optionValue="value"
-        :error-message="errors.dateFormat" :label="$t('settings.date_format')" />
-      <p class="text-xs text-gray-500 mt-1">{{ $t('settings.date_format_description') }}</p>
-    </div>
+  <div class="max-w-4xl mx-auto">
 
-    <div>
-      <AppSelect v-model="form.timeFormat.value" :options="timeFormatOpts" optionLabel="name" optionValue="value"
-        :error-message="errors.timeFormat" :label="$t('settings.time_format')" />
-      <p class="text-xs text-gray-500 mt-1">{{ $t('settings.time_format_description') }}</p>
-    </div>
-
-    <div class="md:col-span-2">
-      <AppSelect v-model="form.timezone.value" :options="timezoneOpts" optionLabel="name" optionValue="value"
-        :error-message="errors.timezone" :label="$t('settings.timezone')" />
-      <p class="text-xs text-gray-500 mt-1">{{ $t('settings.timezone_description') }}</p>
-    </div>
-
-    <!-- Vista Previa de Formatos -->
-    <div v-if="datePreview" class="md:col-span-2 p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-      <h3 class="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">
-        {{ $t('settings.preview') }}
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-        <div>
-          <span class="text-neutral-600 dark:text-neutral-400">{{ $t('settings.date') }}:</span>
-          <div class="font-mono bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 px-3 py-2 rounded border border-neutral-300 dark:border-neutral-600 mt-1">
-            {{ datePreview.date }}
+    <!-- Form -->
+    <form @submit.prevent="onSubmit" class="space-y-8">
+      <!-- Grid de selectores -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Zona Horaria -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ $t('settings.timezone_label') }}
+            </label>
           </div>
+          <AppSelect
+            v-model="form.timezone.value"
+            :options="timezoneOpts"
+            optionLabel="name"
+            optionValue="value"
+            :error-message="errors.timezone"
+            class="w-full"
+          />
+          <p class="text-xs text-gray-500">{{ $t('settings.timezone_description') }}</p>
         </div>
-        <div>
-          <span class="text-neutral-600 dark:text-neutral-400">{{ $t('settings.time') }}:</span>
-          <div class="font-mono bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 px-3 py-2 rounded border border-neutral-300 dark:border-neutral-600 mt-1">
-            {{ datePreview.time }}
+
+        <!-- Formato de Fecha -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ $t('settings.date_format_label') }}
+            </label>
           </div>
+          <AppSelect
+            v-model="form.dateFormat.value"
+            :options="dateFormatOpts"
+            optionLabel="name"
+            optionValue="value"
+            :error-message="errors.dateFormat"
+            class="w-full"
+          />
+          <p class="text-xs text-gray-500">{{ $t('settings.date_format_description') }}</p>
         </div>
-        <div>
-          <span class="text-neutral-600 dark:text-neutral-400">{{ $t('settings.date_time') }}:</span>
-          <div class="font-mono bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100 px-3 py-2 rounded border border-neutral-300 dark:border-neutral-600 mt-1">
-            {{ datePreview.dateTime }}
+
+        <!-- Formato de Hora -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ $t('settings.time_format_label') }}
+            </label>
           </div>
+          <AppSelect
+            v-model="form.timeFormat.value"
+            :options="timeFormatOpts"
+            optionLabel="name"
+            optionValue="value"
+            :error-message="errors.timeFormat"
+            class="w-full"
+          />
+          <p class="text-xs text-gray-500">{{ $t('settings.time_format_description') }}</p>
         </div>
       </div>
-    </div>
 
-    <div class="flex gap-3 pt-2 md:col-span-2">
-      <AppButton type="submit" :disabled="saving || loading" severity="primary" :label="$t('settings.save')" />
-      <AppButton type="button" severity="secondary" :disabled="saving" :label="$t('settings.reset')" @click="resetForm()" />
-    </div>
-  </form>
+      <!-- Botones de acción -->
+      <div class="flex gap-3 pt-2">
+        <AppButton
+          type="submit"
+          class="!w-auto"
+          :disabled="saving || loading"
+          severity="primary"
+          :label="$t('settings.save')"
+        />
+        <AppButton
+          type="button"
+          class="!w-auto"
+          severity="secondary"
+          :disabled="saving"
+          :label="$t('settings.reset')"
+          @click="resetForm()"
+        />
+      </div>
+    </form>
+  </div>
 </template>

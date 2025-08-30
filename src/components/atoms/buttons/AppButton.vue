@@ -36,7 +36,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <PrimeButton  class="w-full !rounded-xl flex items-center justify-center gap-2" :variant="outlined ? 'outlined' : undefined" :loading="loading"
+  <PrimeButton class="w-full !rounded-xl flex items-center justify-center gap-2" :variant="outlined ? 'outlined' : undefined" :loading="loading"
     size="small" :disabled="isDisabled" :severity="variant">
 
     <slot name="icon-start" v-if="!loading"></slot>

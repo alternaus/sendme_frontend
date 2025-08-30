@@ -19,7 +19,7 @@ export function useSettingsForm() {
     initialValues: {
       dateFormat: 'DD/MM/YYYY',
       timeFormat: 'HH:mm',
-      timezone: 'UTC',
+      timezone: 'America/Mexico_City',
     },
   })
 

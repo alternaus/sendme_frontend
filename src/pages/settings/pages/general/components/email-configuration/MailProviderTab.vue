@@ -29,8 +29,6 @@ const loading = ref(false)
 const saving = ref(false)
 const testing = ref(false)
 const currentId = ref<number | null>(null)
-const isEditMode = ref(false)
-const hasConfiguration = ref(false)
 
 // Opciones de puerto SMTP con mapeo de seguridad
 const portSecurityMap = {
@@ -52,8 +50,6 @@ onMounted(async () => {
     const list: EmailConfigurationResponseDto[] = Array.isArray(res) ? res : []
     const item = list?.[0]
     if (item) {
-      hasConfiguration.value = true
-      isEditMode.value = false // Modo readonly inicialmente
       currentId.value = (item).id as number
       setValues({
         name: (item).name,
@@ -67,9 +63,6 @@ onMounted(async () => {
         isDefault: true,
         isActive: true,
       })
-    } else {
-      hasConfiguration.value = false
-      isEditMode.value = true // Modo edición si no hay configuración
     }
   } finally {
     loading.value = false
@@ -84,16 +77,7 @@ watch(() => form.port.value, (port) => {
   }
 })
 
-// Funciones para manejar el modo de edición
-const enableEditMode = () => {
-  isEditMode.value = true
-}
 
-const cancelEdit = () => {
-  isEditMode.value = false
-  // Recargar los datos originales
-  window.location.reload()
-}
 
 // Computed para validaciones
 const isFormValid = computed(() => {
@@ -121,8 +105,7 @@ const onSubmit = handleSubmit(async (values) => {
       } as unknown as UpdateEmailConfigurationDto
 
       await updateEmailConfiguration(currentId.value, updatePayload)
-      toast.add({ severity: 'success', summary: 'Saved', detail: 'Configuration updated', life: 2500 })
-      isEditMode.value = false // Volver a modo readonly
+      toast.add({ severity: 'success', summary: 'Guardado', detail: 'Configuración actualizada', life: 2500 })
     } else {
       const createPayload: CreateEmailConfigurationDto = {
         name: values.name,
@@ -140,12 +123,10 @@ const onSubmit = handleSubmit(async (values) => {
       const created = await createEmailConfiguration(createPayload)
       const createdData: EmailConfigurationResponseDto = (created)
       currentId.value = (createdData).id as number
-      hasConfiguration.value = true
-      isEditMode.value = false // Volver a modo readonly
-      toast.add({ severity: 'success', summary: 'Saved', detail: 'Configuration created', life: 2500 })
+      toast.add({ severity: 'success', summary: 'Guardado', detail: 'Configuración creada', life: 2500 })
     }
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Could not save', life: 3000 })
+    toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar', life: 3000 })
   } finally {
     saving.value = false
   }
@@ -206,7 +187,6 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.name.value"
               :error-message="errors.name"
               :placeholder="$t('email_configuration.name')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.name_description') }}
@@ -231,7 +211,6 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.fromName.value"
               :error-message="errors.fromName"
               :placeholder="$t('email_configuration.from_name')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.from_name_description') }}
@@ -245,7 +224,6 @@ const testConfiguration = handleSubmit(async (values) => {
               :error-message="errors.fromEmail"
               type="email"
               :placeholder="$t('email_configuration.from_email')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.from_email_description') }}
@@ -267,7 +245,6 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.username.value"
               :error-message="errors.username"
               :placeholder="$t('email_configuration.username')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.username_description') }}
@@ -281,7 +258,6 @@ const testConfiguration = handleSubmit(async (values) => {
               :error-message="errors.password"
               type="password"
               :placeholder="$t('email_configuration.password')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.password_description') }}
@@ -303,7 +279,6 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.host.value"
               :error-message="errors.host"
               :placeholder="$t('email_configuration.smtp_host')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.smtp_host_description') }}
@@ -316,7 +291,6 @@ const testConfiguration = handleSubmit(async (values) => {
               :error-message="errors.port"
               :options="portOptions"
               :placeholder="$t('email_configuration.port')"
-              :disabled="!isEditMode"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.port_description') }}
@@ -326,58 +300,32 @@ const testConfiguration = handleSubmit(async (values) => {
       </div>
 
       <!-- Sección: Acciones -->
-      <div class="flex flex-col sm:flex-row gap-3">
-        <!-- Botón de editar (solo visible cuando hay configuración y no está en modo edición) -->
+      <div class="flex gap-3 pt-2">
+        <!-- Botón de guardar -->
         <AppButton
-          v-if="hasConfiguration && !isEditMode"
-          type="button"
-          class="!w-auto"
-          severity="primary"
-          :label="$t('email_configuration.edit')"
-          @click="enableEditMode"
-          :disabled="loading || saving || testing"
-        />
-
-        <!-- Botón de guardar (solo visible en modo edición) -->
-        <AppButton
-          v-if="isEditMode"
           type="submit"
           class="!w-auto"
           :disabled="saving || loading || testing || !isFormValid"
           severity="primary"
-          :label="hasConfiguration ? $t('email_configuration.save_changes') : $t('email_configuration.create')"
+          :label="currentId ? $t('email_configuration.save_changes') : $t('email_configuration.create')"
         />
 
-        <!-- Botón de cancelar edición (solo visible en modo edición y hay configuración) -->
+        <!-- Botón de probar configuración -->
         <AppButton
-          v-if="isEditMode && hasConfiguration"
-          type="button"
-          class="!w-auto"
-          severity="secondary"
-          outlined
-          :label="$t('email_configuration.cancel_edit')"
-          @click="cancelEdit"
-          :disabled="saving || testing"
-        />
-
-        <!-- Botón de probar configuración (siempre visible si hay datos válidos) -->
-        <AppButton
-          v-if="hasConfiguration || isFormValid"
           type="button"
           :disabled="testing || saving || loading || !isFormValid"
-          class="!w-auto"
-          severity="info"
+          class="!w-auto ml-auto"
+          outlined
+          severity="contrast"
           :label="testing ? $t('email_configuration.testing') : $t('email_configuration.test_configuration')"
           @click="testConfiguration"
         />
 
-        <!-- Botón de restablecer (solo en modo edición) -->
         <AppButton
-          v-if="isEditMode"
           type="button"
           outlined
-          class="!w-auto ml-auto"
-          severity="secondary"
+          class="!w-auto"
+          severity="contrast"
           :disabled="saving || testing"
           :label="$t('email_configuration.reset')"
           @click="resetForm()"
