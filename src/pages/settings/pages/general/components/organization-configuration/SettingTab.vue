@@ -238,8 +238,9 @@ const onSubmit = handleSubmit(async (values) => {
         />
         <AppButton
           type="button"
-          class="!w-auto"
-          severity="secondary"
+          class="!w-auto ml-auto"
+          severity="contrast"
+          outlined
           :disabled="saving"
           :label="$t('settings.reset')"
           @click="resetForm()"

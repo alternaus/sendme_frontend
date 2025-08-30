@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 
 import PrimeButton from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
-import DataView from 'primevue/dataview'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import Toast from 'primevue/toast'
@@ -14,6 +13,7 @@ import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import { useDateFormat } from '@/composables/useDateFormat'
 import type { IApiKey } from '@/services/api-key/interfaces/api-key.interface'
 import { useApiKeysService } from '@/services/api-key/useApiKeyService'
 
@@ -24,6 +24,7 @@ const toast = useToast()
 const confirm = useConfirm()
 const { list, create, remove } = useApiKeysService()
 const { form, handleSubmit, resetForm, errors } = useApiKeysForm()
+const { formatDate } = useDateFormat()
 
 const rows = ref<IApiKey[]>([])
 const loading = ref(false)
@@ -45,10 +46,7 @@ const copyNow = async (k?: string | null) => {
   toast.add({ severity: 'info', summary: t('api_keys.copied'), detail: t('api_keys.copied'), life: 1500 })
 }
 
-const copy = async (k: string) => {
-  await navigator.clipboard.writeText(k)
-  toast.add({ severity: 'info', summary: t('api_keys.copied'), detail: t('api_keys.copied'), life: 1500 })
-}
+
 
 const onCreate = handleSubmit(async (values) => {
   creating.value = true
@@ -91,39 +89,87 @@ const confirmDelete = (row: IApiKey) => {
 </script>
 
 <template>
-  <div class="space-y-4">
-    <div v-if="rows.length<3" class="flex items-end gap-2">
-      <AppInput v-model="form.name.value" class="w-full" :errorMessage="errors.name"
-        :placeholder="t('api_keys.placeholder')" />
-      <AppButton class="w-auto!" :loading="creating" :label="t('api_keys.create')" @click="onCreate" />
+  <div class="max-w-4xl mx-auto">
+    <!-- Header Section -->
+    <div class="flex items-center gap-3 mb-2">
+      <h2 class="text-xl font-semibold text-neutral-900 dark:text-white">
+        {{ $t('api_keys.title') }}
+      </h2>
     </div>
 
-    <DataView dataKey="id" :value="rows" :loading="loading" layout="list" class="mt-8">
-      <template #list="{ items }">
-        <ul class="rounded-lg">
-          <li v-for="r in items" :key="r.id" class="flex items-center justify-between px-3 py-2 text-sm m-2">
-            <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="font-medium truncate max-w-[280px] md:max-w-[420px]">{{ r.name }}</span>
-                <Tag :value="r.isActive ? t('api_keys.active') : t('api_keys.inactive')"
-                  :severity="r.isActive ? 'success' : 'danger'" class="!py-0 !px-2 !text-xs" />
-              </div>
-              <div class="mt-0.5 text-xs text-muted-color font-mono truncate">
-                {{ mask(r.key) }} · {{ new Date(r.createdAt).toLocaleDateString() }}
-              </div>
-            </div>
-            <div class="flex shrink-0 gap-1">
-              <PrimeButton icon="pi pi-copy" text rounded severity="info" size="small" @click="copy(r.key)" />
-              <PrimeButton icon="pi pi-trash" severity="danger" text rounded size="small" @click="confirmDelete(r)" />
-            </div>
-          </li>
-        </ul>
-      </template>
+    <p class="text-neutral-600 dark:text-neutral-400 mb-8">
+      {{ $t('api_keys.description') }}
+    </p>
 
-      <template #empty>
-        <div class="text-center text-sm text-muted-color py-6">{{ t('api_keys.empty') }}</div>
-      </template>
-    </DataView>
+    <div class="space-y-2">
+      <div>
+        <AppInput v-model="form.name.value" class="w-full" :errorMessage="errors.name"
+          :placeholder="t('api_keys.placeholder')" />
+        <p class="text-xs text-neutral-500">
+          {{ $t('api_keys.input_description') }}
+        </p>
+      </div>
+
+      <div class="flex justify-end">
+        <AppButton class="!w-auto" :loading="creating" :label="t('api_keys.create')" @click="onCreate" />
+      </div>
+    </div>
+
+
+    <!-- API Keys List Section -->
+    <div class="space-y-2">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">
+          {{ $t('api_keys.existing_keys') }}
+        </h3>
+        <span class="text-sm text-neutral-500">
+          {{ rows.length }} {{ rows.length === 1 ? $t('api_keys.keys_count') : $t('api_keys.keys_count_plural') }}
+        </span>
+      </div>
+
+      <div v-if="loading" class="text-center py-8">
+        <div class="text-neutral-500">{{ $t('api_keys.loading') }}</div>
+      </div>
+
+      <div v-else-if="rows.length === 0" class="text-center py-8">
+        <div class="text-neutral-500">{{ $t('api_keys.no_keys') }}</div>
+      </div>
+
+      <div v-else class="space-y-3">
+        <div v-for="r in rows" :key="r.id"
+          class="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
+          <div class="flex items-center justify-between">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="font-medium text-neutral-900 dark:text-white text-base truncate">
+                  {{ r.name }}
+                </span>
+                <Tag :value="r.isActive ? t('api_keys.active') : t('api_keys.inactive')"
+                  :severity="r.isActive ? 'success' : 'danger'" class="!py-1 !px-2 !text-xs" />
+              </div>
+              <div class="text-sm text-neutral-600 dark:text-neutral-400 font-mono">
+                {{ mask(r.key) }}
+              </div>
+              <div class="text-xs text-neutral-500 mt-1">
+                {{ $t('api_keys.created_on') }} {{ formatDate(r.createdAt) }}
+              </div>
+            </div>
+
+            <div class="flex items-center ml-4">
+              <button @click="confirmDelete(r)"
+                class="p-2 text-red-500 dark:text-red-400 transition-colors"
+                title="Eliminar API key">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                  </path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <Dialog v-model:visible="showKeyDialog" modal :header="t('api_keys.created')" :style="{ width: '34rem' }"
       :draggable="false">

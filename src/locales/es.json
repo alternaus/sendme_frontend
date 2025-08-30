@@ -739,7 +739,16 @@
     }
   },
   "api_keys": {
-    "tab_header": "API Keys  ",
+    "tab_header": "API Keys",
+    "title": "Gestión de API Keys",
+    "description": "Cree y administre las claves de API para integraciones externas",
+    "existing_keys": "API Keys Existentes",
+    "keys_count": "API key configurada",
+    "keys_count_plural": "API keys configuradas",
+    "input_description": "Ingrese un nombre descriptivo para identificar el uso de esta API key",
+    "no_keys": "No hay API keys configuradas",
+    "loading": "Cargando...",
+    "created_on": "Creada el",
     "name": "Nombre",
     "placeholder": "p. ej., backoffice",
     "create": "Crear",
