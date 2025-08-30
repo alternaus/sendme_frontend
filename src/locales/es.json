@@ -448,6 +448,7 @@
     "copied": "Copiado",
     "last_name": "Apellido",
     "phone": "Teléfono",
+    "phone_placeholder": "Ingrese su número de teléfono",
     "email": "Correo electrónico",
     "address": "Dirección",
     "date": "Fecha",

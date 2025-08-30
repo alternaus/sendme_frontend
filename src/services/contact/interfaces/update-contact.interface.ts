@@ -7,11 +7,11 @@ export interface IUpdateContact {
   countryCode?: string
   status?: ContactStatus
   lastName?: string
-  birthDate?: Date
+  birthDate?: Date | null
   customValues?: IUpdateCustomValue[]
 }
 
 export interface IUpdateCustomValue {
   customFieldId: number
-  value: string
+  value: string | null // Permitir null para campos de fecha
 }

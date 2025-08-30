@@ -25,6 +25,7 @@
     "axios": "^1.7.9",
     "chart.js": "^4.5.0",
     "dayjs": "^1.11.13",
+    "libphonenumber-js": "^1.12.15",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",

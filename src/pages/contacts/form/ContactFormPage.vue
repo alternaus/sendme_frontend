@@ -10,7 +10,6 @@ import { useI18n } from 'vue-i18n'
 import BirthdayIcon from '@/assets/svg/birthday.svg?component'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
-import PhoneIcon from '@/assets/svg/phone.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
@@ -21,6 +20,7 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import AppPhoneInput from '@/components/molecules/phone-input/AppPhoneInput.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
@@ -30,13 +30,14 @@ import { type CustomValue,useFormContact } from '../composables/useContactForm'
 export default defineComponent({
   components: {
     AppInput,
+    AppPhoneInput,
     AppHeader,
     AppCard,
     AppButton,
     AppSelect,
     AppDatePicker,
     CredentialIcon,
-    PhoneIcon,
+
     EmailIcon,
     BirthdayIcon,
     StatusIcon,
@@ -98,7 +99,7 @@ export default defineComponent({
           contact.customValues?.forEach((custom) => {
             addCustomField({
               customFieldId: custom.customFieldId,
-              value: custom.value,
+              value: custom.value || '',
               id: custom.id,
             })
             addedFields.add(custom.customFieldId)
@@ -156,13 +157,13 @@ export default defineComponent({
           const payload = {
             ...values,
             birthDate: values.birthDate ? values.birthDate : new Date(),
-            customValues: values.customValues
+            customValues: values.customValues ? values.customValues
               .filter((customValue) => customValue.customFieldId !== undefined)
               .map((customValue) => ({
                 customFieldId: customValue.customFieldId as number,
                 value: customValue.value || '',
                 id: customValue.id,
-              })),
+              })) : [],
           }
 
 
@@ -213,13 +214,19 @@ export default defineComponent({
 
     const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>, index: number) => {
       if (custom.value) {
-        custom.value.value = value ? value.toISOString() : ''
+        custom.value.value = value ? value.toISOString() : null // Permitir null para fechas vacías
         handleCustomFieldChange(index, 'value')
       }
     }
 
     const goBack = () => {
       router.push('/contacts')
+    }
+
+    const handlePhoneInput = (phoneResult: { number: string; valid: boolean; country: { dialCode: string } }) => {
+      // El componente AppPhoneInput ya maneja la sincronización automáticamente
+      // pero podemos agregar lógica adicional aquí si es necesaria
+      console.log('Phone input changed:', phoneResult)
     }
 
     return {
@@ -237,6 +244,7 @@ export default defineComponent({
       goBack,
       handleDateChange,
       handleCustomFieldChange,
+      handlePhoneInput,
     }
   },
 })
@@ -269,19 +277,17 @@ export default defineComponent({
         </template>
       </AppInput>
 
-      <AppInput v-model="form.phone.value" type="tel" class="w-full rounded-md mt-3" :error-message="errors.phone"
-        :label="$t('general.phone')">
-        <template #icon>
-          <PhoneIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppInput>
-
-      <AppInput v-model="form.countryCode.value" type="text" class="w-full rounded-md mt-3"
-        :error-message="errors.countryCode" :label="$t('general.country_code')">
-        <template #icon>
-          <CredentialIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppInput>
+      <AppPhoneInput
+        v-model="form.phone.value"
+        v-model:countryCode="form.countryCode.value"
+        class="w-full mt-3"
+        :label="$t('general.phone')"
+        :placeholder="$t('general.phone_placeholder')"
+        :error-message="errors.phone || errors.countryCode"
+        default-country="CO"
+        :preferred-countries="['CO', 'US', 'MX', 'ES', 'PE', 'AR', 'CL', 'EC']"
+        @input="handlePhoneInput"
+      />
 
       <AppDatePicker v-model="form.birthDate.value" placeholder="Seleccione una fecha" class="w-full mt-3"
         :error-message="errors.birthDate" :label="$t('general.birth_date')">
@@ -326,9 +332,10 @@ export default defineComponent({
                 :error-message="getError(index, 'value')" @update:model-value="() => handleCustomFieldChange(index, 'value')" />
             </template>
             <template v-else-if="customFields.find((field) => field.id === custom.value.customFieldId)?.dataType === 'date'">
-              <AppDatePicker :model-value="custom.value.value ? new Date(custom.value.value) : new Date()"
+              <AppDatePicker :model-value="custom.value.value ? new Date(custom.value.value) : null"
                 @update:model-value="(val) => handleDateChange(val, custom, index)"
                 class="w-full rounded-md"
+                placeholder="Seleccione una fecha (opcional)"
                 :error-message="getError(index, 'value')" />
             </template>
             <template v-else>
