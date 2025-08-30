@@ -82,8 +82,71 @@ export default defineComponent({
 
 <template>
   <div class="w-full">
-    <FloatLabel v-if="$slots.icon">
-      <IconField>
+    <!-- Con label y FloatLabel -->
+    <template v-if="label">
+      <FloatLabel v-if="$slots.icon">
+        <IconField>
+          <InputIcon><slot name="icon" /></InputIcon>
+
+          <!-- Number -->
+          <InputNumber
+            v-if="isNumber"
+            :size="size"
+            v-model="internalNumber"
+            :inputId="id"
+            :placeholder="placeholder"
+            :useGrouping="numberUseGrouping"
+            :minFractionDigits="numberMinFractionDigits"
+            :maxFractionDigits="numberMaxFractionDigits"
+            :class="wrapperClass"
+            :inputClass="inputClasses"
+          />
+
+          <!-- Textual -->
+          <InputText
+            v-else
+            :id="id"
+            v-model="internalText"
+            :type="type"
+            :placeholder="placeholder"
+            :size="size"
+            class="!w-full !rounded-xl"
+            :class="{ 'p-invalid': errorMessage.length > 0 }"
+          />
+        </IconField>
+        <label class="text-sm" :for="id">{{ label }}</label>
+      </FloatLabel>
+
+      <FloatLabel v-else>
+        <InputNumber
+          v-if="isNumber"
+          v-model="internalNumber"
+          :inputId="id"
+           :size="size"
+          :placeholder="placeholder"
+          :useGrouping="numberUseGrouping"
+          :minFractionDigits="numberMinFractionDigits"
+          :maxFractionDigits="numberMaxFractionDigits"
+          :class="wrapperClass"
+          :inputClass="inputClasses"
+        />
+        <InputText
+          v-else
+          :id="id"
+          v-model="internalText"
+          :type="type"
+          :placeholder="placeholder"
+          :size="size"
+          class="!w-full !rounded-xl"
+          :class="{ 'p-invalid': errorMessage.length > 0 }"
+        />
+        <label class="text-sm" :for="id">{{ label }}</label>
+      </FloatLabel>
+    </template>
+
+    <!-- Sin label, solo input -->
+    <template v-else>
+      <IconField v-if="$slots.icon">
         <InputIcon><slot name="icon" /></InputIcon>
 
         <!-- Number -->
@@ -112,34 +175,32 @@ export default defineComponent({
           :class="{ 'p-invalid': errorMessage.length > 0 }"
         />
       </IconField>
-      <label class="text-sm" :for="id">{{ label }}</label>
-    </FloatLabel>
 
-    <FloatLabel v-else>
-      <InputNumber
-        v-if="isNumber"
-        v-model="internalNumber"
-        :inputId="id"
-         :size="size"
-        :placeholder="placeholder"
-        :useGrouping="numberUseGrouping"
-        :minFractionDigits="numberMinFractionDigits"
-        :maxFractionDigits="numberMaxFractionDigits"
-        :class="wrapperClass"
-        :inputClass="inputClasses"
-      />
-      <InputText
-        v-else
-        :id="id"
-        v-model="internalText"
-        :type="type"
-        :placeholder="placeholder"
-        :size="size"
-        class="!w-full !rounded-xl"
-        :class="{ 'p-invalid': errorMessage.length > 0 }"
-      />
-      <label class="text-sm" :for="id">{{ label }}</label>
-    </FloatLabel>
+      <template v-else>
+        <InputNumber
+          v-if="isNumber"
+          v-model="internalNumber"
+          :inputId="id"
+           :size="size"
+          :placeholder="placeholder"
+          :useGrouping="numberUseGrouping"
+          :minFractionDigits="numberMinFractionDigits"
+          :maxFractionDigits="numberMaxFractionDigits"
+          :class="wrapperClass"
+          :inputClass="inputClasses"
+        />
+        <InputText
+          v-else
+          :id="id"
+          v-model="internalText"
+          :type="type"
+          :placeholder="placeholder"
+          :size="size"
+          class="!w-full !rounded-xl"
+          :class="{ 'p-invalid': errorMessage.length > 0 }"
+        />
+      </template>
+    </template>
 
     <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>

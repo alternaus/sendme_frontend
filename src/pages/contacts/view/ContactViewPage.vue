@@ -142,7 +142,7 @@ export default defineComponent({
     })
 
     const formattedCustomFields = computed(() => {
-      if (!contact.value || !customFields.value.length) return []
+      if (!contact.value || !customFields.value.length || !contact.value.customValues) return []
 
       return contact.value.customValues.map((customValue) => {
         const field = customFields.value.find((f) => f.id === customValue.customFieldId)

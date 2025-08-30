@@ -57,7 +57,6 @@ export const useSendService = () => {
     }
   }
 
-  //Servicio para enviar un sms a todos los contactos
   const sendSmsToAllContacts = async (message: IMessage) => {
     try {
 

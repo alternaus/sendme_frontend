@@ -1,7 +1,6 @@
 <template>
   <AppHeader :text="$t('contact.import_contacts')" :icon="IconTypes.IMPORT" :actions="[]" />
 
-
   <AppCard>
     <template #content>
       <div class="flex justify-content-center mb-4">
