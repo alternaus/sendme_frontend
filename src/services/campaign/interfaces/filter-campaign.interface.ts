@@ -1,6 +1,7 @@
 export interface IFilterCampaign {
+  search?: string;
   name?: string;
-  status?: 'active' | 'inactive';
+  status?: 'active' | 'inactive' | 'paused' | 'finished';
   startDate?: string;
   endDate?: string;
   channelId?: number;

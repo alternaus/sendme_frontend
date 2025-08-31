@@ -15,20 +15,29 @@ const i18nStore = useI18nStore()
 const menu = ref<InstanceType<typeof PrimeMenu> | null>(null)
 const target = ref<HTMLElement | null>(null)
 
+// Mapeo de idiomas a códigos de país para las banderas
+const languageCountryMap = {
+  en: 'us', // Inglés -> Bandera de Estados Unidos
+  es: 'es', // Español -> Bandera de España
+}
+
 const items = computed<MenuItem[]>(() => [
   {
     label: t('languages.en'),
-    icon: i18nStore.language === 'en' ? 'pi pi-check' : '',
+    icon: languageCountryMap.en,
     command: () => i18nStore.changeLanguage('en'),
   },
   {
     label: t('languages.es'),
-    icon: i18nStore.language === 'es' ? 'pi pi-check' : '',
+    icon: languageCountryMap.es,
     command: () => i18nStore.changeLanguage('es'),
   },
 ])
 
 const tooltipText = computed(() => t('languages.language'))
+
+// Bandera del idioma actual
+const currentFlag = computed(() => languageCountryMap[i18nStore.language])
 
 function openMenu(event: Event) {
   menu.value?.toggle(event)
@@ -51,6 +60,22 @@ const buttonSeverity = computed(() => (themeStore.isDark ? 'primary' : 'secondar
       v-tooltip.bottom="tooltipText"
       @click="openMenu"
     />
-    <PrimeMenu ref="menu" :model="items" popup />
+
+    <PrimeMenu ref="menu" :model="items" popup>
+      <template #item="{ item }">
+        <div class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+          <span
+            v-if="item.icon === currentFlag"
+            class="pi pi-check w-4"
+          ></span>
+          <span
+            v-else
+            class="w-4"
+          ></span>
+          <span :class="['country-flag', item.icon, 'text-base']"></span>
+          <span class="font-medium">{{ item.label }}</span>
+        </div>
+      </template>
+    </PrimeMenu>
   </div>
 </template>

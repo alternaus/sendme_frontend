@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @custom-variant dark (&:where(.dark, .dark *));
 @import 'primeicons/primeicons.css';
+@import './country-flags.css';
 
 @font-face {
   font-family: 'Quicksand';

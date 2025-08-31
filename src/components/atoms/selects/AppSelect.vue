@@ -15,7 +15,7 @@ export default defineComponent({
   },
   props: {
     modelValue: {
-      type: [String, Number,Boolean, null],
+      type: [String, Number, Boolean, null],
       default: null,
     },
     options: {
@@ -46,6 +46,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {

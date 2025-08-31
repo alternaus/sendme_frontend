@@ -225,7 +225,6 @@ initializeDefaultCountry()
 </template>
 
 <style lang="scss" scoped>
-@use "./scss/country-flags.scss";
 
 :deep(.p-inputgroup) {
   .p-select {

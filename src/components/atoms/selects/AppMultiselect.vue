@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent, type PropType, ref, watch } from 'vue'
 
-import InputGroup from 'primevue/inputgroup'
-import InputGroupAddon from 'primevue/inputgroupaddon'
+import { IconField, InputIcon } from 'primevue'
+import FloatLabel from 'primevue/floatlabel'
 import MultiSelect, { type MultiSelectChangeEvent } from 'primevue/multiselect'
 
 import type { SelectOption } from './types/select-option.types'
@@ -11,8 +11,9 @@ export default defineComponent({
   name: 'AppMultiselect',
   components: {
     MultiSelect,
-    InputGroup,
-    InputGroupAddon,
+    FloatLabel,
+    IconField,
+    InputIcon,
   },
   props: {
     modelValue: {
@@ -26,6 +27,10 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: 'Seleccione...',
+    },
+    label: {
+      type: String,
+      default: '',
     },
     showClear: {
       type: Boolean,
@@ -74,11 +79,30 @@ export default defineComponent({
 
 <template>
   <div class="w-full min-w-0">
-    <InputGroup v-if="$slots.icon">
-      <InputGroupAddon class="!rounded-l-xl !border-r-0">
-        <slot name="icon"></slot>
-      </InputGroupAddon>
+    <!-- Con ícono -->
+    <FloatLabel v-if="$slots.icon">
+      <IconField class="w-full">
+        <InputIcon>
+          <slot name="icon" />
+        </InputIcon>
+        <MultiSelect
+          v-model="selectedValues"
+          :options="options"
+          optionLabel="name"
+          optionValue="value"
+          :placeholder="placeholder"
+          :showClear="showClear"
+          size="small"
+          class="w-full !pl-10 !rounded-xl"
+          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+          @change="handleChange"
+        />
+      </IconField>
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
 
+    <!-- Sin ícono -->
+    <FloatLabel v-else>
       <MultiSelect
         v-model="selectedValues"
         :options="options"
@@ -86,31 +110,16 @@ export default defineComponent({
         optionValue="value"
         :placeholder="placeholder"
         :showClear="showClear"
-        class="w-full min-w-0 !rounded-r-xl !border-l-0"
         size="small"
+        class="w-full !rounded-xl"
         :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
         @change="handleChange"
       />
-    </InputGroup>
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
 
-    <MultiSelect
-      v-else
-      v-model="selectedValues"
-      :options="options"
-      optionLabel="name"
-      optionValue="value"
-      :placeholder="placeholder"
-      :showClear="showClear"
-      class="w-full min-w-0 !rounded-xl"
-      size="small"
-      :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-      @change="handleChange"
-    />
-
-    <div
-      v-if="showErrorMessage && errorMessage.length"
-      class="text-red-400 dark:text-red-300 p-0 m-0"
-    >
+    <!-- Mensaje de error -->
+    <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
       <small>{{ errorMessage }}</small>
     </div>
   </div>
