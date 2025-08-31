@@ -4,6 +4,7 @@ import type { IPaginationResponse } from '../interfaces/pagination-response.inte
 import type { ICampaign } from './interfaces/campaign.interface'
 import type { ICreateCampaign } from './interfaces/create-campaign.interface'
 import type { IFilterCampaign } from './interfaces/filter-campaign.interface'
+import type { ITestCampaignRequest, ITestCampaignResponse, ITestRulesRequest, ITestRulesResponse } from './interfaces/test-rules.interface'
 import type { IUpdateCampaign } from './interfaces/update-campaign.interface'
 
 
@@ -32,11 +33,21 @@ export const useCampaignService = () => {
     return privateApi.delete(`/campaigns/${id}`)
   }
 
+  const testCampaignRules = async (testRules: ITestRulesRequest) => {
+    return privateApi.post<ITestRulesResponse, ITestRulesRequest>('/campaigns/test-rules', testRules)
+  }
+
+  const testCampaign = async (testRequest: ITestCampaignRequest) => {
+    return privateApi.post<ITestCampaignResponse, ITestCampaignRequest>('/campaigns/test', testRequest)
+  }
+
   return {
     getCampaigns,
     getCampaign,
     createCampaign,
     updateCampaign,
-    deleteCampaign
+    deleteCampaign,
+    testCampaignRules,
+    testCampaign
   }
 }
