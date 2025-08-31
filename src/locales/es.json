@@ -656,8 +656,42 @@
       "insert": "Insertar"
     },
     "errors": {
-      "translate_failed": "Error en la traducción. Por favor intenta de nuevo."
+      "translate_failed": "Error en la traducción. Por favor intenta de nuevo.",
+      "generate_failed": "Error al generar contenido. Por favor intenta de nuevo."
     }
+  },
+  "bulk_sms": {
+    "title": "Envío Masivo",
+    "selected_contacts_info": "Contactos seleccionados",
+    "contacts_count": "{count} contactos válidos de {total} seleccionados",
+    "contacts_without_phone": "{count} contactos no tienen número de teléfono",
+    "contacts_without_email": "{count} contactos no tienen dirección de email",
+    "selected_contacts": "Contactos Seleccionados",
+    "all_contacts": "Todos los Contactos",
+    "manual_message": "Mensaje Manual",
+    "ai_generation": "Generar con IA",
+    "message_content": "Contenido del Mensaje",
+    "message_placeholder": "Escribe tu mensaje SMS aquí...",
+    "message_too_long": "El mensaje excede el límite de caracteres",
+    "ai_prompt_placeholder": "Describe el tipo de mensaje que quieres generar (ej: mensaje promocional, recordatorio, saludo, etc.)",
+    "ai_prompt_required": "Debes ingresar una instrucción para generar el contenido",
+    "content_generated": "Contenido generado exitosamente",
+    "content_inserted": "Contenido insertado en el mensaje",
+    "sending": "Enviando...",
+    "send_messages": "Enviar SMS",
+    "send_emails": "Enviar Emails",
+    "messages_sent_successfully": "¡{count} mensajes enviados exitosamente!",
+    "send_bulk_sms": "Envío Masivo SMS",
+    "no_contacts_selected": "Debes seleccionar al menos un contacto"
+  },
+  "contact_view": {
+    "title": "Información del Contacto",
+    "important_dates": "Fechas Importantes",
+    "created_at": "Creado el",
+    "updated_at": "Actualizado el",
+    "notes": "Notas",
+    "add_notes": "Agregar notas sobre el contacto",
+    "notes_placeholder": "Escribe observaciones, comentarios o información adicional sobre este contacto..."
   },
   "email_configuration": {
     "tab_header": "Configuración de Email",

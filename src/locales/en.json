@@ -655,8 +655,42 @@
       "insert": "Insert"
     },
     "errors": {
-      "translate_failed": "Translation failed. Please try again."
+      "translate_failed": "Translation failed. Please try again.",
+      "generate_failed": "Failed to generate content. Please try again."
     }
+  },
+  "bulk_sms": {
+    "title": "Bulk Messaging",
+    "selected_contacts_info": "Selected contacts",
+    "contacts_count": "{count} valid contacts out of {total} selected",
+    "contacts_without_phone": "{count} contacts don't have phone numbers",
+    "contacts_without_email": "{count} contacts don't have email addresses",
+    "selected_contacts": "Selected Contacts",
+    "all_contacts": "All Contacts",
+    "manual_message": "Manual Message",
+    "ai_generation": "Generate with AI",
+    "message_content": "Message Content",
+    "message_placeholder": "Write your SMS message here...",
+    "message_too_long": "Message exceeds character limit",
+    "ai_prompt_placeholder": "Describe the type of message you want to generate (e.g.: promotional message, reminder, greeting, etc.)",
+    "ai_prompt_required": "You must enter instructions to generate content",
+    "content_generated": "Content generated successfully",
+    "content_inserted": "Content inserted into message",
+    "sending": "Sending...",
+    "send_messages": "Send SMS",
+    "send_emails": "Send Emails",
+    "messages_sent_successfully": "{count} messages sent successfully!",
+    "send_bulk_sms": "Bulk SMS Sending",
+    "no_contacts_selected": "You must select at least one contact"
+  },
+  "contact_view": {
+    "title": "Contact Information",
+    "important_dates": "Important Dates",
+    "created_at": "Created on",
+    "updated_at": "Updated on",
+    "notes": "Notes",
+    "add_notes": "Add notes about the contact",
+    "notes_placeholder": "Write observations, comments or additional information about this contact..."
   },
   "email_configuration": {
     "tab_header": "Email configuration",

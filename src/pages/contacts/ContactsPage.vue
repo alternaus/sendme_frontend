@@ -17,11 +17,14 @@ import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import allCountriesData from '@/components/molecules/phone-input/all-countries'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { useContactService } from '@/services/contact/useContactService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 
+import BulkSmsModal from './components/BulkSmsModal.vue'
 import CardFilterContacts from './components/CardFilterContacts.vue'
+import ContactViewModal from './components/ContactViewModal.vue'
 import { useContactFilter } from './composables/useContactFilter'
 
 const { t } = useI18n()
@@ -42,8 +45,20 @@ const contactsMeta = ref<IPaginationMeta>({
   totalRecords: 0,
 })
 const selectedContact = ref<IContact | null>(null)
+const selectedContacts = ref<IContact[]>([])
+const showBulkSmsModal = ref(false)
+const showContactViewModal = ref(false)
+const contactToView = ref<IContact | null>(null)
 const toast = useToast()
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+// Función para obtener información del país por código de país (dialCode)
+const getCountryInfo = (dialCode: string) => {
+  return allCountriesData.find(country => country.dialCode === dialCode)
+}
+
+// Función para convertir string a lowercase para las clases CSS de banderas
+const toLowerCase = (str: string) => str.toLowerCase()
 
 const fetchContacts = async ({ pageSize = 1, limitSize = 10 } = {}) => {
   page.value = pageSize
@@ -103,8 +118,14 @@ watch([search, name, countryCode, status, origin], () => {
   }, 300)
 }, { deep: true })
 
-const handleSelectionChange = (selectedRow: IContact) => {
-  selectedContact.value = selectedRow
+const handleSelectionChange = (selectedRow: IContact | IContact[]) => {
+  if (Array.isArray(selectedRow)) {
+    selectedContacts.value = selectedRow
+    selectedContact.value = selectedRow.length === 1 ? selectedRow[0] : null
+  } else {
+    selectedContact.value = selectedRow
+    selectedContacts.value = selectedRow ? [selectedRow] : []
+  }
 }
 
 const handleDelete = async () => {
@@ -113,6 +134,7 @@ const handleDelete = async () => {
   try {
     await deleteContact(selectedContact.value.id)
     selectedContact.value = null
+    selectedContacts.value = []
     toast.add({
       severity: 'success',
       summary: t('general.success'),
@@ -130,22 +152,64 @@ const handleDelete = async () => {
   }
 }
 
+const handleRowDoubleClick = (contact: IContact) => {
+  if (contact?.id) {
+    push(`/contacts/edit/${contact.id}`)
+  }
+}
+
+const handleRowView = (contact: IContact) => {
+  contactToView.value = contact
+  showContactViewModal.value = true
+}
+
+const handleEditContact = (contact: IContact) => {
+  if (contact?.id) {
+    push(`/contacts/edit/${contact.id}`)
+  }
+}
+
+const openBulkSmsModal = () => {
+  if (selectedContacts.value.length === 0) {
+    toast.add({
+      severity: 'warn',
+      summary: t('general.warning'),
+      detail: t('bulk_sms.no_contacts_selected'),
+      life: 3000,
+    })
+    return
+  }
+  showBulkSmsModal.value = true
+}
+
+const handleBulkSmsSuccess = () => {
+  selectedContacts.value = []
+  selectedContact.value = null
+  // Opcional: recargar contactos para actualizar cualquier estado
+  // fetchContacts({ pageSize: page.value, limitSize: limit.value })
+}
+
 const headerActions = computed(() => [
   {
     label: t('actions.create'),
     onClick: () => push('/contacts/create'),
     type: ActionTypes.CREATE,
   },
+  ...(selectedContacts.value.length > 0
+    ? [
+        {
+          label: t('bulk_sms.send_bulk_sms'),
+          onClick: openBulkSmsModal,
+          type: ActionTypes.BULK_SMS,
+        },
+      ]
+    : []),
   ...(selectedContact.value
     ? [
         { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
         {
           label: t('actions.view'),
-          onClick: () => {
-            if (selectedContact.value?.id) {
-              push(`/contacts/view/${selectedContact.value?.id}`)
-            }
-          },
+          onClick: () => handleRowView(selectedContact.value!),
           type: ActionTypes.VIEW,
         },
       ]
@@ -215,11 +279,13 @@ const headerActions = computed(() => [
     :pageSize="contactsMeta.limit"
     :pageCurrent="contactsMeta.currentPage"
     :totalItems="contactsMeta.totalRecords"
-    :multipleSelection="false"
+    :multipleSelection="true"
     :loading="loading"
     textTotalItems="contact.contacts"
     @selection-change="handleSelectionChange"
     @page-change="fetchContacts"
+    @row-double-click="handleRowDoubleClick"
+    @row-view="handleRowView"
   >
     <template #header-name>
       <div class="flex items-center">
@@ -262,6 +328,22 @@ const headerActions = computed(() => [
         <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
       </div>
     </template>
+        <template #custom-phone="{ data }">
+      <div class="flex justify-center items-center gap-2">
+        <template v-if="data.phone && data.countryCode">
+          <span
+            v-if="getCountryInfo(data.countryCode)"
+            :class="[
+              'country-flag',
+              toLowerCase(getCountryInfo(data.countryCode)?.iso2 || ''),
+              'inline-block'
+            ]"
+          ></span>
+          <span>+{{ data.countryCode }} {{ data.phone }}</span>
+        </template>
+        <span v-else>-</span>
+      </div>
+    </template>
     <template #custom-phoneNumber="{ data }">
       <div class="flex justify-center">
         {{ data.phoneNumber || '-' }}
@@ -273,4 +355,17 @@ const headerActions = computed(() => [
       </div>
     </template>
   </AppTable>
+
+  <!-- Modales -->
+  <BulkSmsModal
+    v-model:visible="showBulkSmsModal"
+    :selectedContacts="selectedContacts"
+    @message-sent="handleBulkSmsSuccess"
+  />
+
+  <ContactViewModal
+    v-model:visible="showContactViewModal"
+    :contact="contactToView"
+    @edit-contact="handleEditContact"
+  />
 </template>

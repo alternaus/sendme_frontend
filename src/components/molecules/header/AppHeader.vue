@@ -4,10 +4,10 @@ import {
   type FunctionalComponent,
   type PropType,
   ref,
-  type SVGAttributes,
 } from 'vue'
 
-import EyeIcon from '@/assets/svg/eye.svg?component'
+import PrimeButton from 'primevue/button'
+
 import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
@@ -22,6 +22,7 @@ import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
+import ViewIcon from '@/assets/svg/table-actions/view.svg?component'
 import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppNotificationBell from '@/components/atoms/notifications/AppNotificationBell.vue'
@@ -32,13 +33,15 @@ import AppProfile from '@/components/molecules/profile/AppProfile.vue'
 import { ActionTypes } from './enums/action-types.enum'
 import { IconTypes } from './enums/icon-types.enum'
 
-export const ActionIcons: Record<ActionTypes, FunctionalComponent<SVGAttributes>> = {
+export const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.CREATE]: CreateIcon,
   [ActionTypes.EDIT]: EditIcon,
   [ActionTypes.DELETE]: DeleteIcon,
   [ActionTypes.EXPORT]: ExportIcon,
   [ActionTypes.IMPORT]: ImportIcon,
-  [ActionTypes.VIEW]: EyeIcon,
+  [ActionTypes.VIEW]: ViewIcon,
+  [ActionTypes.SEND]: SendIcon,
+  [ActionTypes.BULK_SMS]: SendIcon,
 }
 
 export const IconComponents: Record<IconTypes, FunctionalComponent> = {
@@ -62,7 +65,8 @@ export default defineComponent({
     AppLanguage,
     AppBreadcrumb,
     AppDarkMode,
-    AppNotificationBell
+    AppNotificationBell,
+    PrimeButton
   },
   props: {
     icon: {
@@ -79,6 +83,7 @@ export default defineComponent({
           type: ActionTypes
           label: string
           onClick: (id?: number) => void
+          icon?: string
         }>
       >,
       required: false,
@@ -108,17 +113,20 @@ export default defineComponent({
   setup() {
     const searchQuery = ref('')
 
-    const getActionClass = (actionType: ActionTypes) => {
-      return actionType === ActionTypes.DELETE
-        ? 'bg-red-500 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-700'
-        : 'bg-[var(--p-primary-color)] hover:bg-yellow-400 text-black'
+    const getActionSeverity = (actionType: ActionTypes) => {
+      return actionType === ActionTypes.DELETE ? 'danger' : undefined
+    }
+
+    const getActionSize = (): 'small' | 'large' | undefined => {
+      return 'small'
     }
 
     return {
       searchQuery,
-      ActionIcons,
+      ActionIconComponents,
       IconComponents,
-      getActionClass,
+      getActionSeverity,
+      getActionSize,
     }
   },
 })
@@ -164,15 +172,21 @@ export default defineComponent({
         :placeholder="placeholder"
       />
       <div class="flex gap-2 mx-2">
-        <button
+        <PrimeButton
           v-for="(action, index) in actions"
           :key="index"
           v-tooltip.bottom="action.label"
           @click="action.onClick(selectedId)"
-          :class="`p-2 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed, cursor-pointer ${getActionClass(action.type)}`"
+          :severity="getActionSeverity(action.type)"
+          :size="getActionSize()"
+          rounded
+          class="!w-10 !h-10 flex-shrink-0"
         >
-          <component :is="ActionIcons[action.type]" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-        </button>
+          <component
+            :is="ActionIconComponents[action.type]"
+            class="w-5 h-5"
+          />
+        </PrimeButton>
       </div>
     </div>
   </div>

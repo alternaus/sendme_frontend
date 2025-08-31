@@ -84,10 +84,10 @@ const tabOptions = computed(() => [
     <button
       type="button"
       :title="buttonTitle"
-      class="w-6 h-6 rounded-md text-xs flex items-center justify-center bg-surface-200 dark:bg-surface-800 hover:bg-surface-300 dark:hover:bg-surface-700 transition-colors"
+      class="w-6 h-6 rounded-md cursor-pointer text-xs flex items-center justify-center bg-surface-200 dark:bg-surface-800 hover:bg-surface-300 dark:hover:bg-surface-700 transition-colors"
       @click="open"
     >
-      <IconSparkles class="w-4 h-4 text-[var(--p-primary-color)]" />
+      <IconSparkles class="w-4 h-4 text-[var(--p-primary-color)] fill-[var(--p-primary-color)]" />
     </button>
 
     <Dialog

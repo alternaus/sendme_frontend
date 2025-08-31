@@ -5,4 +5,6 @@ export enum ActionTypes {
   EXPORT = 'EXPORT',
   IMPORT = 'IMPORT',
   VIEW = 'VIEW',
+  SEND = 'SEND',
+  BULK_SMS = 'BULK_SMS',
 }

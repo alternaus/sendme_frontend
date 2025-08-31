@@ -86,7 +86,7 @@ watch(internalValue, value => {
       <FloatLabel v-if="$slots.icon || aiAttach">
         <IconField>
           <InputIcon>
-            <slot name="icon" />
+            <slot v-if="!aiAttach" name="icon" />
             <template v-if="aiAttach">
               <AppAIGenerate
                 type="sms"

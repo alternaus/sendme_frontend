@@ -216,7 +216,10 @@ export default defineComponent({
     }
 
     const handlePhoneInput = (phoneResult: { number: string; valid: boolean; country: { dialCode: string } }) => {
-      console.log('Phone input changed:', phoneResult)
+      // Asegurar que el código de país se guarde correctamente
+      if (phoneResult.country?.dialCode) {
+        form.countryCode.value = phoneResult.country.dialCode
+      }
     }
 
     return {

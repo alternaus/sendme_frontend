@@ -123,12 +123,13 @@ const fullPhoneNumber = computed(() => {
   return `+${selectedCountry.value.dialCode}${rawPhoneNumber.value}`
 })
 
-watch(fullPhoneNumber, (newValue) => {
+watch(rawPhoneNumber, (newValue) => {
+  // Emitir solo el número local sin código de país
   emit('update:modelValue', newValue)
 
   if (selectedCountry.value && rawPhoneNumber.value) {
     emit('input', {
-      number: newValue,
+      number: fullPhoneNumber.value, // Número completo para el evento input
       valid: isCurrentNumberValid.value,
       country: {
         dialCode: selectedCountry.value.dialCode
@@ -148,23 +149,23 @@ watch(selectedCountry, (newCountry) => {
 })
 
 watch(() => props.modelValue, (newValue) => {
-  if (newValue && newValue !== fullPhoneNumber.value) {
+  if (newValue && newValue !== rawPhoneNumber.value) {
+    // Si el valor viene con + y código de país, parsearlo
+    if (newValue.startsWith('+')) {
+      const { countryCode, localNumber } = parseFullPhoneNumber(newValue)
 
-    const { countryCode, localNumber } = parseFullPhoneNumber(newValue)
-
-    if (countryCode) {
-
-      const country = countries.value.find(c => c.iso2.toLowerCase() === countryCode.toLowerCase())
-      if (country) {
-        selectedCountry.value = country
-        updatePhoneNumber(localNumber, country.iso2)
-        return
+      if (countryCode) {
+        const country = countries.value.find(c => c.iso2.toLowerCase() === countryCode.toLowerCase())
+        if (country) {
+          selectedCountry.value = country
+          updatePhoneNumber(localNumber, country.iso2)
+          return
+        }
       }
     }
 
-
-    const cleanNumber = newValue.replace(/^\+/, '')
-    updatePhoneNumber(cleanNumber, selectedCountry.value?.iso2)
+    // Si es solo un número local, usarlo directamente
+    updatePhoneNumber(newValue, selectedCountry.value?.iso2)
   }
 }, { immediate: true })
 

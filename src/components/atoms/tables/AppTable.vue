@@ -83,7 +83,7 @@ export default defineComponent({
       default: true,
     },
   },
-  emits: ['selection-change', 'page-change'],
+  emits: ['selection-change', 'page-change', 'row-double-click', 'row-view'],
   setup(props, { emit }) {
     const rowSizes = [10, 20, 50, 100]
     const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[] | null>([])
@@ -92,9 +92,13 @@ export default defineComponent({
 
     const menuModel = ref([
       {
-        label: 'Custom',
-        icon: 'pi pi-fw pi-search',
-        command: () => console.log('custom'),
+        label: 'Ver',
+        icon: 'pi pi-fw pi-eye',
+        command: () => {
+          if (selectedRow.value && !Array.isArray(selectedRow.value)) {
+            emit('row-view', selectedRow.value)
+          }
+        },
         class: 'text-xs',
       },
     ])
@@ -174,10 +178,15 @@ export default defineComponent({
       })
     }
 
+    const handleRowDoubleClick = (event: { data: Record<string, unknown> }) => {
+      emit('row-double-click', event.data)
+    }
+
     return {
       selectedRow,
       handleRowSelect,
       handlePageChange,
+      handleRowDoubleClick,
       isMdScreen,
       menuModel,
       contextMenuRef,
@@ -203,6 +212,7 @@ export default defineComponent({
           size="small"
           v-model:contextMenuSelection="selectedRow"
           @rowContextmenu="onRowContextMenu"
+          @rowDblclick="handleRowDoubleClick"
           :selectionMode="multipleSelection ? 'multiple' : 'single'"
           removableSort
           tableStyle="min-width: 50rem"
