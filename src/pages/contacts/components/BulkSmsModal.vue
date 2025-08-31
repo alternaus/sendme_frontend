@@ -35,13 +35,11 @@ const { t } = useI18n()
 const toast = useToast()
 const { sendBatchMessage } = useSendService()
 
-// Form data
 const selectedChannel = ref<MessageChannel>(MessageChannel.SMS)
 const message = ref('')
 const subject = ref('')
 const isSending = ref(false)
 
-// Constants for SMS
 const MAX_SINGLE_MESSAGE = 160
 const MAX_CONCATENATED_MESSAGE = 153
 const MAX_CHARACTERS = 459
@@ -51,13 +49,11 @@ const dialogVisible = computed({
   set: (value: boolean) => emit('update:visible', value)
 })
 
-// Channel options
 const channelOptions = computed(() => [
   { name: t('general.sms'), value: MessageChannel.SMS },
   { name: t('general.email_channel'), value: MessageChannel.EMAIL },
 ])
 
-// Contact filtering based on channel
 const validContacts = computed(() => {
   if (selectedChannel.value === MessageChannel.SMS) {
     return props.selectedContacts.filter(contact => contact.phone)
@@ -69,11 +65,8 @@ const validContacts = computed(() => {
 const contactNumbers = computed(() => {
   if (selectedChannel.value === MessageChannel.SMS) {
     return validContacts.value.map(contact => {
-      // El número ya viene con formato +57XXXXXXXXX
-      // Remover el + y el código de país para obtener solo el número local
       let phoneNumber = contact.phone!.replace(/^\+/, '')
 
-      // Remover el código de país del inicio del número
       if (contact.countryCode && phoneNumber.startsWith(contact.countryCode)) {
         phoneNumber = phoneNumber.substring(contact.countryCode.length)
       }
@@ -85,13 +78,11 @@ const contactNumbers = computed(() => {
   }
 })
 
-// Obtener código de país más común para SMS
 const countryCode = computed(() => {
   if (selectedChannel.value !== MessageChannel.SMS || validContacts.value.length === 0) {
     return undefined
   }
 
-  // Tomar el código de país más frecuente entre los contactos seleccionados
   const countryCodes = validContacts.value.map(contact => contact.countryCode)
   const countryFreq = countryCodes.reduce((acc, code) => {
     acc[code] = (acc[code] || 0) + 1
@@ -103,7 +94,6 @@ const countryCode = computed(() => {
   )
 })
 
-// Message info for SMS
 const messageInfo = computed(() => {
   const length = message.value.length
   if (selectedChannel.value !== MessageChannel.SMS) {
@@ -242,7 +232,6 @@ const closeDialog = () => {
 
 
 
-      <!-- Campo de asunto para emails -->
       <div v-if="selectedChannel === MessageChannel.EMAIL">
         <AppInput
           v-model="subject"
@@ -254,9 +243,7 @@ const closeDialog = () => {
         </AppInput>
       </div>
 
-      <!-- Campo de mensaje -->
       <div>
-        <!-- AppTextarea para SMS -->
         <AppTextarea
           v-if="selectedChannel === MessageChannel.SMS"
           v-model="message"
@@ -272,7 +259,6 @@ const closeDialog = () => {
           <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
         </AppTextarea>
 
-        <!-- AppEditor para emails -->
         <AppEditor
           v-else
           v-model="message"
@@ -283,16 +269,14 @@ const closeDialog = () => {
           class="w-full"
         />
 
-        <!-- Información del mensaje -->
         <div class="flex justify-center mt-2">
           <small class="text-sm text-gray-500 dark:text-gray-400">
             {{ messageInfo }}
           </small>
         </div>
 
-        <!-- Advertencia para SMS muy largos -->
         <div v-if="selectedChannel === MessageChannel.SMS && messageLength > MAX_CHARACTERS" class="text-center mt-1">
-          <span class="text-red-500 text-xs">
+          <span class="text-red-500 dark:text-red-400 text-xs">
             {{ t('bulk_sms.message_too_long') }}
           </span>
         </div>

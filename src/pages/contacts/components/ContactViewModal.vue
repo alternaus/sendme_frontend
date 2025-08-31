@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -7,9 +7,13 @@ import Divider from 'primevue/divider'
 
 import { useI18n } from 'vue-i18n'
 
+import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
 import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import { useDateFormat } from '@/composables/useDateFormat'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
+import type { ICustomField } from '@/services/custom-field/interfaces/custom-field.interface'
+import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
 interface Props {
   visible: boolean
@@ -25,6 +29,11 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
+const { formatDate } = useDateFormat()
+const { getCustomFields } = useCustomFieldService()
+
+const customFields = ref<ICustomField[]>([])
+const isLoadingCustomFields = ref(false)
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -43,6 +52,80 @@ const editContact = () => {
   }
 }
 
+const loadCustomFields = async () => {
+  if (isLoadingCustomFields.value || !props.contact?.customValues?.length) return
+
+  isLoadingCustomFields.value = true
+  try {
+    const response = await getCustomFields()
+    customFields.value = response
+  } catch (error) {
+    console.error('Error loading custom fields:', error)
+    customFields.value = []
+  } finally {
+    isLoadingCustomFields.value = false
+  }
+}
+
+const getCustomFieldInfo = (customFieldId: number) => {
+  return customFields.value.find(field => field.id === customFieldId)
+}
+
+const getCustomFieldName = (customFieldId: number): string => {
+  const field = getCustomFieldInfo(customFieldId)
+  return field?.fieldName || `${t('general.field')} #${customFieldId}`
+}
+
+const getCustomFieldDataType = (customFieldId: number): string => {
+  const field = getCustomFieldInfo(customFieldId)
+  return field?.dataType || 'string'
+}
+
+// Computed para obtener todos los custom fields
+const allCustomFields = computed(() => {
+  if (!props.contact?.customValues || customFields.value.length === 0) return []
+  return props.contact.customValues
+})
+
+const formatCustomFieldValue = (value: string | null, customFieldId: number): string => {
+  if (!value) return t('general.not_defined')
+
+  const dataType = getCustomFieldDataType(customFieldId)
+
+  if (dataType === 'date') {
+    try {
+      return formatDate(value)
+    } catch {
+      return value
+    }
+  }
+
+  return value
+}
+
+const getCustomFieldIcon = (customFieldId: number): string => {
+  const dataType = getCustomFieldDataType(customFieldId)
+
+  switch (dataType) {
+    case 'date':
+      return 'pi pi-calendar'
+    case 'number':
+      return 'pi pi-hashtag'
+    case 'string':
+    default:
+      return 'pi pi-file-edit'
+  }
+}
+
+const getAvatarInitials = computed(() => {
+  if (!props.contact?.name) return '?'
+  return props.contact.name
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('')
+})
+
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
@@ -56,6 +139,19 @@ const copyToClipboard = async (text: string) => {
     document.body.removeChild(textArea)
   }
 }
+
+// Cargar custom fields solo cuando el contacto cambie y tenga customValues
+watch(
+  () => props.contact,
+  (newContact) => {
+    if (newContact?.customValues?.length) {
+      loadCustomFields()
+    } else {
+      customFields.value = []
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -67,30 +163,40 @@ const copyToClipboard = async (text: string) => {
     class="contact-view-modal"
   >
     <div v-if="contact" class="space-y-4">
-      <!-- Información básica del contacto -->
-      <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {{ contact.name || t('general.not_defined') }}
-          </h3>
+      <!-- Sección Avatar y Nombre -->
+      <div class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <AppAvatar
+              :label="getAvatarInitials"
+              shape="circle"
+            />
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+              {{ contact.name || t('general.not_defined') }}
+            </h3>
+          </div>
           <AppTag
             :label="contact.status === 'active' ? t('general.active') : t('general.inactive')"
             :severity="statusVariant"
           />
         </div>
+      </div>
 
-        <!-- Información de contacto -->
-        <div class="grid grid-cols-1 gap-3">
+      <!-- Información básica del contacto -->
+      <div class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
+
+        <!-- Información de contacto en grid 2x2 -->
+        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
           <!-- Teléfono -->
-          <div v-if="contact.phone" class="flex items-center justify-between">
+          <div v-if="contact.phone" class="space-y-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-phone text-blue-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <i class="pi pi-phone text-neutral-500 dark:text-neutral-400"></i>
+              <span class="text-xs text-neutral-600 dark:text-neutral-400">
                 {{ t('general.phone') }}:
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-900 dark:text-gray-100">{{ contact.phone }}</span>
+              <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.phone }}</span>
               <Button
                 v-tooltip="t('general.copy')"
                 @click="copyToClipboard(contact.phone!)"
@@ -103,124 +209,90 @@ const copyToClipboard = async (text: string) => {
             </div>
           </div>
 
-          <!-- Email -->
-          <div v-if="contact.email" class="flex items-center justify-between">
+          <!-- Código de País -->
+          <div v-if="contact.countryCode" class="space-y-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-envelope text-green-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('general.email') }}:
+              <i class="pi pi-globe text-neutral-500 dark:text-neutral-400"></i>
+              <span class="text-xs text-neutral-600 dark:text-neutral-400">
+                {{ t('general.country_code') }}:
               </span>
             </div>
+            <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.countryCode }}</span>
+          </div>
+
+          <!-- Organización -->
+          <div class="space-y-1">
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-900 dark:text-gray-100">{{ contact.email }}</span>
+              <i class="pi pi-bookmark text-neutral-500 dark:text-neutral-400"></i>
+              <span class="text-xs text-neutral-600 dark:text-neutral-400">
+                {{ t('general.organization') }}:
+              </span>
+            </div>
+            <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.organizationId }}</span>
+          </div>
+
+          <!-- Fecha de Nacimiento -->
+          <div v-if="contact.birthDate" class="space-y-1">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-calendar text-neutral-500 dark:text-neutral-400"></i>
+              <span class="text-xs text-neutral-600 dark:text-neutral-400">
+                {{ t('general.birth_date') }}:
+              </span>
+            </div>
+            <FormattedDate :date="contact.birthDate" format="date" class="text-sm font-medium text-neutral-900 dark:text-neutral-100" />
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Sección CAMPOS PERSONALIZADOS - todos los custom fields -->
+      <div v-if="allCustomFields.length > 0">
+        <Divider />
+        <h4 class="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-3 tracking-wide">
+          CAMPOS PERSONALIZADOS
+        </h4>
+
+        <div class="space-y-3">
+          <div
+            v-for="customValue in allCustomFields"
+            :key="customValue.id"
+            class="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg"
+          >
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+              <i
+                :class="getCustomFieldIcon(customValue.customFieldId)"
+                class="text-neutral-500 dark:text-neutral-400 flex-shrink-0"
+              ></i>
+              <span class="text-xs text-neutral-600 dark:text-neutral-400 truncate">
+                {{ getCustomFieldName(customValue.customFieldId) }}:
+              </span>
+            </div>
+            <div class="flex items-center gap-2 min-w-0">
+              <span
+                class="text-xs text-neutral-900 dark:text-neutral-100 text-right"
+                :class="{
+                  'font-mono': getCustomFieldDataType(customValue.customFieldId) === 'date',
+                  'italic text-neutral-500 dark:text-neutral-500': !customValue.value
+                }"
+              >
+                {{ formatCustomFieldValue(customValue.value, customValue.customFieldId) }}
+              </span>
               <Button
+                v-if="customValue.value"
                 v-tooltip="t('general.copy')"
-                @click="copyToClipboard(contact.email!)"
+                @click="copyToClipboard(formatCustomFieldValue(customValue.value, customValue.customFieldId))"
                 icon="pi pi-copy"
                 size="small"
                 severity="secondary"
                 text
-                class="p-1"
+                class="p-1 flex-shrink-0"
               />
             </div>
           </div>
-
-          <!-- País -->
-          <div v-if="contact.countryCode" class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-globe text-purple-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('general.country_code') }}:
-              </span>
-            </div>
-            <span class="text-sm text-gray-900 dark:text-gray-100">{{ contact.countryCode }}</span>
-          </div>
-
-          <!-- ID de organización -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-bookmark text-orange-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('general.organization') }}:
-              </span>
-            </div>
-            <span class="text-sm text-gray-900 dark:text-gray-100">{{ contact.organizationId }}</span>
-          </div>
         </div>
       </div>
 
-      <!-- Fechas importantes -->
-      <div v-if="contact.birthDate || contact.createdAt || contact.updatedAt">
-        <Divider />
-        <h4 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-3">
-          {{ t('contact_view.important_dates') }}
-        </h4>
 
-        <div class="space-y-2">
-          <!-- Fecha de nacimiento -->
-          <div v-if="contact.birthDate" class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-calendar text-pink-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('general.birth_date') }}:
-              </span>
-            </div>
-            <FormattedDate :date="contact.birthDate" format="date" />
-          </div>
-
-          <!-- Fecha de creación -->
-          <div v-if="contact.createdAt" class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-plus-circle text-green-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('contact_view.created_at') }}:
-              </span>
-            </div>
-            <FormattedDate :date="contact.createdAt" format="datetime" />
-          </div>
-
-          <!-- Fecha de actualización -->
-          <div v-if="contact.updatedAt && contact.updatedAt !== contact.createdAt" class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-pencil text-blue-500"></i>
-              <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                {{ t('contact_view.updated_at') }}:
-              </span>
-            </div>
-            <FormattedDate :date="contact.updatedAt" format="datetime" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Campos personalizados -->
-      <div v-if="contact.customValues && contact.customValues.length > 0">
-        <Divider />
-        <h4 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-3">
-          {{ t('contact.custom_fields') }}
-        </h4>
-
-        <div class="space-y-2">
-          <div
-            v-for="customValue in contact.customValues"
-            :key="customValue.id"
-            class="flex items-center justify-between"
-          >
-            <span class="text-sm font-medium text-gray-600 dark:text-gray-400 capitalize">
-              {{ t('general.field') }} {{ customValue.customFieldId }}:
-            </span>
-            <span class="text-sm text-gray-900 dark:text-gray-100">
-              {{ customValue.value || t('general.not_defined') }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ID del contacto -->
-      <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded text-center">
-        <span class="text-xs text-gray-500 dark:text-gray-400">
-          ID: {{ contact.id }}
-        </span>
-      </div>
     </div>
 
     <template #footer>

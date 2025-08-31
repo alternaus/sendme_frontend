@@ -482,6 +482,8 @@
     "validation_error": "Error de validación",
     "unknown_field": "Campo desconocido",
     "not_defined": "No definido",
+    "field": "Campo",
+    "organization": "Organización",
     "instant_message": "Mensaje Instantáneo",
     "whatsapp_instant_message": "Mensaje Instantáneo de WhatsApp",
     "send_instant_message": "Enviar mensaje instantáneo",
