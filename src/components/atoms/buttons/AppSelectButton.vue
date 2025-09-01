@@ -51,6 +51,16 @@ const hasError = computed(() => (props.errorMessage?.length ?? 0) > 0)
 
 // ID único para el input
 const inputId = computed(() => props.inputId || `app-select-button-${crypto.randomUUID()}`)
+
+// Configuración de PrimeVue passthrough
+const ptConfig = computed(() => ({
+  ...props.pt,
+  pcToggleButton: {
+    content: ({ context }: { context: { active: boolean } }) => ({
+      class: context.active ? 'bg-[var(--p-primary-color)]! text-[var(--p-surface-700)]' : ''
+    })
+  }
+}))
 </script>
 
 <template>
@@ -68,11 +78,7 @@ const inputId = computed(() => props.inputId || `app-select-button-${crypto.rand
         ptOptions,
         ...$attrs
       }"
-      :pt="{
-        pcToggleButton: {
-          content: ({ context }: { context: { active: boolean } }) => ({ class: context.active ? 'bg-[var(--p-primary-color)]! text-[var(--p-surface-700)]' : '' })
-        }
-      }"
+      :pt="ptConfig"
       :class="[
         selectButtonClass,
         { 'p-invalid': hasError }

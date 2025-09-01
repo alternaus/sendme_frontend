@@ -13,7 +13,6 @@ import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
-import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { type IBatchMessage,MessageChannel } from '@/services/send/interfaces/message.interface'
 import { useSendService } from '@/services/send/useSendService'
@@ -40,8 +39,6 @@ const message = ref('')
 const subject = ref('')
 const isSending = ref(false)
 
-const MAX_SINGLE_MESSAGE = 160
-const MAX_CONCATENATED_MESSAGE = 153
 const MAX_CHARACTERS = 459
 
 const dialogVisible = computed({
@@ -94,19 +91,7 @@ const countryCode = computed(() => {
   )
 })
 
-const messageInfo = computed(() => {
-  const length = message.value.length
-  if (selectedChannel.value !== MessageChannel.SMS) {
-    return `${length} ${t('general.characters')}`
-  }
 
-  let smsCount = 1
-  if (length > MAX_SINGLE_MESSAGE) {
-    smsCount = Math.ceil((length - MAX_SINGLE_MESSAGE) / MAX_CONCATENATED_MESSAGE) + 1
-  }
-
-  return `${length}/${MAX_CHARACTERS} ${t('general.characters')} - ${smsCount} ${t('general.sms')}`
-})
 
 const messageLength = computed(() => message.value.length)
 
@@ -244,42 +229,17 @@ const closeDialog = () => {
       </div>
 
       <div>
-        <AppTextarea
-          v-if="selectedChannel === MessageChannel.SMS"
-          v-model="message"
-          :placeholder="t('bulk_sms.message_placeholder')"
-          :rows="8"
-          :aiAttach="true"
-          :aiInsertMode="'replace'"
-          :autoResize="true"
-          :maxlength="maxLength"
-          :disabled="isSending"
-          class="w-full"
-        >
-          <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
-        </AppTextarea>
-
         <AppEditor
-          v-else
           v-model="message"
-          content-type="html"
-          ai-attach
-          :placeholder="t('general.write_email_message')"
+          :content-type="selectedChannel === MessageChannel.SMS ? 'text' : 'html'"
+          :ai-attach="true"
+          :ai-insert-mode="'replace'"
+          :placeholder="selectedChannel === MessageChannel.SMS ? t('bulk_sms.message_placeholder') : t('general.write_email_message')"
           :disabled="isSending"
+          :maxlength="selectedChannel === MessageChannel.SMS ? maxLength : undefined"
+          :rows="selectedChannel === MessageChannel.SMS ? 6 : 8"
           class="w-full"
         />
-
-        <div class="flex justify-center mt-2">
-          <small class="text-sm text-gray-500 dark:text-gray-400">
-            {{ messageInfo }}
-          </small>
-        </div>
-
-        <div v-if="selectedChannel === MessageChannel.SMS && messageLength > MAX_CHARACTERS" class="text-center mt-1">
-          <span class="text-red-500 dark:text-red-400 text-xs">
-            {{ t('bulk_sms.message_too_long') }}
-          </span>
-        </div>
       </div>
     </div>
 

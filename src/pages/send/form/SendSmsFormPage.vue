@@ -1,12 +1,10 @@
 <script lang="ts">
-import { computed, defineComponent, ref, watchEffect } from 'vue'
-
-import { useI18n } from 'vue-i18n'
+import { defineComponent, ref, watchEffect } from 'vue'
 
 import BtnSend from '@/assets/svg/btn_send.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
-import SmsIcon from '@/assets/svg/sms.svg?component'
+import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { MessageChannel } from '@/services/send/interfaces/message.interface'
@@ -18,32 +16,18 @@ export default defineComponent({
   name: 'SendSmsFormPage',
   components: {
     AppTextarea,
+    AppEditor,
     PhoneIcon,
-    SmsIcon,
     BtnSend,
     ContactsIcon,
   },
   setup() {
-    const { t } = useI18n()
     const contactsInput = ref('')
     const contactsCount = ref<number | null>(null)
     const sendService = useSendService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.SMS)
-    const MAX_SINGLE_MESSAGE = 160
-    const MAX_CONCATENATED_MESSAGE = 153
     const MAX_CHARACTERS = 459
-
-    const messageInfo = computed(() => {
-      const length = form.message.value.length
-      let smsCount = 1
-
-      if (length > MAX_SINGLE_MESSAGE) {
-        smsCount = Math.ceil((length - MAX_SINGLE_MESSAGE) / MAX_CONCATENATED_MESSAGE) + 1
-      }
-
-      return `${length} ${t('general.characters')} - ${smsCount} ${t('general.sms')}`
-    })
 
     const fetchContactsCount = async () => {
       try {
@@ -85,7 +69,6 @@ export default defineComponent({
 
     return {
       form,
-      messageInfo,
       sendMessage,
       errors,
       setValues,
@@ -136,22 +119,15 @@ export default defineComponent({
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
-    <AppTextarea
+    <AppEditor
       v-model="form.message.value"
-      :rows="12"
-      ai-attach
-      :placeholder="$t('general.write_message')"
+      content-type="text"
+      :ai-attach="true"
+      :placeholder="$t('editor.sms_placeholder')"
       :maxlength="MAX_CHARACTERS"
+      :rows="12"
       class="w-full mb-2"
-    >
-      <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
-    </AppTextarea>
-
-    <div class="flex flex-col">
-      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
-        {{ messageInfo }}
-      </small>
-    </div>
+    />
 
     <div class="flex justify-center my-4">
       <button type="button" @click="sendMessage">

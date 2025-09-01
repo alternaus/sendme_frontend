@@ -597,6 +597,29 @@
       "normal": "Normal",
       "high": "Alta",
       "urgent": "Urgente"
+    },
+    "editor": {
+      "sms_placeholder": "Escribe tu mensaje SMS aquí...",
+      "whatsapp_placeholder": "Escribe tu mensaje de WhatsApp aquí...",
+      "email_placeholder": "Escribe tu mensaje de correo aquí...",
+      "characters": "Caracteres",
+      "messages": "Mensajes",
+      "sms_limit_exceeded": "Has excedido el límite de 3 mensajes SMS concatenados. Por favor, acorta tu mensaje.",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "font_size": "Tamaño de fuente",
+      "ordered_list": "Lista ordenada",
+      "bullet_list": "Lista con viñetas",
+      "align_left": "Alinear a la izquierda",
+      "align_center": "Centrar",
+      "align_right": "Alinear a la derecha",
+      "justify": "Justificar",
+      "add_link": "Agregar enlace",
+      "add_image": "Agregar imagen",
+      "clean_formatting": "Limpiar formato",
+      "ai_generate": "Generar con IA"
     }
   },
   "customFields": {

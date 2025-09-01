@@ -1,7 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, ref, watchEffect } from 'vue'
-
-import { useI18n } from 'vue-i18n'
+import { defineComponent, ref, watchEffect } from 'vue'
 
 import BtnSend from '@/assets/svg/btn_send.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
@@ -24,17 +22,11 @@ export default defineComponent({
     ContactsIcon,
   },
   setup() {
-    const { t } = useI18n()
     const contactsInput = ref('')
     const contactsCount = ref<number | null>(null)
     const sendService = useSendService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.EMAIL)
-
-    const messageInfo = computed(() => {
-      const length = form.message.value.length
-      return `${length} ${t('general.characters')}`
-    })
 
     const fetchContactsCount = async () => {
       try {
@@ -76,7 +68,6 @@ export default defineComponent({
 
     return {
       form,
-      messageInfo,
       sendMessage,
       errors,
       setValues,
@@ -140,16 +131,10 @@ export default defineComponent({
     <AppEditor
       v-model="form.message.value"
       content-type="html"
-      ai-attach
-      :placeholder="$t('general.write_email_message')"
+      :ai-attach="true"
+      :placeholder="$t('editor.email_placeholder')"
       class="w-full mb-2"
     />
-
-    <div class="flex flex-col">
-      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
-        {{ messageInfo }}
-      </small>
-    </div>
 
     <div class="flex justify-center my-4">
       <button type="button" @click="sendMessage">

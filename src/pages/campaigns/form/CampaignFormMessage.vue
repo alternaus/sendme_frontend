@@ -15,10 +15,12 @@
       <!-- Editor según el tipo de canal -->
       <div class="flex items-center justify-center col-span-12 lg:col-span-5">
         <AppEditor
+          ref="editorRef"
           :contentType="isEmailChannel ? 'html' : 'text'"
           :modelValue="(form.content.value as string)"
           :errorMessage="errors.content"
           :aiAttach="true"
+          :placeholder="isEmailChannel ? $t('general.write_email_message') : $t('editor.sms_placeholder')"
           @update:modelValue="updateContent"
         />
       </div>
@@ -75,6 +77,8 @@ const { getCustomFields } = useCustomFieldService()
 const availableFields = ref<SelectOption[]>([])
 const selectedField = ref<string | null>(null)
 
+const editorRef = ref<InstanceType<typeof AppEditor> | null>(null)
+
 // Determinar el canal seleccionado
 const selectedChannel = computed(() => {
   const channelId = props.form.channelId.value as number
@@ -125,9 +129,19 @@ const updateContent = (value: string) => {
 const insertPlaceholder = () => {
   try {
     if (selectedField.value) {
-      const currentContent = props.form.content.value as string || ''
-      const newValue = `${currentContent} ${selectedField.value}`
-      updateContent(newValue)
+      // Usar el método insertContent del editor para insertar el campo dinámico
+      if (editorRef.value?.insertContent) {
+        const success = editorRef.value.insertContent(selectedField.value, 'cursor')
+        if (!success) {
+          // Si no se pudo insertar (por ejemplo, excede el límite de SMS)
+          console.warn('No se pudo insertar el campo dinámico')
+        }
+      } else {
+        // Fallback al método anterior si no está disponible el método expuesto
+        const currentContent = props.form.content.value as string || ''
+        const newValue = `${currentContent} ${selectedField.value}`
+        updateContent(newValue)
+      }
     }
   } catch {
     // Manejo de errores silencioso

@@ -4,7 +4,7 @@ import { defineComponent, ref, watchEffect } from 'vue'
 import BtnSend from '@/assets/svg/btn_send.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
-import SmsIcon from '@/assets/svg/sms.svg?component'
+import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { MessageChannel } from '@/services/send/interfaces/message.interface'
@@ -16,8 +16,8 @@ export default defineComponent({
   name: 'SendWhatsappFormPage',
   components: {
     AppTextarea,
+    AppEditor,
     PhoneIcon,
-    SmsIcon,
     BtnSend,
     ContactsIcon,
   },
@@ -117,21 +117,15 @@ export default defineComponent({
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
-    <AppTextarea
+    <AppEditor
       v-model="form.message.value"
-      :rows="12"
-      :placeholder="$t('general.write_message')"
+      content-type="text"
+      :ai-attach="true"
+      :placeholder="$t('editor.whatsapp_placeholder')"
       :maxlength="MAX_CHARACTERS"
+      :rows="12"
       class="w-full mb-2"
-    >
-      <template #icon><SmsIcon class="w-4 h-4 dark:fill-white" /></template>
-    </AppTextarea>
-
-    <div class="flex flex-col">
-      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
-        {{ form.message.value.length + ' ' + $t('general.characters') }}
-      </small>
-    </div>
+    />
 
     <div class="flex justify-center my-4">
       <button type="button" @click="sendMessage">

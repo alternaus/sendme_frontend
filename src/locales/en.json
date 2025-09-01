@@ -596,6 +596,29 @@
       "normal": "Normal",
       "high": "High",
       "urgent": "Urgent"
+    },
+    "editor": {
+      "sms_placeholder": "Write your SMS message here...",
+      "whatsapp_placeholder": "Write your WhatsApp message here...",
+      "email_placeholder": "Write your email message here...",
+      "characters": "Characters",
+      "messages": "Messages",
+      "sms_limit_exceeded": "You have exceeded the 3 concatenated SMS messages limit. Please shorten your message.",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strikethrough",
+      "font_size": "Font Size",
+      "ordered_list": "Ordered List",
+      "bullet_list": "Bullet List",
+      "align_left": "Align Left",
+      "align_center": "Align Center",
+      "align_right": "Align Right",
+      "justify": "Justify",
+      "add_link": "Add Link",
+      "add_image": "Add Image",
+      "clean_formatting": "Clean Formatting",
+      "ai_generate": "Generate with AI"
     }
   },
   "customFields": {

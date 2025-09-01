@@ -1,150 +1,205 @@
-<script lang="ts">
-import { computed, defineComponent, watchEffect } from 'vue'
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 
 import Editor, { type EditorTextChangeEvent } from 'primevue/editor'
+
+import { useI18n } from 'vue-i18n'
 
 import AppAIGenerate from '@/components/atoms/editor/AppAIGenerate.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 
-export default defineComponent({
-  name: 'AppEditor',
-  components: {
-    Editor,
-    AppTextarea,
-    AppAIGenerate,
+interface Props {
+  modelValue?: string
+  errorMessage?: string
+  contentType?: 'html' | 'text'
+  showErrorMessage?: boolean
+  aiAttach?: boolean
+  readonly?: boolean
+  showToolbar?: boolean
+  placeholder?: string
+  disabled?: boolean
+  rows?: number
+  maxlength?: number
+  aiInsertMode?: 'append' | 'replace'
+}
+
+interface Emits {
+  (e: 'update:modelValue', value: string): void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  errorMessage: '',
+  contentType: 'html',
+  showErrorMessage: true,
+  aiAttach: false,
+  readonly: false,
+  showToolbar: true,
+  placeholder: '',
+  disabled: false,
+  rows: 6,
+  maxlength: undefined,
+  aiInsertMode: 'append'
+})
+
+const emit = defineEmits<Emits>()
+
+const { t } = useI18n()
+
+// Constantes para límites de SMS
+const SMS_CHAR_LIMITS = {
+  GSM_7BIT: 160,
+  GSM_7BIT_EXTENDED: 160,
+  UCS2: 70,
+  MAX_SINGLE_MESSAGE: 160,
+  MAX_CONCATENATED_MESSAGE: 153,
+  MAX_CHARACTERS: 459
+}
+
+// Referencia al contenido interno
+const internalContent = ref('')
+
+const editorContent = computed({
+  get: () => internalContent.value || props.modelValue || '',
+  set: (value) => {
+    const newValue = value || ''
+    internalContent.value = newValue
+    emit('update:modelValue', newValue)
   },
-  props: {
-    modelValue: {
-      type: String,
-      required: true,
-    },
-    errorMessage: {
-      type: String,
-      default: '',
-    },
-    contentType: {
-      type: String,
-      default: 'html',
-      validator: (value: string) => ['html', 'text'].includes(value),
-    },
-    showErrorMessage: {
-      type: Boolean,
-      default: true,
-    },
-    aiAttach: {
-      type: Boolean,
-      default: false,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
-    showToolbar: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    // Constantes para límites de SMS
-    const SMS_CHAR_LIMITS = {
-      GSM_7BIT: 160,
-      GSM_7BIT_EXTENDED: 160,
-      UCS2: 70
-    }
+})
 
-    const editorContent = computed({
-      get: () => props.modelValue,
-      set: (value) => emit('update:modelValue', value),
-    })
+// Contador de caracteres para SMS
+const smsStats = computed(() => {
+  if (props.contentType !== 'text') return null
 
-    // Contador de caracteres para SMS
-    const smsStats = computed(() => {
-      if (props.contentType !== 'text') return null
+  const text = editorContent.value || ''
+  const charCount = text.length
+  const maxChars = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
 
-      const text = editorContent.value || ''
-      const charCount = text.length
+  // Calcular número de mensajes usando la lógica optimizada
+  let messageCount = 1
+  if (charCount > SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) {
+    messageCount = Math.ceil((charCount - SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) / SMS_CHAR_LIMITS.MAX_CONCATENATED_MESSAGE) + 1
+  }
 
-      // Calcular número de mensajes
-      let messageCount = 1
-      if (charCount > SMS_CHAR_LIMITS.GSM_7BIT) {
-        messageCount = Math.ceil(charCount / SMS_CHAR_LIMITS.GSM_7BIT)
-      }
+  // Determinar si excede el límite
+  const isOverLimit = charCount > maxChars
 
-      // Determinar si excede el límite
-      const isOverLimit = charCount > SMS_CHAR_LIMITS.GSM_7BIT * 10 // Máximo 10 mensajes
+  return {
+    charCount,
+    messageCount,
+    isOverLimit,
+    maxChars
+  }
+})
 
-      return {
-        charCount,
-        messageCount,
-        isOverLimit,
-        maxChars: SMS_CHAR_LIMITS.GSM_7BIT * 10
-      }
-    })
-
-    watchEffect(() => {
-      if (props.modelValue !== editorContent.value) {
-        editorContent.value = props.modelValue
-      }
-    })
-
-    const handleTextChange = (event: EditorTextChangeEvent) => {
-      const newValue = props.contentType === 'html' ? event.htmlValue : event.textValue
-
-      // Para SMS, limitar a 1600 caracteres (10 mensajes)
-      if (props.contentType === 'text' && newValue.length > SMS_CHAR_LIMITS.GSM_7BIT * 10) {
-        return // No permitir más caracteres
-      }
-
-      editorContent.value = newValue
-      emit('update:modelValue', newValue)
-    }
-
-    const handleAiInsert = (aiContent: string) => {
-      // Simplificar la inserción: agregar al final del contenido actual
-      const currentContent = editorContent.value || ''
-      const separator = currentContent && !currentContent.endsWith('\n') ? '\n' : ''
-      const newContent = currentContent + separator + aiContent
-
-      // Para SMS, verificar límite antes de insertar
-      if (props.contentType === 'text' && newContent.length > SMS_CHAR_LIMITS.GSM_7BIT * 10) {
-        return // No permitir inserción si excede el límite
-      }
-
-      editorContent.value = newContent
-      emit('update:modelValue', newContent)
-    }
-
-    return {
-      editorContent,
-      handleTextChange,
-      handleAiInsert,
-      smsStats,
+// Sincronizar con modelValue externo
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    const value = newValue || ''
+    if (value !== internalContent.value) {
+      internalContent.value = value
     }
   },
+  { immediate: true }
+)
+
+// Método para insertar campos dinámicos o contenido personalizado
+const insertContent = (content: string, position: 'start' | 'end' | 'cursor' = 'cursor') => {
+  const currentContent = editorContent.value || ''
+  let newContent = ''
+
+  switch (position) {
+    case 'start':
+      newContent = content + (currentContent ? '\n' + currentContent : '')
+      break
+    case 'end':
+      newContent = currentContent + (currentContent ? '\n' : '') + content
+      break
+    case 'cursor':
+    default:
+      // Para campos dinámicos, insertar con un espacio si es necesario
+      if (currentContent && !currentContent.endsWith(' ') && !currentContent.endsWith('\n')) {
+        newContent = currentContent + ' ' + content
+      } else {
+        newContent = currentContent + content
+      }
+      break
+  }
+
+  // Para SMS, verificar límite antes de insertar
+  const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+  if (props.contentType === 'text' && newContent.length > maxLength) {
+    return false // Retornar false si excede el límite
+  }
+
+  editorContent.value = newContent
+  return true // Retornar true si la inserción fue exitosa
+}
+
+const handleTextChange = (event: EditorTextChangeEvent) => {
+  const newValue = props.contentType === 'html' ? event.htmlValue : event.textValue
+
+  // Para SMS, limitar caracteres si se define maxlength
+  const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+  if (props.contentType === 'text' && props.maxlength && newValue.length > maxLength) {
+    return // No permitir más caracteres
+  }
+
+  editorContent.value = newValue
+}
+
+const handleAiInsert = (aiContent: string) => {
+  if (props.aiInsertMode === 'replace') {
+    // Reemplazar todo el contenido
+    editorContent.value = aiContent
+  } else {
+    // Modo append: agregar al final del contenido actual
+    const currentContent = editorContent.value || ''
+    const separator = currentContent && !currentContent.endsWith('\n') ? '\n' : ''
+    const newContent = currentContent + separator + aiContent
+
+    // Verificar límite para SMS
+    const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+    if (props.contentType === 'text' && newContent.length > maxLength) {
+      return // No permitir inserción si excede el límite
+    }
+
+    editorContent.value = newContent
+  }
+}
+
+// Exponer métodos para uso externo
+defineExpose({
+  insertContent
 })
 </script>
 
 <template>
   <div class="w-full">
-    <!-- Textarea para contenido de texto -->
+    <!-- Textarea para contenido de texto (SMS) -->
     <div v-if="contentType === 'text'" class="w-full">
       <AppTextarea
         v-model="editorContent"
-        :rows="6"
+        :rows="rows"
         :error-message="errorMessage"
         :show-error-message="showErrorMessage"
         :use-float-label="false"
         :auto-resize="true"
+        :placeholder="placeholder || t('editor.sms_placeholder')"
+        :disabled="disabled || readonly"
+        :maxlength="maxlength"
         class="w-full"
         :ai-attach="aiAttach"
+        :ai-insert-mode="aiInsertMode"
       />
 
       <!-- Contador de caracteres para SMS -->
       <div v-if="smsStats" class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex justify-between items-center">
         <div class="flex items-center gap-4">
-          <span>Caracteres: {{ smsStats.charCount }}</span>
-          <span>Mensajes: {{ smsStats.messageCount }}</span>
+          <span>{{ t('editor.characters') }}: {{ smsStats.charCount }}</span>
+          <span>{{ t('editor.messages') }}: {{ smsStats.messageCount }}</span>
         </div>
         <span
           :class="{
@@ -152,7 +207,7 @@ export default defineComponent({
             'text-red-600 dark:text-red-400': smsStats.isOverLimit
           }"
         >
-          {{ smsStats.charCount }}/{{ smsStats.maxChars }}
+          {{ smsStats.charCount }}/{{ smsStats.maxChars }} {{ t('editor.characters') }} - {{ smsStats.messageCount }} {{ t('general.sms') }}
         </span>
       </div>
 
@@ -161,32 +216,33 @@ export default defineComponent({
         v-if="smsStats && smsStats.isOverLimit"
         class="mt-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded-md"
       >
-        ⚠️ Has excedido el límite de 10 mensajes SMS. Por favor, acorta tu mensaje.
+        {{ t('editor.sms_limit_exceeded') }}
       </div>
     </div>
 
-    <!-- Editor HTML para contenido HTML -->
+    <!-- Editor HTML para contenido HTML (Email) -->
     <Editor
       v-else
       v-model="editorContent"
       editorStyle="height: 200px"
-      :readonly="readonly"
+      :readonly="readonly || disabled"
+      :placeholder="placeholder || t('editor.email_placeholder')"
       class="w-full !rounded-xl transition-all duration-300"
       :class="{
         'p-invalid border-1 border-red-400  dark:border-red-300': errorMessage.length > 0,
-        'readonly-editor': readonly,
+        'readonly-editor': readonly || disabled,
       }"
       @text-change="handleTextChange"
     >
-      <template v-if="showToolbar && !readonly" v-slot:toolbar>
+      <template v-if="showToolbar && !readonly && !disabled" v-slot:toolbar>
         <span class="ql-formats">
-          <button v-tooltip.bottom="'Bold'" class="ql-bold"></button>
-          <button v-tooltip.bottom="'Italic'" class="ql-italic"></button>
-          <button v-tooltip.bottom="'Underline'" class="ql-underline"></button>
-          <button v-tooltip.bottom="'Strike'" class="ql-strike"></button>
+          <button v-tooltip.bottom="t('editor.bold')" class="ql-bold"></button>
+          <button v-tooltip.bottom="t('editor.italic')" class="ql-italic"></button>
+          <button v-tooltip.bottom="t('editor.underline')" class="ql-underline"></button>
+          <button v-tooltip.bottom="t('editor.strike')" class="ql-strike"></button>
         </span>
         <span class="ql-formats">
-          <select v-tooltip.bottom="'Font Size'" class="ql-size">
+          <select v-tooltip.bottom="t('editor.font_size')" class="ql-size">
             <option value="small"></option>
             <option selected></option>
             <option value="large"></option>
@@ -194,29 +250,29 @@ export default defineComponent({
           </select>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="'Ordered List'" class="ql-list" value="ordered"></button>
-          <button v-tooltip.bottom="'Bullet List'" class="ql-list" value="bullet"></button>
+          <button v-tooltip.bottom="t('editor.ordered_list')" class="ql-list" value="ordered"></button>
+          <button v-tooltip.bottom="t('editor.bullet_list')" class="ql-list" value="bullet"></button>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="'Align Left'" class="ql-align" value=""></button>
-          <button v-tooltip.bottom="'Align Center'" class="ql-align" value="center"></button>
-          <button v-tooltip.bottom="'Align Right'" class="ql-align" value="right"></button>
-          <button v-tooltip.bottom="'Justify'" class="ql-align" value="justify"></button>
+          <button v-tooltip.bottom="t('editor.align_left')" class="ql-align" value=""></button>
+          <button v-tooltip.bottom="t('editor.align_center')" class="ql-align" value="center"></button>
+          <button v-tooltip.bottom="t('editor.align_right')" class="ql-align" value="right"></button>
+          <button v-tooltip.bottom="t('editor.justify')" class="ql-align" value="justify"></button>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="'Add Link'" class="ql-link"></button>
-          <button v-tooltip.bottom="'Add Image'" class="ql-image"></button>
+          <button v-tooltip.bottom="t('editor.add_link')" class="ql-link"></button>
+          <button v-tooltip.bottom="t('editor.add_image')" class="ql-image"></button>
         </span>
 
         <span class="ql-formats">
-          <button v-tooltip.bottom="'Clean Formatting'" class="ql-clean"></button>
+          <button v-tooltip.bottom="t('editor.clean_formatting')" class="ql-clean"></button>
         </span>
         <span v-if="aiAttach" class="ql-formats">
           <AppAIGenerate
             type="email"
             :current-text="editorContent"
-            append-mode="append"
-            button-title="Generar con IA"
+            :append-mode="aiInsertMode"
+            :button-title="t('editor.ai_generate')"
             @insert="handleAiInsert"
           />
         </span>
