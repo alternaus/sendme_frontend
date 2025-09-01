@@ -30,7 +30,6 @@ defineOptions({
 
 const attrs = useAttrs()
 
-// Filtrar atributos conflictivos
 const blockKeys = ['class']
 
 const forwardedAttrs = computed(() => {
@@ -38,7 +37,6 @@ const forwardedAttrs = computed(() => {
   return Object.fromEntries(Object.entries(src).filter(([k]) => !blockKeys.includes(k)))
 })
 
-// Manejar clases del contenedor
 const containerClasses = computed(() => {
   const classAttr = attrs.class as string | undefined
   const combinedClasses = [props.customClass, classAttr].filter(Boolean).join(' ')
@@ -58,7 +56,6 @@ const containerClasses = computed(() => {
       :pt-options="ptOptions"
     >
       <slot>
-        <small>O</small>
       </slot>
     </Divider>
   </div>
@@ -73,7 +70,6 @@ const containerClasses = computed(() => {
     :pt-options="ptOptions"
   >
     <slot>
-      <small>O</small>
     </slot>
   </Divider>
 </template>

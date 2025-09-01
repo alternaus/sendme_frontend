@@ -132,7 +132,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="html"
       :ai-attach="true"
-      :placeholder="$t('editor.email_placeholder')"
+      :placeholder="$t('general.editor.email_placeholder')"
       class="w-full mb-2"
     />
 

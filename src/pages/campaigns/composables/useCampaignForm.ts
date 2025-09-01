@@ -40,7 +40,6 @@ export function useCampaignForm() {
 
   const userOrganizationId = authStore.user?.organizationId || 1
 
-  // Obtener estados válidos dinámicamente
   const validStatuses = getStatusesForType('campaign')
 
   const detailsSchema = yup.object({

@@ -1,156 +1,175 @@
-<script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
+<script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
 import { useDark } from '@vueuse/core'
 
-import Chart from 'primevue/chart'
-
 import { useHead } from '@unhead/vue'
+import type { ComposeOption } from 'echarts'
+import type { PieSeriesOption } from 'echarts/charts'
+import type {
+  LegendComponentOption,
+  TitleComponentOption,
+  ToolboxComponentOption,
+  TooltipComponentOption
+} from 'echarts/components'
 import { useI18n } from 'vue-i18n'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
+import AppEChart from '@/components/atoms/charts/AppEChart.vue'
+import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
-import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useStatusColors } from '@/composables/useStatusColors'
+import { useTableTypes } from '@/composables/useTableTypes'
 import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
 import { useDashboardService } from '@/services/dashboard/useDashboardService'
 import { useAuthStore } from '@/stores/useAuthStore'
+type ECOption = ComposeOption<
+  | PieSeriesOption
+  | TitleComponentOption
+  | LegendComponentOption
+  | TooltipComponentOption
+  | ToolboxComponentOption
+>
 
-export default defineComponent({
-  components: {
-    AppCard,
-    AppHeader,
-    AppTable,
-    Chart,
-  },
-  setup() {
-    const { t } = useI18n()
-    const authStore = useAuthStore()
-    const isDark = useDark()
-    useHead({
-      title: t('titles.home'),
-    })
+const { t } = useI18n()
+const authStore = useAuthStore()
+const isDark = useDark()
+const { getStatusSeverity } = useStatusColors()
+useHead({ title: t('titles.home') })
 
-    const { getDashboardData } = useDashboardService()
-    const dashboardData = ref<DashboardResponse | null>(null)
-    const loading = ref(true)
+const { getDashboardData } = useDashboardService()
+const dashboardData = ref<DashboardResponse | null>(null)
+const loading = ref(true)
+const { getTableValueWithDefault } = useTableTypes()
 
-    const updateChartColors = (isDarkMode: boolean) => {
-      chartData.value = {
-        ...chartData.value,
-        datasets: [{
-          ...chartData.value.datasets[0],
-          backgroundColor: [isDarkMode ? '#fed757' : '#fece2f', '#000000'],
-          hoverBackgroundColor: [isDarkMode ? '#fed757' : '#fece2f', '#262626'],
-        }]
-      }
-    }
+const primary = ref<string | undefined>('')
+const surface500 = ref<string | undefined>('')
+const surface700 = ref<string | undefined>('')
 
-    const chartData = ref({
-      labels: [t('home.sent'), t('home.failed')],
-      datasets: [
-        {
-          data: [0, 0],
-          backgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#000000'],
-          hoverBackgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#262626'],
-        },
-      ],
-    })
-
-    const chartOptions = ref({
-      type: 'pie',
-      plugins: {
-        legend: {
-          labels: {
-            usePointStyle: true,
-            color: isDark.value ? '#ffffff' : '#000000',
-          },
-        },
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '0%',
-    })
-
-    const tableHeaders = [
-      { field: 'campaignName', header: 'Campaña' },
-      { field: 'phone', header: 'Número' },
-      { field: 'content', header: 'Contenido' },
-    ]
-
-    const loadDashboardData = async () => {
-      try {
-        loading.value = true
-        const response = await getDashboardData()
-        if (response) {
-          dashboardData.value = response
-
-          //Actualizar datos del gráfico
-          chartData.value = {
-            labels: [t('home.sent'), t('home.failed')],
-            datasets: [
-              {
-                data: [
-                  response.stats.sentMessages || 0,
-                  response.stats.failedMessages || 0
-                ],
-                backgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#000000'],
-                hoverBackgroundColor: [isDark.value ? '#fed757' : '#fece2f', '#262626'],
-              },
-            ],
-          }
-        }
-      } catch {
-      } finally {
-        loading.value = false
-      }
-    }
-
-    //Observar cambios en el modo oscuro
-    watch(isDark, (newValue) => {
-      updateChartColors(newValue)
-      chartOptions.value.plugins.legend.labels.color = newValue ? '#ffffff' : '#000000'
-    })
-
-    onMounted(() => {
-      loadDashboardData()
-    })
-
-    return {
-      IconTypes,
-      chartData,
-      chartOptions,
-      tableHeaders,
-      dashboardData,
-      loading,
-      t,
-      authStore,
-    }
-  },
+onMounted(() => {
+  primary.value = getComputedStyle(document.documentElement).getPropertyValue('--p-primary-color')
+  surface500.value = getComputedStyle(document.documentElement).getPropertyValue('--p-surface-500')
+  surface700.value = getComputedStyle(document.documentElement).getPropertyValue('--p-surface-700')
 })
+
+const makeMessagesStatusChart = (dark: boolean, data: DashboardResponse | null): ECOption => ({
+  title: {
+
+    left: 'center',
+    textStyle: { color: dark ? '#fff' : '#000' }
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{a} <br/>{b} : {c} ({d}%)'
+  },
+  legend: {
+    left: 'center',
+    top: 'bottom',
+    textStyle: { color: dark ? '#fff' : '#000' }
+  },
+  toolbox: {
+    show: true,
+    feature: {
+      dataView: { show: true, readOnly: false },
+      restore: { show: true },
+      saveAsImage: { show: true }
+    }
+  },
+  color: [primary.value, surface700.value, surface500.value],
+  series: [
+    {
+      name: t('home.messages'),
+      type: 'pie',
+      radius: [20, 140],
+      center: ['50%', '50%'],
+      roseType: 'radius',
+      itemStyle: { borderRadius: 5 },
+      label: { show: false },
+      emphasis: { label: { show: true } },
+      data: [
+        {
+          value: data?.stats.sentMessages || 0,
+          name: t('home.sent')
+        },
+        {
+          value: data?.stats.failedMessages || 0,
+          name: t('home.failed')
+        },
+        {
+          value: data?.stats.availableMessages || 0,
+          name: t('home.available'),
+        }
+      ]
+    }
+  ]
+})
+
+const chartData = ref<ECOption>(makeMessagesStatusChart(isDark.value, null))
+
+const tableHeaders: { field: string; header: string; width?: string }[] = [
+  { field: 'phone', header: t('home.phone'), width: '120px' },
+  { field: 'content', header: t('home.content'), width: '200px' },
+  { field: 'status', header: t('home.status'), width: '100px' },
+]
+
+const loadDashboardData = async () => {
+  try {
+    loading.value = true
+    const response = await getDashboardData()
+    if (response) {
+      dashboardData.value = response
+      chartData.value = makeMessagesStatusChart(isDark.value, response)
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+watch(isDark, (v) => {
+  chartData.value = makeMessagesStatusChart(v, dashboardData.value)
+})
+
+
+onMounted(loadDashboardData)
+
+const showContentModal = ref(false)
+const selectedMessageContent = ref('')
+
+const openContentModal = (content: string, _type: 'text' | 'html') => {
+  selectedMessageContent.value = content
+  showContentModal.value = true
+}
+
 </script>
 
 <template>
-
-<AppHeader :showHeader="false" />
+  <AppHeader :showHeader="false" />
 
   <div class="p-2 md:p-4 mx-auto">
     <AppCard class="mb-2">
       <template #content>
         <div class="flex justify-between items-center">
-          <p class="text-sm md:text-base">{{ t('home.welcome', { name: authStore.user?.name }) }}</p>
+          <p class="text-sm md:text-base">
+            {{ t('home.welcome', { name: authStore.user?.name }) }}
+          </p>
         </div>
       </template>
     </AppCard>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
       <AppCard>
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="fas fa-bullhorn text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.campaigns') }}</span>
+              <i class="pi pi-megaphone text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.totalCampaigns') }}
+              </span>
             </div>
-            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalCampaigns || 0 }}</span>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.totalCampaigns || 0 }}
+            </span>
           </div>
         </template>
       </AppCard>
@@ -159,64 +178,158 @@ export default defineComponent({
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="fas fa-users text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.contacts') }}</span>
+              <i class="pi pi-play-circle text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.activeCampaigns') }}
+              </span>
             </div>
-            <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.totalContacts || 0 }}</span>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.activeCampaigns || 0 }}
+            </span>
           </div>
         </template>
       </AppCard>
 
-      <AppCard class="sm:col-span-2 lg:col-span-1">
+      <AppCard>
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="fas fa-comment text-xs md:text-sm"></i>
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">{{ t('home.available') }}</span>
+              <i class="pi pi-user text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.totalContacts') }}
+              </span>
             </div>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.totalContacts || 0 }}
+            </span>
+          </div>
+        </template>
+      </AppCard>
+
+      <AppCard>
+        <template #content>
+          <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <span class="text-sm md:text-base font-bold">{{ dashboardData?.stats.availableMessages || 0 }}</span>
+              <i class="pi pi-comments text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.available') }}
+              </span>
             </div>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.availableMessages || 0 }}
+            </span>
+          </div>
+        </template>
+      </AppCard>
+    </div>
+
+    <!-- Métricas de mensajes -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
+      <AppCard>
+        <template #content>
+          <div class="flex items-center justify-between px-2 py-1">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-check-circle text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.sentMessages') }}
+              </span>
+            </div>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.sentMessages || 0 }}
+            </span>
+          </div>
+        </template>
+      </AppCard>
+
+      <AppCard>
+        <template #content>
+          <div class="flex items-center justify-between px-2 py-1">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-exclamation-triangle text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.failedMessages') }}
+              </span>
+            </div>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.failedMessages || 0 }}
+            </span>
+          </div>
+        </template>
+      </AppCard>
+
+      <AppCard>
+        <template #content>
+          <div class="flex items-center justify-between px-2 py-1">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-pause-circle text-xs md:text-sm"></i>
+              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                {{ t('home.available') }}
+              </span>
+            </div>
+            <span class="text-sm md:text-base font-bold">
+              {{ dashboardData?.stats.availableMessages || 0 }}
+            </span>
           </div>
         </template>
       </AppCard>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <AppCard class="h-[300px]">
+      <AppCard class="min-h-[360px]">
         <template #content>
-          <div class="flex flex-row items-center gap-4 h-full">
-            <div class="w-full md:flex-2">
-              <Chart type="pie" :data="chartData" :options="chartOptions" />
-            </div>
-            <div class="hidden md:grid grid-rows-2 gap-4 w-full flex-1">
-              <div class="p-2 rounded text-center bg-[var(--p-primary-color)]">
-                <span class="text-xs md:text-sm font-bold block text-[var(--p-button-primary-color)]">{{ t('home.sent') }}</span>
-                <div class="text-sm md:text-base text-[var(--p-button-primary-color)]">{{
-                  dashboardData?.stats.sentMessages || 0 }}</div>
-              </div>
-              <div class="bg-black text-white p-2 rounded text-center">
-                <span class="text-xs md:text-sm font-bold block">{{ t('home.failed') }}</span>
-                <div class="text-sm md:text-base">{{ dashboardData?.stats.failedMessages || 0 }}</div>
-              </div>
-            </div>
+          <div class="h-[360px]">
+            <AppEChart :option="chartData" height="100%" />
           </div>
         </template>
       </AppCard>
 
-      <AppTable :data="dashboardData?.recentMessages || []" :headers="tableHeaders" :pageSize="10" :pageCurrent="1"
-        :totalItems="(dashboardData?.recentMessages || []).length" :showPaginator="false" class="h-full" />
+      <AppCard class="min-h-[360px]">
+        <template #content>
+          <div class="h-[360px]">
+            <h3 class="text-lg font-semibold mb-4 text-neutral-700 dark:text-white">
+              {{ t('home.recentMessages') }}
+            </h3>
+            <AppTable :data="dashboardData?.recentMessages || []" :headers="tableHeaders" :pageSize="10"
+              :pageCurrent="1" :totalItems="(dashboardData?.recentMessages || []).length" :showPaginator="false">
+              <template #custom-content="{ data }">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="truncate max-w-[150px]" :title="getTableValueWithDefault<string>(data, 'content', '')">
+                    {{ getTableValueWithDefault<string>(data, 'content', '') }}
+                  </span>
+                  <button
+                    @click="openContentModal(
+                      getTableValueWithDefault<string>(data, 'content', ''),
+                      'text'
+                    )"
+                    class="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                    :title="$t('general.view_content')"
+                  >
+                    <i class="pi pi-eye text-sm"></i>
+                  </button>
+                </div>
+              </template>
+              <template #custom-status="{ data }">
+                <AppTag :label="$t(`status.message.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
+                  :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'message')" />
+              </template>
+            </AppTable>
+          </div>
+        </template>
+      </AppCard>
     </div>
+
+    <AppHtmlViewerDialog
+      v-model:visible="showContentModal"
+      :html-content="selectedMessageContent"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.fas {
-  @apply text-neutral-700 dark:text-white;
-}
-
-:deep(.p-chart) {
-  width: 100% !important;
-  height: 100% !important;
+.chart-container,
+:deep(.p-chart),
+:deep(.echarts) {
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -51,6 +51,10 @@
   transition: all 0.3s ease;
 }
 
+canvas{
+  border-radius: 0.75rem;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }

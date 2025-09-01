@@ -298,6 +298,7 @@ const paginatorClasses = computed(() => {
             :key="col.field"
             :field="col.field"
             :sortable="true"
+            :style="col.width ? { width: col.width, minWidth: col.width, maxWidth: col.width } : {}"
           >
             <template #header>
               <slot :name="`header-${col.field}`">

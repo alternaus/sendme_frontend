@@ -646,7 +646,23 @@
     "contacts": "Contactos",
     "available": "Disponibles",
     "sent": "Enviados",
-    "failed": "Fallidos"
+    "failed": "Fallidos",
+    "inactive": "Inactivas",
+    "totalCampaigns": "Total de Campañas",
+    "activeCampaigns": "Campañas Activas",
+    "totalContacts": "Total de Contactos",
+    "sentMessages": "Mensajes Enviados",
+    "failedMessages": "Mensajes Fallidos",
+    "inactiveCampaigns": "Campañas Inactivas",
+    "messagesStatus": "Estado de Mensajes",
+    "messagesStatusSubtext": "Distribución de mensajes por estado",
+    "messages": "Mensajes",
+    "campaign": "Campaña",
+    "phone": "Teléfono",
+    "content": "Contenido",
+    "status": "Estado",
+    "date": "Fecha",
+    "recentMessages": "Mensajes Recientes"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -891,7 +907,6 @@
     "events": "Eventos",
     "retries": "Reintentos",
     "timeout": "Timeout",
-    "created": "Creado",
     "basic_information": "Información Básica del Webhook",
     "name_placeholder": "ej: Notificación de Email Enviado",
     "name_description": "Nombre descriptivo para identificar el webhook",
@@ -967,11 +982,11 @@
       "blocked": "Bloqueado"
     },
     "message": {
-      "queued": "En cola",
+      "queued": "En Cola",
       "sending": "Enviando",
       "sent": "Enviado",
       "delivered": "Entregado",
-      "undelivered": "No entregado",
+      "undelivered": "No Entregado",
       "failed": "Fallido",
       "received": "Recibido",
       "scheduled": "Programado",
@@ -979,22 +994,22 @@
       "read": "Leído"
     },
     "recharge": {
-      "accepted": "Aceptada",
-      "rejected": "Rechazada",
+      "accepted": "Aceptado",
+      "rejected": "Rechazado",
       "pending": "Pendiente",
-      "failed": "Fallida",
-      "reversed": "Revertida",
-      "held": "Retenida",
-      "initiated": "Iniciada",
-      "expired": "Expirada",
-      "abandoned": "Abandonada",
-      "cancelled": "Cancelada"
+      "failed": "Fallido",
+      "reversed": "Reversado",
+      "held": "Retenido",
+      "initiated": "Iniciado",
+      "expired": "Expirado",
+      "abandoned": "Abandonado",
+      "cancelled": "Cancelado"
     },
     "audit": {
-      "create": "Creado",
-      "update": "Actualizado",
-      "delete": "Eliminado",
-      "read": "Consultado"
+      "create": "Crear",
+      "update": "Actualizar",
+      "delete": "Eliminar",
+      "read": "Leer"
     },
     "dispatch": {
       "pending": "Pendiente",

@@ -645,7 +645,23 @@
     "contacts": "Contacts",
     "available": "Available",
     "sent": "Sent",
-    "failed": "Failed"
+    "failed": "Failed",
+    "inactive": "Inactive",
+    "totalCampaigns": "Total Campaigns",
+    "activeCampaigns": "Active Campaigns",
+    "totalContacts": "Total Contacts",
+    "sentMessages": "Sent Messages",
+    "failedMessages": "Failed Messages",
+    "inactiveCampaigns": "Inactive Campaigns",
+    "messagesStatus": "Messages Status",
+    "messagesStatusSubtext": "Distribution of messages by status",
+    "messages": "Messages",
+    "campaign": "Campaign",
+    "phone": "Phone",
+    "content": "Content",
+    "status": "Status",
+    "date": "Date",
+    "recentMessages": "Recent Messages"
   },
   "notifications": {
     "title": "Notifications",
@@ -803,9 +819,7 @@
     "date": "Date",
     "time": "Time",
     "date_time": "Date and Time",
-    "date_format_description": "Select how dates will appear throughout the application",
-    "time_format_description": "Select how time will appear throughout the application", 
-    "timezone_description": "Timezone used to display dates and times",
+
     "date_formats": {
       "european_standard": "European standard format",
       "iso_international": "ISO international format",
@@ -871,7 +885,7 @@
     "loading": "Loading...",
     "add_new": "Add Webhook",
     "configure_new_webhook": "Configure New Webhook",
-    "created": "Webhook created successfully",
+
     "error_create": "Could not create webhook",
     "status_updated": "Webhook status updated",
     "error_update": "Could not update webhook",
@@ -993,9 +1007,9 @@
       "cancelled": "Cancelled"
     },
     "audit": {
-      "create": "Created",
-      "update": "Updated",
-      "delete": "Deleted",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete",
       "read": "Read"
     },
     "dispatch": {

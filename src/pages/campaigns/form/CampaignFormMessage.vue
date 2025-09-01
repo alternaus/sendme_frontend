@@ -20,7 +20,7 @@
           :modelValue="(form.content.value as string)"
           :errorMessage="errors.content"
           :aiAttach="true"
-          :placeholder="isEmailChannel ? $t('general.write_email_message') : $t('editor.sms_placeholder')"
+          :placeholder="isEmailChannel ? $t('general.write_email_message') : $t('general.editor.sms_placeholder')"
           @update:modelValue="updateContent"
         />
       </div>
@@ -67,6 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
   channels: () => []
 })
 
+
 const emit = defineEmits<{
   'update:form': [key: string, value: unknown]
 }>()
@@ -106,23 +107,27 @@ const updateContentType = () => {
   const newContentType = isEmailChannel.value ? 'html' : 'plain_text'
   emit('update:form', 'contentType', newContentType)
 
-  // Borrar el contenido al cambiar de canal para evitar problemas entre HTML y texto
-  emit('update:form', 'content', '')
+  // NO borrar el contenido al cambiar de canal - solo actualizar el tipo
+  // emit('update:form', 'content', '') // <- Esta línea era el problema
 }
 
 // Observar cambios en el canal para actualizar el tipo de contenido
 watch(
   () => props.form.channelId.value,
-  () => {
-    updateContentType()
+  (newValue, oldValue) => {
+    // Solo ejecutar si realmente cambió el canal (no en la inicialización)
+    if (oldValue !== undefined && newValue !== oldValue) {
+      updateContentType()
+    }
   }
 )
 
 const updateContent = (value: string) => {
   try {
+    console.log('CampaignFormMessage - updateContent llamado con:', value)
     emit('update:form', 'content', value)
   } catch {
-    // Manejo de errores silencioso
+        // Manejo de errores silencioso
   }
 }
 

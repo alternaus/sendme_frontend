@@ -6,6 +6,7 @@ import Message from 'primevue/message'
 import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
@@ -58,8 +59,8 @@ const formatExecutionDate = (dateString: string): string => {
     class="campaign-test-modal"
   >
     <div v-if="testResults && currentCampaign" class="space-y-4">
-      <!-- Grid de métricas en 3 columnas compacto -->
-      <div v-if="testResults.rules" class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
+            <!-- Grid de métricas en 3 columnas compacto -->
+      <AppCard v-if="testResults.rules">
         <div class="grid grid-cols-3 gap-4">
           <!-- Total de Contactos -->
           <div class="text-center">
@@ -103,10 +104,10 @@ const formatExecutionDate = (dateString: string): string => {
             </div>
           </div>
         </div>
-      </div>
+      </AppCard>
 
-                  <!-- Próximas 10 Ejecuciones -->
-      <div v-if="testResults.executions" class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4">
+      <!-- Próximas 10 Ejecuciones -->
+      <AppCard v-if="testResults.executions">
         <div class="flex items-center gap-2 mb-3">
           <i class="pi pi-clock text-neutral-500 dark:text-neutral-400"></i>
           <h4 class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
@@ -148,7 +149,7 @@ const formatExecutionDate = (dateString: string): string => {
             ... {{ t('campaign.more_executions', { count: testResults.executions.upcomingExecutions.length - 10 }) }}
           </div>
         </div>
-      </div>
+      </AppCard>
     </div>
 
     <template #footer>

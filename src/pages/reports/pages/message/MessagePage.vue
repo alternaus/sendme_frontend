@@ -29,10 +29,10 @@ interface IReportMessage {
   updatedAt: Date
   // Otras propiedades que pueda tener el mensaje
 }
+import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
 import { useReportService } from '@/services/report/useReportServices'
 
 import CardFilterMessages from './components/CardFilterMessages.vue'
-import HtmlViewerDialog from './components/HtmlViewerDialog.vue'
 import { useMessageFilter } from './composables/useMessageFilter'
 import { TypeMessageTypes } from './enums/message-types.enum.ts'
 import { StatusMessageTypes } from './enums/status-types.enum'
@@ -42,7 +42,7 @@ export default defineComponent({
     AppHeader,
     AppTable,
     AppTag,
-    HtmlViewerDialog,
+    AppHtmlViewerDialog,
     NumberIcon,
     MessageTypeIcon,
     DateSendIcon,
@@ -292,7 +292,7 @@ export default defineComponent({
   </AppTable>
 
   <!-- Modal para visualizar contenido HTML -->
-  <HtmlViewerDialog
+  <AppHtmlViewerDialog
     v-model:visible="isHtmlViewerVisible"
     :html-content="htmlContent"
   />

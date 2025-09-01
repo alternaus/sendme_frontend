@@ -2,7 +2,6 @@
 import { computed, defineComponent, ref } from 'vue'
 
 import PrimeBadge from 'primevue/badge'
-import PrimeButton from 'primevue/button'
 import PrimeMenu from 'primevue/menu'
 
 import { useI18n } from 'vue-i18n'
@@ -11,12 +10,14 @@ import JobNotification from '@/components/molecules/notifications/JobNotificatio
 import { type INotification, useNotifications } from '@/composables/useNotifications'
 import { useThemeStore } from '@/stores/themeStore'
 
+import AppButton from '../buttons/AppButton.vue'
+
 type NotificationType = INotification['type']
 
 export default defineComponent({
   name: 'AppNotificationBell',
   components: {
-    PrimeButton,
+    AppButton,
     PrimeBadge,
     PrimeMenu,
     JobNotification
@@ -132,14 +133,12 @@ export default defineComponent({
 
 <template>
   <div class="relative">
-    <PrimeButton
+    <AppButton
       v-tooltip.bottom="t('notifications.title')"
       icon="pi pi-bell"
-      text
-      rounded
       size="large"
-      :severity="buttonSeverity"
       variant="text"
+      :severity="buttonSeverity"
       @click="menu?.toggle($event)"
       class="relative"
     />
@@ -166,7 +165,7 @@ export default defineComponent({
           </button>
         </div>
 
-        <div v-if="list.length === 0" class="p-6 text-center text-gray-500 dark:text-gray-400">
+        <div v-if="list.length === 0" class="p-6 text-center text-neutral-500 dark:text-neutral-400">
           {{ t('notifications.no_notifications') }}
         </div>
 
@@ -188,10 +187,10 @@ export default defineComponent({
               v-else
               class="relative flex items-start gap-4 px-4 py-3 mb-3 rounded-lg shadow-sm border-l-4 transition-all duration-300"
               :class="{
-                'border-green-700 dark:border-green-300 bg-white dark:bg-neutral-800': notification.type === 'success',
-                'border-red-700 dark:border-red-300 bg-white dark:bg-neutral-800': notification.type === 'error',
-                'border-yellow-700 dark:border-yellow-300 bg-white dark:bg-neutral-800': notification.type === 'warning',
-                'border-blue-700 dark:border-blue-300 bg-white dark:bg-neutral-800': notification.type === 'info',
+                'border-green-500 dark:border-green-400 bg-white dark:bg-neutral-800': notification.type === 'success',
+                'border-red-500 dark:border-red-400 bg-white dark:bg-neutral-800': notification.type === 'error',
+                'border-yellow-500 dark:border-yellow-400 bg-white dark:bg-neutral-800': notification.type === 'warning',
+                'border-blue-500 dark:border-blue-400 bg-white dark:bg-neutral-800': notification.type === 'info',
                 'opacity-60': notification.read
               }"
             >
@@ -204,7 +203,7 @@ export default defineComponent({
               >
                 <div class="flex justify-between items-center mb-1">
                   <span
-                    class="font-semibold text-gray-800 dark:text-gray-200 truncate"
+                    class="font-semibold text-neutral-800 dark:text-neutral-200 truncate"
                     :class="{ 'font-bold': !notification.read }"
                   >
                     {{ notification.title }}
@@ -215,12 +214,12 @@ export default defineComponent({
                   </span>
                 </div>
                 <p
-                  class="text-gray-700 dark:text-gray-300 text-sm"
+                  class="text-neutral-700 dark:text-neutral-300 text-sm"
                   :class="{ 'font-medium': !notification.read }"
                 >
                   {{ notification.message }}
                 </p>
-                <div class="text-xs text-gray-400 dark:text-gray-500 mt-2 flex justify-between items-center">
+                <div class="text-xs text-neutral-400 dark:text-neutral-500 mt-2 flex justify-between items-center">
                   <span>{{ formatDate(notification.timestamp) }}</span>
                   <span v-if="notification.read" class="text-green-600 dark:text-green-400 text-xs">
                     {{ t('notifications.read') }}
@@ -245,7 +244,7 @@ export default defineComponent({
                   @click="handleDelete(notification)"
                   :title="t('notifications.delete')"
                 >
-                  <i class="pi pi-times text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"></i>
+                  <i class="pi pi-times text-neutral-600 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400"></i>
                 </button>
               </div>
             </div>

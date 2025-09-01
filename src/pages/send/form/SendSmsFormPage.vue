@@ -123,7 +123,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="text"
       :ai-attach="true"
-      :placeholder="$t('editor.sms_placeholder')"
+      :placeholder="$t('general.editor.sms_placeholder')"
       :maxlength="MAX_CHARACTERS"
       :rows="12"
       class="w-full mb-2"

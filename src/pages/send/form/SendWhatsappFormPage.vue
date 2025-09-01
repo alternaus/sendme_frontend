@@ -121,7 +121,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="text"
       :ai-attach="true"
-      :placeholder="$t('editor.whatsapp_placeholder')"
+      :placeholder="$t('general.editor.whatsapp_placeholder')"
       :maxlength="MAX_CHARACTERS"
       :rows="12"
       class="w-full mb-2"

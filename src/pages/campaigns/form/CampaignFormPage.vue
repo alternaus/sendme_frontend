@@ -139,6 +139,7 @@ export default defineComponent({
           endDate: new Date(campaign.endDate),
           time: timeDate,
           days: campaign.days || [],
+          content: campaign.content || '',
           campaignRules: (campaign.campaignRules || []).map(rule => ({
             conditionType: rule.conditionType,
             value: String(rule.value || ''),
@@ -162,7 +163,10 @@ export default defineComponent({
 
     const updateFormContent = (key: string, value: unknown) => {
       try {
+        console.log('CampaignFormPage - updateFormContent llamado con:', key, value)
+        console.log('CampaignFormPage - form antes de setValues:', form)
         setValues({ [key]: value } as Record<string, unknown>)
+        console.log('CampaignFormPage - form después de setValues:', form)
       } catch {
       }
     }

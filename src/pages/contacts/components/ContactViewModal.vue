@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
@@ -162,7 +163,7 @@ watch(
   >
     <div v-if="contact" class="space-y-4">
       <!-- Sección Avatar y Nombre -->
-      <div class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
+      <AppCard>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <AppAvatar
@@ -178,10 +179,10 @@ watch(
             :severity="statusVariant"
           />
         </div>
-      </div>
+      </AppCard>
 
       <!-- Información básica del contacto -->
-      <div class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
+      <AppCard>
 
         <!-- Información de contacto en grid 2x2 -->
         <div class="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -240,7 +241,7 @@ watch(
             <FormattedDate :date="contact.birthDate" format="date" class="text-sm font-medium text-neutral-900 dark:text-neutral-100" />
           </div>
         </div>
-      </div>
+      </AppCard>
 
 
       <!-- Sección CAMPOS PERSONALIZADOS - todos los custom fields -->
@@ -254,7 +255,7 @@ watch(
           <div
             v-for="customValue in allCustomFields"
             :key="customValue.id"
-            class="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg"
+            class="flex items-center justify-between p-3"
           >
             <div class="flex items-center gap-2 min-w-0 flex-1">
               <i

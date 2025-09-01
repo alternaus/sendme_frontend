@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
-import Editor, { type EditorTextChangeEvent } from 'primevue/editor'
+import Editor from 'primevue/editor'
 
 import { useI18n } from 'vue-i18n'
 
@@ -43,10 +43,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
-
 const { t } = useI18n()
 
-// Constantes para límites de SMS
 const SMS_CHAR_LIMITS = {
   GSM_7BIT: 160,
   GSM_7BIT_EXTENDED: 160,
@@ -55,139 +53,103 @@ const SMS_CHAR_LIMITS = {
   MAX_CONCATENATED_MESSAGE: 153,
   MAX_CHARACTERS: 459
 }
+/** Fuente de verdad única */
+const contentData = ref<string>('')
+const updatingFromOutside = ref(false)
 
-// Referencia al contenido interno
-const internalContent = ref('')
-
-const editorContent = computed({
-  get: () => internalContent.value || props.modelValue || '',
-  set: (value) => {
-    const newValue = value || ''
-    internalContent.value = newValue
-    emit('update:modelValue', newValue)
-  },
-})
-
-// Contador de caracteres para SMS
-const smsStats = computed(() => {
-  if (props.contentType !== 'text') return null
-
-  const text = editorContent.value || ''
-  const charCount = text.length
-  const maxChars = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
-
-  // Calcular número de mensajes usando la lógica optimizada
-  let messageCount = 1
-  if (charCount > SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) {
-    messageCount = Math.ceil((charCount - SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) / SMS_CHAR_LIMITS.MAX_CONCATENATED_MESSAGE) + 1
-  }
-
-  // Determinar si excede el límite
-  const isOverLimit = charCount > maxChars
-
-  return {
-    charCount,
-    messageCount,
-    isOverLimit,
-    maxChars
-  }
-})
-
-// Sincronizar con modelValue externo
 watch(
   () => props.modelValue,
-  (newValue) => {
-    const value = newValue || ''
-    if (value !== internalContent.value) {
-      internalContent.value = value
+  (nv) => {
+    const v = nv ?? ''
+    if (v !== contentData.value) {
+      updatingFromOutside.value = true
+      contentData.value = v
+      updatingFromOutside.value = false
     }
   },
   { immediate: true }
 )
 
-// Método para insertar campos dinámicos o contenido personalizado
+/** Emite solo cuando el cambio viene del usuario */
+watch(contentData, (nv) => {
+  if (updatingFromOutside.value) return
+  emit('update:modelValue', nv ?? '')
+})
+
+/** Métricas SMS */
+const smsStats = computed(() => {
+  if (props.contentType !== 'text') return null
+  const text = contentData.value ?? ''
+  const charCount = text.length
+  const maxChars = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+  let messageCount = 1
+  if (charCount > SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) {
+    messageCount = Math.ceil((charCount - SMS_CHAR_LIMITS.MAX_SINGLE_MESSAGE) / SMS_CHAR_LIMITS.MAX_CONCATENATED_MESSAGE) + 1
+  }
+  const isOverLimit = charCount > maxChars
+  return { charCount, messageCount, isOverLimit, maxChars }
+})
+
+/** Inserción de contenido (placeholder o IA) */
 const insertContent = (content: string, position: 'start' | 'end' | 'cursor' = 'cursor') => {
-  const currentContent = editorContent.value || ''
-  let newContent = ''
+  const current = contentData.value ?? ''
+  let next = ''
 
   switch (position) {
     case 'start':
-      newContent = content + (currentContent ? '\n' + currentContent : '')
+      next = content + (current ? '\n' + current : '')
       break
     case 'end':
-      newContent = currentContent + (currentContent ? '\n' : '') + content
+      next = current + (current ? '\n' : '') + content
       break
     case 'cursor':
     default:
-      // Para campos dinámicos, insertar con un espacio si es necesario
-      if (currentContent && !currentContent.endsWith(' ') && !currentContent.endsWith('\n')) {
-        newContent = currentContent + ' ' + content
+      // Sin API de cursor del hijo, aproximamos: unión suave al final
+      if (current && !current.endsWith(' ') && !current.endsWith('\n')) {
+        next = current + ' ' + content
       } else {
-        newContent = currentContent + content
+        next = current + content
       }
       break
   }
 
-  // Para SMS, verificar límite antes de insertar
-  const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
-  if (props.contentType === 'text' && newContent.length > maxLength) {
-    return false // Retornar false si excede el límite
-  }
+  const max = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+  if (props.contentType === 'text' && next.length > max) return false
 
-  editorContent.value = newContent
-  return true // Retornar true si la inserción fue exitosa
-}
-
-const handleTextChange = (event: EditorTextChangeEvent) => {
-  const newValue = props.contentType === 'html' ? event.htmlValue : event.textValue
-
-  // Para SMS, limitar caracteres si se define maxlength
-  const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
-  if (props.contentType === 'text' && props.maxlength && newValue.length > maxLength) {
-    return // No permitir más caracteres
-  }
-
-  editorContent.value = newValue
+  contentData.value = next
+  return true
 }
 
 const handleAiInsert = (aiContent: string) => {
   if (props.aiInsertMode === 'replace') {
-    // Reemplazar todo el contenido
-    editorContent.value = aiContent
+    contentData.value = aiContent
   } else {
-    // Modo append: agregar al final del contenido actual
-    const currentContent = editorContent.value || ''
-    const separator = currentContent && !currentContent.endsWith('\n') ? '\n' : ''
-    const newContent = currentContent + separator + aiContent
-
-    // Verificar límite para SMS
-    const maxLength = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
-    if (props.contentType === 'text' && newContent.length > maxLength) {
-      return // No permitir inserción si excede el límite
-    }
-
-    editorContent.value = newContent
+    const current = contentData.value ?? ''
+    const sep = current && !current.endsWith('\n') ? '\n' : ''
+    const next = current + sep + aiContent
+    const max = props.maxlength || SMS_CHAR_LIMITS.MAX_CHARACTERS
+    if (props.contentType === 'text' && next.length > max) return
+    contentData.value = next
   }
 }
 
-// Exponer métodos para uso externo
-defineExpose({
-  insertContent
-})
+
+
+defineExpose({ insertContent })
 </script>
 
 <template>
   <div class="w-full">
-    <!-- Textarea para contenido de texto (SMS) -->
+    <!-- SMS -->
     <div v-if="contentType === 'text'" class="w-full">
       <AppTextarea
-        v-model="editorContent"
+        v-model="contentData"
         :rows="rows"
         :error-message="errorMessage"
         :show-error-message="showErrorMessage"
         :use-float-label="false"
         :auto-resize="true"
-        :placeholder="placeholder || t('editor.sms_placeholder')"
+        :placeholder="placeholder || t('general.editor.sms_placeholder')"
         :disabled="disabled || readonly"
         :maxlength="maxlength"
         class="w-full"
@@ -195,54 +157,41 @@ defineExpose({
         :ai-insert-mode="aiInsertMode"
       />
 
-      <!-- Contador de caracteres para SMS -->
-      <div v-if="smsStats" class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-          <span>{{ t('editor.characters') }}: {{ smsStats.charCount }}</span>
-          <span>{{ t('editor.messages') }}: {{ smsStats.messageCount }}</span>
-        </div>
-        <span
-          :class="{
-            'text-green-600 dark:text-green-400': !smsStats.isOverLimit,
-            'text-red-600 dark:text-red-400': smsStats.isOverLimit
-          }"
-        >
-          {{ smsStats.charCount }}/{{ smsStats.maxChars }} {{ t('editor.characters') }} - {{ smsStats.messageCount }} {{ t('general.sms') }}
-        </span>
+      <div v-if="smsStats" class="mt-2 text-sm text-neutral-600 dark:text-neutral-400 flex justify-center items-center">
+        <span>{{ smsStats.charCount }}/{{ smsStats.maxChars }} - {{ smsStats.messageCount }} {{ t('general.sms') }}</span>
       </div>
 
-      <!-- Advertencia si excede el límite -->
       <div
         v-if="smsStats && smsStats.isOverLimit"
-        class="mt-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded-md"
+        class="mt-2 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded-md"
       >
-        {{ t('editor.sms_limit_exceeded') }}
+        {{ t('general.editor.sms_limit_exceeded') }}
       </div>
     </div>
 
-    <!-- Editor HTML para contenido HTML (Email) -->
+    <!-- HTML (Quill) -->
     <Editor
       v-else
-      v-model="editorContent"
+      :key="contentType"
+      v-model="contentData"
       editorStyle="height: 200px"
       :readonly="readonly || disabled"
-      :placeholder="placeholder || t('editor.email_placeholder')"
+      :placeholder="placeholder || t('general.editor.email_placeholder')"
       class="w-full !rounded-xl transition-all duration-300"
       :class="{
-        'p-invalid border-1 border-red-400  dark:border-red-300': errorMessage.length > 0,
+        'p-invalid border-1 border-red-400 dark:border-red-300': !!errorMessage,
         'readonly-editor': readonly || disabled,
       }"
-      @text-change="handleTextChange"
     >
-      <template v-if="showToolbar && !readonly && !disabled" v-slot:toolbar>
+      <template v-if="showToolbar && !readonly && !disabled" #toolbar>
         <span class="ql-formats">
-          <button v-tooltip.bottom="t('editor.bold')" class="ql-bold"></button>
-          <button v-tooltip.bottom="t('editor.italic')" class="ql-italic"></button>
-          <button v-tooltip.bottom="t('editor.underline')" class="ql-underline"></button>
-          <button v-tooltip.bottom="t('editor.strike')" class="ql-strike"></button>
+          <button v-tooltip.bottom="t('general.editor.bold')" class="ql-bold"></button>
+          <button v-tooltip.bottom="t('general.editor.italic')" class="ql-italic"></button>
+          <button v-tooltip.bottom="t('general.editor.underline')" class="ql-underline"></button>
+          <button v-tooltip.bottom="t('general.editor.strike')" class="ql-strike"></button>
         </span>
         <span class="ql-formats">
-          <select v-tooltip.bottom="t('editor.font_size')" class="ql-size">
+          <select v-tooltip.bottom="t('general.editor.font_size')" class="ql-size">
             <option value="small"></option>
             <option selected></option>
             <option value="large"></option>
@@ -250,39 +199,36 @@ defineExpose({
           </select>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="t('editor.ordered_list')" class="ql-list" value="ordered"></button>
-          <button v-tooltip.bottom="t('editor.bullet_list')" class="ql-list" value="bullet"></button>
+          <button v-tooltip.bottom="t('general.editor.ordered_list')" class="ql-list" value="ordered"></button>
+          <button v-tooltip.bottom="t('general.editor.bullet_list')" class="ql-list" value="bullet"></button>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="t('editor.align_left')" class="ql-align" value=""></button>
-          <button v-tooltip.bottom="t('editor.align_center')" class="ql-align" value="center"></button>
-          <button v-tooltip.bottom="t('editor.align_right')" class="ql-align" value="right"></button>
-          <button v-tooltip.bottom="t('editor.justify')" class="ql-align" value="justify"></button>
+          <button v-tooltip.bottom="t('general.editor.align_left')" class="ql-align" value=""></button>
+          <button v-tooltip.bottom="t('general.editor.align_center')" class="ql-align" value="center"></button>
+          <button v-tooltip.bottom="t('general.editor.align_right')" class="ql-align" value="right"></button>
+          <button v-tooltip.bottom="t('general.editor.justify')" class="ql-align" value="justify"></button>
         </span>
         <span class="ql-formats">
-          <button v-tooltip.bottom="t('editor.add_link')" class="ql-link"></button>
-          <button v-tooltip.bottom="t('editor.add_image')" class="ql-image"></button>
+          <button v-tooltip.bottom="t('general.editor.add_link')" class="ql-link"></button>
+          <button v-tooltip.bottom="t('general.editor.add_image')" class="ql-image"></button>
         </span>
-
         <span class="ql-formats">
-          <button v-tooltip.bottom="t('editor.clean_formatting')" class="ql-clean"></button>
+          <button v-tooltip.bottom="t('general.editor.clean_formatting')" class="ql-clean"></button>
         </span>
         <span v-if="aiAttach" class="ql-formats">
           <AppAIGenerate
             type="email"
-            :current-text="editorContent"
+            :current-text="contentData"
             :append-mode="aiInsertMode"
-            :button-title="t('editor.ai_generate')"
+            :button-title="t('general.editor.ai_generate')"
             @insert="handleAiInsert"
           />
         </span>
       </template>
-
     </Editor>
 
-    <!-- Mensaje de error para el editor HTML (el textarea maneja su propio error) -->
     <div
-      v-if="contentType === 'html' && showErrorMessage && errorMessage.length"
+      v-if="contentType === 'html' && showErrorMessage && errorMessage"
       class="text-red-400 dark:text-red-300 p-0 m-0"
     >
       <small>{{ errorMessage }}</small>
@@ -296,60 +242,32 @@ defineExpose({
   border: 1px solid var(--p-select-border-color) !important;
   background-color: var(--p-inputtext-background) !important;
 }
-
 :deep(.ql-editor) {
   border-radius: 0% 0% var(--radius-xl) var(--radius-xl) !important;
   border: 1px solid var(--p-select-border-color) !important;
   background-color: var(--p-inputtext-background) !important;
 }
-
 :deep(.ql-container) {
   border-radius: 0% 0% var(--radius-xl) var(--radius-xl);
   border: none;
 }
-
 :deep(.ql-toolbar) {
   border-radius: var(--radius-xl) var(--radius-xl) 0% 0%;
   border: 1px solid var(--p-select-border-color) !important;
   background-color: var(--p-inputtext-background) !important;
 }
-
-:deep(.ql-formats) {
-  margin-right: 8px;
-}
-
-:deep(.ql-picker-label) {
-  border: none !important;
-  background-color: transparent !important;
-}
-
+:deep(.ql-formats) { margin-right: 8px; }
+:deep(.ql-picker-label) { border: none !important; background-color: transparent !important; }
 :deep(.ql-picker-options) {
   background-color: var(--p-inputtext-background) !important;
   border: 1px solid var(--p-select-border-color) !important;
   border-radius: var(--radius-md);
 }
+:deep(.ql-snow .ql-tooltip){ position: sticky; }
 
-:deep(.ql-snow .ql-tooltip){
-  position: sticky;
-}
-
-
-// Estilos para modo readonly
 :deep(.readonly-editor) {
-  .ql-toolbar {
-    display: none !important;
-  }
-
-  .ql-container {
-    border-radius: var(--radius-xl) !important;
-    border: 1px solid var(--p-select-border-color) !important;
-  }
-
-  .ql-editor {
-    border-radius: var(--radius-xl) !important;
-    border: 1px solid var(--p-select-border-color) !important;
-    background-color: var(--p-surface-50) !important;
-    cursor: default !important;
-  }
+  .ql-toolbar { display: none !important; }
+  .ql-container { border-radius: var(--radius-xl) !important; border: 1px solid var(--p-select-border-color) !important; }
+  .ql-editor { border-radius: var(--radius-xl) !important; border: 1px solid var(--p-select-border-color) !important; cursor: default !important; }
 }
 </style>
