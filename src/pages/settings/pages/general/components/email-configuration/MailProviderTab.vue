@@ -316,7 +316,7 @@ const testConfiguration = handleSubmit(async (values) => {
           :disabled="testing || saving || loading || !isFormValid"
           class="!w-auto ml-auto"
           outlined
-          severity="contrast"
+          severity="secondary"
           :label="testing ? $t('email_configuration.testing') : $t('email_configuration.test_configuration')"
           @click="testConfiguration"
         />
@@ -325,7 +325,7 @@ const testConfiguration = handleSubmit(async (values) => {
           type="button"
           outlined
           class="!w-auto"
-          severity="contrast"
+          severity="secondary"
           :disabled="saving || testing"
           :label="$t('email_configuration.reset')"
           @click="resetForm()"

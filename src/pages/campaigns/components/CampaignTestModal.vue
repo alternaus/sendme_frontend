@@ -13,7 +13,7 @@ import type { ITestCampaignResponse } from '@/services/campaign/interfaces/test-
 
 interface Props {
   visible: boolean
-  campaign: ICampaign | null
+  campaign: ICampaign | ICampaign[] | null
   testResults: ITestCampaignResponse | null
 }
 
@@ -30,6 +30,14 @@ const { formatDateTime } = useDateFormat()
 const dialogVisible = computed({
   get: () => props.visible,
   set: (value: boolean) => emit('update:visible', value)
+})
+
+// Obtener la campaña individual del array o la campaña directa
+const currentCampaign = computed(() => {
+  if (Array.isArray(props.campaign)) {
+    return props.campaign.length > 0 ? props.campaign[0] : null
+  }
+  return props.campaign
 })
 
 const formatExecutionDate = (dateString: string): string => {
@@ -49,7 +57,7 @@ const formatExecutionDate = (dateString: string): string => {
     :style="{ width: '900px' }"
     class="campaign-test-modal"
   >
-    <div v-if="testResults && campaign" class="space-y-4">
+    <div v-if="testResults && currentCampaign" class="space-y-4">
       <!-- Grid de métricas en 3 columnas compacto -->
       <div v-if="testResults.rules" class="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg">
         <div class="grid grid-cols-3 gap-4">

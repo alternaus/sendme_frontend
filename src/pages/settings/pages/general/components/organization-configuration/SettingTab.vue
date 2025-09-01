@@ -239,7 +239,7 @@ const onSubmit = handleSubmit(async (values) => {
         <AppButton
           type="button"
           class="!w-auto ml-auto"
-          severity="contrast"
+          severity="secondary"
           outlined
           :disabled="saving"
           :label="$t('settings.reset')"

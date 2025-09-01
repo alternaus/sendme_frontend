@@ -138,6 +138,7 @@ export default defineComponent({
           startDate: new Date(campaign.startDate),
           endDate: new Date(campaign.endDate),
           time: timeDate,
+          days: campaign.days || [],
           campaignRules: (campaign.campaignRules || []).map(rule => ({
             conditionType: rule.conditionType,
             value: String(rule.value || ''),
@@ -166,6 +167,21 @@ export default defineComponent({
       }
     }
 
+    // Helper para convertir días de campaña al formato de la API
+    const convertDaysToApiFormat = (days: string[]): string[] => {
+      const dayMapping: Record<string, string> = {
+        'MO': 'MO', // Monday
+        'TU': 'TU', // Tuesday
+        'WE': 'WE', // Wednesday
+        'TH': 'TH', // Thursday
+        'FR': 'FR', // Friday
+        'SA': 'SA', // Saturday
+        'SU': 'SU', // Sunday
+      }
+
+      return days.map(day => dayMapping[day] || day)
+    }
+
     const formatCampaignData = (values: GenericObject): Record<string, unknown> => {
       try {
         const timeString = values.time instanceof Date
@@ -181,6 +197,7 @@ export default defineComponent({
             ? values.endDate.toISOString().split('T')[0]
             : values.endDate,
           time: timeString,
+          days: Array.isArray(values.days) ? convertDaysToApiFormat(values.days) : [],
           campaignRules: Array.isArray(values.campaignRules)
             ? values.campaignRules.map((rule: Record<string, unknown>) => ({
                 conditionType: rule.conditionType,
@@ -364,6 +381,7 @@ export default defineComponent({
         <CampaignFormMessage
           :form="form"
           :errors="errors"
+          :channels="channels"
           @update:form="updateFormContent"
           :disabled="isLoading"
         />

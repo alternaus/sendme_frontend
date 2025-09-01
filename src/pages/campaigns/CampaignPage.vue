@@ -39,7 +39,7 @@ const toast = useToast()
 const page = ref(1)
 const limit = ref(10)
 const campaigns = ref<ICampaign[]>([])
-const selected = ref<ICampaign | null>(null)
+const selected = ref<ICampaign[]>([])
 const loading = ref(false)
 const testingRules = ref(false)
 const testResults = ref<ITestCampaignResponse | null>(null)
@@ -145,10 +145,12 @@ watch(dateRange, (newValue, oldValue) => {
 })
 
 const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
-  if (selection && !Array.isArray(selection)) {
-    selected.value = selection as unknown as ICampaign
+  if (selection && Array.isArray(selection)) {
+    selected.value = selection as unknown as ICampaign[]
+  } else if (selection && !Array.isArray(selection)) {
+    selected.value = [selection as unknown as ICampaign]
   } else {
-    selected.value = null
+    selected.value = []
   }
   // Limpiar resultados de test cuando cambia la selección
   testResults.value = null
@@ -156,15 +158,26 @@ const handleSelectionChange = (selection: Record<string, unknown> | Record<strin
 }
 
 const handleDelete = async () => {
-  if (!selected.value) return
+  if (!selected.value.length) return
+
+  const campaignsToDelete = [...selected.value]
 
   try {
-    await deleteCampaign(selected.value.id)
-    selected.value = null
+    // Eliminar múltiples campañas si están seleccionadas
+    if (campaignsToDelete.length === 1) {
+      await deleteCampaign(campaignsToDelete[0].id)
+    } else {
+      // Eliminar múltiples campañas
+      await Promise.all(campaignsToDelete.map(campaign => deleteCampaign(campaign.id)))
+    }
+
+    selected.value = []
     toast.add({
       severity: 'success',
       summary: t('general.success'),
-      detail: t('campaign.success.removed'),
+      detail: campaignsToDelete.length === 1
+        ? t('campaign.success.removed')
+        : t('campaign.success.removed_multiple', { count: campaignsToDelete.length }),
       life: 3000,
     })
     await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
@@ -194,7 +207,29 @@ const convertDaysToApiFormat = (days: string[]): string[] => {
 }
 
 const handleTestRules = async () => {
-  if (!selected.value?.campaignRules?.length) {
+  if (!selected.value.length) {
+    toast.add({
+      severity: 'warn',
+      summary: t('general.warning'),
+      detail: t('campaign.no_selection_warning'),
+      life: 3000,
+    })
+    return
+  }
+
+  // Solo permitir test de una campaña a la vez
+  if (selected.value.length > 1) {
+    toast.add({
+      severity: 'warn',
+      summary: t('general.warning'),
+      detail: t('campaign.single_test_warning'),
+      life: 3000,
+    })
+    return
+  }
+
+  const campaign = selected.value[0]
+  if (!campaign?.campaignRules?.length) {
     toast.add({
       severity: 'warn',
       summary: t('general.warning'),
@@ -210,17 +245,17 @@ const handleTestRules = async () => {
 
   try {
     const testRequest: ITestCampaignRequest = {
-      rules: selected.value.campaignRules.map(rule => ({
+      rules: campaign.campaignRules.map(rule => ({
         conditionType: rule.conditionType,
         value: rule.value,
         customFieldId: rule.customFieldId
       })),
       executions: {
-        startDate: selected.value.startDate,
-        endDate: selected.value.endDate,
-        time: selected.value.time,
-        days: convertDaysToApiFormat(selected.value.days || []),
-        frequency: selected.value.frequency,
+        startDate: campaign.startDate,
+        endDate: campaign.endDate,
+        time: campaign.time,
+        days: convertDaysToApiFormat(campaign.days || []),
+        frequency: campaign.frequency,
         maxExecutions: 10 // Limitar a 10 próximas ejecuciones para el preview
       }
     }
@@ -229,7 +264,7 @@ const handleTestRules = async () => {
     testResults.value = response
     showTestResultsModal.value = true
 
-        toast.add({
+    toast.add({
       severity: 'success',
       summary: t('general.success'),
       detail: response.rules ? t('campaign.test_completed', {
@@ -258,24 +293,29 @@ const headerActions = computed(() => [
     onClick: () => push('/campaigns/create'),
     type: ActionTypes.CREATE,
   },
-  ...(selected.value
+  ...(selected.value.length > 0
     ? [
         {
           label: testingRules.value ? t('campaign.testing_rules') : t('campaign.test_rules'),
           onClick: handleTestRules,
           type: ActionTypes.VIEW,
-          disabled: testingRules.value || !selected.value?.campaignRules?.length,
+          disabled: testingRules.value || selected.value.length !== 1 || !selected.value[0]?.campaignRules?.length,
         },
-        { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
         {
+          label: t('actions.delete'),
+          onClick: handleDelete,
+          type: ActionTypes.DELETE,
+          disabled: selected.value.length === 0,
+        },
+        ...(selected.value.length === 1 ? [{
           label: t('actions.edit'),
           onClick: () => {
-            if (selected.value?.id) {
-              push(`/campaigns/edit/${selected.value?.id}`)
+            if (selected.value[0]?.id) {
+              push(`/campaigns/edit/${selected.value[0].id}`)
             }
           },
           type: ActionTypes.EDIT,
-        },
+        }] : []),
       ]
     : []),
 ])
@@ -313,7 +353,7 @@ const headerActions = computed(() => [
     :pageSize="campaignMeta.limit"
     :pageCurrent="campaignMeta.currentPage"
     :totalItems="campaignMeta.totalRecords"
-    :multipleSelection="false"
+    :multipleSelection="true"
     :loading="loading"
     textTotalItems="campaign.campaigns"
     :autoDetectDateFields="true"

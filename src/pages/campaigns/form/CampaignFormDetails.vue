@@ -5,13 +5,12 @@ import { useI18n } from 'vue-i18n'
 
 import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
 import ChannelIcon from '@/assets/svg/channel.svg?component'
-import DateEndIcon from '@/assets/svg/date_end.svg?component'
 import DateStartIcon from '@/assets/svg/date_start.svg?component'
 import DescriptionIcon from '@/assets/svg/description.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
 import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import type { SelectButtonOption } from '@/components/atoms/buttons/types/select-button-options.type'
-import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
 import AppTimePicker from '@/components/atoms/datepickers/AppTimePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
@@ -51,6 +50,25 @@ const daysOptions: SelectButtonOption[] = [
 const updateField = (key: string, value: unknown) => {
   emit('update:form', key, value)
 }
+
+// Función para manejar el cambio de rango de fechas
+const handleDateRangeChange = (dateRange: Date[]) => {
+  if (dateRange.length === 2) {
+    updateField('startDate', dateRange[0])
+    updateField('endDate', dateRange[1])
+  }
+}
+
+// Función para obtener el rango de fechas actual
+const getCurrentDateRange = computed(() => {
+  const startDate = props.form.startDate.value as Date
+  const endDate = props.form.endDate.value as Date
+
+  if (startDate && endDate) {
+    return [startDate, endDate]
+  }
+  return []
+})
 
 //Computed properties to access ref values safely
 const formValues = computed(() => ({
@@ -147,25 +165,15 @@ const errorMessages = computed(() => ({
             <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.duration') }}</p>
           </div>
           <div class="grid grid-cols-1 gap-2">
-            <AppDatePicker
-              :modelValue="formValues.startDate"
-              @update:modelValue="updateField('startDate', $event)"
+            <AppDateRangePicker
+              :modelValue="getCurrentDateRange"
+              @update:modelValue="handleDateRangeChange"
               :errorMessage="errorMessages.startDate"
             >
               <template #icon>
                 <DateStartIcon class="dark:fill-white w-4 h-4" />
               </template>
-            </AppDatePicker>
-
-            <AppDatePicker
-              :modelValue="formValues.endDate"
-              @update:modelValue="updateField('endDate', $event)"
-              :errorMessage="errorMessages.endDate"
-            >
-              <template #icon>
-                <DateEndIcon class="dark:fill-white w-4 h-4" />
-              </template>
-            </AppDatePicker>
+            </AppDateRangePicker>
           </div>
         </div>
 
@@ -180,6 +188,8 @@ const errorMessages = computed(() => ({
               @update:modelValue="updateField('days', $event)"
               :options="daysOptions"
               :errorMessage="errorMessages.days"
+              :multiple="true"
+              class="w-full"
             />
           </div>
         </div>

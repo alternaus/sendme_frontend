@@ -542,7 +542,7 @@ const onCancel = () => {
         type="button"
         outlined
         class="!w-auto"
-        severity="contrast"
+        severity="secondary"
         :disabled="props.loading"
         :label="$t('webhooks.cancel')"
         @click="onCancel"
@@ -607,7 +607,7 @@ const onCancel = () => {
         :label="$t('webhooks.close')"
         @click="closeSchemaDialog"
         outlined
-        severity="contrast"
+        severity="secondary"
       />
     </div>
   </AppDialog>

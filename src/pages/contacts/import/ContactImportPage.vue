@@ -18,7 +18,7 @@
 
       <div class="flex justify-content-center" v-if="importType === 'google'">
         <AppButton label="Importar desde Google" icon="pi pi-cloud-upload" size="small" :loading="loading"
-          @click="handleGoogleImport" class="mb-2 mx-auto!" />
+          @click="handleGoogleImport" class="mb-2 mx-auto! w-auto!" />
       </div>
       <div v-else>
         <UploadFile />

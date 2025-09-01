@@ -26,12 +26,12 @@ const props = withDefaults(defineProps<Props>(), {
   optionLabel: 'name',
   optionValue: 'value',
   errorMessage: '',
-  multiple: true,
+  multiple: false,
   disabled: false,
   size: 'small',
   containerClass: 'w-full',
   selectButtonClass: 'w-full flex justify-center items-center flex-wrap',
-  errorClass: 'text-red-400 dark:text-red-300 p-0 m-0'
+  errorClass: 'text-red-400 dark:text-gray-300 p-0 m-0'
 })
 
 defineOptions({
@@ -65,19 +65,36 @@ const inputId = computed(() => props.inputId || `app-select-button-${crypto.rand
         multiple,
         disabled,
         size,
-        pt,
         ptOptions,
         ...$attrs
+      }"
+      :pt="{
+        pcToggleButton: {
+          content: ({ context }: { context: { active: boolean } }) => ({ class: context.active ? 'bg-[var(--p-primary-color)]! text-[var(--p-surface-700)]' : '' })
+        }
       }"
       :class="[
         selectButtonClass,
         { 'p-invalid': hasError }
       ]"
       @update:model-value="internalValue = $event"
-    />
+    >
+      <template #option="slotProps">
+        <slot name="option" :option="slotProps.option" />
+      </template>
+    </SelectButton>
 
     <div v-if="hasError" :class="errorClass">
       <small>{{ errorMessage }}</small>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+:deep(.p-selectbutton .p-button) {
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  font-size: 0.875rem;
+  /* 14px */
+}
+</style>

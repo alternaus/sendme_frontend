@@ -46,9 +46,40 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
+    // Constantes para límites de SMS
+    const SMS_CHAR_LIMITS = {
+      GSM_7BIT: 160,
+      GSM_7BIT_EXTENDED: 160,
+      UCS2: 70
+    }
+
     const editorContent = computed({
       get: () => props.modelValue,
       set: (value) => emit('update:modelValue', value),
+    })
+
+    // Contador de caracteres para SMS
+    const smsStats = computed(() => {
+      if (props.contentType !== 'text') return null
+
+      const text = editorContent.value || ''
+      const charCount = text.length
+
+      // Calcular número de mensajes
+      let messageCount = 1
+      if (charCount > SMS_CHAR_LIMITS.GSM_7BIT) {
+        messageCount = Math.ceil(charCount / SMS_CHAR_LIMITS.GSM_7BIT)
+      }
+
+      // Determinar si excede el límite
+      const isOverLimit = charCount > SMS_CHAR_LIMITS.GSM_7BIT * 10 // Máximo 10 mensajes
+
+      return {
+        charCount,
+        messageCount,
+        isOverLimit,
+        maxChars: SMS_CHAR_LIMITS.GSM_7BIT * 10
+      }
     })
 
     watchEffect(() => {
@@ -59,6 +90,12 @@ export default defineComponent({
 
     const handleTextChange = (event: EditorTextChangeEvent) => {
       const newValue = props.contentType === 'html' ? event.htmlValue : event.textValue
+
+      // Para SMS, limitar a 1600 caracteres (10 mensajes)
+      if (props.contentType === 'text' && newValue.length > SMS_CHAR_LIMITS.GSM_7BIT * 10) {
+        return // No permitir más caracteres
+      }
+
       editorContent.value = newValue
       emit('update:modelValue', newValue)
     }
@@ -69,6 +106,11 @@ export default defineComponent({
       const separator = currentContent && !currentContent.endsWith('\n') ? '\n' : ''
       const newContent = currentContent + separator + aiContent
 
+      // Para SMS, verificar límite antes de insertar
+      if (props.contentType === 'text' && newContent.length > SMS_CHAR_LIMITS.GSM_7BIT * 10) {
+        return // No permitir inserción si excede el límite
+      }
+
       editorContent.value = newContent
       emit('update:modelValue', newContent)
     }
@@ -77,6 +119,7 @@ export default defineComponent({
       editorContent,
       handleTextChange,
       handleAiInsert,
+      smsStats,
     }
   },
 })
@@ -85,16 +128,42 @@ export default defineComponent({
 <template>
   <div class="w-full">
     <!-- Textarea para contenido de texto -->
-    <AppTextarea
-      v-if="contentType === 'text'"
-      v-model="editorContent"
-      :rows="6"
-      :error-message="errorMessage"
-      :show-error-message="showErrorMessage"
-      :use-float-label="false"
-      :auto-resize="true"
-      class="w-full"
-    />
+    <div v-if="contentType === 'text'" class="w-full">
+      <AppTextarea
+        v-model="editorContent"
+        :rows="6"
+        :error-message="errorMessage"
+        :show-error-message="showErrorMessage"
+        :use-float-label="false"
+        :auto-resize="true"
+        class="w-full"
+        :ai-attach="aiAttach"
+      />
+
+      <!-- Contador de caracteres para SMS -->
+      <div v-if="smsStats" class="mt-2 text-sm text-gray-600 dark:text-gray-400 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <span>Caracteres: {{ smsStats.charCount }}</span>
+          <span>Mensajes: {{ smsStats.messageCount }}</span>
+        </div>
+        <span
+          :class="{
+            'text-green-600 dark:text-green-400': !smsStats.isOverLimit,
+            'text-red-600 dark:text-red-400': smsStats.isOverLimit
+          }"
+        >
+          {{ smsStats.charCount }}/{{ smsStats.maxChars }}
+        </span>
+      </div>
+
+      <!-- Advertencia si excede el límite -->
+      <div
+        v-if="smsStats && smsStats.isOverLimit"
+        class="mt-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded-md"
+      >
+        ⚠️ Has excedido el límite de 10 mensajes SMS. Por favor, acorta tu mensaje.
+      </div>
+    </div>
 
     <!-- Editor HTML para contenido HTML -->
     <Editor

@@ -117,7 +117,7 @@ const handleCancel = () => {
               <AppButton
                 v-if="!isFirstStep"
                 :label="t('general.previous')"
-                severity="contrast"
+                severity="secondary"
                 size="small"
                 outlined
                 icon="pi pi-arrow-left"
@@ -149,7 +149,7 @@ const handleCancel = () => {
 
               <AppButton
                 :label="t('general.cancel')"
-                severity="contrast"
+                severity="secondary"
                 outlined
                 size="small"
                 @click="handleCancel"
