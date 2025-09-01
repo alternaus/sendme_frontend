@@ -61,7 +61,6 @@ const updateField = (field: string, value: string | Date[] | null) => {
       emit('update:dateRange', value as Date[])
       break
     default:
-      console.warn(`Unknown field: ${field}`)
   }
 }
 
@@ -72,8 +71,8 @@ const fetchChannels = async () => {
     if (response) {
       channels.value = response
     }
-  } catch (error) {
-    console.error('Error fetching channels:', error)
+  } catch  {
+
   } finally {
     loadingChannels.value = false
   }

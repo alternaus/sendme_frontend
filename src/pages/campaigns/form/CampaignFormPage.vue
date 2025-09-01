@@ -163,15 +163,11 @@ export default defineComponent({
 
     const updateFormContent = (key: string, value: unknown) => {
       try {
-        console.log('CampaignFormPage - updateFormContent llamado con:', key, value)
-        console.log('CampaignFormPage - form antes de setValues:', form)
         setValues({ [key]: value } as Record<string, unknown>)
-        console.log('CampaignFormPage - form después de setValues:', form)
       } catch {
       }
     }
 
-    // Helper para convertir días de campaña al formato de la API
     const convertDaysToApiFormat = (days: string[]): string[] => {
       const dayMapping: Record<string, string> = {
         'MO': 'MO', // Monday

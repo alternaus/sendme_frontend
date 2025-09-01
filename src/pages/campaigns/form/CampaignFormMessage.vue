@@ -124,32 +124,25 @@ watch(
 
 const updateContent = (value: string) => {
   try {
-    console.log('CampaignFormMessage - updateContent llamado con:', value)
     emit('update:form', 'content', value)
   } catch {
-        // Manejo de errores silencioso
   }
 }
 
 const insertPlaceholder = () => {
   try {
     if (selectedField.value) {
-      // Usar el método insertContent del editor para insertar el campo dinámico
       if (editorRef.value?.insertContent) {
         const success = editorRef.value.insertContent(selectedField.value, 'cursor')
         if (!success) {
-          // Si no se pudo insertar (por ejemplo, excede el límite de SMS)
-          console.warn('No se pudo insertar el campo dinámico')
         }
       } else {
-        // Fallback al método anterior si no está disponible el método expuesto
         const currentContent = props.form.content.value as string || ''
         const newValue = `${currentContent} ${selectedField.value}`
         updateContent(newValue)
       }
     }
   } catch {
-    // Manejo de errores silencioso
   }
 }
 

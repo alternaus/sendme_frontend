@@ -26,7 +26,7 @@ export const usePaymentHandler = () => {
   } = usePaymentProviders()
 
   const loadProviders = async () => {
-    try { await loadAvailableProviders() } catch (err) { console.error('Error loading providers:', err) }
+    try { await loadAvailableProviders() } catch {  }
   }
 
   const selectProvider = async (provider: IPaymentProvider) => {

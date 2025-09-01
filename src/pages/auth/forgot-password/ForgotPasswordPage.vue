@@ -60,8 +60,7 @@ const onSubmit = handleSubmit(async (values) => {
       router.push('/auth/sign-in')
     }, 3000)
 
-  } catch (error) {
-    console.error('Error sending reset link:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),

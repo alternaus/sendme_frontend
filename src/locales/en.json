@@ -558,6 +558,7 @@
     "error_getting_organization": "Error getting organization",
     "error_getting_recharges": "Error getting recharges",
     "recharges": "Recharges",
+    "custom_fields": "Custom Fields",
     "movements": "Movements",
     "remaining_messages": "Remaining messages",
     "messages_count": "Messages count",

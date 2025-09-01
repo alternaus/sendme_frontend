@@ -174,12 +174,10 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   }
 }
 
-const handlePaymentSuccess = (result: { transactionId?: string }) => {
-  console.log('Payment successful:', result)
+const handlePaymentSuccess = (_result: { transactionId?: string }) => {
 }
 
-const handlePaymentError = (error: { message?: string }) => {
-  console.error('Payment error:', error)
+const handlePaymentError = (_error: { message?: string }) => {
 }
 
 onMounted(async () => {

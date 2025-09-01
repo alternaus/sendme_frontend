@@ -15,12 +15,9 @@ import { useI18n } from 'vue-i18n'
 
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppEChart from '@/components/atoms/charts/AppEChart.vue'
+import AppDataView from '@/components/atoms/data-view/AppDataView.vue'
 import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
-import AppTable from '@/components/atoms/tables/AppTable.vue'
-import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
-import { useStatusColors } from '@/composables/useStatusColors'
-import { useTableTypes } from '@/composables/useTableTypes'
 import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
 import { useDashboardService } from '@/services/dashboard/useDashboardService'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -35,13 +32,11 @@ type ECOption = ComposeOption<
 const { t } = useI18n()
 const authStore = useAuthStore()
 const isDark = useDark()
-const { getStatusSeverity } = useStatusColors()
 useHead({ title: t('titles.home') })
 
 const { getDashboardData } = useDashboardService()
 const dashboardData = ref<DashboardResponse | null>(null)
 const loading = ref(true)
-const { getTableValueWithDefault } = useTableTypes()
 
 const primary = ref<string | undefined>('')
 const surface500 = ref<string | undefined>('')
@@ -107,11 +102,7 @@ const makeMessagesStatusChart = (dark: boolean, data: DashboardResponse | null):
 
 const chartData = ref<ECOption>(makeMessagesStatusChart(isDark.value, null))
 
-const tableHeaders: { field: string; header: string; width?: string }[] = [
-  { field: 'phone', header: t('home.phone'), width: '120px' },
-  { field: 'content', header: t('home.content'), width: '200px' },
-  { field: 'status', header: t('home.status'), width: '100px' },
-]
+
 
 const loadDashboardData = async () => {
   try {
@@ -289,30 +280,10 @@ const openContentModal = (content: string, _type: 'text' | 'html') => {
             <h3 class="text-lg font-semibold mb-4 text-neutral-700 dark:text-white">
               {{ t('home.recentMessages') }}
             </h3>
-            <AppTable :data="dashboardData?.recentMessages || []" :headers="tableHeaders" :pageSize="10"
-              :pageCurrent="1" :totalItems="(dashboardData?.recentMessages || []).length" :showPaginator="false">
-              <template #custom-content="{ data }">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="truncate max-w-[150px]" :title="getTableValueWithDefault<string>(data, 'content', '')">
-                    {{ getTableValueWithDefault<string>(data, 'content', '') }}
-                  </span>
-                  <button
-                    @click="openContentModal(
-                      getTableValueWithDefault<string>(data, 'content', ''),
-                      'text'
-                    )"
-                    class="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                    :title="$t('general.view_content')"
-                  >
-                    <i class="pi pi-eye text-sm"></i>
-                  </button>
-                </div>
-              </template>
-              <template #custom-status="{ data }">
-                <AppTag :label="$t(`status.message.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
-                  :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'message')" />
-              </template>
-            </AppTable>
+            <AppDataView
+              :data="dashboardData?.recentMessages || []"
+              @view-content="(content: string) => openContentModal(content, 'text')"
+            />
           </div>
         </template>
       </AppCard>

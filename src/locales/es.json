@@ -559,6 +559,7 @@
     "error_getting_organization": "Error al obtener la organización",
     "error_getting_recharges": "Error al obtener los recargas",
     "recharges": "Recargas",
+    "custom_fields": "Campos Personalizados",
     "movements": "Movimientos",
     "remaining_messages": "Mensajes restantes",
     "messages_count": "Cantidad de mensajes",

@@ -274,8 +274,7 @@ const handleTestRules = async () => {
       }) : t('campaign.test_completed_executions'),
       life: 5000,
     })
-  } catch (error) {
-    console.error('Error testing campaign rules:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),

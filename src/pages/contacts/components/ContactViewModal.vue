@@ -7,7 +7,6 @@ import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
-import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
@@ -154,35 +153,23 @@ watch(
 </script>
 
 <template>
-      <AppDialog
-    v-model:modelValue="dialogVisible"
-    modal
-    :header="t('contact_view.title')"
-    :style="{ width: '500px' }"
-    class="contact-view-modal"
-  >
+  <AppDialog v-model:modelValue="dialogVisible" modal :header="t('contact_view.title')" :style="{ width: '500px' }">
     <div v-if="contact" class="space-y-4">
-      <!-- Sección Avatar y Nombre -->
-      <AppCard>
+      <AppCard cardClass="dark:bg-neutral-900!">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <AppAvatar
-              :label="getAvatarInitials"
-              shape="circle"
-            />
+            <AppAvatar :label="getAvatarInitials" shape="circle" />
             <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
               {{ contact.name || t('general.not_defined') }}
             </h3>
           </div>
-          <AppTag
-            :label="contact.status === 'active' ? t('general.active') : t('general.inactive')"
-            :severity="statusVariant"
-          />
+          <AppTag :label="contact.status === 'active' ? t('general.active') : t('general.inactive')"
+            :severity="statusVariant" />
         </div>
       </AppCard>
 
       <!-- Información básica del contacto -->
-      <AppCard>
+      <AppCard cardClass="dark:bg-neutral-900!">
 
         <!-- Información de contacto en grid 2x2 -->
         <div class="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -196,19 +183,11 @@ watch(
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.phone }}</span>
-              <AppButton
-                v-tooltip="t('general.copy')"
-                @click="copyToClipboard(contact.phone!)"
-                icon="pi pi-copy"
-                size="small"
-                severity="secondary"
-                text
-                class="p-1"
-              />
+              <AppButton v-tooltip="t('general.copy')" @click="copyToClipboard(contact.phone!)" icon="pi pi-copy"
+                size="small" severity="secondary" text class="p-1" />
             </div>
           </div>
 
-          <!-- Código de País -->
           <div v-if="contact.countryCode" class="space-y-1">
             <div class="flex items-center gap-2">
               <i class="pi pi-globe text-neutral-500 dark:text-neutral-400"></i>
@@ -219,16 +198,6 @@ watch(
             <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.countryCode }}</span>
           </div>
 
-          <!-- Organización -->
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <i class="pi pi-bookmark text-neutral-500 dark:text-neutral-400"></i>
-              <span class="text-xs text-neutral-600 dark:text-neutral-400">
-                {{ t('general.organization') }}:
-              </span>
-            </div>
-            <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.organizationId }}</span>
-          </div>
 
           <!-- Fecha de Nacimiento -->
           <div v-if="contact.birthDate" class="space-y-1">
@@ -238,75 +207,73 @@ watch(
                 {{ t('general.birth_date') }}:
               </span>
             </div>
-            <FormattedDate :date="contact.birthDate" format="date" class="text-sm font-medium text-neutral-900 dark:text-neutral-100" />
+            <FormattedDate :date="contact.birthDate" format="date"
+              class="text-sm font-medium text-neutral-900 dark:text-neutral-100" />
           </div>
         </div>
       </AppCard>
 
 
       <!-- Sección CAMPOS PERSONALIZADOS - todos los custom fields -->
-      <div v-if="allCustomFields.length > 0">
-        <AppDivider />
-        <h4 class="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-3 tracking-wide">
-          CAMPOS PERSONALIZADOS
-        </h4>
+      <div v-if="allCustomFields.length">
+  <h4 class="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2 tracking-wide">
+    {{ t('general.custom_fields') }}
+  </h4>
 
-        <div class="space-y-3">
-          <div
-            v-for="customValue in allCustomFields"
-            :key="customValue.id"
-            class="flex items-center justify-between p-3"
-          >
-            <div class="flex items-center gap-2 min-w-0 flex-1">
-              <i
-                :class="getCustomFieldIcon(customValue.customFieldId)"
-                class="text-neutral-500 dark:text-neutral-400 flex-shrink-0"
-              ></i>
-              <span class="text-xs text-neutral-600 dark:text-neutral-400 truncate">
-                {{ getCustomFieldName(customValue.customFieldId) }}:
-              </span>
-            </div>
-            <div class="flex items-center gap-2 min-w-0">
-              <span
-                class="text-xs text-neutral-900 dark:text-neutral-100 text-right"
-                :class="{
-                  'font-mono': getCustomFieldDataType(customValue.customFieldId) === 'date',
-                  'italic text-neutral-500 dark:text-neutral-500': !customValue.value
-                }"
-              >
-                {{ formatCustomFieldValue(customValue.value, customValue.customFieldId) }}
-              </span>
-              <AppButton
-                v-if="customValue.value"
-                v-tooltip="t('general.copy')"
-                @click="copyToClipboard(formatCustomFieldValue(customValue.value, customValue.customFieldId))"
-                icon="pi pi-copy"
-                size="small"
-                severity="secondary"
-                text
-                class="p-1 flex-shrink-0"
-              />
-            </div>
-          </div>
-        </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+    <div
+      v-for="customValue in allCustomFields"
+      :key="customValue.id"
+      class="rounded-lg bg-[var(--p-card-background)] dark:bg-neutral-900 p-2"
+    >
+      <!-- Nombre + icono -->
+      <div class="flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400">
+        <i
+          :class="getCustomFieldIcon(customValue.customFieldId)"
+          class="text-neutral-500 dark:text-neutral-400"
+        />
+        <span class="truncate">
+          {{ getCustomFieldName(customValue.customFieldId) }}
+        </span>
       </div>
+
+      <!-- Valor + copiar -->
+      <div class="mt-1 flex items-start justify-between gap-2">
+        <span
+          class="text-xs text-neutral-900 dark:text-neutral-100 break-words"
+          :class="{
+            'font-mono': getCustomFieldDataType(customValue.customFieldId) === 'date',
+            'italic text-neutral-500 dark:text-neutral-500': !customValue.value
+          }"
+        >
+          {{ formatCustomFieldValue(customValue.value, customValue.customFieldId) }}
+        </span>
+
+        <AppButton
+          v-if="customValue.value"
+          v-tooltip="t('general.copy')"
+          @click="copyToClipboard(formatCustomFieldValue(customValue.value, customValue.customFieldId))"
+          icon="pi pi-copy"
+          size="small"
+          severity="secondary"
+          text
+          class="p-1"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
     </div>
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <AppButton
-          @click="dialogVisible = false"
-          severity="secondary"
-        >
+        <AppButton @click="dialogVisible = false" severity="secondary">
           {{ t('general.cancel') }}
         </AppButton>
-        <AppButton
-          @click="editContact"
-          :disabled="!contact"
-        >
-          <i class="pi pi-pencil mr-2"></i>
+        <AppButton @click="editContact" :disabled="!contact">
           {{ t('actions.edit') }}
         </AppButton>
       </div>
@@ -314,8 +281,4 @@ watch(
   </AppDialog>
 </template>
 
-<style scoped>
-.contact-view-modal :deep(.p-dialog-content) {
-  padding: 1.5rem;
-}
-</style>
+<style scoped></style>

@@ -55,7 +55,6 @@ const updateField = (field: string, value: string) => {
       emit('update:origin', value)
       break
     default:
-      console.warn(`Unknown field: ${field}`)
   }
 }
 
