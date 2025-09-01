@@ -156,18 +156,15 @@ watch(isVisible, (newValue) => {
     </template>
 
     <!-- Default content slot -->
-    <slot name="content">
-      <slot />
-    </slot>
+    <template #default>
+      <slot name="content">
+        <slot />
+      </slot>
+    </template>
 
     <!-- Footer slot -->
     <template v-if="$slots.footer" #footer>
       <slot name="footer" />
-    </template>
-
-    <!-- Custom slots pass-through -->
-    <template v-for="(_, slotName) in $slots" :key="slotName" #[slotName]>
-      <slot :name="String(slotName)" v-if="!['header', 'content', 'footer', 'default'].includes(String(slotName))" />
     </template>
   </PrimeDialog>
 </template>

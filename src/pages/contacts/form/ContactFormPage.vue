@@ -14,7 +14,7 @@ import StatusIcon from '@/assets/svg/status.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
@@ -32,7 +32,7 @@ export default defineComponent({
     AppPhoneInput,
     AppHeader,
     AppButton,
-    AppSelect,
+    AppStatusSelect,
     AppDatePicker,
     CredentialIcon,
     EmailIcon,
@@ -143,10 +143,7 @@ export default defineComponent({
       }
     })
 
-    const statusOptions = [
-      { name: t('general.active'), value: 'active' },
-      { name: t('general.inactive'), value: 'inactive' },
-    ]
+    // Los estados ahora se manejan directamente en AppStatusSelect
 
     const onSubmitForm = handleSubmit(
       async (values) => {
@@ -230,7 +227,6 @@ export default defineComponent({
       resetForm,
       onSubmitForm,
       addCustomField,
-      statusOptions,
       customFields,
       contactId,
       goBack,
@@ -291,12 +287,18 @@ export default defineComponent({
         </template>
       </AppDatePicker>
 
-      <AppSelect v-model="form.status.value" :options="statusOptions" class="w-full mt-3" :error-message="errors.status"
-        :label="$t('general.status')">
+      <AppStatusSelect
+        v-model="form.status.value"
+        status-type="contact"
+        class="w-full mt-3"
+        :error-message="errors.status"
+        :label="$t('general.status')"
+        :show-colors="true"
+      >
         <template #icon>
           <StatusIcon class="w-4 h-4 dark:fill-white" />
         </template>
-      </AppSelect>
+      </AppStatusSelect>
     </div>
 
     <CustomFieldsForm

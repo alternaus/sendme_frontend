@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { IconField, InputIcon } from 'primevue'
 import DatePicker from 'primevue/datepicker'
@@ -21,6 +21,7 @@ interface Props {
   containerClass?: string
   inputClass?: string
   errorClass?: string
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -50,6 +51,9 @@ defineOptions({
 const emit = defineEmits<{
   'update:modelValue': [value: Date | null]
 }>()
+
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-timepicker-${crypto.randomUUID()}`)
 
 const selectedTime = ref<Date | null>(null)
 let previousValue: Date | null = null
@@ -97,6 +101,7 @@ watch(
             stepSecond,
             pt,
             ptOptions,
+            inputId,
             ...$attrs
           }"
           timeOnly
@@ -126,6 +131,7 @@ watch(
           stepSecond,
           pt,
           ptOptions,
+          inputId,
           ...$attrs
         }"
         timeOnly

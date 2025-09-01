@@ -18,6 +18,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import allCountriesData from '@/components/molecules/phone-input/all-countries'
+import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { useContactService } from '@/services/contact/useContactService'
@@ -33,6 +34,7 @@ const { push } = useRouter()
 const { getContacts, deleteContact, exportContacts } = useContactService()
 const { search, name, countryCode, status, origin } = useContactFilter()
 const { getTableValueWithDefault, hasTableValue } = useTableTypes()
+const { getStatusSeverity } = useStatusColors()
 
 const page = ref(1)
 const limit = ref(10)
@@ -332,7 +334,10 @@ const headerActions = computed(() => [
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
-        <AppTag :label="getTableValueWithDefault<string>(data, 'status', '') === 'active' ? $t('general.active') : $t('general.inactive')" />
+        <AppTag
+          :label="$t(`status.contact.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
+          :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'contact')"
+        />
       </div>
     </template>
         <template #custom-phone="{ data }">

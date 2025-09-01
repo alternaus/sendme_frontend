@@ -11,6 +11,7 @@ import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import ApiKeyTab from './components/api-keys/ApiKeyTab.vue'
 import MailProviderTab from './components/email-configuration/MailProviderTab.vue'
 import SettingTab from './components/organization-configuration/SettingTab.vue'
+import WebhookTab from './components/webhooks/WebhookTab.vue'
 </script>
 
 <template>
@@ -27,6 +28,9 @@ import SettingTab from './components/organization-configuration/SettingTab.vue'
       <Tab value="2" class="px-3 py-2">
         <span class="font-bold whitespace-nowrap">{{ $t('api_keys.tab_header') }}</span>
       </Tab>
+      <Tab value="3" class="px-3 py-2">
+        <span class="font-bold whitespace-nowrap">{{ $t('webhooks.tab_header') }}</span>
+      </Tab>
     </TabList>
 
     <TabPanels class="rounded-b-lg">
@@ -38,6 +42,9 @@ import SettingTab from './components/organization-configuration/SettingTab.vue'
       </TabPanel>
       <TabPanel value="2" as="p" class="m-0">
         <ApiKeyTab />
+      </TabPanel>
+      <TabPanel value="3" as="p" class="m-0">
+        <WebhookTab />
       </TabPanel>
     </TabPanels>
   </Tabs>

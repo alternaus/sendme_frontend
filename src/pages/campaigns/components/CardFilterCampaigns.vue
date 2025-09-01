@@ -10,10 +10,9 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { IChannel } from '@/services/channel/interfaces/channel.interface'
 import { useChannelService } from '@/services/channel/useChannelService'
-
-import { CampaignStatusTypes } from '../enums/campaign-status.enum'
 
 interface Props {
   search?: string
@@ -122,22 +121,18 @@ onMounted(() => {
           </template>
         </AppInput>
 
-        <AppSelect
+        <AppStatusSelect
           class="w-full mt-3"
           :modelValue="status"
-          :options="
-            Object.entries(CampaignStatusTypes).map(([key, value]) => ({
-              value: key,
-              name: $t(value),
-            }))
-          "
+          status-type="campaign"
           :label="$t('general.status')"
+          :show-colors="true"
           @update:modelValue="updateField('status', $event as string)"
         >
           <template #icon>
             <StatusIcon class="w-6 h-4 dark:fill-white" />
           </template>
-        </AppSelect>
+        </AppStatusSelect>
 
         <AppSelect
           class="w-full mt-3"

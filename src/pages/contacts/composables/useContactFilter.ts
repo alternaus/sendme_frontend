@@ -2,6 +2,8 @@ import { useForm } from 'vee-validate'
 import type { Ref } from 'vue'
 import * as yup from 'yup'
 
+import { useStatusColors } from '@/composables/useStatusColors'
+
 export interface ContactFilterForm {
   search: string
   name: string
@@ -19,11 +21,16 @@ export interface ContactFilterFormRef {
 }
 
 export const useContactFilter = () => {
+  const { getStatusesForType } = useStatusColors()
+
+  // Obtener estados válidos dinámicamente
+  const validStatuses = ['', ...getStatusesForType('contact')]
+
   const schema = yup.object<ContactFilterForm>({
     search: yup.string(),
     name: yup.string(),
     countryCode: yup.string(),
-    status: yup.string(),
+    status: yup.string().oneOf(validStatuses),
     origin: yup.string(),
   })
 

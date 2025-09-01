@@ -86,8 +86,7 @@ const onSubmit = handleSubmit(async (values) => {
       router.push('/auth/sign-in')
     }, 5000)
 
-  } catch (error) {
-    console.error('Error resetting password:', error)
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),

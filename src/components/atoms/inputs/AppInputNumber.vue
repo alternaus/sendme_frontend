@@ -16,6 +16,7 @@ interface Props {
   size?: NumberSize
   errorMessage?: string
   showErrorMessage?: boolean
+  inputId?: string
   disabled?: boolean
   readonly?: boolean
   min?: number
@@ -111,6 +112,9 @@ const inputClasses = computed(() => {
   return classes.join(' ')
 })
 
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-input-number-${crypto.randomUUID()}`)
+
 const internalValue = ref<number | null>(null)
 
 // Sincronizar con modelValue
@@ -161,6 +165,7 @@ watch(internalValue, (newValue) => {
           :input-class="inputClasses"
           :pt="pt"
           :pt-options="ptOptions"
+          :input-id="inputId"
           class="!w-full"
         />
       </IconField>
@@ -195,6 +200,7 @@ watch(internalValue, (newValue) => {
         :input-class="inputClasses"
         :pt="pt"
         :pt-options="ptOptions"
+        :input-id="inputId"
         class="!w-full"
       />
       <label class="text-sm">{{ label }}</label>
@@ -233,6 +239,7 @@ watch(internalValue, (newValue) => {
         :input-class="inputClasses"
         :pt="pt"
         :pt-options="ptOptions"
+        :input-id="inputId"
         class="!w-full"
       />
     </IconField>
@@ -266,6 +273,7 @@ watch(internalValue, (newValue) => {
       :input-class="inputClasses"
       :pt="pt"
       :pt-options="ptOptions"
+      :input-id="inputId"
       class="!w-full"
     />
 

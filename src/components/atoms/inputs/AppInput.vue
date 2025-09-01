@@ -9,8 +9,6 @@ import InputText from 'primevue/inputtext'
 type InputSize = 'small' | 'large'
 type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'
 
-let uid = 0
-
 interface Props {
   modelValue?: string | number | null
   type?: InputType
@@ -113,7 +111,7 @@ const inputClasses = computed(() => {
 })
 
 // ID único para el input
-const id = computed(() => props.inputId || `app-input-${++uid}`)
+const id = computed(() => props.inputId || `app-input-${crypto.randomUUID()}`)
 
 // Determinar si es número
 const isNumber = computed(() =>

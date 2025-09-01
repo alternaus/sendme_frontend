@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
 import { type StepConfig, useFormStepper } from '@/composables/useFormStepper'
+import { useStatusColors } from '@/composables/useStatusColors'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface CampaignRule {
@@ -17,7 +18,7 @@ export interface CampaignFormData {
   description: string
   content: string
   contentType: 'plain_text' | 'html'
-  status: 'active' | 'inactive'
+  status: 'active' | 'inactive' | 'paused' | 'finished'
   startDate: Date
   endDate: Date
   time: Date
@@ -35,14 +36,18 @@ export type CampaignFormErrors = ReturnType<typeof useCampaignForm>['fieldErrors
 export function useCampaignForm() {
   const { t } = useI18n()
   const authStore = useAuthStore()
+  const { getStatusesForType } = useStatusColors()
 
   const userOrganizationId = authStore.user?.organizationId || 1
+
+  // Obtener estados válidos dinámicamente
+  const validStatuses = getStatusesForType('campaign')
 
   const detailsSchema = yup.object({
     name: yup.string().required().label(t('campaign.form.campaign_name')),
     description: yup.string().required().label(t('campaign.form.description')),
     channelId: yup.number().integer().min(1).required().label(t('campaign.form.channel_id')),
-    status: yup.string().oneOf(['active', 'inactive']).required().label(t('campaign.form.status')),
+    status: yup.string().oneOf(validStatuses).required().label(t('campaign.form.status')),
     startDate: yup.date().required().label(t('campaign.form.start_date')),
     endDate: yup.date().required().label(t('campaign.form.end_date')),
     time: yup.date().required().label(t('campaign.form.execution_time')),

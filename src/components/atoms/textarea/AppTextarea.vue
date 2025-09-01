@@ -32,6 +32,7 @@ interface Props {
   containerClass?: string
   textareaClass?: string
   errorClass?: string
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -110,6 +111,9 @@ const hasIcon = computed(() => {
   return !!(slots['onVnodeBeforeMount'] || slots['v-slot:icon']) || props.aiAttach
 })
 
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-textarea-${crypto.randomUUID()}`)
+
 const internalValue = ref('')
 
 // Sincronizar con modelValue
@@ -171,6 +175,7 @@ const handleAiInsert = (aiText: string) => {
             @blur="emit('blur', $event)"
             @keydown="emit('keydown', $event as KeyboardEvent)"
             @input="emit('input', $event)"
+            :input-id="inputId"
           />
         </IconField>
         <label class="text-sm">{{ label }}</label>
@@ -198,6 +203,7 @@ const handleAiInsert = (aiText: string) => {
           @blur="emit('blur', $event)"
           @keydown="emit('keydown', $event as KeyboardEvent)"
           @input="emit('input', $event)"
+          :input-id="inputId"
         />
         <label class="text-sm">{{ label }}</label>
       </FloatLabel>
@@ -229,6 +235,7 @@ const handleAiInsert = (aiText: string) => {
           :class="textareaClasses"
           :pt="pt"
           :pt-options="ptOptions"
+          :input-id="inputId"
           @focus="emit('focus', $event)"
           @blur="emit('blur', $event)"
           @keydown="emit('keydown', $event as KeyboardEvent)"
@@ -254,6 +261,7 @@ const handleAiInsert = (aiText: string) => {
           :class="textareaClasses"
           :pt="pt"
           :pt-options="ptOptions"
+          :input-id="inputId"
           @focus="emit('focus', $event)"
           @blur="emit('blur', $event)"
           @keydown="emit('keydown', $event as KeyboardEvent)"
@@ -292,6 +300,7 @@ const handleAiInsert = (aiText: string) => {
           :class="textareaClasses"
           :pt="pt"
           :pt-options="ptOptions"
+          :input-id="inputId"
           @focus="emit('focus', $event)"
           @blur="emit('blur', $event)"
           @keydown="emit('keydown', $event as KeyboardEvent)"
@@ -317,6 +326,7 @@ const handleAiInsert = (aiText: string) => {
         :class="textareaClasses"
         :pt="pt"
         :pt-options="ptOptions"
+        :input-id="inputId"
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event)"
         @keydown="emit('keydown', $event as KeyboardEvent)"

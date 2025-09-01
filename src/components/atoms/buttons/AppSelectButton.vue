@@ -17,6 +17,7 @@ interface Props {
   containerClass?: string
   selectButtonClass?: string
   errorClass?: string
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -47,12 +48,16 @@ const internalValue = computed({
 })
 
 const hasError = computed(() => (props.errorMessage?.length ?? 0) > 0)
+
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-select-button-${crypto.randomUUID()}`)
 </script>
 
 <template>
   <div :class="containerClass">
     <SelectButton
       v-bind="{
+        inputId,
         modelValue: internalValue,
         options,
         optionLabel,

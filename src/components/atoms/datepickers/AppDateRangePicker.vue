@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import AppDatePicker from './AppDatePicker.vue'
 
@@ -20,6 +20,7 @@ interface Props {
   containerClass?: string
   inputClass?: string
   errorClass?: string
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -27,6 +28,9 @@ interface Props {
 interface Emits {
   'update:modelValue': [value: Date[]]
 }
+
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-daterange-${crypto.randomUUID()}`)
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
@@ -99,6 +103,7 @@ const handleDateChange = (value: Date | Date[] | (Date | null)[] | null | undefi
     :show-time="false"
     selection-mode="range"
     v-bind="$attrs"
+    :input-id="inputId"
     @update:model-value="handleDateChange"
   >
     <template v-if="$slots.icon" #icon>

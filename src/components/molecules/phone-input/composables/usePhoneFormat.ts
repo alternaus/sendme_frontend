@@ -14,8 +14,7 @@ export const usePhoneFormat = () => {
       if (phoneNumberObj && phoneNumberObj.isValid()) {
         return phoneNumberObj.formatNational()
       }
-    } catch (error) {
-      console.warn('Error formatting phone number:', error)
+    } catch {
     }
     return number
   }
@@ -60,8 +59,7 @@ export const usePhoneFormat = () => {
           localNumber: phoneNumberObj.nationalNumber
         }
       }
-    } catch (error) {
-      console.warn('Error parsing full phone number:', error)
+    } catch  {
     }
 
     return { countryCode: null, localNumber: fullNumber.replace(/^\+/, '') }

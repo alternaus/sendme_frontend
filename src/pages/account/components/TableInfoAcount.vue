@@ -7,6 +7,7 @@ import DateIcon from '@/assets/svg/date.svg?component'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import { useStatusColors } from '@/composables/useStatusColors'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IRecharge } from '@/services/organization/interfaces/recharge.interface'
 import { useOrganizationService } from '@/services/organization/useOrganizationService'
@@ -32,6 +33,7 @@ export default defineComponent({
     const { t } = useI18n()
     const { getRecharges } = useOrganizationService()
     const { startDate, endDate } = useRechargesFilter()
+    const { getStatusSeverity } = useStatusColors()
 
     const optionSelected = ref('1')
     const limit = ref(10)
@@ -116,6 +118,7 @@ export default defineComponent({
       endDate,
       getTableValueWithDefault,
       formatTableValue,
+      getStatusSeverity,
     }
   },
 })
@@ -204,7 +207,10 @@ export default defineComponent({
       </template>
       <template #custom-status="{ data }">
         <div class="flex justify-center items-center">
-          <AppTag :label="formatTableValue<string, string>(data, 'status', getStatusTranslation, '')" />
+          <AppTag
+            :label="$t(`status.recharge.${getTableValueWithDefault<string>(data, 'status', 'pending')}`)"
+            :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'pending'), 'recharge')"
+          />
         </div>
       </template>
     </AppTable>

@@ -7,9 +7,9 @@ import StatusIcon from '@/assets/svg/status.svg?component'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 
 import { ContactOriginTypes } from '../enums/contact-origin.enum'
-import { ContactStatusTypes } from '../enums/contact-status.enum'
 
 interface Props {
   search?: string
@@ -113,22 +113,18 @@ const countryCodeOptions = [
           </template>
         </AppSelect>
 
-        <AppSelect
+        <AppStatusSelect
           class="w-full mt-3"
           :modelValue="_props.status"
-          :options="
-            Object.entries(ContactStatusTypes).map(([key, value]) => ({
-              value: key,
-              name: $t(value),
-            }))
-          "
+          status-type="contact"
           :label="$t('general.status')"
+          :show-colors="true"
           @update:modelValue="updateField('status', $event !== null ? String($event) : '')"
         >
           <template #icon>
             <StatusIcon class="w-6 h-4 dark:fill-white" />
           </template>
-        </AppSelect>
+        </AppStatusSelect>
 
         <AppSelect
           class="w-full mt-3"

@@ -44,6 +44,7 @@ interface Props {
   errorClass?: string
   errorMessage?: string
   showErrorMessage?: boolean
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -97,7 +98,7 @@ const emit = defineEmits<{
 const attrs = useAttrs()
 
 // Generar ID único para el input
-const inputId = computed(() => `msel-${crypto.randomUUID()}`)
+const inputId = computed(() => props.inputId || `msel-${crypto.randomUUID()}`)
 
 // Filtrar atributos conflictivos
 const blockKeys = [

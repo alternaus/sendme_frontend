@@ -14,6 +14,7 @@ interface Props {
   size?: PasswordSize
   errorMessage?: string
   showErrorMessage?: boolean
+  inputId?: string
   disabled?: boolean
   readonly?: boolean
   feedback?: boolean
@@ -97,6 +98,9 @@ const inputClasses = computed(() => {
   return classes.join(' ')
 })
 
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-input-password-${crypto.randomUUID()}`)
+
 const internalValue = ref<string>('')
 
 // Sincronizar con modelValue
@@ -143,6 +147,7 @@ watch(internalValue, (newValue) => {
           :pt="pt"
           :pt-options="ptOptions"
           class="w-full"
+          :input-id="inputId"
         />
       </IconField>
       <label class="text-sm">{{ label }}</label>
@@ -171,6 +176,7 @@ watch(internalValue, (newValue) => {
         :pt="pt"
         :pt-options="ptOptions"
         class="w-full"
+        :input-id="inputId"
       />
       <label class="text-sm">{{ label }}</label>
     </FloatLabel>
@@ -203,6 +209,7 @@ watch(internalValue, (newValue) => {
         :pt="pt"
         :pt-options="ptOptions"
         class="w-full"
+        :input-id="inputId"
       />
     </IconField>
 
@@ -230,6 +237,7 @@ watch(internalValue, (newValue) => {
       :pt="pt"
       :pt-options="ptOptions"
       class="w-full"
+      :input-id="inputId"
     />
 
     <div v-if="showErrorMessage && hasError" :class="errorClass">

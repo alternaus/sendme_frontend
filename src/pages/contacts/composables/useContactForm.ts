@@ -3,6 +3,7 @@ import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
+import { useStatusColors } from '@/composables/useStatusColors'
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
 
 export interface CustomValue {
@@ -36,6 +37,10 @@ export interface ContactFormRef {
 
 export const useFormContact = () => {
   const { t } = useI18n()
+  const { getStatusesForType } = useStatusColors()
+
+  // Obtener estados válidos dinámicamente
+  const validStatuses = getStatusesForType('contact')
 
   yup.setLocale({
     mixed: {
@@ -53,7 +58,7 @@ export const useFormContact = () => {
     email: yup.string().email().optional().label(t('general.email')),
     phone: yup.string().required().label(t('general.phone')),
     countryCode: yup.string().required().label(t('general.country_code')),
-    status: yup.string().oneOf(['active', 'inactive']).optional().label(t('general.status')),
+    status: yup.string().oneOf(validStatuses).optional().label(t('general.status')),
     birthDate: yup.date().nullable().optional().label(t('general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({

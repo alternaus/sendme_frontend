@@ -58,8 +58,7 @@ const loadCustomFields = async () => {
   try {
     const response = await getCustomFields()
     customFields.value = response
-  } catch (error) {
-    console.error('Error loading custom fields:', error)
+  } catch {
     customFields.value = []
   } finally {
     isLoadingCustomFields.value = false

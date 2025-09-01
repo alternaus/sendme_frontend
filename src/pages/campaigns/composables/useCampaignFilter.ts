@@ -2,6 +2,8 @@ import { useForm } from 'vee-validate'
 import type { Ref } from 'vue'
 import * as yup from 'yup'
 
+import { useStatusColors } from '@/composables/useStatusColors'
+
 export interface CampaignFilterForm {
   search: string
   name: string
@@ -19,10 +21,15 @@ export interface CampaignFilterFormRef {
 }
 
 export const useCampaignFilter = () => {
+  const { getStatusesForType } = useStatusColors()
+
+  // Obtener estados válidos dinámicamente
+  const validStatuses = ['', ...getStatusesForType('campaign')]
+
   const schema = yup.object<CampaignFilterForm>({
     search: yup.string(),
     name: yup.string(),
-    status: yup.string(),
+    status: yup.string().oneOf(validStatuses),
     channelId: yup.string(),
     dateRange: yup.array().of(yup.date()),
   })

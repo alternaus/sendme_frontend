@@ -15,6 +15,7 @@ import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppTimePicker from '@/components/atoms/datepickers/AppTimePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 
 import type { CampaignFormFields } from '../composables/useCampaignForm'
@@ -23,13 +24,11 @@ interface Props {
   form: CampaignFormFields
   errors: Partial<Record<string, string | undefined>>
   channels?: SelectOption[]
-  statusOptions?: SelectOption[]
   disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   channels: () => [],
-  statusOptions: () => [],
   disabled: false
 })
 
@@ -122,19 +121,20 @@ const errorMessages = computed(() => ({
         </template>
       </AppSelect>
 
-      <AppSelect
+      <AppStatusSelect
         :modelValue="formValues.status"
         @update:modelValue="updateField('status', $event)"
-        :options="statusOptions"
+        status-type="campaign"
         :error-message="errorMessages.status"
         :label="t('general.status')"
         class="w-full"
         :disabled="disabled"
+        :show-colors="true"
       >
         <template #icon>
           <StatusIcon class="dark:fill-white w-4 h-4" />
         </template>
-      </AppSelect>
+      </AppStatusSelect>
     </div>
 
 

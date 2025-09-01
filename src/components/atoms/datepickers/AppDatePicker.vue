@@ -31,6 +31,7 @@ interface Props {
   containerClass?: string
   inputClass?: string
   errorClass?: string
+  inputId?: string
   pt?: object
   ptOptions?: object
 }
@@ -82,6 +83,9 @@ const blockKeys = [
   'inputId', 'placeholder',
   'inputClass', 'pt'
 ]
+
+// ID único para el input
+const inputId = computed(() => props.inputId || `app-datepicker-${crypto.randomUUID()}`)
 
 const attrs = useAttrs()
 
@@ -155,6 +159,7 @@ watch(
             customClass,
             { 'p-invalid': errorMessage.length > 0 }
           ]"
+          :input-id="inputId"
           @update:model-value="selectedDate = $event as Date | null"
         />
       </IconField>
@@ -189,6 +194,7 @@ watch(
           customClass,
           { 'p-invalid': errorMessage.length > 0 }
         ]"
+        :input-id="inputId"
         @update:model-value="selectedDate = $event as Date | null"
       />
       <label class="text-sm">{{ label }}</label>

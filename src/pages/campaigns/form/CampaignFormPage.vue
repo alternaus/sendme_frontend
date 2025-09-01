@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -11,6 +11,7 @@ import { type SelectOption } from '@/components/atoms/selects/types/select-optio
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppFormStepper from '@/components/molecules/stepper/AppFormStepper.vue'
+import { useStatusColors } from '@/composables/useStatusColors'
 import type { ICreateCampaign } from '@/services/campaign/interfaces/create-campaign.interface'
 import type { IUpdateCampaign } from '@/services/campaign/interfaces/update-campaign.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
@@ -59,15 +60,18 @@ export default defineComponent({
 
     const { getChannels } = useChannelService()
     const { createCampaign, updateCampaign, getCampaign } = useCampaignService()
+    const { getStatusOptions } = useStatusColors()
 
     const isLoading = ref(false)
     const isEditMode = ref(false)
     const campaignId = ref<string | null>(null)
 
-    const statusOptions = [
-      { name: t('general.active'), value: 'active' },
-      { name: t('general.inactive'), value: 'inactive' },
-    ]
+    const statusOptions = computed(() =>
+      getStatusOptions('campaign').map(option => ({
+        name: option.label,
+        value: option.value
+      }))
+    )
 
     const conditionOptions = [
       { name: t('campaign.conditions.is_empty'), value: 'is_empty' },
@@ -339,7 +343,6 @@ export default defineComponent({
           :form="form"
           :errors="errors"
           :channels="channels"
-          :status-options="statusOptions"
           @update:form="updateFormContent"
           :disabled="isLoading"
         />

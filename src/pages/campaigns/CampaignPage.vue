@@ -17,6 +17,7 @@ import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ITestCampaignRequest, ITestCampaignResponse } from '@/services/campaign/interfaces/test-rules.interface'
@@ -32,6 +33,7 @@ const { push } = useRouter()
 const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
+const { getStatusSeverity } = useStatusColors()
 const toast = useToast()
 
 const page = ref(1)
@@ -370,7 +372,10 @@ const headerActions = computed(() => [
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
-        <AppTag :label="getTableValueWithDefault<string>(data, 'status', '') === 'active' ? $t('general.active') : $t('general.inactive')" />
+        <AppTag
+          :label="$t(`status.campaign.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
+          :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'campaign')"
+        />
       </div>
     </template>
   </AppTable>

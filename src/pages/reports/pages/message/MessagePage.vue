@@ -12,9 +12,11 @@ import NumberIcon from '@/assets/svg/number.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useStatusColors } from '@/composables/useStatusColors'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 // Interfaz para mensajes de reporte con contenido
 interface IReportMessage {
@@ -39,6 +41,7 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    AppTag,
     HtmlViewerDialog,
     NumberIcon,
     MessageTypeIcon,
@@ -53,6 +56,7 @@ export default defineComponent({
     const router = useRouter()
     const { getMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
+    const { getStatusSeverity } = useStatusColors()
 
     const page = ref(1)
     const limit = ref(10)
@@ -175,6 +179,7 @@ export default defineComponent({
       endDateString,
       getStatusTranslation,
       getTypeMessageTranslation,
+      getStatusSeverity,
       loading,
       isHtmlViewerVisible,
       htmlContent,
@@ -265,7 +270,10 @@ export default defineComponent({
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
-        {{ getStatusTranslation(data.status) }}
+        <AppTag
+          :label="$t(`status.message.${String(data.status || 'failed')}`)"
+          :severity="getStatusSeverity(String(data.status || 'failed'), 'message')"
+        />
       </div>
     </template>
     <template #custom-actions="{ data }">
