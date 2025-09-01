@@ -4,30 +4,30 @@ import { useDark, useResizeObserver } from '@vueuse/core'
 
 import type { ComposeOption } from 'echarts'
 import * as echarts from 'echarts'
-import type { PieSeriesOption } from 'echarts/charts'
-import type {
-  LegendComponentOption,
-  TitleComponentOption,
-  ToolboxComponentOption,
-  TooltipComponentOption} from 'echarts/components'
+import type { BarSeriesOption, LineSeriesOption, PieSeriesOption, RadarSeriesOption } from 'echarts/charts'
+import type { GridComponentOption, LegendComponentOption, TitleComponentOption, ToolboxComponentOption } from 'echarts/components'
+import { useI18n } from 'vue-i18n'
 
-export type ECOption = ComposeOption<
+type ECOption = ComposeOption<
   | PieSeriesOption
+  | LineSeriesOption
+  | BarSeriesOption
+  | RadarSeriesOption
   | TitleComponentOption
   | LegendComponentOption
-  | TooltipComponentOption
   | ToolboxComponentOption
+  | GridComponentOption
 >
 
 const props = defineProps<{
-  option: ECOption            // ⬅️ antes: echarts.EChartsOption
-  height?: string
-  width?: string
+  option: ECOption | Record<string, unknown>
 }>()
 
+const isDark = useDark({ selector: 'html' })
+const { locale } = useI18n()
+const wrapperRef = ref<HTMLDivElement | null>(null)
 const chartRef = ref<HTMLDivElement | null>(null)
 let chartInstance: echarts.ECharts | null = null
-const isDark = useDark({ selector: 'html' })
 
 function initChart() {
   if (!chartRef.value) return
@@ -38,6 +38,7 @@ function renderChart() {
   if (!chartInstance) initChart()
   if (!chartInstance) return
   chartInstance.setOption(props.option, { notMerge: true })
+  chartInstance.resize()
 }
 
 function resizeChart() {
@@ -54,24 +55,23 @@ onBeforeUnmount(() => {
   chartInstance = null
 })
 
-useResizeObserver(chartRef, resizeChart)
+useResizeObserver(wrapperRef, () => resizeChart())
 
-watch(
-  () => props.option,
-  () => nextTick(renderChart),
-  { deep: true }
-)
-
+watch(() => props.option, () => nextTick(renderChart), { deep: true })
 watch(isDark, () => {
   chartInstance?.dispose()
   chartInstance = null
-  nextTick(() => {
-    initChart()
-    renderChart()
-  })
+  nextTick(() => { initChart(); renderChart() })
+})
+watch(locale, () => {
+  chartInstance?.dispose()
+  chartInstance = null
+  nextTick(() => { initChart(); renderChart() })
 })
 </script>
 
 <template>
-  <div :style="{ width: width || '100%', height: height || '320px' }" ref="chartRef"></div>
+  <div ref="wrapperRef" class="relative w-full h-full min-h-[320px]">
+    <div ref="chartRef" class="absolute inset-0"></div>
+  </div>
 </template>

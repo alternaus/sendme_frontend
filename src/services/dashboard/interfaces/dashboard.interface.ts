@@ -4,6 +4,7 @@ export interface DashboardStats {
   availableMessages: number
   sentMessages: number
   failedMessages: number
+  pendingMessages: number
   totalContacts: number
 }
 

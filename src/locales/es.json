@@ -647,12 +647,14 @@
     "contacts": "Contactos",
     "available": "Disponibles",
     "sent": "Enviados",
+    "pending": "Pendientes",
     "failed": "Fallidos",
     "inactive": "Inactivas",
     "totalCampaigns": "Total de Campañas",
     "activeCampaigns": "Campañas Activas",
     "totalContacts": "Total de Contactos",
     "sentMessages": "Mensajes Enviados",
+    "pendingMessages": "Mensajes Pendientes",
     "failedMessages": "Mensajes Fallidos",
     "inactiveCampaigns": "Campañas Inactivas",
     "messagesStatus": "Estado de Mensajes",
@@ -663,7 +665,11 @@
     "content": "Contenido",
     "status": "Estado",
     "date": "Fecha",
-    "recentMessages": "Mensajes Recientes"
+    "recentMessages": "Mensajes Recientes",
+    "pie_chart": "Gráfica Circular",
+    "line_chart": "Gráfica de Líneas",
+    "bar_chart": "Gráfica de Barras",
+    "radar_chart": "Gráfica de Radar"
   },
   "notifications": {
     "title": "Notificaciones",

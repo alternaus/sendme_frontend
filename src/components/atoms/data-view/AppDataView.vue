@@ -8,53 +8,44 @@
       layout="list"
       class="compact-data-view"
     >
-            <template #list="slotProps">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+      <template #list="slotProps">
+        <div class="space-y-1.5">
           <div
             v-for="item in slotProps.items"
             :key="item.id"
-            class="bg-neutral-60 dark:bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col"
+            class="bg-white dark:bg-neutral-900 rounded-lg p-1.5 shadow-sm hover:shadow-md transition-all duration-200"
           >
-            <!-- Header con nombre de campaña y estado -->
-            <div class="flex items-start justify-between gap-2 mb-2">
-              <span class="text-sm font-semibold text-neutral-700 dark:text-neutral-800 truncate flex-1">
-                {{ item.campaignName }}
-              </span>
-              <AppTag
-                :label="$t(`status.message.${item.status}`)"
-                :severity="getStatusSeverity(item.status, 'message')"
-                size="small"
-              />
-            </div>
-
-            <!-- Información de contacto y fecha -->
-            <div class="space-y-1 mb-3">
-              <div class="flex items-center gap-2 text-xs text-neutral-500">
-                <i class="pi pi-phone flex-shrink-0"></i>
-                <span class="text-neutral-600 dark:text-neutral-600 truncate">{{ item.phone }}</span>
+            <div class="flex items-center justify-between gap-2">
+              <!-- Información principal en una línea -->
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <div class="flex items-center gap-1 text-xs text-neutral-500">
+                  <i class="pi pi-phone"></i>
+                  <span class="text-neutral-600 dark:text-neutral-100">{{ item.phone }}</span>
+                </div>
+                <div class="flex items-center gap-1 text-xs text-neutral-500">
+                  <i class="pi pi-calendar"></i>
+                  <span class="text-neutral-600 dark:text-neutral-100">{{ formatDate(item.createdAt) }}</span>
+                </div>
+                <span class="text-xs text-neutral-600 dark:text-neutral-100 truncate" :title="item.content">
+                  {{ truncateText(item.content, 50) }}
+                </span>
               </div>
-              <div class="flex items-center gap-2 text-xs text-neutral-500">
-                <i class="pi pi-calendar flex-shrink-0"></i>
-                <span class="text-neutral-600 dark:text-neutral-600">{{ formatDate(item.createdAt) }}</span>
+
+              <!-- Estado y botón de vista -->
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <AppTag
+                  :label="$t(`status.message.${item.status}`)"
+                  :severity="getStatusSeverity(item.status, 'message')"
+                  size="small"
+                />
+                <button
+                  @click="$emit('view-content', item.content)"
+                  class="p-1 bg-transparent border-none rounded text-primary-color hover:bg-primary-50 hover:text-primary-600 cursor-pointer transition-all duration-200 active:scale-95"
+                  :title="$t('general.view_content')"
+                >
+                  <i class="pi pi-eye text-xs"></i>
+                </button>
               </div>
-            </div>
-
-            <!-- Contenido del mensaje -->
-            <div class="flex-1">
-              <span class="text-xs text-neutral-600 dark:text-neutral-600 leading-relaxed block" :title="item.content">
-                {{ truncateText(item.content, 80) }}
-              </span>
-            </div>
-
-            <!-- Botón de vista -->
-            <div class="flex justify-end mt-2">
-              <button
-                @click="$emit('view-content', item.content)"
-                class="p-1 bg-transparent border-none rounded text-primary-color hover:bg-primary-50 hover:text-primary-600 cursor-pointer transition-all duration-200 active:scale-95"
-                :title="$t('general.view_content')"
-              >
-                <i class="pi pi-eye text-xs"></i>
-              </button>
             </div>
           </div>
         </div>
