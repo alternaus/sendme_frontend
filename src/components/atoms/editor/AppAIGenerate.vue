@@ -1,14 +1,12 @@
-<!-- components/ai/AiAssistantDialog.vue -->
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-
-import Dialog from 'primevue/dialog'
-import SelectButton from 'primevue/selectbutton'
 
 import { useI18n } from 'vue-i18n'
 
 import IconSparkles from '@/assets/svg/sparkles.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useAiService } from '@/services/ai'
@@ -74,8 +72,8 @@ function insertGenerated() { emit('insert', result.value); close() }
 function insertTranslated() { emit('insert', translateResult.value); close() }
 
 const tabOptions = computed(() => [
-  { label: t('ai.tabs.generate'), value: 'generate' },
-  { label: t('ai.tabs.translate'), value: 'translate' },
+  { name: t('ai.tabs.generate'), value: 'generate' },
+  { name: t('ai.tabs.translate'), value: 'translate' },
 ])
 </script>
 
@@ -90,8 +88,8 @@ const tabOptions = computed(() => [
       <IconSparkles class="w-4 h-4 text-[var(--p-primary-color)] fill-[var(--p-primary-color)]" />
     </button>
 
-    <Dialog
-      v-model:visible="show"
+    <AppDialog
+      v-model:modelValue="show"
       modal
       :draggable="false"
       :dismissableMask="true"
@@ -105,10 +103,10 @@ const tabOptions = computed(() => [
       }"
     >
       <div class="flex flex-col gap-3">
-        <SelectButton
+        <AppSelectButton
           v-model="activeTab"
           :options="tabOptions"
-          optionLabel="label"
+          optionLabel="name"
           optionValue="value"
           size="small"
           :allowEmpty="false"
@@ -133,14 +131,14 @@ const tabOptions = computed(() => [
             <AppButton
               :label="isGenerating ? t('ai.buttons.generating') : t('ai.buttons.generate')"
               :loading="isGenerating"
-              variant="primary"
+              severity="primary"
               :disabled="isGenerating || !prompt.trim()"
               @click="generate"
             />
             <AppButton
               class="ml-auto"
               :label="t('ai.buttons.insert')"
-              variant="secondary"
+              severity="secondary"
               :disabled="!result.length"
               @click="insertGenerated"
             />
@@ -180,14 +178,14 @@ const tabOptions = computed(() => [
             <AppButton
               :label="isTranslating ? t('ai.buttons.translating') : t('ai.buttons.translate')"
               :loading="isTranslating"
-              variant="primary"
+              severity="primary"
               :disabled="!translateSource.trim()"
               @click="translate"
             />
             <AppButton
               class="ml-auto"
               :label="t('ai.buttons.insert')"
-              variant="secondary"
+              severity="secondary"
               :disabled="!translateResult.length"
               @click="insertTranslated"
             />
@@ -202,7 +200,7 @@ const tabOptions = computed(() => [
           />
         </div>
       </div>
-    </Dialog>
+    </AppDialog>
   </div>
 </template>
 

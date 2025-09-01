@@ -6,7 +6,7 @@
       <span class="text-surface-900 dark:text-surface-0 text-3xl font-bold">{{ plan.cost }}</span>
       <span class="text-surface-500 dark:text-surface-400 text-base">/{{ $t('enrollment.month') }}</span>
     </div>
-    <Divider />
+    <AppDivider />
     <ul class="list-none flex flex-col gap-3">
       <li v-for="(feature, index) in plan.features" :key="index" class="flex items-center gap-2">
         <i class="pi pi-check-circle text-md! text-[var(--p-primary-color)]" />
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import Divider from 'primevue/divider'
+import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 
 interface Props {
   plan: {

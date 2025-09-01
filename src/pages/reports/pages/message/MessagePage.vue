@@ -121,25 +121,28 @@ export default defineComponent({
 
     onMounted(() => fetchMessages())
 
-    const getStatusTranslation = (status: string) => {
-      const translationKey = StatusMessageTypes[status as keyof typeof StatusMessageTypes]
-      return translationKey ? t(translationKey) : status
+    const getStatusTranslation = (status: unknown) => {
+      const statusString = typeof status === 'string' ? status : String(status)
+      const translationKey = StatusMessageTypes[statusString as keyof typeof StatusMessageTypes]
+      return translationKey ? t(translationKey) : statusString
     }
-    const getTypeMessageTranslation = (type: string) => {
+    const getTypeMessageTranslation = (type: unknown) => {
+      const typeString = typeof type === 'string' ? type : String(type)
       // Manejar los tipos específicos de contenido
-      if (type === 'plain_text') {
+      if (typeString === 'plain_text') {
         return t('general.sms')
       }
-      if (type === 'html') {
+      if (typeString === 'html') {
         return t('general.email_channel')
       }
 
       // Fallback para otros tipos usando el enum existente
-      const translationKey = TypeMessageTypes[type as keyof typeof TypeMessageTypes]
-      return translationKey ? t(translationKey) : type
+      const translationKey = TypeMessageTypes[typeString as keyof typeof TypeMessageTypes]
+      return translationKey ? t(translationKey) : typeString
     }
 
-    const handleViewHtmlContent = (message: IReportMessage) => {
+    const handleViewHtmlContent = (messageData: Record<string, unknown>) => {
+      const message = messageData as unknown as IReportMessage
       htmlContent.value = message.content
       isHtmlViewerVisible.value = true
     }
@@ -254,9 +257,9 @@ export default defineComponent({
           v-else
           v-tooltip.left="data.content"
           class="line-clamp-1 max-w-[200px] cursor-pointer"
-          :title="data.content"
+          :title="String(data.content || '')"
         >
-          {{ data.content }}
+          {{ data.content || '' }}
         </span>
       </div>
     </template>

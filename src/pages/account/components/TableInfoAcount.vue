@@ -10,6 +10,7 @@ import AppTag from '@/components/atoms/tag/AppTag.vue'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IRecharge } from '@/services/organization/interfaces/recharge.interface'
 import { useOrganizationService } from '@/services/organization/useOrganizationService'
+import { formatTableValue,getTableValueWithDefault } from '@/utils/table-type-utils'
 
 import { useRechargesFilter } from '../composables/useRechargesFilter'
 import { RechargeStatus } from './enums/status-recharge-types.enum'
@@ -77,7 +78,7 @@ export default defineComponent({
     }
 
     //Método para formatear moneda
-    const formatCurrency = (amount: number, _currencyCode: string) => {
+    const formatCurrency = (amount: number): string => {
       return new Intl.NumberFormat('es-CO', {
         style: 'decimal',
         minimumFractionDigits: 2,
@@ -85,7 +86,7 @@ export default defineComponent({
       }).format(amount)
     }
 
-    const getStatusTranslation = (status: string) => {
+    const getStatusTranslation = (status: string): string => {
       switch (status) {
         case 'accepted':
           return t(RechargeStatus.accepted)
@@ -113,6 +114,8 @@ export default defineComponent({
       getStatusTranslation,
       startDate,
       endDate,
+      getTableValueWithDefault,
+      formatTableValue,
     }
   },
 })
@@ -194,14 +197,14 @@ export default defineComponent({
       <template #custom-amount="{ data }">
         <div class="flex justify-center items-center">
           <small class="custom-text-small">
-            {{ data.currencyCode }}
-            {{ formatCurrency(data.amount, data.currencyCode) }}
+            {{ getTableValueWithDefault<string>(data, 'currencyCode', '') }}
+            {{ formatTableValue<number, string>(data, 'amount', formatCurrency, '0.00') }}
           </small>
         </div>
       </template>
       <template #custom-status="{ data }">
         <div class="flex justify-center items-center">
-          <AppTag :label="getStatusTranslation(data.status)" />
+          <AppTag :label="formatTableValue<string, string>(data, 'status', getStatusTranslation, '')" />
         </div>
       </template>
     </AppTable>

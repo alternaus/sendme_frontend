@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
-import Divider from 'primevue/divider'
-
 import { useI18n } from 'vue-i18n'
 
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
+import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
@@ -155,8 +154,8 @@ watch(
 </script>
 
 <template>
-      <Dialog
-    v-model:visible="dialogVisible"
+      <AppDialog
+    v-model:modelValue="dialogVisible"
     modal
     :header="t('contact_view.title')"
     :style="{ width: '500px' }"
@@ -197,7 +196,7 @@ watch(
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.phone }}</span>
-              <Button
+              <AppButton
                 v-tooltip="t('general.copy')"
                 @click="copyToClipboard(contact.phone!)"
                 icon="pi pi-copy"
@@ -247,7 +246,7 @@ watch(
 
       <!-- Sección CAMPOS PERSONALIZADOS - todos los custom fields -->
       <div v-if="allCustomFields.length > 0">
-        <Divider />
+        <AppDivider />
         <h4 class="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-3 tracking-wide">
           CAMPOS PERSONALIZADOS
         </h4>
@@ -277,7 +276,7 @@ watch(
               >
                 {{ formatCustomFieldValue(customValue.value, customValue.customFieldId) }}
               </span>
-              <Button
+              <AppButton
                 v-if="customValue.value"
                 v-tooltip="t('general.copy')"
                 @click="copyToClipboard(formatCustomFieldValue(customValue.value, customValue.customFieldId))"
@@ -297,22 +296,22 @@ watch(
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <Button
+        <AppButton
           @click="dialogVisible = false"
           severity="secondary"
         >
           {{ t('general.cancel') }}
-        </Button>
-        <Button
+        </AppButton>
+        <AppButton
           @click="editContact"
           :disabled="!contact"
         >
           <i class="pi pi-pencil mr-2"></i>
           {{ t('actions.edit') }}
-        </Button>
+        </AppButton>
       </div>
     </template>
-  </Dialog>
+  </AppDialog>
 </template>
 
 <style scoped>

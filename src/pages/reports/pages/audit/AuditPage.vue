@@ -17,6 +17,7 @@ import CardFilterAudit from '@/pages/reports/pages/audit/components/CardFilterAu
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import { useReportService } from '@/services/report/useReportServices'
+import { formatTableValue } from '@/utils/table-type-utils'
 
 import DialogChangesAudit from './components/DialogChangesAudit.vue'
 import { useAuditFilter } from './composables/useAuditFilter'
@@ -85,9 +86,10 @@ export default defineComponent({
       }
     }
 
-    const handleViewChanges = (rowData: IAudit) => {
-      if (rowData.changes) {
-        dataChanges.value = rowData.changes
+    const handleViewChanges = (rowData: Record<string, unknown>) => {
+      const audit = rowData as unknown as IAudit
+      if (audit.changes) {
+        dataChanges.value = audit.changes
         isDialogVisible.value = true
       }
     }
@@ -122,13 +124,15 @@ export default defineComponent({
       }).format(date)
     }
 
-    const getActionTranslation = (action: string) => {
-      const translationKey = ActionAuditTypes[action as keyof typeof ActionAuditTypes]
-      return translationKey ? t(translationKey) : action
+    const getActionTranslation = (action: unknown) => {
+      const actionString = typeof action === 'string' ? action : String(action)
+      const translationKey = ActionAuditTypes[actionString as keyof typeof ActionAuditTypes]
+      return translationKey ? t(translationKey) : actionString
     }
-    const getModuleTranslation = (module: string) => {
-      const translationKey = ModuleTypes[module as keyof typeof ModuleTypes]
-      return translationKey ? t(translationKey) : module
+    const getModuleTranslation = (module: unknown) => {
+      const moduleString = typeof module === 'string' ? module : String(module)
+      const translationKey = ModuleTypes[moduleString as keyof typeof ModuleTypes]
+      return translationKey ? t(translationKey) : moduleString
     }
 
     const startDateString = computed({
@@ -164,6 +168,7 @@ export default defineComponent({
       startDateString,
       endDateString,
       loading,
+      formatTableValue,
     }
   },
 })
@@ -233,7 +238,7 @@ export default defineComponent({
     </template>
     <template #custom-table="{ data }">
       <div class="flex justify-center">
-        {{ getModuleTranslation(data.table) }}
+        {{ formatTableValue<string, string>(data, 'table', getModuleTranslation, '') }}
       </div>
     </template>
     <template #custom-changes="{ data }">
@@ -250,7 +255,7 @@ export default defineComponent({
     </template>
     <template #custom-action="{ data }">
       <div class="flex justify-center">
-        {{ getActionTranslation(data.action) }}
+        {{ formatTableValue<string, string>(data, 'action', getActionTranslation, '') }}
       </div>
     </template>
   </AppTable>

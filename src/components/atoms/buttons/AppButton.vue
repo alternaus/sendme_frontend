@@ -4,11 +4,13 @@ import { computed } from 'vue'
 import PrimeButton from 'primevue/button'
 
 type ButtonSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'
+type ButtonVariant = 'filled' | 'outlined' | 'text'
 type ButtonSize = 'small' | 'large'
 
 interface Props {
   label?: string
-  variant?: ButtonSeverity
+  severity?: ButtonSeverity
+  variant?: ButtonVariant
   outlined?: boolean
   loading?: boolean
   size?: ButtonSize
@@ -23,7 +25,8 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   label: '',
-  variant: 'primary',
+  severity: 'primary',
+  variant: 'filled',
   outlined: false,
   loading: false,
   size: 'small',
@@ -44,8 +47,8 @@ const isDisabled = computed(() => props.loading || props.disabled)
   <PrimeButton
     v-bind="{
       label,
-      severity: variant,
-      variant: outlined ? 'outlined' : undefined,
+      severity,
+      variant: variant === 'outlined' ? 'outlined' : variant === 'text' ? 'text' : undefined,
       loading,
       size,
       disabled: isDisabled,

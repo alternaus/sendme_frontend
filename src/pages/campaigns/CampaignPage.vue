@@ -17,6 +17,7 @@ import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useTableTypes } from '@/composables/useTableTypes'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ITestCampaignRequest, ITestCampaignResponse } from '@/services/campaign/interfaces/test-rules.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
@@ -30,6 +31,7 @@ const { t } = useI18n()
 const { push } = useRouter()
 const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange } = useCampaignFilter()
+const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const toast = useToast()
 
 const page = ref(1)
@@ -140,8 +142,12 @@ watch(dateRange, (newValue, oldValue) => {
   }
 })
 
-const handleSelectionChange = (selectedRow: ICampaign) => {
-  selected.value = selectedRow
+const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
+  if (selection && !Array.isArray(selection)) {
+    selected.value = selection as unknown as ICampaign
+  } else {
+    selected.value = null
+  }
   // Limpiar resultados de test cuando cambia la selección
   testResults.value = null
   showTestResultsModal.value = false
@@ -349,22 +355,22 @@ const headerActions = computed(() => [
       </div>
     </template>
     <template #custom-channelName="{ data }">
-      <div>{{ data.channel?.name || '-' }}</div>
+      <div>{{ getNestedTableValue<string>(data, 'channel.name') || '-' }}</div>
     </template>
     <template #custom-frequency="{ data }">
       <div>
-        <template v-if="data.days && data.days.length">
-          {{ data.days.map((day: string) => $t(`campaign.days_abbr.${day}`)).join(', ') }} {{ data.time }}
+        <template v-if="hasTableValue(data, 'days') && getTableValueWithDefault<string[]>(data, 'days', []).length">
+          {{ getTableValueWithDefault<string[]>(data, 'days', []).map((day: string) => $t(`campaign.days_abbr.${day}`)).join(', ') }} {{ getTableValueWithDefault<string>(data, 'time', '') }}
         </template>
-        <template v-else-if="data.frequency">
-          {{ $t(`campaign.frequency_types.${data.frequency}`) }}
+        <template v-else-if="hasTableValue(data, 'frequency')">
+          {{ $t(`campaign.frequency_types.${getTableValueWithDefault<string>(data, 'frequency', '')}`) }}
         </template>
         <template v-else>-</template>
       </div>
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
-        <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
+        <AppTag :label="getTableValueWithDefault<string>(data, 'status', '') === 'active' ? $t('general.active') : $t('general.inactive')" />
       </div>
     </template>
   </AppTable>

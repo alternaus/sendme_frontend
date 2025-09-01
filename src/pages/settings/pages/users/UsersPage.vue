@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import { Button as PrimeButton } from 'primevue'
+// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -228,14 +228,14 @@ onMounted(() => {
                       {{ idx + 1 }}
                     </div>
                     <div class="flex gap-2">
-                      <PrimeButton
+                      <AppButton
                         v-if="user.id"
                         @click="toggleEditMode(idx)"
                         :icon="user.isEditing ? 'pi pi-times' : 'pi pi-pencil'"
                         :severity="user.isEditing ? 'secondary' : 'info'"
                         variant="text"
                         rounded />
-                      <PrimeButton
+                      <AppButton
                         @click="handleRemoveUser(idx)"
                         icon="pi pi-trash"
                         severity="danger"

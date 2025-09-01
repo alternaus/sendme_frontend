@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-import PrimeButton from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
-import Dialog from 'primevue/dialog'
-import Tag from 'primevue/tag'
 import Toast from 'primevue/toast'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -12,7 +9,9 @@ import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
 import type { IApiKey } from '@/services/api-key/interfaces/api-key.interface'
 import { useApiKeysService } from '@/services/api-key/useApiKeyService'
@@ -144,7 +143,7 @@ const confirmDelete = (row: IApiKey) => {
                 <span class="font-medium text-neutral-900 dark:text-white text-base truncate">
                   {{ r.name }}
                 </span>
-                <Tag :value="r.isActive ? t('api_keys.active') : t('api_keys.inactive')"
+                <AppTag :value="r.isActive ? t('api_keys.active') : t('api_keys.inactive')"
                   :severity="r.isActive ? 'success' : 'danger'" class="!py-1 !px-2 !text-xs" />
               </div>
               <div class="text-sm text-neutral-600 dark:text-neutral-400 font-mono">
@@ -171,7 +170,7 @@ const confirmDelete = (row: IApiKey) => {
       </div>
     </div>
 
-    <Dialog v-model:visible="showKeyDialog" modal :header="t('api_keys.created')" :style="{ width: '34rem' }"
+    <AppDialog v-model:modelValue="showKeyDialog" modal :header="t('api_keys.created')" :style="{ width: '34rem' }"
       :draggable="false">
       <div class="space-y-3 text-sm">
         <p class="font-medium">
@@ -181,13 +180,13 @@ const confirmDelete = (row: IApiKey) => {
           <code class="font-mono break-all">{{ createdKey }}</code>
         </div>
         <div class="flex justify-end gap-2">
-          <PrimeButton icon="pi pi-copy" size="small" :label="t('api_keys.copy')" @click="copyNow(createdKey)" />
+          <AppButton icon="pi pi-copy" size="small" :label="t('api_keys.copy')" @click="copyNow(createdKey)" />
         </div>
         <p class="text-xs text-muted-color">
           {{ t('api_keys.copy_warning') }}
         </p>
       </div>
-    </Dialog>
+    </AppDialog>
 
     <ConfirmDialog />
     <Toast />

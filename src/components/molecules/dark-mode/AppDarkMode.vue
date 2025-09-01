@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import PrimeButton from 'primevue/button'
-
 import { useI18n } from 'vue-i18n'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useThemeStore } from '@/stores/themeStore'
 
 const { t } = useI18n()
@@ -21,7 +20,7 @@ function toggleTheme() {
 
 <template>
   <div class="flex items-center space-x-2">
-    <PrimeButton
+    <AppButton
       rounded
       size="large"
       :severity="buttonSeverity"

@@ -106,7 +106,7 @@ const countryCodeOptions = [
           :modelValue="_props.countryCode"
           :options="countryCodeOptions"
           :label="$t('general.country_code')"
-          @update:modelValue="updateField('countryCode', $event)"
+          @update:modelValue="updateField('countryCode', $event !== null ? String($event) : '')"
         >
           <template #icon>
             <PhoneIcon class="w-6 h-4 dark:fill-white" />
@@ -123,7 +123,7 @@ const countryCodeOptions = [
             }))
           "
           :label="$t('general.status')"
-          @update:modelValue="updateField('status', $event)"
+          @update:modelValue="updateField('status', $event !== null ? String($event) : '')"
         >
           <template #icon>
             <StatusIcon class="w-6 h-4 dark:fill-white" />
@@ -140,7 +140,7 @@ const countryCodeOptions = [
             }))
           "
           :label="$t('general.origin')"
-          @update:modelValue="updateField('origin', $event)"
+          @update:modelValue="updateField('origin', $event !== null ? String($event) : '')"
         >
           <template #icon>
             <DataOriginIcon class="w-6 h-4 dark:fill-white" />

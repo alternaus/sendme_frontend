@@ -122,7 +122,7 @@ export default defineComponent({
     <AppDivider />
 
     <div class="w-full grid grid-cols-1 gap-4">
-      <AppButton label="Google" :variant="'contrast'" outlined @click="handleGoogleLogin">
+      <AppButton label="Google" severity="contrast" variant="outlined" @click="handleGoogleLogin">
         <template #icon-start>
           <GoogleIcon class="w-4 h-4" />
         </template>

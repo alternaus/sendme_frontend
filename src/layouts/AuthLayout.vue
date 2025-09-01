@@ -49,7 +49,7 @@ function goToRegistration() {
                 </div>
                 <AppButton
                   :label="t('auth.register_here')"
-                  variant="outline"
+                  variant="outlined"
                   size="small"
                   @click="goToRegistration"
                 />

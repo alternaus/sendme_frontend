@@ -11,7 +11,7 @@
       <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
         <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
         <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-        <AppButton @click="fetchPlanDetails(planId)" :label="$t('general.retry')" variant="secondary" class="mt-4" />
+        <AppButton @click="fetchPlanDetails(planId)" :label="$t('general.retry')" severity="secondary" class="mt-4" />
       </div>
 
       <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
@@ -72,7 +72,7 @@
               </div>
             </div>
 
-            <Divider />
+            <AppDivider />
 
             <div class="mt-8">
               <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{
@@ -109,11 +109,10 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import Divider from 'primevue/divider'
-
 import { useI18n } from 'vue-i18n'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import PaymentProviderSelector from '@/pages/enrollment/components/PaymentProviderSelector.vue'
 import type { IPlan } from '@/services/organization/interfaces/plan.interface'

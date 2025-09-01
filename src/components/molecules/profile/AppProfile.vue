@@ -2,14 +2,14 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import PrimeButton from 'primevue/button'
-import PrimeDialog from 'primevue/dialog'
 import PrimeMenu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
 
 import { useI18n } from 'vue-i18n'
 
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import { useI18nStore } from '@/stores/i18nStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -63,8 +63,8 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
     <PrimeMenu ref="menu" :model="items" popup />
 
     <!-- Diálogo de confirmación de cierre de sesión -->
-    <PrimeDialog
-      v-model:visible="showLogoutDialog"
+    <AppDialog
+      v-model:modelValue="showLogoutDialog"
       modal
       :header="$t('auth.confirm_logout')"
       :style="{ width: '25rem' }"
@@ -73,14 +73,14 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
         {{ $t('auth.sure_logout') }}
       </span>
       <div class="flex justify-end gap-2">
-        <PrimeButton
+        <AppButton
           type="button"
           size="small"
           :label="$t('general.cancel')"
           severity="secondary"
           @click="showLogoutDialog = false"
         />
-        <PrimeButton
+        <AppButton
           type="button"
           size="small"
           :label="$t('auth.logout')"
@@ -88,6 +88,6 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
           @click="confirmLogout"
         />
       </div>
-    </PrimeDialog>
+    </AppDialog>
   </div>
 </template>

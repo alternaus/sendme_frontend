@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick,onMounted, ref } from 'vue'
 
-import { Button as PrimeButton } from 'primevue'
+// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -244,14 +244,14 @@ onMounted(() => {
                       {{ idx + 1 }}
                     </div>
                     <div class="flex gap-2">
-                      <PrimeButton
+                      <AppButton
                         v-if="idx in customFieldIds"
                         @click="toggleEditMode(idx)"
                         :icon="editingFieldIndices.includes(idx) ? 'pi pi-times' : 'pi pi-pencil'"
                         :severity="editingFieldIndices.includes(idx) ? 'secondary' : 'info'"
                         variant="text"
                         rounded />
-                      <PrimeButton
+                      <AppButton
                         @click="handleRemoveField(idx)"
                         icon="pi pi-trash"
                         severity="danger"

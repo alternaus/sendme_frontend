@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 
@@ -10,6 +8,8 @@ import { useI18n } from 'vue-i18n'
 
 import EmailIcon from '@/assets/svg/email.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
@@ -186,8 +186,8 @@ const closeDialog = () => {
 </script>
 
 <template>
-    <Dialog
-    v-model:visible="dialogVisible"
+    <AppDialog
+    v-model:modelValue="dialogVisible"
     modal
     :header="t('bulk_sms.title')"
     :style="{ width: '650px' }"
@@ -285,15 +285,15 @@ const closeDialog = () => {
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <Button
+        <AppButton
           @click="closeDialog"
           severity="secondary"
           :disabled="isSending"
           size="small"
         >
           {{ t('general.cancel') }}
-        </Button>
-        <Button
+        </AppButton>
+        <AppButton
           @click="sendBulkMessage"
           :loading="isSending"
           :disabled="!canSend || (selectedChannel === MessageChannel.SMS && messageLength > MAX_CHARACTERS)"
@@ -307,8 +307,8 @@ const closeDialog = () => {
                 ? t('bulk_sms.send_messages')
                 : t('bulk_sms.send_emails')
           }}
-        </Button>
+        </AppButton>
       </div>
     </template>
-  </Dialog>
+    </AppDialog>
 </template>

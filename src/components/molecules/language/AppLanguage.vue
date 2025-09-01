@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import PrimeButton from 'primevue/button'
 import PrimeMenu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
 
 import { useI18n } from 'vue-i18n'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import { useI18nStore } from '@/stores/i18nStore'
 import { useThemeStore } from '@/stores/themeStore'
 
@@ -50,7 +50,7 @@ const buttonSeverity = computed(() => (themeStore.isDark ? 'primary' : 'secondar
 
 <template>
   <div class="flex items-center space-x-2">
-    <PrimeButton
+    <AppButton
       ref="target"
       rounded
       size="large"

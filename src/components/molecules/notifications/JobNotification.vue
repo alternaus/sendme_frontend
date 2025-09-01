@@ -6,7 +6,7 @@
       <div class="flex justify-between items-start flex-wrap gap-2">
         <div class="flex items-center gap-2 flex-1">
           <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 m-0">{{ getJobTitle() }}</h4>
-          <Tag
+          <AppTag
             :value="getJobTypeLabel()"
             :severity="getJobTypeSeverity()"
             class="text-xs"
@@ -88,7 +88,7 @@
 
       <!-- Footer con acciones -->
       <div class="flex justify-end gap-2">
-        <Button
+        <AppButton
           v-if="!job.isActive && job.jobType === 'contact_import'"
           icon="pi pi-download"
           label="Ver reporte"
@@ -96,7 +96,7 @@
           outlined
           @click="$emit('viewReport', job.jobId)"
         />
-        <Button
+        <AppButton
           icon="pi pi-times"
           severity="secondary"
           size="small"
@@ -111,11 +111,13 @@
 <script setup lang="ts">
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
-import Tag from 'primevue/tag'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import type { JobProgress } from '@/composables/useNotifications'
+
+type TagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast'
 
 interface Props {
   job: JobProgress
@@ -179,14 +181,14 @@ const getJobTypeLabel = (): string => {
   }
 }
 
-const getJobTypeSeverity = (): string => {
+const getJobTypeSeverity = (): TagSeverity => {
   switch (props.job.jobType) {
     case 'contact_import':
       return 'info'
     case 'contact_export':
       return 'success'
     case 'data_sync':
-      return 'warning'
+      return 'warn'
     default:
       return 'secondary'
   }

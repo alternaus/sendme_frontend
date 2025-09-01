@@ -18,6 +18,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import allCountriesData from '@/components/molecules/phone-input/all-countries'
+import { useTableTypes } from '@/composables/useTableTypes'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { useContactService } from '@/services/contact/useContactService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
@@ -31,6 +32,7 @@ const { t } = useI18n()
 const { push } = useRouter()
 const { getContacts, deleteContact, exportContacts } = useContactService()
 const { search, name, countryCode, status, origin } = useContactFilter()
+const { getTableValueWithDefault, hasTableValue } = useTableTypes()
 
 const page = ref(1)
 const limit = ref(10)
@@ -118,13 +120,16 @@ watch([search, name, countryCode, status, origin], () => {
   }, 300)
 }, { deep: true })
 
-const handleSelectionChange = (selectedRow: IContact | IContact[]) => {
-  if (Array.isArray(selectedRow)) {
-    selectedContacts.value = selectedRow
-    selectedContact.value = selectedRow.length === 1 ? selectedRow[0] : null
+const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
+  if (Array.isArray(selection)) {
+    selectedContacts.value = selection as unknown as IContact[]
+    selectedContact.value = selection.length === 1 ? (selection[0] as unknown as IContact) : null
+  } else if (selection) {
+    selectedContact.value = selection as unknown as IContact
+    selectedContacts.value = [selection as unknown as IContact]
   } else {
-    selectedContact.value = selectedRow
-    selectedContacts.value = selectedRow ? [selectedRow] : []
+    selectedContact.value = null
+    selectedContacts.value = []
   }
 }
 
@@ -152,13 +157,15 @@ const handleDelete = async () => {
   }
 }
 
-const handleRowDoubleClick = (contact: IContact) => {
+const handleRowDoubleClick = (row: Record<string, unknown>) => {
+  const contact = row as unknown as IContact
   if (contact?.id) {
     push(`/contacts/edit/${contact.id}`)
   }
 }
 
-const handleRowView = (contact: IContact) => {
+const handleRowView = (row: Record<string, unknown>) => {
+  const contact = row as unknown as IContact
   contactToView.value = contact
   showContactViewModal.value = true
 }
@@ -325,38 +332,37 @@ const headerActions = computed(() => [
     </template>
     <template #custom-status="{ data }">
       <div class="flex justify-center">
-        <AppTag :label="data.status === 'active' ? $t('general.active') : $t('general.inactive')" />
+        <AppTag :label="getTableValueWithDefault<string>(data, 'status', '') === 'active' ? $t('general.active') : $t('general.inactive')" />
       </div>
     </template>
         <template #custom-phone="{ data }">
       <div class="flex justify-center items-center gap-2">
-        <template v-if="data.phone && data.countryCode">
+        <template v-if="hasTableValue(data, 'phone') && hasTableValue(data, 'countryCode')">
           <span
-            v-if="getCountryInfo(data.countryCode)"
+            v-if="getCountryInfo(getTableValueWithDefault<string>(data, 'countryCode', ''))"
             :class="[
               'country-flag',
-              toLowerCase(getCountryInfo(data.countryCode)?.iso2 || ''),
+              toLowerCase(getCountryInfo(getTableValueWithDefault<string>(data, 'countryCode', ''))?.iso2 || ''),
               'inline-block'
             ]"
           ></span>
-          <span>+{{ data.countryCode }} {{ data.phone }}</span>
+          <span>+{{ getTableValueWithDefault<string>(data, 'countryCode', '') }} {{ getTableValueWithDefault<string>(data, 'phone', '') }}</span>
         </template>
         <span v-else>-</span>
       </div>
     </template>
     <template #custom-phoneNumber="{ data }">
       <div class="flex justify-center">
-        {{ data.phoneNumber || '-' }}
+        {{ getTableValueWithDefault<string>(data, 'phone', '-') }}
       </div>
     </template>
     <template #custom-email="{ data }">
       <div class="flex justify-center">
-        {{ data.email || '-' }}
+        {{ getTableValueWithDefault<string>(data, 'email', '-') }}
       </div>
     </template>
   </AppTable>
 
-  <!-- Modales -->
   <BulkSmsModal
     v-model:visible="showBulkSmsModal"
     :selectedContacts="selectedContacts"

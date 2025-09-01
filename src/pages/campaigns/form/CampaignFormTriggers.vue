@@ -144,18 +144,20 @@ const handleRemoveRule = (index: number) => {
   touchedFields.value = newTouchedFields
 }
 
-const handleConditionChange = (index: number, _conditionType: string) => {
+const handleConditionChange = (index: number, conditionType: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
+    rule.conditionType = typeof conditionType === 'string' ? conditionType : String(conditionType)
     rule.value = ''
   }
   clearBetweenValues(index)
   handleFieldChange(index)
 }
 
-const handleCustomFieldChange = (index: number, _customFieldId: number) => {
+const handleCustomFieldChange = (index: number, customFieldId: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
+    rule.customFieldId = typeof customFieldId === 'number' ? customFieldId : Number(customFieldId) || 0
     rule.conditionType = ''
     rule.value = ''
   }
@@ -164,8 +166,9 @@ const handleCustomFieldChange = (index: number, _customFieldId: number) => {
 }
 
 
-const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: string) => {
-  updateBetweenValue(index, type, value)
+const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: string | number | null) => {
+  const stringValue = value !== null ? String(value) : ''
+  updateBetweenValue(index, type, stringValue)
   handleFieldChange(index)
 }
 </script>

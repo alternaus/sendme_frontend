@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 
 import PrimeTag from 'primevue/tag'
 
-type TagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast'
+type TagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'warning' | 'danger' | 'contrast'
 
 interface Props {
   label?: string

@@ -6,8 +6,6 @@ import {
   ref,
 } from 'vue'
 
-import PrimeButton from 'primevue/button'
-
 import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
@@ -24,6 +22,7 @@ import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import ViewIcon from '@/assets/svg/table-actions/view.svg?component'
 import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppNotificationBell from '@/components/atoms/notifications/AppNotificationBell.vue'
 import AppDarkMode from '@/components/molecules/dark-mode/AppDarkMode.vue'
@@ -66,7 +65,7 @@ export default defineComponent({
     AppBreadcrumb,
     AppDarkMode,
     AppNotificationBell,
-    PrimeButton
+    AppButton
   },
   props: {
     icon: {
@@ -172,7 +171,7 @@ export default defineComponent({
         :placeholder="placeholder"
       />
       <div class="flex gap-2 mx-2">
-        <PrimeButton
+        <AppButton
           v-for="(action, index) in actions"
           :key="index"
           v-tooltip.bottom="action.label"
@@ -186,7 +185,7 @@ export default defineComponent({
             :is="ActionIconComponents[action.type]"
             class="w-5 h-5"
           />
-        </PrimeButton>
+        </AppButton>
       </div>
     </div>
   </div>

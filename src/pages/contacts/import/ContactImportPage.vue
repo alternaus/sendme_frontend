@@ -4,20 +4,20 @@
   <AppCard>
     <template #content>
       <div class="flex justify-content-center mb-4">
-        <SelectButton v-model="importType" :options="importOptions" optionLabel="label" optionValue="value"
+        <AppSelectButton v-model="importType" :options="importOptions" optionLabel="name" optionValue="value"
         class="mx-auto"
           :allowEmpty="false">
           <template #option="slotProps">
             <span>
               <i :class="slotProps.option.icon" style="margin-right:8px" />
-              {{ slotProps.option.label }}
+              {{ slotProps.option.name }}
             </span>
           </template>
-        </SelectButton>
+        </AppSelectButton>
       </div>
 
       <div class="flex justify-content-center" v-if="importType === 'google'">
-        <PrimeButton label="Importar desde Google" icon="pi pi-cloud-upload" size="small" :loading="loading"
+        <AppButton label="Importar desde Google" icon="pi pi-cloud-upload" size="small" :loading="loading"
           @click="handleGoogleImport" class="mb-2 mx-auto!" />
       </div>
       <div v-else>
@@ -31,10 +31,10 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 
-import PrimeButton from 'primevue/button'
-import SelectButton from 'primevue/selectbutton'
 import { useToast } from 'primevue/usetoast'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
@@ -49,16 +49,16 @@ export default defineComponent({
     AppHeader,
     AppCard,
     UploadFile,
-    SelectButton,
-    PrimeButton,
+    AppSelectButton,
+    AppButton,
   },
   setup() {
 
     const toast = useToast()
     const importType = ref<'google' | 'excel'>('excel')
     const importOptions = [
-      { label: 'Google', value: 'google', icon: 'pi pi-google' },
-      { label: 'Excel', value: 'excel', icon: 'pi pi-file-excel' }
+      { name: 'Google', value: 'google', icon: 'pi pi-google' },
+      { name: 'Excel', value: 'excel', icon: 'pi pi-file-excel' }
     ]
     const loading = ref(false)
     const result = ref<{ imported: number; created: number; updated: number } | null>(null)

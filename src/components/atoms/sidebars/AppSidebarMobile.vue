@@ -1,7 +1,7 @@
 <script lang="ts">
 import {  computed, defineComponent, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
-import PrimeButton from 'primevue/button'
 import Drawer from 'primevue/drawer'
 
 import { useI18n } from 'vue-i18n'
@@ -14,11 +14,12 @@ import Reports from '@/assets/svg/sidebar/reports.svg?component'
 import Send from '@/assets/svg/sidebar/send.svg?component'
 import Settings from '@/assets/svg/sidebar/settings.svg?component'
 import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 
 export default defineComponent({
   name: 'AppSidebarMobile',
   components: {
-    PrimeButton,
+    AppButton,
     Drawer,
     Logo,
     Buy,
@@ -33,6 +34,7 @@ export default defineComponent({
     const visible = ref(false)
 
     const { t } = useI18n()
+    const currentRoute = useRoute()
     const routes = computed(() => [
       { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
       { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
@@ -42,9 +44,20 @@ export default defineComponent({
       { path: '/buy', icon: Buy, title: t('general.buy') },
       { path: '/settings', icon: Settings, title: t('general.settings') },
     ])
+    const openSidebar = () => {
+      visible.value = true
+    }
+
+    const closeSidebar = () => {
+      visible.value = false
+    }
+
     return {
       visible,
       routes,
+      currentRoute,
+      openSidebar,
+      closeSidebar,
     }
   },
 })
@@ -53,7 +66,7 @@ export default defineComponent({
 <template>
   <div class="w-full flex flex-col">
     <div class="w-full flex justify-start p-2 bg-[var(--p-card-background)]">
-      <PrimeButton
+      <AppButton
         icon="pi pi-bars"
         text
         rounded
@@ -72,7 +85,7 @@ export default defineComponent({
               class="h-16 w-16 cursor-pointer dark:fill-[var(--p-primary-color)]"
               @click="closeCallback()"
             />
-            <PrimeButton
+            <AppButton
               @click="closeCallback"
               icon="pi pi-times"
               size="small"
@@ -95,22 +108,22 @@ export default defineComponent({
                     :is="route.icon"
                     class="w-6 h-6 transition-all duration-300"
                     :class="{
-                      'dark:fill-black fill-[var(--p-primary-color)]': $route.path.startsWith(
+                      'dark:fill-black fill-[var(--p-primary-color)]': currentRoute.path.startsWith(
                         route.path,
                       ),
                       'group-hover:fill-black dark:group-hover:fill-black': true,
-                      'dark:fill-[var(--p-primary-color)]': !$route.path.startsWith(route.path),
+                      'dark:fill-[var(--p-primary-color)]': !currentRoute.path.startsWith(route.path),
                     }"
                   />
 
                   <span
                     class="text-sm transition-all duration-300"
                     :class="{
-                      'dark:text-black text-[var(--p-primary-color)]': $route.path.startsWith(
+                      'dark:text-black text-[var(--p-primary-color)]': currentRoute.path.startsWith(
                         route.path,
                       ),
                       'group-hover:text-black dark:group-hover:text-black': true,
-                      'dark:text-[var(--p-primary-color)]': !$route.path.startsWith(route.path),
+                      'dark:text-[var(--p-primary-color)]': !currentRoute.path.startsWith(route.path),
                     }"
                   >
                     {{ route.title }}

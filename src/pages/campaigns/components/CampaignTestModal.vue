@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 
 import { useI18n } from 'vue-i18n'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import { useDateFormat } from '@/composables/useDateFormat'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ITestCampaignResponse } from '@/services/campaign/interfaces/test-rules.interface'
@@ -42,8 +42,8 @@ const formatExecutionDate = (dateString: string): string => {
 </script>
 
 <template>
-    <Dialog
-    v-model:visible="dialogVisible"
+    <AppDialog
+    v-model:modelValue="dialogVisible"
     modal
     :header="t('campaign.test_results')"
     :style="{ width: '900px' }"
@@ -145,7 +145,7 @@ const formatExecutionDate = (dateString: string): string => {
 
     <template #footer>
       <div class="flex justify-end gap-2 pt-3">
-        <Button
+        <AppButton
           @click="dialogVisible = false"
           :label="t('general.close')"
           severity="secondary"
@@ -153,7 +153,7 @@ const formatExecutionDate = (dateString: string): string => {
         />
       </div>
     </template>
-  </Dialog>
+  </AppDialog>
 </template>
 
 <style scoped>

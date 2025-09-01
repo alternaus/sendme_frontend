@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 
-import Button from 'primevue/button'
 import Step from 'primevue/step'
 import StepList from 'primevue/steplist'
 import StepPanel from 'primevue/steppanel'
@@ -10,6 +9,7 @@ import Stepper from 'primevue/stepper'
 
 import { useI18n } from 'vue-i18n'
 
+import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import type { StepConfig } from '@/composables/useFormStepper'
 
 interface Props {
@@ -114,7 +114,7 @@ const handleCancel = () => {
 
           <div class="flex justify-between my-2">
             <div>
-              <Button
+              <AppButton
                 v-if="!isFirstStep"
                 :label="t('general.previous')"
                 severity="contrast"
@@ -127,7 +127,7 @@ const handleCancel = () => {
             </div>
 
             <div class="flex gap-3">
-              <Button
+              <AppButton
                 v-if="!isLastStep"
                 :label="t('general.next')"
                 icon="pi pi-arrow-right"
@@ -137,7 +137,7 @@ const handleCancel = () => {
                 :disabled="isLoading"
               />
 
-              <Button
+              <AppButton
                 v-if="isLastStep && showSubmit"
                 :label="effectiveSubmitLabel"
                 severity="primary"
@@ -147,7 +147,7 @@ const handleCancel = () => {
                 :loading="isLoading"
               />
 
-              <Button
+              <AppButton
                 :label="t('general.cancel')"
                 severity="contrast"
                 outlined

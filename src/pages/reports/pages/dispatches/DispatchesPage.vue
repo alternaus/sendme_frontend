@@ -125,9 +125,10 @@ export default defineComponent({
       return classes[status as keyof typeof classes] || classes.pending
     }
 
-    const formatDate = (dateString?: string) => {
+    const formatDate = (dateString?: unknown) => {
       if (!dateString) return '-'
-      return new Date(dateString).toLocaleString()
+      const dateStr = typeof dateString === 'string' ? dateString : String(dateString)
+      return new Date(dateStr).toLocaleString()
     }
 
     const startDateString = computed({
@@ -232,9 +233,9 @@ export default defineComponent({
         <span
           v-tooltip.left="data.campaignName"
           class="line-clamp-1 max-w-[150px]"
-          :title="data.campaignName"
+          :title="String(data.campaignName || '')"
         >
-          {{ data.campaignName }}
+          {{ data.campaignName || '' }}
         </span>
       </div>
     </template>
@@ -244,9 +245,9 @@ export default defineComponent({
         <span
           v-tooltip.left="data.providerName"
           class="line-clamp-1 max-w-[150px]"
-          :title="data.providerName"
+          :title="String(data.providerName || '')"
         >
-          {{ data.providerName }}
+          {{ data.providerName || '' }}
         </span>
       </div>
     </template>
@@ -254,7 +255,7 @@ export default defineComponent({
     <template #custom-totalSent="{ data }">
       <div class="flex justify-center">
         <span class="text-sm font-medium">
-          {{ data.totalSent }}
+          {{ data.totalSent || 0 }}
         </span>
       </div>
     </template>
@@ -262,7 +263,7 @@ export default defineComponent({
     <template #custom-totalDelivered="{ data }">
       <div class="flex justify-center">
         <span class="text-sm font-medium text-green-600">
-          {{ data.totalDelivered }}
+          {{ data.totalDelivered || 0 }}
         </span>
       </div>
     </template>
@@ -270,7 +271,7 @@ export default defineComponent({
     <template #custom-totalFailed="{ data }">
       <div class="flex justify-center">
         <span class="text-sm font-medium text-red-600">
-          {{ data.totalFailed }}
+          {{ data.totalFailed || 0 }}
         </span>
       </div>
     </template>

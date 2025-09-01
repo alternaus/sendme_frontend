@@ -24,7 +24,7 @@ const goToHome = () => {
       <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">{{ t('notFound.description') }}</p>
       <AppButton
         :label="t('notFound.backToHome')"
-        variant="primary"
+        severity="primary"
         @click="goToHome"
         class="!w-fit mx-auto"
       />
