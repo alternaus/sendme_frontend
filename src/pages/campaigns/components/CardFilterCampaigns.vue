@@ -124,7 +124,6 @@ onMounted(() => {
 
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="status"
           :options="
             Object.entries(CampaignStatusTypes).map(([key, value]) => ({
@@ -133,7 +132,7 @@ onMounted(() => {
             }))
           "
           :label="$t('general.status')"
-          @update:modelValue="updateField('status', $event)"
+          @update:modelValue="updateField('status', $event as string)"
         >
           <template #icon>
             <StatusIcon class="w-6 h-4 dark:fill-white" />
@@ -142,11 +141,10 @@ onMounted(() => {
 
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="channelId"
           :options="channelOptions"
           :label="$t('campaign.channel')"
-          @update:modelValue="updateField('channelId', $event)"
+          @update:modelValue="updateField('channelId', $event as string)"
         >
           <template #icon>
             <ChannelIcon class="w-6 h-4 dark:fill-white" />
@@ -154,7 +152,7 @@ onMounted(() => {
         </AppSelect>
 
         <AppDateRangePicker
-          placeholder=""
+
           class="w-full mt-3"
           :modelValue="props.dateRange"
           :label="$t('general.date_range')"

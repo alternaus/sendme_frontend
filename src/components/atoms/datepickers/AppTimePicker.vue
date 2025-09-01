@@ -1,96 +1,146 @@
-<script lang="ts">
-import { defineComponent, type PropType, ref, watch } from 'vue'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
 
 import { IconField, InputIcon } from 'primevue'
 import DatePicker from 'primevue/datepicker'
 import FloatLabel from 'primevue/floatlabel'
 
-export default defineComponent({
-  name: 'AppTimePicker',
-  components: {
-    DatePicker,
-    FloatLabel,
-    IconField,
-    InputIcon,
+interface Props {
+  modelValue?: Date | null
+  label?: string
+  hourFormat?: '12' | '24'
+  errorMessage?: string
+  customClass?: string
+  disabled?: boolean
+  readonly?: boolean
+  size?: 'small' | 'large'
+  showSeconds?: boolean
+  stepHour?: number
+  stepMinute?: number
+  stepSecond?: number
+  containerClass?: string
+  inputClass?: string
+  errorClass?: string
+  pt?: object
+  ptOptions?: object
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: null,
+  label: '',
+  hourFormat: '24',
+  errorMessage: '',
+  customClass: '',
+  disabled: false,
+  readonly: false,
+  size: 'small',
+  showSeconds: false,
+  stepHour: 1,
+  stepMinute: 1,
+  stepSecond: 1,
+  containerClass: 'w-full',
+  inputClass: '!w-full !rounded-xl',
+  errorClass: 'text-red-400 dark:text-red-300 p-0 m-0'
+})
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: Date | null]
+}>()
+
+const selectedTime = ref<Date | null>(null)
+let previousValue: Date | null = null
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedTime.value = newValue instanceof Date ? newValue : null
   },
-  props: {
-    modelValue: {
-      type: [Date, null] as PropType<Date | null>,
-      default: null,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    hourFormat: {
-      type: String as () => '12' | '24',
-      default: '12',
-    },
-    errorMessage: {
-      type: String,
-      default: '',
-    },
-    customClass: {
-      type: String,
-      default: '',
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const selectedTime = ref<Date | null>(null)
-    let previousValue: Date | null = null
+  { immediate: true }
+)
 
-    watch(
-      () => props.modelValue,
-      (newValue) => {
-        selectedTime.value = newValue instanceof Date ? newValue : null
-      },
-      { immediate: true },
-    )
-
-    watch(
-      selectedTime,
-      (value) => {
-        if (
-          (value instanceof Date && previousValue?.getTime() !== value.getTime()) ||
-          (value === null && previousValue !== null)
-        ) {
-          previousValue = value
-          emit('update:modelValue', value)
-        }
-      },
-      { deep: true },
-    )
-
-    return {
-      selectedTime,
+watch(
+  selectedTime,
+  (value) => {
+    if (
+      (value instanceof Date && previousValue?.getTime() !== value.getTime()) ||
+      (value === null && previousValue !== null)
+    ) {
+      previousValue = value
+      emit('update:modelValue', value)
     }
   },
-})
+  { deep: true }
+)
 </script>
 
 <template>
-  <div class="w-full">
+  <div :class="containerClass">
     <FloatLabel v-if="$slots.icon">
       <IconField>
         <InputIcon>
           <slot name="icon" />
         </InputIcon>
-        <DatePicker v-model="selectedTime" timeOnly size="small" :hourFormat="hourFormat"
-          input-class="!w-full !rounded-xl" class="!w-full"
-          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
+        <DatePicker
+          v-bind="{
+            modelValue: selectedTime,
+            hourFormat,
+            disabled,
+            readonly,
+            size,
+            showSeconds,
+            stepHour,
+            stepMinute,
+            stepSecond,
+            pt,
+            ptOptions,
+            ...$attrs
+          }"
+          timeOnly
+          :input-class="inputClass"
+          :class="[
+            '!w-full',
+            customClass,
+            { 'p-invalid': errorMessage.length > 0 }
+          ]"
+          @update:model-value="selectedTime = $event as Date | null"
+        />
       </IconField>
-      <label>{{ label }}</label>
+      <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
     <FloatLabel v-else>
-      <DatePicker v-model="selectedTime" timeOnly size="small" :hourFormat="hourFormat"
-        input-class="!w-full !rounded-xl" class="!w-full"
-        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]" />
-      <label>{{ label }}</label>
+      <DatePicker
+        v-bind="{
+          modelValue: selectedTime,
+          hourFormat,
+          disabled,
+          readonly,
+          size,
+          showSeconds,
+          stepHour,
+          stepMinute,
+          stepSecond,
+          pt,
+          ptOptions,
+          ...$attrs
+        }"
+        timeOnly
+        :input-class="inputClass"
+        :class="[
+          '!w-full',
+          customClass,
+          { 'p-invalid': errorMessage.length > 0 }
+        ]"
+        @update:model-value="selectedTime = $event as Date | null"
+      />
+      <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div v-if="errorMessage.length" :class="errorClass">
       <small>{{ errorMessage }}</small>
     </div>
   </div>

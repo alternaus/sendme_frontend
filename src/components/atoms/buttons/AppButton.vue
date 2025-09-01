@@ -1,47 +1,66 @@
-<script lang="ts">
-import { computed, defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import PrimeButton from 'primevue/button'
 
-export default defineComponent({
-  name: 'AppButton',
-  props: {
-    label: {
-      type: String,
-      default: '',
-    },
-    variant: {
-      type: String,
-      default: 'primary',
-    },
-    outlined: {
-      type: Boolean,
-      default: false,
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  components: {
-    PrimeButton,
+type ButtonSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'
+type ButtonSize = 'small' | 'large'
 
-  },
-  setup(props) {
-    const isDisabled = computed(() => props.loading)
+interface Props {
+  label?: string
+  variant?: ButtonSeverity
+  outlined?: boolean
+  loading?: boolean
+  size?: ButtonSize
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  icon?: string
+  iconPos?: 'left' | 'right' | 'top' | 'bottom'
+  buttonClass?: string
+  pt?: object
+  ptOptions?: object
+}
 
-    return { isDisabled }
-  },
+const props = withDefaults(defineProps<Props>(), {
+  label: '',
+  variant: 'primary',
+  outlined: false,
+  loading: false,
+  size: 'small',
+  disabled: false,
+  type: 'button',
+  iconPos: 'left',
+  buttonClass: 'w-full !rounded-xl flex items-center justify-center gap-2'
 })
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const isDisabled = computed(() => props.loading || props.disabled)
 </script>
 
 <template>
-  <PrimeButton class="w-full !rounded-xl flex items-center justify-center gap-2" :variant="outlined ? 'outlined' : undefined" :loading="loading"
-    size="small" :disabled="isDisabled" :severity="variant">
-
-    <slot name="icon-start" v-if="!loading"></slot>
-    {{ label }}
-    <slot name="icon-end" v-if="!loading"></slot>
+  <PrimeButton
+    v-bind="{
+      label,
+      severity: variant,
+      variant: outlined ? 'outlined' : undefined,
+      loading,
+      size,
+      disabled: isDisabled,
+      type,
+      icon,
+      iconPos,
+      pt,
+      ptOptions,
+      ...$attrs
+    }"
+    :class="buttonClass"
+  >
+    <slot name="icon-start" v-if="!loading" />
+    <slot v-if="!icon || ($slots.default && label)" />
+    <slot name="icon-end" v-if="!loading" />
   </PrimeButton>
 </template>
 

@@ -76,7 +76,6 @@ export default defineComponent({
         </AppInput>
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="action"
           :options="
             Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: t(value) }))
@@ -90,7 +89,6 @@ export default defineComponent({
         </AppSelect>
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="table"
           :options="
             Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: t(value) }))
@@ -104,7 +102,7 @@ export default defineComponent({
         </AppSelect>
         <AppDatePicker
           :modelValue="startDateValue"
-          placeholder=""
+
           :label="$t('general.start_date')"
           class="w-full mt-3"
           @update:modelValue="updateField('startDate', $event)"
@@ -115,7 +113,7 @@ export default defineComponent({
         </AppDatePicker>
         <AppDatePicker
           :modelValue="endDateValue"
-          placeholder=""
+
           :label="$t('general.end_date')"
           class="w-full mt-3"
           @update:modelValue="updateField('endDate', $event)"

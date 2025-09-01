@@ -179,7 +179,6 @@ export default defineComponent({
       </div>
     </div>
 
-    <!-- Progress Details -->
     <div v-if="isProgressType && progressData" class="mt-2">
       <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
         <span>{{ t('contacts.import.progress') }}: {{ progressData.progress }}%</span>

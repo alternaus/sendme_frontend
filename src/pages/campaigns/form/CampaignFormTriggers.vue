@@ -203,7 +203,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-model="rule.customFieldId"
                     :options="customFieldsOptions"
                     :errorMessage="getError(index, 'customFieldId')"
-                    :placeholder="t('campaign.select_field')"
+                    :label="t('campaign.select_field')"
                     class="w-full"
                     @update:modelValue="handleCustomFieldChange(index, $event)" />
 
@@ -211,7 +211,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-model="rule.conditionType"
                     :options="getFilteredConditionOptions(rule.customFieldId)"
                     :errorMessage="getError(index, 'conditionType')"
-                    :placeholder="t('campaign.select_condition')"
+                    :label="t('campaign.select_condition')"
                     class="w-full"
                     :disabled="!rule.customFieldId"
                     @update:modelValue="handleConditionChange(index, $event)" />

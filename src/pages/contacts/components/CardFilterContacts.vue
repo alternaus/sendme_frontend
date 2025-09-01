@@ -103,7 +103,6 @@ const countryCodeOptions = [
 
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="_props.countryCode"
           :options="countryCodeOptions"
           :label="$t('general.country_code')"
@@ -116,7 +115,6 @@ const countryCodeOptions = [
 
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="_props.status"
           :options="
             Object.entries(ContactStatusTypes).map(([key, value]) => ({
@@ -134,7 +132,6 @@ const countryCodeOptions = [
 
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="_props.origin"
           :options="
             Object.entries(ContactOriginTypes).map(([key, value]) => ({

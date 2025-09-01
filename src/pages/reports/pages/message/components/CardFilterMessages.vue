@@ -73,7 +73,6 @@ export default defineComponent({
         </AppInput>
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="status"
           :options="
             Object.entries(StatusMessageTypes).map(([key, value]) => ({
@@ -90,7 +89,6 @@ export default defineComponent({
         </AppSelect>
         <AppSelect
           class="w-full mt-3"
-          placeholder=""
           :modelValue="messageType"
           :options="
             Object.entries(TypeMessageTypes).map(([key, value]) => ({
@@ -106,7 +104,7 @@ export default defineComponent({
           </template>
         </AppSelect>
         <AppDatePicker
-          placeholder=""
+
           class="w-full mt-3"
           :modelValue="startDateValue"
           :showTime="true"
@@ -118,7 +116,7 @@ export default defineComponent({
           </template>
         </AppDatePicker>
         <AppDatePicker
-          placeholder=""
+
           class="w-full mt-3"
           :modelValue="endDateValue"
           :showTime="true"

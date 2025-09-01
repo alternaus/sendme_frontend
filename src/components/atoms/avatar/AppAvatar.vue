@@ -1,35 +1,41 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-
+<script setup lang="ts">
 import Avatar from 'primevue/avatar'
 
-export default defineComponent({
-  name: 'AppAvatar',
-  components: {
-    Avatar,
-  },
-  props: {
-    image: {
-      type: String,
-      required: false,
-    },
-    shape: {
-      type: String as () => 'circle' | 'square',
-      default: 'circle',
-    },
-    label: {
-      type: String,
-      required: false,
-    },
-  },
-  setup(props) {
-    return { ...props }
-  },
+interface Props {
+  image?: string
+  imageAlt?: string
+  shape?: 'circle' | 'square'
+  size?: 'normal' | 'large' | 'xlarge'
+  label?: string
+  icon?: string
+  pt?: object
+  ptOptions?: object
+}
+
+withDefaults(defineProps<Props>(), {
+  shape: 'circle',
+  size: 'large'
+})
+
+defineOptions({
+  inheritAttrs: false
 })
 </script>
 
 <template>
-  <avatar :image="image"  class="!w-14 !h-14" :shape="shape" :label="label" />
+  <Avatar
+    v-bind="{
+      image,
+      imageAlt,
+      shape,
+      size,
+      label,
+      icon,
+      pt,
+      ptOptions,
+      ...$attrs
+    }"
+  />
 </template>
 
 <style lang="scss"></style>

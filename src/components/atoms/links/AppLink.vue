@@ -1,25 +1,96 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
 
 import PrimeButton from 'primevue/button'
 
-export default defineComponent({
-  name: 'AppLink',
-  props: {
-    label: {
-      type: String,
-      default: '',
-    },
-  },
-  components: {
-    PrimeButton,
-  },
-  setup() {
-    return {}
-  },
+type ButtonSize = 'small' | 'large'
+type ButtonSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'help' | 'primary' | 'contrast'
+
+interface Props {
+  label?: string
+  size?: ButtonSize
+  severity?: ButtonSeverity
+  disabled?: boolean
+  loading?: boolean
+  icon?: string
+  iconPos?: 'left' | 'right' | 'top' | 'bottom'
+  badge?: string
+  badgeClass?: string
+  badgeSeverity?: ButtonSeverity
+  containerClass?: string
+  buttonClass?: string
+  pt?: object
+  ptOptions?: object
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  label: '',
+  size: 'small',
+  severity: 'primary',
+  disabled: false,
+  loading: false,
+  iconPos: 'left',
+  containerClass: 'w-full',
+  buttonClass: '!rounded-xl'
 })
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const emit = defineEmits<{
+  'click': [event: Event]
+}>()
+
+const attrs = useAttrs()
+
+// Filtrar atributos conflictivos
+const blockKeys = ['class', 'onClick']
+
+const forwardedAttrs = computed(() => {
+  const src = attrs ?? {}
+  return Object.fromEntries(Object.entries(src).filter(([k]) => !blockKeys.includes(k)))
+})
+
+// Manejar clases del contenedor y botón
+const containerClasses = computed(() => {
+  const classAttr = attrs.class as string | undefined
+  return classAttr ? `${props.containerClass} ${classAttr}` : props.containerClass
+})
+
+const buttonClasses = computed(() => {
+  return props.buttonClass
+})
+
+// Manejar click
+const handleClick = (event: Event) => {
+  if (!props.disabled && !props.loading) {
+    emit('click', event)
+  }
+}
 </script>
 
 <template>
-  <PrimeButton class="w-full !rounded-xl" :label="label" variant="link" size="small"></PrimeButton>
+  <div :class="containerClasses">
+    <PrimeButton
+      v-bind="forwardedAttrs"
+      :label="label"
+      :size="size"
+      :severity="severity"
+      :disabled="disabled"
+      :loading="loading"
+      :icon="icon"
+      :icon-pos="iconPos"
+      :badge="badge"
+      :badge-class="badgeClass"
+      :badge-severity="badgeSeverity"
+      :class="buttonClasses"
+      :pt="pt"
+      :pt-options="ptOptions"
+      variant="link"
+      @click="handleClick"
+    >
+      <slot />
+    </PrimeButton>
+  </div>
 </template>

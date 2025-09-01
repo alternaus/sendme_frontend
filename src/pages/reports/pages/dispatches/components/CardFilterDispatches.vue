@@ -63,7 +63,7 @@ export default defineComponent({
         </AppInput>
 
         <AppDatePicker
-          placeholder=""
+
           class="w-full mt-3"
           :modelValue="startDateValue"
           :showTime="true"
@@ -76,7 +76,7 @@ export default defineComponent({
         </AppDatePicker>
 
         <AppDatePicker
-          placeholder=""
+
           class="w-full mt-3"
           :modelValue="endDateValue"
           :showTime="true"

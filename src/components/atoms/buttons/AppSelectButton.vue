@@ -1,69 +1,77 @@
-<script lang="ts">
-import { computed,defineComponent, type PropType } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import SelectButton from 'primevue/selectbutton'
 
 import type { SelectButtonOption } from './types/select-button-options.type'
 
-export default defineComponent({
-  name: 'AppSelectButton',
-  components: {
-    SelectButton,
-  },
-  props: {
-    modelValue: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    options: {
-      type: Array as PropType<SelectButtonOption[]>,
-      required: true,
-    },
-    optionLabel: {
-      type: String,
-      default: 'name',
-    },
-    errorMessage: {
-      type: String,
-      default: '',
-    },
-  },
-  emits: ['update:modelValue'],
-  computed: {
-    internalValue: {
-      get() {
-        return this.modelValue
-      },
-      set(value: SelectButtonOption[]) {
-        this.$emit('update:modelValue', value)
-      },
-    },
-  },
-  setup(props) {
-    const hasError = computed(() => props.errorMessage.length > 0)
+interface Props {
+  modelValue: string[] | string | number | boolean
+  options: SelectButtonOption[]
+  optionLabel?: string
+  optionValue?: string
+  errorMessage?: string
+  multiple?: boolean
+  disabled?: boolean
+  size?: 'small' | 'large'
+  containerClass?: string
+  selectButtonClass?: string
+  errorClass?: string
+  pt?: object
+  ptOptions?: object
+}
 
-    return {
-      hasError,
-    }
-  },
+const props = withDefaults(defineProps<Props>(), {
+  optionLabel: 'name',
+  optionValue: 'value',
+  errorMessage: '',
+  multiple: true,
+  disabled: false,
+  size: 'small',
+  containerClass: 'w-full',
+  selectButtonClass: 'w-full flex justify-center items-center flex-wrap',
+  errorClass: 'text-red-400 dark:text-red-300 p-0 m-0'
 })
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string[] | string | number | boolean]
+}>()
+
+const internalValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
+})
+
+const hasError = computed(() => (props.errorMessage?.length ?? 0) > 0)
 </script>
 
 <template>
-  <div class="w-full">
+  <div :class="containerClass">
     <SelectButton
-      size="small"
-      v-model="internalValue"
-      :options="options"
-      :optionLabel="optionLabel"
-      option-value="value"
-      multiple
-      class="w-full flex justify-center items-center flex-wrap"
-      :class="{ 'p-invalid': hasError }"
-      aria-labelledby="multiple"
+      v-bind="{
+        modelValue: internalValue,
+        options,
+        optionLabel,
+        optionValue,
+        multiple,
+        disabled,
+        size,
+        pt,
+        ptOptions,
+        ...$attrs
+      }"
+      :class="[
+        selectButtonClass,
+        { 'p-invalid': hasError }
+      ]"
+      @update:model-value="internalValue = $event"
     />
 
-    <div v-if="hasError" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div v-if="hasError" :class="errorClass">
       <small>{{ errorMessage }}</small>
     </div>
   </div>

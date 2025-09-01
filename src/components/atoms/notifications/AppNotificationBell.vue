@@ -97,7 +97,6 @@ export default defineComponent({
       }
     }
 
-    //Métodos para manejar jobs
     const handleJobDismiss = (_jobId: string) => {
       //Implementar si es necesario
     }

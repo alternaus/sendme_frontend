@@ -17,7 +17,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
-    "@primevue/themes": "^4.2.5",
+    "@primeuix/themes": "^1.2.3",
     "@tailwindcss/vite": "^4.0.0",
     "@types/socket.io-client": "^1.4.36",
     "@unhead/vue": "^2.0.8",
@@ -28,7 +28,7 @@
     "libphonenumber-js": "^1.12.15",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",
-    "primevue": "^4.2.5",
+    "primevue": "^4.3.7",
     "quill": "^2.0.3",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.0.0",

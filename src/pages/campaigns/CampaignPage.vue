@@ -22,8 +22,8 @@ import type { ITestCampaignRequest, ITestCampaignResponse } from '@/services/cam
 import { useCampaignService } from '@/services/campaign/useCampaignService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 
+import CampaignTestModal from './components/CampaignTestModal.vue'
 import CardFilterCampaigns from './components/CardFilterCampaigns.vue'
-import TestResultsModal from './components/TestResultsModal.vue'
 import { useCampaignFilter } from './composables/useCampaignFilter'
 
 const { t } = useI18n()
@@ -285,7 +285,7 @@ const headerActions = computed(() => [
   />
 
   <!-- Modal de Resultados del Test -->
-  <TestResultsModal
+  <CampaignTestModal
     v-model:visible="showTestResultsModal"
     :campaign="selected"
     :test-results="testResults"

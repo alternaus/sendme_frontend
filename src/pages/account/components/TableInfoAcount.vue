@@ -150,7 +150,7 @@ export default defineComponent({
       <div class="flex flex-col sm:flex-row gap-4">
         <AppDatePicker
           v-model="startDate"
-          placeholder=""
+
           :label="$t('general.start_date')"
           class="w-full mt-3"
         >
@@ -160,7 +160,7 @@ export default defineComponent({
         </AppDatePicker>
         <AppDatePicker
           v-model="endDate"
-          placeholder=""
+
           :label="$t('general.end_date')"
           class="w-full mt-3"
         >

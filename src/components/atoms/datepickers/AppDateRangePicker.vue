@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-import { IconField, InputIcon } from 'primevue'
-import DatePicker from 'primevue/datepicker'
-import FloatLabel from 'primevue/floatlabel'
+import AppDatePicker from './AppDatePicker.vue'
 
 interface Props {
   modelValue?: Date[]
@@ -12,6 +10,18 @@ interface Props {
   dateFormat?: string
   errorMessage?: string
   customClass?: string
+  disabled?: boolean
+  readonly?: boolean
+  size?: 'small' | 'large'
+  minDate?: Date
+  maxDate?: Date
+  numberOfMonths?: number
+  showButtonBar?: boolean
+  containerClass?: string
+  inputClass?: string
+  errorClass?: string
+  pt?: object
+  ptOptions?: object
 }
 
 interface Emits {
@@ -25,20 +35,30 @@ const props = withDefaults(defineProps<Props>(), {
   dateFormat: 'dd/mm/yy',
   errorMessage: '',
   customClass: '',
+  disabled: false,
+  readonly: false,
+  size: 'small',
+  numberOfMonths: 1,
+  showButtonBar: false,
+  containerClass: 'w-full',
+  inputClass: '!w-full !rounded-xl',
+  errorClass: 'text-red-400 dark:text-red-300 p-0 m-0'
+})
+
+defineOptions({
+  inheritAttrs: false
 })
 
 const emit = defineEmits<Emits>()
 
-const selectedDates = ref<Date[]>([])
 const internalDates = ref<(Date | null)[]>([])
 
 watch(
   () => props.modelValue,
   (newValue) => {
-    selectedDates.value = newValue || []
     internalDates.value = newValue || []
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 const handleDateChange = (value: Date | Date[] | (Date | null)[] | null | undefined) => {
@@ -49,57 +69,40 @@ const handleDateChange = (value: Date | Date[] | (Date | null)[] | null | undefi
   const hasCompleteDateRange = validDates.length === 2 && dateArray.length === 2
 
   if (hasCompleteDateRange) {
-    selectedDates.value = dateArray as Date[]
     emit('update:modelValue', dateArray as Date[])
   } else if (dateArray.length === 0) {
-    selectedDates.value = []
     emit('update:modelValue', [])
   }
 }
 </script>
 
 <template>
-  <div class="w-full">
-    <FloatLabel v-if="$slots.icon">
-      <IconField>
-        <InputIcon>
-          <slot name="icon"></slot>
-        </InputIcon>
-        <DatePicker
-          :modelValue="internalDates"
-          size="small"
-          :placeholder="placeholder"
-          :showIcon="false"
-          :dateFormat="dateFormat"
-          selectionMode="range"
-          :showTime="false"
-          input-class="!w-full !rounded-xl"
-          class="!w-full"
-          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-          @update:modelValue="handleDateChange"
-        />
-      </IconField>
-      <label class="text-sm">{{ label }}</label>
-    </FloatLabel>
-    <FloatLabel v-else>
-      <DatePicker
-        :modelValue="internalDates"
-        size="small"
-        :placeholder="placeholder"
-        :showIcon="false"
-        :dateFormat="dateFormat"
-        selectionMode="range"
-        :showTime="false"
-        input-class="!w-full !rounded-xl"
-        class="!w-full"
-        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
-        @update:modelValue="handleDateChange"
-      />
-      <label class="text-sm">{{ label }}</label>
-    </FloatLabel>
-
-    <div v-if="errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
-      <small>{{ errorMessage }}</small>
-    </div>
-  </div>
+  <AppDatePicker
+    :model-value="internalDates as any"
+    :label="label"
+    :placeholder="placeholder"
+    :date-format="dateFormat"
+    :error-message="errorMessage"
+    :custom-class="customClass"
+    :disabled="disabled"
+    :readonly="readonly"
+    :size="size"
+    :min-date="minDate"
+    :max-date="maxDate"
+    :number-of-months="numberOfMonths"
+    :show-button-bar="showButtonBar"
+    :container-class="containerClass"
+    :input-class="inputClass"
+    :error-class="errorClass"
+    :pt="pt"
+    :pt-options="ptOptions"
+    :show-time="false"
+    selection-mode="range"
+    v-bind="$attrs"
+    @update:model-value="handleDateChange"
+  >
+    <template v-if="$slots.icon" #icon>
+      <slot name="icon" />
+    </template>
+  </AppDatePicker>
 </template>

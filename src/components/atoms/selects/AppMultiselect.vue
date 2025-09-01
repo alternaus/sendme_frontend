@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, type PropType, ref, watch } from 'vue'
+<script setup lang="ts">
+import { computed, ref, useAttrs, watch } from 'vue'
 
 import { IconField, InputIcon } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
@@ -7,120 +7,360 @@ import MultiSelect, { type MultiSelectChangeEvent } from 'primevue/multiselect'
 
 import type { SelectOption } from './types/select-option.types'
 
-export default defineComponent({
-  name: 'AppMultiselect',
-  components: {
-    MultiSelect,
-    FloatLabel,
-    IconField,
-    InputIcon,
-  },
-  props: {
-    modelValue: {
-      type: Array as PropType<string[]>,
-      default: () => [],
-    },
-    options: {
-      type: Array as PropType<SelectOption[]>,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      default: 'Seleccione...',
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    showClear: {
-      type: Boolean,
-      default: true,
-    },
-    customClass: {
-      type: String,
-      default: '',
-    },
-    errorMessage: {
-      type: String,
-      default: '',
-    },
-    showErrorMessage: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const selectedValues = ref<string[]>([])
-    watch(
-      () => props.modelValue,
-      (newValue) => {
-        selectedValues.value = newValue
-      },
-      { immediate: true },
-    )
+type MultiSelectSize = 'small' | 'large'
+type MultiSelectDisplay = 'comma' | 'chip'
 
-    watch(selectedValues, (value) => {
-      emit('update:modelValue', value)
-    })
+interface Props {
+  modelValue?: (string | number | boolean)[]
+  options: SelectOption[]
+  label?: string
+  placeholder?: string
+  showClear?: boolean
+  disabled?: boolean
+  loading?: boolean
+  filter?: boolean
+  filterPlaceholder?: string
+  filterLocale?: string
+  filterMatchMode?: 'startsWith' | 'contains' | 'endsWith'
+  filterFields?: string[]
+  resetFilterOnHide?: boolean
+  display?: MultiSelectDisplay
+  selectedItemsLabel?: string
+  maxSelectedLabels?: number
+  selectionLimit?: number
+  showToggleAll?: boolean
+  optionLabel?: string
+  optionValue?: string
+  optionDisabled?: string
+  optionGroupLabel?: string
+  optionGroupChildren?: string
+  size?: MultiSelectSize
+  scrollHeight?: string
+  autoFilterFocus?: boolean
+  selectAll?: boolean
+  customClass?: string
+  containerClass?: string
+  inputClass?: string
+  errorClass?: string
+  errorMessage?: string
+  showErrorMessage?: boolean
+  pt?: object
+  ptOptions?: object
+}
 
-    const handleChange = (event: MultiSelectChangeEvent) => {
-      const value = event.value
-      emit('update:modelValue', value)
-    }
-
-    return {
-      selectedValues,
-      handleChange,
-    }
-  },
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => [],
+  label: '',
+  placeholder: 'Seleccione...',
+  showClear: true,
+  disabled: false,
+  loading: false,
+  filter: false,
+  filterPlaceholder: 'Search...',
+  filterMatchMode: 'contains',
+  resetFilterOnHide: true,
+  display: 'comma',
+  selectedItemsLabel: '{0} items selected',
+  maxSelectedLabels: 3,
+  showToggleAll: true,
+  optionLabel: 'name',
+  optionValue: 'value',
+  size: 'small',
+  scrollHeight: '200px',
+  autoFilterFocus: false,
+  selectAll: false,
+  customClass: '',
+  containerClass: 'w-full min-w-0',
+  inputClass: 'w-full !rounded-xl',
+  errorClass: 'text-red-400 dark:text-red-300 p-0 m-0',
+  errorMessage: '',
+  showErrorMessage: true
 })
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: (string | number | boolean)[]]
+  'change': [event: MultiSelectChangeEvent]
+  'focus': [event: Event]
+  'blur': [event: Event]
+  'before-show': []
+  'before-hide': []
+  'show': []
+  'hide': []
+  'filter': [event: { originalEvent: Event; value: string }]
+  'select-all-change': [event: { originalEvent: Event; checked: boolean }]
+}>()
+
+const attrs = useAttrs()
+
+// Generar ID único para el input
+const inputId = computed(() => `msel-${crypto.randomUUID()}`)
+
+// Filtrar atributos conflictivos
+const blockKeys = [
+  'modelValue', 'onUpdate:modelValue',
+  'class', 'placeholder'
+]
+
+const forwardedAttrs = computed(() => {
+  const src = attrs ?? {}
+  return Object.fromEntries(Object.entries(src).filter(([k]) => !blockKeys.includes(k)))
+})
+
+
+
+// Merges tu pt con el padding para dejar espacio al icono
+const ptMerged = computed(() => ({
+  root: { class: 'pl-9' },     // espacio para el icono a la izquierda
+  label: { class: 'pl-1' },    // pequeño respiro del texto
+  dropdown: { class: 'pr-3' }, // evita choque con caret
+  ...(props.pt as object || {})
+}))
+
+// Manejar clases del contenedor
+const containerClasses = computed(() => {
+  const classAttr = attrs.class as string | undefined
+  return classAttr ? `${props.containerClass} ${classAttr}` : props.containerClass
+})
+
+// Placeholder efectivo para FloatLabel
+/* const effectivePlaceholder = computed(() => {
+  return props.placeholder || props.label || ' '
+}) */
+
+// Determinar si hay error
+const hasError = computed(() => props.errorMessage.length > 0)
+
+// Clases del input con estado de error
+const inputClasses = computed(() => {
+  const classes = [props.inputClass, props.customClass]
+  if (hasError.value) classes.push('p-invalid')
+  return classes.filter(Boolean).join(' ')
+})
+
+const selectedValues = ref<(string | number | boolean)[]>([])
+
+// Sincronizar con modelValue
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedValues.value = newValue || []
+  },
+  { immediate: true }
+)
+
+// Emitir cambios
+watch(selectedValues, (newValue) => {
+  emit('update:modelValue', newValue)
+})
+
+// Manejar eventos
+const handleChange = (event: MultiSelectChangeEvent) => {
+  selectedValues.value = (event.value as (string | number | boolean)[]) || []
+  emit('change', event)
+}
 </script>
 
 <template>
-  <div class="w-full min-w-0">
-    <!-- Con ícono -->
-    <FloatLabel v-if="$slots.icon">
+  <div :class="containerClasses">
+    <!-- Con label y icono -->
+    <FloatLabel v-if="label && $slots.icon">
       <IconField class="w-full">
         <InputIcon>
           <slot name="icon" />
         </InputIcon>
         <MultiSelect
+          v-bind="forwardedAttrs"
+          :inputId="inputId"
           v-model="selectedValues"
           :options="options"
-          optionLabel="name"
-          optionValue="value"
-          :placeholder="placeholder"
-          :showClear="showClear"
-          size="small"
-          class="w-full !pl-10 !rounded-xl"
-          :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+          :option-label="optionLabel"
+          :option-value="optionValue"
+          :option-disabled="optionDisabled"
+          :option-group-label="optionGroupLabel"
+          :option-group-children="optionGroupChildren"
+          :show-clear="showClear"
+          :disabled="disabled"
+          :loading="loading"
+          :filter="filter"
+          :filter-placeholder="filterPlaceholder"
+          :filter-locale="filterLocale"
+          :filter-match-mode="filterMatchMode"
+          :filter-fields="filterFields"
+          :reset-filter-on-hide="resetFilterOnHide"
+          :display="display"
+          :selected-items-label="selectedItemsLabel"
+          :max-selected-labels="maxSelectedLabels"
+          :selection-limit="selectionLimit"
+          :show-toggle-all="showToggleAll"
+          :size="size"
+          :scroll-height="scrollHeight"
+          :auto-filter-focus="autoFilterFocus"
+          :select-all="selectAll"
+          :class="inputClasses"
+          :pt="ptMerged"
+          :pt-options="ptOptions"
           @change="handleChange"
+          @focus="emit('focus', $event)"
+          @blur="emit('blur', $event)"
+          @before-show="emit('before-show')"
+          @before-hide="emit('before-hide')"
+          @show="emit('show')"
+          @hide="emit('hide')"
+          @filter="emit('filter', $event)"
+          @selectall-change="emit('select-all-change', $event)"
         />
       </IconField>
-      <label class="text-sm">{{ label }}</label>
+      <label :for="inputId" class="text-sm">{{ label }}</label>
     </FloatLabel>
 
-    <!-- Sin ícono -->
-    <FloatLabel v-else>
+    <!-- Con label sin icono -->
+    <FloatLabel v-else-if="label">
       <MultiSelect
+        v-bind="forwardedAttrs"
+        :inputId="inputId"
         v-model="selectedValues"
         :options="options"
-        optionLabel="name"
-        optionValue="value"
-        :placeholder="placeholder"
-        :showClear="showClear"
-        size="small"
-        class="w-full !rounded-xl"
-        :class="[customClass, { 'p-invalid': errorMessage.length > 0 }]"
+        :option-label="optionLabel"
+        :option-value="optionValue"
+        :option-disabled="optionDisabled"
+        :option-group-label="optionGroupLabel"
+        :option-group-children="optionGroupChildren"
+        :show-clear="showClear"
+        :disabled="disabled"
+        :loading="loading"
+        :filter="filter"
+        :filter-placeholder="filterPlaceholder"
+        :filter-locale="filterLocale"
+        :filter-match-mode="filterMatchMode"
+        :filter-fields="filterFields"
+        :reset-filter-on-hide="resetFilterOnHide"
+        :display="display"
+        :selected-items-label="selectedItemsLabel"
+        :max-selected-labels="maxSelectedLabels"
+        :selection-limit="selectionLimit"
+        :show-toggle-all="showToggleAll"
+        :size="size"
+        :scroll-height="scrollHeight"
+        :auto-filter-focus="autoFilterFocus"
+        :select-all="selectAll"
+        :class="inputClasses"
+        :pt="ptMerged"
+        :pt-options="ptOptions"
         @change="handleChange"
+        @focus="emit('focus', $event)"
+        @blur="emit('blur', $event)"
+        @before-show="emit('before-show')"
+        @before-hide="emit('before-hide')"
+        @show="emit('show')"
+        @hide="emit('hide')"
+        @filter="emit('filter', $event)"
+        @selectall-change="emit('select-all-change', $event)"
       />
-      <label class="text-sm">{{ label }}</label>
+      <label :for="inputId" class="text-sm">{{ label }}</label>
     </FloatLabel>
 
+    <!-- Sin label con icono -->
+    <IconField v-else-if="$slots.icon" class="w-full">
+      <InputIcon>
+        <slot name="icon" />
+      </InputIcon>
+      <MultiSelect
+        v-bind="forwardedAttrs"
+        :inputId="inputId"
+        v-model="selectedValues"
+        :options="options"
+        :option-label="optionLabel"
+        :option-value="optionValue"
+        :option-disabled="optionDisabled"
+        :option-group-label="optionGroupLabel"
+        :option-group-children="optionGroupChildren"
+        :placeholder="placeholder"
+        :show-clear="showClear"
+        :disabled="disabled"
+        :loading="loading"
+        :filter="filter"
+        :filter-placeholder="filterPlaceholder"
+        :filter-locale="filterLocale"
+        :filter-match-mode="filterMatchMode"
+        :filter-fields="filterFields"
+        :reset-filter-on-hide="resetFilterOnHide"
+        :display="display"
+        :selected-items-label="selectedItemsLabel"
+        :max-selected-labels="maxSelectedLabels"
+        :selection-limit="selectionLimit"
+        :show-toggle-all="showToggleAll"
+        :size="size"
+        :scroll-height="scrollHeight"
+        :auto-filter-focus="autoFilterFocus"
+        :select-all="selectAll"
+        :class="inputClasses"
+        :pt="ptMerged"
+        :pt-options="ptOptions"
+        @change="handleChange"
+        @focus="emit('focus', $event)"
+        @blur="emit('blur', $event)"
+        @before-show="emit('before-show')"
+        @before-hide="emit('before-hide')"
+        @show="emit('show')"
+        @hide="emit('hide')"
+        @filter="emit('filter', $event)"
+        @selectall-change="emit('select-all-change', $event)"
+      />
+    </IconField>
+
+    <!-- Sin label sin icono -->
+    <MultiSelect
+      v-else
+      v-bind="forwardedAttrs"
+      v-model="selectedValues"
+      :options="options"
+      :option-label="optionLabel"
+      :option-value="optionValue"
+      :option-disabled="optionDisabled"
+      :option-group-label="optionGroupLabel"
+      :option-group-children="optionGroupChildren"
+      :placeholder="placeholder"
+      :show-clear="showClear"
+      :disabled="disabled"
+      :loading="loading"
+      :filter="filter"
+      :filter-placeholder="filterPlaceholder"
+      :filter-locale="filterLocale"
+      :filter-match-mode="filterMatchMode"
+      :filter-fields="filterFields"
+      :reset-filter-on-hide="resetFilterOnHide"
+      :display="display"
+      :selected-items-label="selectedItemsLabel"
+      :max-selected-labels="maxSelectedLabels"
+      :selection-limit="selectionLimit"
+      :show-toggle-all="showToggleAll"
+      :size="size"
+      :scroll-height="scrollHeight"
+      :auto-filter-focus="autoFilterFocus"
+      :select-all="selectAll"
+      :class="inputClasses"
+      :pt="pt"
+      :pt-options="ptOptions"
+      @change="handleChange"
+      @focus="emit('focus', $event)"
+      @blur="emit('blur', $event)"
+      @before-show="emit('before-show')"
+      @before-hide="emit('before-hide')"
+      @show="emit('show')"
+      @hide="emit('hide')"
+      @filter="emit('filter', $event)"
+      @selectall-change="emit('select-all-change', $event)"
+    />
+
     <!-- Mensaje de error -->
-    <div v-if="showErrorMessage && errorMessage.length" class="text-red-400 dark:text-red-300 p-0 m-0">
+    <div v-if="showErrorMessage && hasError" :class="errorClass">
       <small>{{ errorMessage }}</small>
     </div>
   </div>
 </template>
+
+

@@ -1,5 +1,5 @@
-<script lang="ts">
-import { computed, defineComponent, type PropType, ref, watchEffect } from 'vue'
+<script setup lang="ts">
+import { computed, ref, useAttrs, watchEffect } from 'vue'
 
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -13,7 +13,7 @@ import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
 
 import type { TableHeader } from './types/table-header.type'
 
-//Interfaz para configuración de formato de fecha
+// Interfaz para configuración de formato de fecha
 export interface DateFormatConfig {
   field: string
   format?: 'date' | 'time' | 'datetime'
@@ -21,74 +21,117 @@ export interface DateFormatConfig {
   showTimezone?: boolean
 }
 
-export default defineComponent({
-  name: 'AppTable',
-  components: {
-    DataTable,
-    Column,
-    Paginator,
-    Card,
-    ContextMenu,
-    FormattedDate,
-  },
-  props: {
-    data: {
-      type: Array as PropType<Record<string, unknown>[]>,
-      required: true,
-    },
-    headers: {
-      type: Array as PropType<TableHeader[]>,
-      required: true,
-    },
-    pageSize: {
-      type: Number,
-      required: true,
-    },
-    pageCurrent: {
-      type: Number,
-      required: true,
-    },
-    totalItems: {
-      type: Number,
-      required: true,
-    },
-    showPaginator: {
-      type: Boolean,
-      default: true,
-    },
-    multipleSelection: {
-      type: Boolean,
-      default: false,
-    },
-    textTotalItems: {
-      type: String,
-      default: 'general.total_records',
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    emptyMessage: {
-      type: String,
-      default: 'general.no_data',
-    },
-    //Configuración de formateo de fechas
-    dateFields: {
-      type: Array as PropType<DateFormatConfig[]>,
-      default: () => [],
-    },
-    //Detectar automáticamente campos de fecha
-    autoDetectDateFields: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: ['selection-change', 'page-change', 'row-double-click', 'row-view'],
-  setup(props, { emit }) {
-    const rowSizes = [10, 20, 50, 100]
-    const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[] | null>([])
-    const isMdScreen = ref(window.innerWidth < 1024)
-    const contextMenuRef = ref()
+type DataTableSize = 'small' | 'large'
+type DataTableSelectionMode = 'single' | 'multiple'
+type PaginatorPosition = 'left' | 'center' | 'right'
+
+interface Props {
+  data: Record<string, unknown>[]
+  headers: TableHeader[]
+  pageSize: number
+  pageCurrent: number
+  totalItems: number
+  showPaginator?: boolean
+  multipleSelection?: boolean
+  textTotalItems?: string
+  loading?: boolean
+  emptyMessage?: string
+
+  // Configuración de formateo de fechas
+  dateFields?: DateFormatConfig[]
+  autoDetectDateFields?: boolean
+
+  // Nuevas propiedades para mejorar la tabla
+  tableSize?: DataTableSize
+  selectionMode?: DataTableSelectionMode
+  removableSort?: boolean
+  resizableColumns?: boolean
+  reorderableColumns?: boolean
+  scrollable?: boolean
+  scrollHeight?: string
+  virtualScrollerOptions?: object
+  showGridlines?: boolean
+  stripedRows?: boolean
+  paginatorTemplate?: string
+  paginatorPosition?: PaginatorPosition
+
+  // Configuración del contexto
+  contextMenu?: boolean
+  contextMenuSelection?: Record<string, unknown> | null
+
+  // Clases personalizadas
+  containerClass?: string
+  tableClass?: string
+  cardClass?: string
+  paginatorClass?: string
+
+  // PassThrough API
+  pt?: object
+  ptOptions?: object
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showPaginator: true,
+  multipleSelection: false,
+  textTotalItems: 'general.total_records',
+  loading: false,
+  emptyMessage: 'general.no_data',
+  dateFields: () => [],
+  autoDetectDateFields: true,
+  tableSize: 'small',
+  removableSort: true,
+  resizableColumns: false,
+  reorderableColumns: false,
+  scrollable: false,
+  scrollHeight: '400px',
+  showGridlines: false,
+  stripedRows: false,
+  paginatorTemplate: 'RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink',
+  paginatorPosition: 'right',
+  contextMenu: true,
+  contextMenuSelection: null,
+  containerClass: 'w-full',
+  tableClass: '',
+  cardClass: 'w-full',
+  paginatorClass: 'text-sm'
+})
+
+defineOptions({
+  inheritAttrs: false
+})
+
+const emit = defineEmits<{
+  'selection-change': [selection: Record<string, unknown> | Record<string, unknown>[] | null]
+  'page-change': [event: { pageSize: number; limitSize: number }]
+  'row-double-click': [row: Record<string, unknown>]
+  'row-view': [row: Record<string, unknown>]
+  'row-select': [event: { originalEvent: Event; data: Record<string, unknown>; index: number }]
+  'row-unselect': [event: { originalEvent: Event; data: Record<string, unknown>; index: number }]
+  'row-select-all': [event: { originalEvent: Event; data: Record<string, unknown>[] }]
+  'row-unselect-all': [event: { originalEvent: Event }]
+  'column-resize-end': [event: { element: HTMLElement; delta: number }]
+  'column-reorder': [event: { originalEvent: Event; dragIndex: number; dropIndex: number }]
+}>()
+
+const attrs = useAttrs()
+
+// Filtrar atributos conflictivos
+const blockKeys = ['class']
+
+const forwardedAttrs = computed(() => {
+  const src = attrs ?? {}
+  return Object.fromEntries(Object.entries(src).filter(([k]) => !blockKeys.includes(k)))
+})
+
+// Manejar clases del contenedor
+const containerClasses = computed(() => {
+  const classAttr = attrs.class as string | undefined
+  return classAttr ? `${props.containerClass} ${classAttr}` : props.containerClass
+})
+
+const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[] | null>([])
+const isMdScreen = ref(window.innerWidth < 1024)
+const contextMenuRef = ref()
 
     const menuModel = ref([
       {
@@ -124,7 +167,7 @@ export default defineComponent({
           return
         }
 
-        //Detectar si es una fecha por nombre del campo o por valor
+
         const isDateField =
           typeof value === 'string' &&
           (field.toLowerCase().includes('date') ||
@@ -182,48 +225,68 @@ export default defineComponent({
       emit('row-double-click', event.data)
     }
 
-    return {
-      selectedRow,
-      handleRowSelect,
-      handlePageChange,
-      handleRowDoubleClick,
-      isMdScreen,
-      menuModel,
-      contextMenuRef,
-      onRowContextMenu,
-      rowSizes,
-      isDateField,
-      getDateConfig,
-    }
-  },
+// Configuración de tamaños de página
+const rowSizes = computed(() => [10, 20, 50, 100])
+
+// Clases mejoradas para multiselect y paginador
+const tableClasses = computed(() => {
+  const classes = [props.tableClass]
+  if (props.multipleSelection) {
+    classes.push('borderless-multiselect')
+  }
+  return classes.filter(Boolean).join(' ')
+})
+
+const paginatorClasses = computed(() => {
+  const classes = [props.paginatorClass]
+  if (props.multipleSelection) {
+    classes.push('compact-paginator')
+  }
+  return classes.filter(Boolean).join(' ')
 })
 </script>
 
 <template>
-  <Card class="w-full">
-    <template #content>
-      <div class="max-h-[calc(100vh-300px)] overflow-auto relative">
-        <ContextMenu ref="contextMenuRef" :model="menuModel" @hide="selectedRow = null" />
+  <div :class="containerClasses">
+    <Card v-bind="forwardedAttrs" :class="cardClass" :pt="pt" :pt-options="ptOptions">
+      <template #content>
+        <div class="max-h-[calc(100vh-300px)] overflow-auto relative">
+          <ContextMenu
+            v-if="contextMenu"
+            ref="contextMenuRef"
+            :model="menuModel"
+            @hide="selectedRow = null"
+          />
 
-        <DataTable
-          v-if="!isMdScreen"
-          v-model:selection="selectedRow"
-          :value="data"
-          size="small"
-          v-model:contextMenuSelection="selectedRow"
-          @rowContextmenu="onRowContextMenu"
-          @rowDblclick="handleRowDoubleClick"
-          :selectionMode="multipleSelection ? 'multiple' : 'single'"
-          removableSort
-          tableStyle="min-width: 50rem"
-          @row-select="handleRowSelect"
-          @row-unselect="handleRowSelect"
-          @row-select-all="handleRowSelect"
-          context-menu
-          @row-unselect-all="handleRowSelect"
-          :loading="loading"
-          :emptyMessage="$t(emptyMessage)"
-        >
+          <DataTable
+            v-if="!isMdScreen"
+            v-model:selection="selectedRow"
+            :value="data"
+            :size="tableSize"
+            v-model:contextMenuSelection="selectedRow"
+            @rowContextmenu="onRowContextMenu"
+            @rowDblclick="handleRowDoubleClick"
+            :selectionMode="multipleSelection ? 'multiple' : 'single'"
+            :removableSort="removableSort"
+            :resizableColumns="resizableColumns"
+            :reorderableColumns="reorderableColumns"
+            :scrollable="scrollable"
+            :scrollHeight="scrollHeight"
+            :virtualScrollerOptions="virtualScrollerOptions"
+            :showGridlines="showGridlines"
+            :stripedRows="stripedRows"
+            tableStyle="min-width: 50rem"
+            :class="tableClasses"
+            @row-select="handleRowSelect"
+            @row-unselect="handleRowSelect"
+            @row-select-all="handleRowSelect"
+            :contextMenu="contextMenu"
+            @row-unselect-all="handleRowSelect"
+            @column-resize-end="emit('column-resize-end', $event)"
+            @column-reorder="emit('column-reorder', $event)"
+            :loading="loading"
+            :emptyMessage="$t(emptyMessage)"
+          >
           <Column
             selectionMode="multiple"
             headerStyle="width: 3rem"
@@ -362,11 +425,14 @@ export default defineComponent({
           :rows="pageSize"
           :rowsPerPageOptions="rowSizes"
           :totalRecords="totalItems"
+          :template="paginatorTemplate"
+          :class="paginatorClasses"
           @page="handlePageChange"
         />
       </div>
     </template>
   </Card>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -386,5 +452,69 @@ export default defineComponent({
 
 :deep(.p-paginator) {
   justify-content: end;
+}
+
+// Mejoras para multiselect - quitar bordes
+:deep(.borderless-multiselect) {
+  .p-datatable-tbody > tr > td {
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .p-datatable-thead > tr > th {
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  // Reducir padding cuando hay multiselect
+  .p-datatable-tbody > tr > td,
+  .p-datatable-thead > tr > th {
+    padding: 0.5rem 0.25rem !important;
+  }
+
+  // Checkbox column más estrecha
+  .p-datatable-tbody > tr > td:first-child,
+  .p-datatable-thead > tr > th:first-child {
+    width: 2rem !important;
+    padding: 0.25rem !important;
+  }
+}
+
+// Paginador más compacto
+:deep(.compact-paginator) {
+  padding: 0.5rem 0 !important;
+
+  .p-paginator-pages .p-paginator-page,
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    min-width: 1.8rem !important;
+    height: 1.8rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .p-paginator-rpp-options {
+    font-size: 0.8rem !important;
+  }
+
+  .p-paginator-current {
+    font-size: 0.8rem !important;
+  }
+}
+
+// Estilos generales para texto más pequeño
+:deep(.text-sm) {
+  .p-paginator {
+    font-size: 0.875rem;
+  }
+
+  .p-paginator-pages .p-paginator-page,
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    font-size: 0.8rem;
+  }
 }
 </style>

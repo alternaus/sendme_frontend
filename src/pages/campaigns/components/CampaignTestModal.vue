@@ -47,7 +47,7 @@ const formatExecutionDate = (dateString: string): string => {
     modal
     :header="t('campaign.test_results')"
     :style="{ width: '900px' }"
-    class="test-results-modal"
+    class="campaign-test-modal"
   >
     <div v-if="testResults && campaign" class="space-y-4">
       <!-- Grid de métricas en 3 columnas compacto -->
@@ -157,33 +157,33 @@ const formatExecutionDate = (dateString: string): string => {
 </template>
 
 <style scoped>
-.test-results-modal :deep(.p-dialog-content) {
+.campaign-test-modal :deep(.p-dialog-content) {
   padding: 1rem;
 }
 
-.test-results-modal :deep(.p-dialog-header) {
+.campaign-test-modal :deep(.p-dialog-header) {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border-radius: 8px 8px 0 0;
   padding: 0.75rem 1rem;
 }
 
-.test-results-modal :deep(.p-dialog-header .p-dialog-title) {
+.campaign-test-modal :deep(.p-dialog-header .p-dialog-title) {
   color: white;
   font-weight: 600;
   font-size: 1rem;
 }
 
-.test-results-modal :deep(.p-dialog-header .p-dialog-header-icon) {
+.campaign-test-modal :deep(.p-dialog-header .p-dialog-header-icon) {
   color: white;
 }
 
-.test-results-modal :deep(.p-dialog-footer) {
+.campaign-test-modal :deep(.p-dialog-footer) {
   padding: 0.75rem 1rem;
 }
 
 /* Compactar el espaciado del modal */
-.test-results-modal :deep(.p-dialog) {
+.campaign-test-modal :deep(.p-dialog) {
   border-radius: 12px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }

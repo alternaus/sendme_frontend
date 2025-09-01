@@ -290,7 +290,7 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.port.value"
               :error-message="errors.port"
               :options="portOptions"
-              :placeholder="$t('email_configuration.port')"
+              :label="$t('email_configuration.port')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
               {{ $t('email_configuration.port_description') }}
