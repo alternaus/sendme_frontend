@@ -64,7 +64,7 @@ const inputId = computed(() => props.inputId || `app-select-button-${crypto.rand
         optionValue,
         multiple,
         disabled,
-        size,
+        size:'small',
         ptOptions,
         ...$attrs
       }"

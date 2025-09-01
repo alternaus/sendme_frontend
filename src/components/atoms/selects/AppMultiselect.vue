@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs, watch } from 'vue'
+import { computed, ref, useAttrs, useSlots, watch } from 'vue'
 
 import { IconField, InputIcon } from 'primevue'
 import FloatLabel from 'primevue/floatlabel'
@@ -96,6 +96,7 @@ const emit = defineEmits<{
 }>()
 
 const attrs = useAttrs()
+const slots = useSlots()
 
 // Generar ID único para el input
 const inputId = computed(() => props.inputId || `msel-${crypto.randomUUID()}`)
@@ -120,6 +121,11 @@ const ptMerged = computed(() => ({
   dropdown: { class: 'pr-3' }, // evita choque con caret
   ...(props.pt as object || {})
 }))
+
+// ptMerged solo cuando hay iconos, pt normal cuando no
+const effectivePt = computed(() => {
+  return slots.icon ? ptMerged.value : props.pt
+})
 
 // Manejar clases del contenedor
 const containerClasses = computed(() => {
@@ -202,7 +208,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
           :auto-filter-focus="autoFilterFocus"
           :select-all="selectAll"
           :class="inputClasses"
-          :pt="ptMerged"
+          :pt="effectivePt"
           :pt-options="ptOptions"
           @change="handleChange"
           @focus="emit('focus', $event)"
@@ -249,7 +255,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
         :auto-filter-focus="autoFilterFocus"
         :select-all="selectAll"
         :class="inputClasses"
-        :pt="ptMerged"
+        :pt="effectivePt"
         :pt-options="ptOptions"
         @change="handleChange"
         @focus="emit('focus', $event)"
@@ -299,7 +305,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
         :auto-filter-focus="autoFilterFocus"
         :select-all="selectAll"
         :class="inputClasses"
-        :pt="ptMerged"
+        :pt="effectivePt"
         :pt-options="ptOptions"
         @change="handleChange"
         @focus="emit('focus', $event)"
@@ -344,7 +350,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
       :auto-filter-focus="autoFilterFocus"
       :select-all="selectAll"
       :class="inputClasses"
-      :pt="pt"
+      :pt="effectivePt"
       :pt-options="ptOptions"
       @change="handleChange"
       @focus="emit('focus', $event)"
