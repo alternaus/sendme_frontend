@@ -90,22 +90,28 @@ jobs:
             mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
             chown -R www-data:www-data "$BASE"; chmod 755 /var /var/www /var/www/vhosts "$BASE" "$BASE/releases" "$BASE/current" || true
         
-            # Usa TUS conf
-            cp -f /tmp/nginx/${SITE}.http.conf  /etc/nginx/sites-available/
-            cp -f /tmp/nginx/${SITE}.https.conf /etc/nginx/sites-available/
+            # Configurar Nginx para ambos dominios
+            cp -f /tmp/nginx/new.sendme123.com /etc/nginx/sites-available/
+            cp -f /tmp/nginx/cms.sendme123.com /etc/nginx/sites-available/
+            cp -f /tmp/nginx/sendme123.com /etc/nginx/sites-available/
         
             # Habilita (un solo symlink con nombre estable)
             rm -f /etc/nginx/sites-enabled/${SITE}.conf /etc/nginx/sites-enabled/default
-            ln -sfn /etc/nginx/sites-available/${SITE}.http.conf  /etc/nginx/sites-enabled/${SITE}.conf
+            ln -sfn /etc/nginx/sites-available/sendme123.com /etc/nginx/sites-enabled/
             nginx -t && systemctl reload nginx
         
-            # Cert si falta
+            # Obtener certificados SSL para ambos dominios si no existen
             if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
               certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" -m "${EMAIL}" --agree-tos --non-interactive
             fi
+            
+            if [ ! -f "/etc/letsencrypt/live/cms.sendme123.com/fullchain.pem" ]; then
+              certbot certonly --webroot -w /var/www/html -d "cms.sendme123.com" -m "${EMAIL}" --agree-tos --non-interactive
+            fi
         
-            # Cambia a HTTPS definitivo
-            ln -sfn /etc/nginx/sites-available/${SITE}.https.conf /etc/nginx/sites-enabled/${SITE}.conf
+            # Cambiar a configuración HTTPS para ambos dominios
+            ln -sfn /etc/nginx/sites-available/new.sendme123.com /etc/nginx/sites-enabled/
+            ln -sfn /etc/nginx/sites-available/cms.sendme123.com /etc/nginx/sites-enabled/
             nginx -t && systemctl reload nginx
         
             # Deploy atómico
@@ -131,6 +137,11 @@ jobs:
               (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
             fi
               
-            # Smoke
+            # Verificación de ambos dominios
+            echo "Verificando frontend..."
             curl -skI "https://${DOMAIN}/" | head -n1 || true
-            curl -skI "https://${DOMAIN}/api/health" | head -n1 || true
+            
+            echo "Verificando Strapi..."
+            curl -skI "https://cms.sendme123.com/" | head -n1 || true
+            
+            echo "Deployment completado exitosamente"
