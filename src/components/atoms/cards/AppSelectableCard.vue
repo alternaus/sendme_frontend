@@ -18,7 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const cardClasses = computed(() => {
-  const baseClasses = 'flex flex-col items-center justify-center w-60 h-38 p-4 border rounded-lg cursor-pointer transition-all duration-200 relative'
+  const baseClasses = 'flex flex-col items-center justify-center w-60 h-38 p-4 border rounded-2xl cursor-pointer transition-all duration-200 relative'
 
   if (props.disabled) {
     return `${baseClasses} border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed opacity-50`

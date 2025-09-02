@@ -60,7 +60,7 @@ const getIconComponent = computed(() => {
 })
 
 const cardClasses = computed(() => {
-  const baseClasses = 'flex flex-col items-center justify-center w-64 sm:w-56 md:w-60 h-36 p-3 border rounded-xl cursor-pointer transition-all duration-200 relative group'
+  const baseClasses = 'flex flex-col items-center justify-center w-64 sm:w-56 md:w-60 h-36 p-3 border rounded-2xl cursor-pointer transition-all duration-200 relative group'
 
   if (props.disabled) {
     return `${baseClasses} border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-50`
