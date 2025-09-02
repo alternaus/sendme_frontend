@@ -28,4 +28,6 @@ import { IconTypesReports } from './components/enums/icon-types-reports.enum'
       :to="{ name: 'report.audit' }"
     />
   </div>
+
+
 </template>

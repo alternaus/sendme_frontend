@@ -21,6 +21,8 @@
     "@tailwindcss/vite": "^4.0.0",
     "@types/socket.io-client": "^1.4.36",
     "@unhead/vue": "^2.0.8",
+    "@vue-email/components": "^0.0.21",
+    "@vue-email/render": "^0.0.9",
     "@vueuse/core": "^12.5.0",
     "axios": "^1.7.9",
     "chart.js": "^4.5.0",
