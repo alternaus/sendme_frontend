@@ -28,13 +28,19 @@ const items = ref<MenuItem[]>([])
 //Función para actualizar los items del menú
 const updateMenuItems = () => {
   items.value = [
-    { label: t('general.account'), command: () => router.push({ name: 'account.index' }) },
+    {
+      label: t('general.account'),
+      icon: 'pi pi-user',
+      command: () => router.push({ name: 'account.index' })
+    },
     {
       label: t('general.settings'),
+      icon: 'pi pi-cog',
       command: () => router.push({ name: 'settings.general' }) // Ahora lleva a la página principal de settings
     },
     {
       label: t('auth.logout'),
+      icon: 'pi pi-sign-out',
       command: () => (showLogoutDialog.value = true),
     },
   ]
