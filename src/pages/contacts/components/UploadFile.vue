@@ -276,7 +276,7 @@ const handleCancel = () => {
           </div>
           <p class="mt-4 text-sm text-gray-500">{{ $t('general.drag_drop_file') }}</p>
           <AppButton class="mt-6 !w-auto !mx-auto" :label="$t('contact.import.select_file')" @click="openFileDialog">
-            <template #icon-start>
+            <template #icon>
               <ImportIcon class="w-5 h-5 fill-current" />
             </template>
           </AppButton>

@@ -6,6 +6,7 @@ import type {
   ChangePasswordDto,
   ForgotPasswordDto,
   IAuthResponse,
+  IGoogleAuthStatus,
   IGoogleAuthUrl,
   ILogin,
   ISignUp,
@@ -47,6 +48,10 @@ export const useAuthService = () => {
     return publicApi.post<IAuthResponse>('/auth/google/one-tap', { credential })
   }
 
+  const checkGoogleAuthStatus = async () => {
+    return privateApi.get<IGoogleAuthStatus>('/auth/google/status')
+  }
+
   const forgotPassword = async (data: ForgotPasswordDto) => {
     return publicApi.post<{ message: string }>('/auth/forgot-password', data)
   }
@@ -70,6 +75,7 @@ export const useAuthService = () => {
     forgotPassword,
     resetPassword,
     changePassword,
-    handleGoogleOneTap
+    handleGoogleOneTap,
+    checkGoogleAuthStatus
   }
 }

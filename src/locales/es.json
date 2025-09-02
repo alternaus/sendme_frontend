@@ -212,7 +212,16 @@
       "partial_success": "{errors} contactos no pudieron ser importados",
       "error": "Error al importar los contactos",
       "connection_error": "Error de conexión al servidor",
-      "upload_success": "El archivo se ha subido correctamente y está siendo procesado"
+      "upload_success": "El archivo se ha subido correctamente y está siendo procesado",
+      "google_sync_success": "Sincronización exitosa: {count} contactos importados",
+      "google_sync_error": "Error al sincronizar contactos: {message}",
+      "google_reauth_required": "Necesita re-autenticarse con Google para sincronizar contactos",
+      "google_connect_error": "No se pudo obtener la URL de autenticación de Google",
+      "google_sync_processing": "Sincronizando contactos de Google...",
+      "google_import_button": "Importar desde Google",
+      "google_connect_button": "Conectar con Google",
+      "import_option_google": "Google",
+      "import_option_excel": "Excel"
     }
   },
   "campaign": {
@@ -498,6 +507,7 @@
     "invalid_email": "Correo electrónico inválido",
     "error": "Error",
     "success": "Éxito",
+    "processing": "Procesando...",
     "validation_error": "Error de validación",
     "unknown_field": "Campo desconocido",
     "not_defined": "No definido",
