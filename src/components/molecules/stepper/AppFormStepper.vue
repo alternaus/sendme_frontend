@@ -165,7 +165,6 @@ const handleCancel = () => {
 
 <style scoped>
 
-/* Asegurar que el step activo tenga prioridad visual */
 [data-pc-name="step"][data-p-active="true"] {
   position: relative;
   z-index: 1;
