@@ -92,6 +92,12 @@ export default defineComponent({
       const data = await authService.handleGoogleOneTap(response.credential)
 
       authStore.setAuthData(data.accessToken, data.refreshToken || '')
+
+      // Obtener datos completos del usuario
+      const userData = await authService.me()
+      authStore.user = userData
+      localStorage.setItem('user', JSON.stringify(userData))
+
       router.push('/')
 
     }
@@ -130,6 +136,4 @@ export default defineComponent({
 
     </div>
   </form>
-
-
 </template>

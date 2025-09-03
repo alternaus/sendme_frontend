@@ -56,8 +56,8 @@ export const useAuthService = () => {
   }
 
   // Google One Tap (specific method)
-  const handleGoogleOneTap = async (credential: string) => {
-    return oauthService.handleGoogleOneTap(credential)
+  const handleGoogleOneTap = async (token: string) => {
+    return oauthService.handleGoogleOneTap(token)
   }
 
   // Password management methods

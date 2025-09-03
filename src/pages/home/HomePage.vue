@@ -35,10 +35,10 @@ const loading = ref(true)
 const primary = ref<string>(''); const surface300 = ref<string>(''); const surface500 = ref<string>(''); const surface700 = ref<string>('')
 onMounted(() => {
   const cs = getComputedStyle(document.documentElement)
-  primary.value   = cs.getPropertyValue('--p-primary-color').trim()
-  surface300.value= cs.getPropertyValue('--p-surface-300').trim()
-  surface500.value= cs.getPropertyValue('--p-surface-500').trim()
-  surface700.value= cs.getPropertyValue('--p-surface-700').trim()
+  primary.value = cs.getPropertyValue('--p-primary-color').trim()
+  surface300.value = cs.getPropertyValue('--p-surface-300').trim()
+  surface500.value = cs.getPropertyValue('--p-surface-500').trim()
+  surface700.value = cs.getPropertyValue('--p-surface-700').trim()
 })
 
 /** Datos comunes */
@@ -51,9 +51,8 @@ const values = computed(() => [
 ])
 const colors = computed(() => [primary.value, surface300.value, surface700.value, surface500.value])
 
-/** Builder único */
 function buildOption(
-  type: 'pie'|'line'|'bar'|'radar',
+  type: 'pie' | 'line' | 'bar' | 'radar',
   dark: boolean,
   labels: string[],
   vals: number[],
@@ -74,7 +73,7 @@ function buildOption(
         name: t('home.messages'),
         type: 'pie',
         radius: [20, 140],
-        center: ['50%','50%'],
+        center: ['50%', '50%'],
         roseType: 'radius',
         itemStyle: { borderRadius: 5 },
         label: { show: false },
@@ -122,7 +121,7 @@ function buildOption(
 }
 
 /** Tipo global para TODAS las gráficas */
-const globalChartType = ref<'pie'|'line'|'bar'|'radar'>('pie')
+const globalChartType = ref<'pie' | 'line' | 'bar' | 'radar'>('pie')
 
 /** Opciones para el select button de gráficas */
 const chartOptions = [
@@ -305,13 +304,8 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex-1 h-full flex flex-col">
             <div class="flex justify-end mb-2">
-              <AppSelectButton
-                v-model="globalChartType"
-                :options="chartOptions"
-                container-class="w-auto"
-                select-button-class="flex gap-1"
-                size="small"
-              >
+              <AppSelectButton v-model="globalChartType" :options="chartOptions" container-class="w-auto"
+                select-button-class="flex gap-1" size="small">
                 <template #option="{ option }">
                   <i :class="option.icon" class="text-sm"></i>
                 </template>
@@ -338,7 +332,6 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         </template>
       </AppCard>
     </div>
-
 
     <AppHtmlViewerDialog v-model:visible="showContentModal" :html-content="selectedMessageContent" />
   </div>

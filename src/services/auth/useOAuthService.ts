@@ -30,8 +30,8 @@ export const useOAuthService = () => {
     return privateApi.delete(`/auth/oauth/${provider}/tokens`)
   }
 
-  const handleGoogleOneTap = async (credential: string) => {
-    return publicApi.post<IOAuthAuthResponse>('/auth/google/one-tap', { credential })
+  const handleGoogleOneTap = async (token: string) => {
+    return publicApi.post<IOAuthAuthResponse>('/auth/google/one-tap', { token })
   }
 
   return {

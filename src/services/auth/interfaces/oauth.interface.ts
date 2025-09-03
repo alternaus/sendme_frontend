@@ -1,3 +1,5 @@
+import type { IUser } from "@/services/user/interfaces/user.interface"
+
 export type OAuthProviderType = 'google' | 'facebook' | 'microsoft'
 
 export interface IOAuthTokens {
@@ -14,11 +16,13 @@ export interface IOAuthUserInfo {
   picture?: string
 }
 
+
 export interface IOAuthAuthResponse {
   accessToken: string
   refreshToken?: string
-  provider: OAuthProviderType
+  provider?: OAuthProviderType
   userInfo?: IOAuthUserInfo
+  user?: IUser
 }
 
 export interface IOAuthAuthUrl {
