@@ -14,10 +14,15 @@ const authRoutes: RouteRecordRaw = {
       meta: { title: 'sign_in' },
     },
     {
+      path: 'oauth/:provider/callback',
+      name: 'oauth-callback',
+      component: () => import('@/pages/auth/sign-in/SignInOAuthPage.vue'),
+      meta: { layout: 'AuthLayout', requiresAuth: false, title: 'oauth_callback' },
+    },
+    {
       path: 'google/callback',
       name: 'sign-in-google',
-      component: () => import('@/pages/auth/sign-in/SignInGooglePage.vue'),
-      meta: { layout: 'AuthLayout', requiresAuth: false, title: 'sign_in_with_google' },
+      redirect: to => `/auth/oauth/google/callback${to.fullPath.split('/callback')[1] || ''}`
     },
     {
       path: 'forgot-password',

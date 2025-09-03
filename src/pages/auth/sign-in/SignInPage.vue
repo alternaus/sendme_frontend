@@ -77,7 +77,7 @@ export default defineComponent({
 
     const handleGoogleLogin = async () => {
       try {
-        const { url } = await authService.getGoogleAuthUrl()
+        const { url } = await authService.getOAuthUrl('google')
         window.location.href = url
       } catch {
       }
@@ -91,7 +91,7 @@ export default defineComponent({
 
       const data = await authService.handleGoogleOneTap(response.credential)
 
-      authStore.setAuthData(data.accessToken, data.refreshToken)
+      authStore.setAuthData(data.accessToken, data.refreshToken || '')
       router.push('/')
 
     }

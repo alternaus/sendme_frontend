@@ -1,6 +1,6 @@
 export * from './auth-response.interface'
 export * from './change-password.interface'
-export * from './google-auth.interface'
 export * from './login.interface'
+export * from './oauth.interface'
 export * from './password-reset.interface'
 export * from './signup.interface'

@@ -16,13 +16,13 @@
       </div>
 
       <div class="flex justify-content-center" v-if="importType === 'google'">
-          <AppButton v-if="googleAuthStatus?.hasValidTokens" :label="t('contact.import.google_import_button')"
+          <AppButton v-if="oauth.hasValidTokens.value('google')" :label="t('contact.import.google_import_button')"
             icon="pi pi-cloud-upload" size="small" :loading="loading" @click="handleGoogleImport"
             class="mb-2 mx-auto! w-auto!" />
           <AppButton v-else :label="t('contact.import.google_connect_button')" icon="pi pi-google" size="small"
             @click="handleGoogleConnect" class="mb-2 mx-auto! w-auto!" />
-          <p v-if="googleAuthStatus?.message" class="text-sm text-gray-600 mt-2">
-            {{ googleAuthStatus.message }}
+          <p v-if="oauth.getStatusMessage.value('google')" class="text-sm text-gray-600 mt-2">
+            {{ oauth.getStatusMessage.value('google') }}
           </p>
       </div>
       <div v-else>
@@ -45,8 +45,7 @@ import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
-import type { IGoogleAuthStatus } from '@/services/auth/interfaces/google-auth.interface'
-import { useAuthService } from '@/services/auth/useAuthService'
+import { useOAuth } from '@/composables/useOAuth'
 import { useContactService } from '@/services/contact/useContactService'
 
 import UploadFile from '../components/UploadFile.vue'
@@ -63,34 +62,26 @@ export default defineComponent({
     const toast = useToast()
     const { t } = useI18n()
     const { syncGoogleContacts } = useContactService()
-    const { checkGoogleAuthStatus, getGoogleAuthUrl } = useAuthService()
+    const oauth = useOAuth()
     const importType = ref<'google' | 'excel'>('excel')
     const importOptions = [
       { name: t('contact.import.import_option_google'), value: 'google', icon: 'pi pi-google' },
       { name: t('contact.import.import_option_excel'), value: 'excel', icon: 'pi pi-file-excel' }
     ]
     const loading = ref(false)
-    const googleAuthStatus = ref<IGoogleAuthStatus | null>(null)
     const result = ref<{ imported: number; created: number; updated: number } | null>(null)
 
     const checkGoogleAuth = async () => {
       try {
-        const response = await checkGoogleAuthStatus()
-        googleAuthStatus.value = response
-      } catch {
-        googleAuthStatus.value = {
-          hasValidTokens: false,
-          reauthUrl: '',
-          message: 'Error al verificar el estado de autenticación de Google'
-        }
+        await oauth.checkOAuthStatus('google')
+      } catch (error) {
+        console.error('Error checking Google auth status:', error)
       }
     }
 
     const handleGoogleConnect = async () => {
       try {
-        const response = await getGoogleAuthUrl()
-        localStorage.setItem('googleAuthReturnPath', '/contacts/import')
-        window.location.href = response.url
+        await oauth.initiateOAuth('google', '/contacts/import')
       } catch {
         toast.add({
           severity: 'error',
@@ -106,7 +97,7 @@ export default defineComponent({
       result.value = null
 
       try {
-        const status = await checkGoogleAuthStatus()
+        const status = await oauth.checkOAuthStatus('google')
 
         if (!status.hasValidTokens) {
           throw new Error('No tiene tokens válidos de Google')
@@ -172,7 +163,7 @@ export default defineComponent({
       importOptions,
       loading,
       result,
-      googleAuthStatus,
+      oauth,
       handleGoogleImport,
       handleGoogleConnect,
       t,
