@@ -93,7 +93,6 @@ export default defineComponent({
 
       authStore.setAuthData(data.accessToken, data.refreshToken || '')
 
-      // Obtener datos completos del usuario
       const userData = await authService.me()
       authStore.user = userData
       localStorage.setItem('user', JSON.stringify(userData))
@@ -123,14 +122,14 @@ export default defineComponent({
 
     <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
 
-    <AppLink :label="$t('auth.forgot_password')" @click="goToForgotPassword" />
+    <AppLink severity="secondary" :label="$t('auth.forgot_password')" @click="goToForgotPassword" />
 
     <AppDivider />
 
     <div class="w-full grid grid-cols-1 gap-4">
-      <AppButton label="Google" severity="secondary" variant="outlined" @click="handleGoogleLogin">
+      <AppButton label="Google" severity="contrast" variant="outlined" @click="handleGoogleLogin">
         <template #icon-start>
-          <GoogleIcon class="w-4 h-4" />
+          <GoogleIcon class="w-5 h-5" />
         </template>
       </AppButton>
 

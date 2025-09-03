@@ -20,7 +20,6 @@ function goToRegistration() {
 
 <template>
   <div class="w-full h-full flex flex-col">
-    <!-- Barra superior con logo SendMe y controles -->
     <header class="w-full p-4 flex items-center justify-between fixed">
       <div class="flex items-center gap-2 ml-auto">
          <AppDarkMode />
@@ -29,7 +28,6 @@ function goToRegistration() {
       </div>
     </header>
 
-    <!-- Contenido principal -->
     <div class="flex-1 grid grid-cols-1 md:grid-cols-2 justify-center items-center">
       <article class="flex justify-center items-center">
         <app-card class="min-w-[22rem] max-w-[22rem]">
@@ -49,7 +47,7 @@ function goToRegistration() {
                 </div>
                 <AppButton
                   :label="t('auth.register_here')"
-                  variant="outlined"
+                  severity="primary"
                   size="small"
                   @click="goToRegistration"
                 />

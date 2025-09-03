@@ -44,7 +44,6 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 
-// Filtrar atributos conflictivos
 const blockKeys = ['class', 'onClick']
 
 const forwardedAttrs = computed(() => {
@@ -52,7 +51,6 @@ const forwardedAttrs = computed(() => {
   return Object.fromEntries(Object.entries(src).filter(([k]) => !blockKeys.includes(k)))
 })
 
-// Manejar clases del contenedor y botón
 const containerClasses = computed(() => {
   const classAttr = attrs.class as string | undefined
   return classAttr ? `${props.containerClass} ${classAttr}` : props.containerClass
@@ -62,7 +60,6 @@ const buttonClasses = computed(() => {
   return props.buttonClass
 })
 
-// Manejar click
 const handleClick = (event: Event) => {
   if (!props.disabled && !props.loading) {
     emit('click', event)
