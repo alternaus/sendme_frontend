@@ -54,17 +54,17 @@ export default defineComponent({
 
 <template>
   <div
-    class="w-[80px] h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-500 ease-in-out"
+    class="w-16 h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300 ease-in-out"
     :class="{ 'w-[200px]': isExpanded }"
   >
-    <div class="flex items-center p-3">
+    <div class="flex items-center py-3">
       <router-link to="/" class="flex-1 flex items-center justify-center">
-        <Logo class="h-16 w-16 transition-all duration-500 ease-in-out dark:fill-[var(--p-primary-color)]" />
+        <Logo class="h-16 w-16 mx-auto transition-all duration-500 ease-in-out dark:fill-[var(--p-primary-color)]" />
       </router-link>
     </div>
 
     <div class="flex-1 flex flex-col items-center overflow-y-auto">
-      <ul class="p-1.5 space-y-3 w-full">
+      <ul class="p-1 space-y-1 w-full">
         <li class="w-full" v-for="(route, index) in routes" :key="index">
           <router-link
             :to="route.path"
@@ -75,7 +75,7 @@ export default defineComponent({
             <div class="flex items-center transition-all duration-300 ease-in-out" :class="{ 'w-full': isExpanded }">
               <component
                 :is="route.icon"
-                class="w-10 h-10 transition-all duration-300 ease-in-out flex-shrink-0"
+                class="w-9 h-9 transition-all duration-300 ease-in-out flex-shrink-0"
                 :class="{
                   'dark:fill-black fill-[var(--p-primary-color)]': $route.path.startsWith(route.path),
                   'group-hover:fill-black dark:group-hover:fill-black': true,
@@ -83,7 +83,7 @@ export default defineComponent({
                 }"
               />
               <span
-                class="text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out"
+                class="text-sm whitespace-nowrap font-semibold overflow-hidden transition-all duration-300 ease-in-out"
                 :class="{
                   'w-0 opacity-0 ml-0': !isExpanded,
                   'w-auto opacity-100 ml-3': isExpanded,
