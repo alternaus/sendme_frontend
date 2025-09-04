@@ -3,6 +3,7 @@ import './assets/scss/main.css'
 import { createApp } from 'vue'
 
 import { ConfirmationService, Ripple, ToastService, Tooltip } from 'primevue'
+import Badge from 'primevue/badge'
 import PrimeVue from 'primevue/config'
 
 import { createHead } from '@unhead/vue/client'
@@ -46,6 +47,8 @@ app.use(PrimeVue, {
 app.use(instanceI18n)
 
 app.use(ConfirmationService)
+
+app.component('PrimeBadge', Badge)
 
 app.directive('tooltip', Tooltip)
 app.directive('ripple', Ripple)

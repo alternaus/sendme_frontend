@@ -2,8 +2,9 @@
 import { ref } from 'vue'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import MobileUserMenu from '@/components/atoms/sidebars/components/MobileUserMenu.vue'
+import SidebarDrawer from '@/components/atoms/sidebars/components/SidebarDrawer.vue'
 import { useSidebarRoutes } from '@/components/atoms/sidebars/composables/useSidebarRoutes'
-import SidebarDrawer from '@/components/atoms/sidebars/SidebarDrawer.vue'
 
 const visible = ref(false)
 const { routes } = useSidebarRoutes()
@@ -11,7 +12,7 @@ const { routes } = useSidebarRoutes()
 
 <template>
   <div class="w-full flex flex-col">
-    <div class="w-full flex justify-start p-2 bg-[var(--p-card-background)]">
+    <div class="w-full flex justify-between items-center p-2 bg-[var(--p-card-background)]">
       <AppButton
         icon="pi pi-bars"
         text
@@ -19,6 +20,7 @@ const { routes } = useSidebarRoutes()
         @click="visible = true"
         class="w-auto !text-black dark:!text-[var(--p-primary-color)] px-4"
       />
+      <MobileUserMenu />
     </div>
 
     <SidebarDrawer

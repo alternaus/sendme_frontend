@@ -28,49 +28,9 @@
 
 :root {
   --p-tooltip-padding: 0.2rem 0.75rem !important;
-  --scrollbar-thumb: var(--color-primary-400);
-  --scrollbar-thumb-hover: var(--color-primary-500);
-  --scrollbar-track: #f1f1f1;
-  --scrollbar-width: 8px;
 }
 
-/* Estilos para el scrollbar */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-  height: var(--scrollbar-width);
-}
 
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-canvas{
-  border-radius: 0.75rem;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-}
-
-/* Estilos para el scrollbar en modo oscuro */
-.dark ::-webkit-scrollbar-track {
-  background: #2d2d2d;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #505050;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #636363;
-}
 
 .p-tooltip-text {
   font-size: 14px !important;

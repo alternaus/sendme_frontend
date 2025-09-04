@@ -2,6 +2,8 @@
 import { computed, defineComponent, provide, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
+import ConfirmDialog from 'primevue/confirmdialog'
+
 import AppSidebar from '@/components/atoms/sidebars/AppSidebar.vue'
 import AppSidebarMobile from '@/components/atoms/sidebars/AppSidebarMobile.vue'
 
@@ -9,6 +11,7 @@ export default defineComponent({
   components: {
     AppSidebar,
     AppSidebarMobile,
+    ConfirmDialog,
   },
   setup() {
     const isSidebarExpanded = ref(false)
@@ -47,6 +50,8 @@ export default defineComponent({
         </div>
       </div>
     </main>
+
+    <ConfirmDialog />
   </div>
 </template>
 

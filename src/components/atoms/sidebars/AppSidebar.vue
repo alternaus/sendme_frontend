@@ -3,18 +3,15 @@ import { ref } from 'vue'
 
 import Campaigns from '@/assets/svg/sidebar/campaigns.svg?component'
 import Logo from '@/assets/svg/sidebar/logo.svg?component'
+import SidebarItem from '@/components/atoms/sidebars/components/SidebarItem.vue'
+import SidebarToggle from '@/components/atoms/sidebars/components/SidebarToggle.vue'
+import UserProfileMenu from '@/components/atoms/sidebars/components/UserProfileMenu.vue'
 import { useSidebarRoutes } from '@/components/atoms/sidebars/composables/useSidebarRoutes'
-import SidebarActionItem from '@/components/atoms/sidebars/SidebarActionItem.vue'
-import SidebarNavItem from '@/components/atoms/sidebars/SidebarNavItem.vue'
-import SidebarToggle from '@/components/atoms/sidebars/SidebarToggle.vue'
-import SidebarUserInfo from '@/components/atoms/sidebars/SidebarUserInfo.vue'
-import { useAuthStore } from '@/stores/useAuthStore'
 
 const emit = defineEmits<{
   'update:expanded': [value: boolean]
 }>()
 
-const authStore = useAuthStore()
 const { routes } = useSidebarRoutes()
 const isExpanded = ref(false)
 
@@ -43,14 +40,17 @@ const handleNotifications = () => {
 
     <div class="flex-1 flex flex-col items-center overflow-y-auto">
       <ul class="p-1 space-y-1 w-full">
-        <SidebarNavItem
+        <SidebarItem
           v-for="route in routes"
           :key="route.path"
-          :route="route"
+          :icon="route.icon"
+          :label="route.title"
+          :route="route.path"
           :is-expanded="isExpanded"
+          :is-active="$route.path.startsWith(route.path)"
         />
 
-        <SidebarActionItem
+        <SidebarItem
           :icon="Campaigns"
           :is-expanded="isExpanded"
           label="Notificaciones"
@@ -59,13 +59,6 @@ const handleNotifications = () => {
       </ul>
     </div>
 
-    <SidebarUserInfo
-      :is-expanded="isExpanded"
-      :user="authStore.user ? {
-        name: authStore.user.name,
-        email: authStore.user.email,
-        avatarUrl: authStore.user.avatarUrl
-      } : undefined"
-    />
+    <UserProfileMenu :is-expanded="isExpanded" />
   </div>
 </template>

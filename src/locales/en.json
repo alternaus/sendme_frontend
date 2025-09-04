@@ -1,7 +1,9 @@
 {
   "theme": {
     "dark": "Dark theme",
-    "light": "Light theme"
+    "light": "Light theme",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
   },
   "enrollment": {
     "select_plan": "Select your plan",
@@ -131,7 +133,9 @@
   "languages": {
     "language": "Language",
     "en": "English",
-    "es": "Spanish"
+    "es": "Spanish",
+    "switchToEnglish": "Switch to English",
+    "switchToSpanish": "Cambiar a Español"
   },
   "notFound": {
     "title": "Page not found",
@@ -444,6 +448,8 @@
   "user": {
     "user": "User",
     "users": "Users",
+    "profile": "Profile",
+    "settings": "Settings",
     "name": "Name",
     "email": "Email",
     "password": "Password",
