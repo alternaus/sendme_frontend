@@ -103,7 +103,7 @@ export default defineComponent({
     <div class="flex justify-center p-4">
       <button
         @click="toggleExpand"
-        class="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out text-gray-800 hover:bg-black/10 dark:text-white dark:hover:bg-white/10"
+        class="w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ease-in-out text-gray-800 hover:bg-black/10 dark:text-white dark:hover:bg-white/10"
         :class="{ 'rotate-180': isExpanded }"
       >
         <i class="pi pi-chevron-right text-lg transition-all duration-300 ease-in-out text-black dark:text-[var(--p-primary-color)]"></i>
