@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
   severity: 'secondary',
   rounded: true,
   containerClass: '',
-  tagClass: '!text-xs !font-medium !px-3 !py-1'
+  tagClass: '!text-xs !font-medium !px-3 !py-1 !w-full'
 })
 
 defineOptions({
