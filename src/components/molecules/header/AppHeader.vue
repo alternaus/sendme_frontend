@@ -21,7 +21,6 @@ import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import ViewIcon from '@/assets/svg/table-actions/view.svg?component'
-import AppBreadcrumb from '@/components/atoms/breadcrumb/AppBreadcrumb.vue'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
 import AppNotificationBell from '@/components/atoms/notifications/AppNotificationBell.vue'
@@ -62,7 +61,6 @@ export default defineComponent({
     AppProfile,
     AppSearchInput,
     AppLanguage,
-    AppBreadcrumb,
     AppDarkMode,
     AppNotificationBell,
     AppButton
@@ -94,6 +92,14 @@ export default defineComponent({
     text: {
       type: String,
       default: null,
+    },
+    title: {
+      type: String,
+      required: false,
+    },
+    selectedItems: {
+      type: Number,
+      default: 0,
     },
     showSearch: {
       type: Boolean,
@@ -133,36 +139,31 @@ export default defineComponent({
 
 <template>
   <div
-
-    class="hidden md:flex md:justify-between md:items-center h-16 dark:border-gray-700 w-full pr-4 gap-4"
+    class="flex flex-col sm:flex-row md:flex-nowrap justify-between items-center sm:h-16 dark:border-gray-700 w-full px-4 gap-4"
+    v-if="showHeader && (text || title || icon)"
   >
-    <AppBreadcrumb />
-    <div class="flex items-center gap-2">
-      <AppNotificationBell />
-      <AppDarkMode />
-      <AppLanguage />
-      <AppProfile />
-    </div>
-  </div>
-
-  <div
-    class="flex flex-col sm:flex-row md:flex-nowrap items-center sm:h-16 dark:border-gray-700 w-full px-4"
-    v-if="showHeader && (text || icon)"
-  >
-    <div class="flex flex-col items-center md:flex-row md:gap-4">
+    <!-- Sección izquierda: Icono y título -->
+    <div class="flex flex-col items-center md:flex-row md:gap-4 flex-shrink-0">
       <component
         :is="IconComponents[icon]"
         v-if="icon && IconComponents[icon]"
         class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]"
       />
-      <span class="text-xl font-semibold text-center md:text-left">
-        {{ text }}
-      </span>
+      <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+        <span class="text-xl font-semibold text-center md:text-left">
+          {{ title || text }}
+        </span>
+        <span
+          v-if="selectedItems > 0"
+          class="text-sm text-gray-500 dark:text-gray-400 text-center md:text-left"
+        >
+          ({{ selectedItems }} seleccionado{{ selectedItems > 1 ? 's' : '' }})
+        </span>
+      </div>
     </div>
 
-    <div
-      class="flex flex-col sm:flex-row justify-center items-center gap-2 ml-auto w-full sm:w-auto"
-    >
+    <!-- Sección central: Búsqueda y acciones -->
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-2 flex-grow">
       <AppSearchInput
         v-if="showSearch"
         v-model:search="searchQuery"
@@ -170,7 +171,7 @@ export default defineComponent({
         @update:search="$emit('update:modelValue', $event)"
         :placeholder="placeholder"
       />
-      <div class="flex gap-2 mx-2">
+      <div class="flex gap-2">
         <AppButton
           v-for="(action, index) in actions"
           :key="index"
@@ -187,6 +188,14 @@ export default defineComponent({
           />
         </AppButton>
       </div>
+    </div>
+
+    <!-- Sección derecha: Elementos de usuario -->
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <AppNotificationBell />
+      <AppDarkMode />
+      <AppLanguage />
+      <AppProfile />
     </div>
   </div>
 </template>

@@ -123,31 +123,43 @@ watch([search, name, countryCode, status, origin], () => {
 }, { deep: true })
 
 const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
-  if (Array.isArray(selection)) {
+  if (selection === null || selection === undefined) {
+    selectedContacts.value = []
+    selectedContact.value = null
+  } else if (Array.isArray(selection)) {
     selectedContacts.value = selection as unknown as IContact[]
     selectedContact.value = selection.length === 1 ? (selection[0] as unknown as IContact) : null
-  } else if (selection) {
-    selectedContact.value = selection as unknown as IContact
-    selectedContacts.value = [selection as unknown as IContact]
   } else {
-    selectedContact.value = null
-    selectedContacts.value = []
+    selectedContacts.value = [selection as unknown as IContact]
+    selectedContact.value = selection as unknown as IContact
   }
 }
 
 const handleDelete = async () => {
-  if (!selectedContact.value) return
+  if (selectedContacts.value.length === 0) return
 
   try {
-    await deleteContact(selectedContact.value.id)
+    if (selectedContacts.value.length === 1) {
+      await deleteContact(selectedContacts.value[0].id)
+      toast.add({
+        severity: 'success',
+        summary: t('general.success'),
+        detail: t('contact.success_removed'),
+        life: 3000,
+      })
+    } else {
+      // Eliminar múltiples contactos
+      await Promise.all(selectedContacts.value.map(contact => deleteContact(contact.id)))
+      toast.add({
+        severity: 'success',
+        summary: t('general.success'),
+        detail: t('contact.success_removed_multiple', { count: selectedContacts.value.length }),
+        life: 3000,
+      })
+    }
+
     selectedContact.value = null
     selectedContacts.value = []
-    toast.add({
-      severity: 'success',
-      summary: t('general.success'),
-      detail: t('contact.success_removed'),
-      life: 3000,
-    })
     await fetchContacts({ pageSize: page.value, limitSize: limit.value })
   } catch {
     toast.add({
@@ -213,23 +225,23 @@ const headerActions = computed(() => [
         },
       ]
     : []),
-  ...(selectedContact.value
+  ...(selectedContacts.value.length > 0
     ? [
         { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
-        {
-          label: t('actions.view'),
-          onClick: () => handleRowView(selectedContact.value!),
-          type: ActionTypes.VIEW,
-        },
       ]
     : []),
-  ...(selectedContact.value
+  ...(selectedContacts.value.length === 1
     ? [
+        {
+          label: t('actions.view'),
+          onClick: () => handleRowView(selectedContacts.value[0]),
+          type: ActionTypes.VIEW,
+        },
         {
           label: t('actions.edit'),
           onClick: () => {
-            if (selectedContact.value?.id) {
-              push(`/contacts/edit/${selectedContact.value?.id}`)
+            if (selectedContacts.value[0]?.id) {
+              push(`/contacts/edit/${selectedContacts.value[0].id}`)
             }
           },
           type: ActionTypes.EDIT,
@@ -266,7 +278,12 @@ const headerActions = computed(() => [
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CONTACTS" :actions="headerActions" />
+  <AppHeader
+    :icon="IconTypes.CONTACTS"
+    :actions="headerActions"
+    :title="$t('contact.contacts')"
+    :selectedItems="selectedContacts.length"
+  />
   <CardFilterContacts
     v-model:search="search"
     v-model:name="name"

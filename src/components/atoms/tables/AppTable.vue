@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs, watchEffect } from 'vue'
+import { computed, ref, useAttrs, watch, watchEffect } from 'vue'
 
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -130,6 +130,12 @@ const containerClasses = computed(() => {
 })
 
 const selectedRow = ref<Record<string, unknown> | Record<string, unknown>[] | null>([])
+
+// Watcher para detectar cambios en la selección
+watch(selectedRow, (newSelection) => {
+  emit('selection-change', newSelection)
+}, { deep: true })
+
 const isMdScreen = ref(window.innerWidth < 1024)
 const contextMenuRef = ref()
 
@@ -203,10 +209,6 @@ const contextMenuRef = ref()
       return () => window.removeEventListener('resize', handleResize)
     })
 
-    const handleRowSelect = () => {
-      emit('selection-change', selectedRow.value)
-    }
-
     const onRowContextMenu = (event: { originalEvent: unknown }) => {
       contextMenuRef.value.show(event.originalEvent)
     }
@@ -277,11 +279,7 @@ const paginatorClasses = computed(() => {
             :stripedRows="stripedRows"
             tableStyle="min-width: 50rem"
             :class="tableClasses"
-            @row-select="handleRowSelect"
-            @row-unselect="handleRowSelect"
-            @row-select-all="handleRowSelect"
             :contextMenu="contextMenu"
-            @row-unselect-all="handleRowSelect"
             @column-resize-end="emit('column-resize-end', $event)"
             @column-reorder="emit('column-reorder', $event)"
             :loading="loading"
@@ -368,7 +366,6 @@ const paginatorClasses = computed(() => {
               @click="
                 () => {
                   selectedRow = selectedRow === item ? null : item
-                  handleRowSelect()
                 }
               "
             >

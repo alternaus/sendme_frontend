@@ -145,13 +145,14 @@ watch(dateRange, (newValue, oldValue) => {
 })
 
 const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
-  if (selection && Array.isArray(selection)) {
-    selected.value = selection as unknown as ICampaign[]
-  } else if (selection && !Array.isArray(selection)) {
-    selected.value = [selection as unknown as ICampaign]
-  } else {
+  if (selection === null || selection === undefined) {
     selected.value = []
+  } else if (Array.isArray(selection)) {
+    selected.value = selection as unknown as ICampaign[]
+  } else {
+    selected.value = [selection as unknown as ICampaign]
   }
+
   // Limpiar resultados de test cuando cambia la selección
   testResults.value = null
   showTestResultsModal.value = false
@@ -322,7 +323,12 @@ const headerActions = computed(() => [
 
 </script>
 <template>
-  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="headerActions" />
+  <AppHeader
+    :icon="IconTypes.CAMPAIGNS"
+    :actions="headerActions"
+    :title="$t('campaign.campaigns')"
+    :selectedItems="selected.length"
+  />
   <CardFilterCampaigns
     v-model:search="search"
     v-model:name="name"
