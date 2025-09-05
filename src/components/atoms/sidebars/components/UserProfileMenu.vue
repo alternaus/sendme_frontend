@@ -68,7 +68,7 @@ const randomAvatarColor = computed(() => {
       @click="toggleMenu"
     >
       <div class="relative">
-        <AppAvatar class="flex-shrink-0 ring-2 ring-neutral-500/30 dark:ring-neutral-300/40" :class="randomAvatarColor" :label="userInitials" :image="authStore.user?.avatarUrl" size="large" />
+        <AppAvatar class="flex-shrink-0 !w-9 !h-9 !text-sm ring-2 ring-neutral-500/30 dark:ring-neutral-300/40" :class="randomAvatarColor" :label="userInitials" :image="authStore.user?.avatarUrl" size="large" />
       </div>
 
       <div

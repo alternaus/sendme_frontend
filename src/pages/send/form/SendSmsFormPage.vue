@@ -81,29 +81,25 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
-    <div class="flex justify-center items-center flex-wrap my-2 mb-4">
+  <div class="space-y-3">
+    <div class="flex justify-center items-center gap-2">
       <div
-        class="p-2 mx-2 cursor-pointer"
-        :class="
-          !form.sendToAll.value
-            ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300'
-            : ''
-        "
+        class="p-1.5 cursor-pointer rounded-lg transition-colors"
+        :class="!form.sendToAll.value ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
         @click="form.sendToAll.value = false"
       >
-        <PhoneIcon class="w-6 h-6 fill-current" />
+        <PhoneIcon class="w-5 h-5 fill-current" />
       </div>
       <div
-        class="p-2 mx-2 cursor-pointer"
-        :class="form.sendToAll.value ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300' : ''"
+        class="p-1.5 cursor-pointer rounded-lg transition-colors"
+        :class="form.sendToAll.value ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
         @click="form.sendToAll.value = true"
       >
-        <ContactsIcon class="w-6 h-6 fill-current" />
+        <ContactsIcon class="w-5 h-5 fill-current" />
       </div>
     </div>
-    <div class="flex flex-col mb-2" v-if="form.sendToAll.value">
-      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
+    <div v-if="form.sendToAll.value" class="text-center">
+      <small class="text-xs text-gray-500 dark:text-gray-400">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
@@ -113,8 +109,7 @@ export default defineComponent({
       v-model="contactsInput"
       :rows="2"
       :placeholder="$t('general.enter_numbers_separated_by_commas')"
-
-      class="w-full mb-4"
+      class="w-full"
     >
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
@@ -125,13 +120,13 @@ export default defineComponent({
       :ai-attach="true"
       :placeholder="$t('general.editor.sms_placeholder')"
       :maxlength="MAX_CHARACTERS"
-      :rows="12"
-      class="w-full mb-2"
+      :rows="10"
+      class="w-full"
     />
 
-    <div class="flex justify-center my-4">
-      <button type="button" @click="sendMessage">
-        <BtnSend class="w-14 h-14 cursor-pointer" />
+    <div class="flex justify-center mt-3">
+      <button type="button" @click="sendMessage" class="transition-transform hover:scale-105">
+        <BtnSend class="w-12 h-12 cursor-pointer" />
       </button>
     </div>
   </div>
