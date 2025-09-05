@@ -2,7 +2,7 @@ name: Deploy sendme frontend
 
 on:
   push:
-    branches: [main]
+    branches: [design/adjusting-space]
   workflow_dispatch:
 
 jobs:
