@@ -26,7 +26,7 @@
         class="flex items-center gap-2 bg-[var(--p-primary-color)] px-3 py-1 rounded-lg text-sm text-black"
       >
         <StatusIcon class="w-4 h-4" />
-        {{ contact.status === 'active' ? $t('general.active') : $t('general.inactive') }}
+        {{ contact.status === 'ACTIVE' ? $t('general.active') : $t('general.inactive') }}
       </span>
     </div>
   </div>

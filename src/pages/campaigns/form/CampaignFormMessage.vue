@@ -104,7 +104,7 @@ const channelName = computed(() => {
 
 // Actualizar el tipo de contenido cuando cambie el canal
 const updateContentType = () => {
-  const newContentType = isEmailChannel.value ? 'html' : 'plain_text'
+  const newContentType = isEmailChannel.value ? 'HTML' : 'PLAIN_TEXT'
   emit('update:form', 'contentType', newContentType)
 
   // NO borrar el contenido al cambiar de canal - solo actualizar el tipo

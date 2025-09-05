@@ -4,6 +4,12 @@ export enum MessageChannel {
   WHATSAPP = 'whatsapp',
 }
 
+export enum SmsMessageType {
+  SMS = 'sms',
+  OTP = 'otp',
+  FLASH = 'flash',
+}
+
 export interface IBatchMessage {
   channel: MessageChannel;
   message: string;
@@ -11,6 +17,7 @@ export interface IBatchMessage {
   contacts?: string[];
   country?: string;
   subject?: string; // Para emails
+  messageType?: SmsMessageType; // Para SMS
 }
 
 //Mantenemos la interfaz anterior para compatibilidad

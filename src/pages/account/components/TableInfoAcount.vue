@@ -90,12 +90,12 @@ export default defineComponent({
 
     const getStatusTranslation = (status: string): string => {
       switch (status) {
-        case 'accepted':
-          return t(RechargeStatus.accepted)
-        case 'pending':
-          return t(RechargeStatus.pending)
-        case 'rejected':
-          return t(RechargeStatus.rejected)
+        case 'ACCEPTED':
+          return t(RechargeStatus.ACCEPTED)
+        case 'PENDING':
+          return t(RechargeStatus.PENDING)
+        case 'REJECTED':
+          return t(RechargeStatus.REJECTED)
         default:
           return t(RechargeStatus[status as keyof typeof RechargeStatus] || status)
       }
@@ -208,8 +208,8 @@ export default defineComponent({
       <template #custom-status="{ data }">
         <div class="flex justify-center items-center">
           <AppTag
-            :label="$t(`status.recharge.${getTableValueWithDefault<string>(data, 'status', 'pending')}`)"
-            :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'pending'), 'recharge')"
+            :label="$t(`status.recharge.${getTableValueWithDefault<string>(data, 'status', 'PENDING')}`)"
+            :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'PENDING'), 'recharge')"
           />
         </div>
       </template>

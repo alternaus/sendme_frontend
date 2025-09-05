@@ -8,8 +8,8 @@ export interface ICreateCampaign {
   name: string;
   description: string;
   content: string;
-  contentType: 'plain_text';
-  status: 'active' | 'inactive';
+  contentType: 'PLAIN_TEXT' | 'HTML';
+  status: 'ACTIVE' | 'INACTIVE';
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
   days: string[];
   startDate: string;

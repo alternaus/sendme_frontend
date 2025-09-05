@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MessageChannel, SmsMessageType } from '@/services/send/interfaces/message.interface'
 import { validateContactsRequiredWhenSpecific } from '@/services/send/validators/contacts-required-when-specific.validator'
 
 export interface SendMessageForm {
@@ -13,6 +13,7 @@ export interface SendMessageForm {
   contacts: string[];
   country: string;
   subject?: string; // Para emails
+  messageType?: SmsMessageType; // Para SMS
 }
 
 export interface SendMessageFormRef {
@@ -22,6 +23,7 @@ export interface SendMessageFormRef {
   contacts: Ref<string[]>;
   country: Ref<string>;
   subject: Ref<string>;
+  messageType: Ref<SmsMessageType>;
 }
 
 export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChannel.SMS) => {
@@ -53,6 +55,11 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       then: (schema) => schema.required(t('general.required_field')),
       otherwise: (schema) => schema.optional(),
     }),
+    messageType: yup.string().oneOf(Object.values(SmsMessageType)).when('channel', {
+      is: MessageChannel.SMS,
+      then: (schema) => schema.required(t('general.required_field')),
+      otherwise: (schema) => schema.optional(),
+    }),
   })
 
 
@@ -65,6 +72,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       contacts: [],
       country: 'CO',
       subject: '',
+      messageType: SmsMessageType.SMS,
     },
     validateOnMount: false,
   })
@@ -75,6 +83,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
   const [contacts] = defineField('contacts')
   const [country] = defineField('country')
   const [subject] = defineField('subject')
+  const [messageType] = defineField('messageType')
 
 
   return {
@@ -85,6 +94,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       contacts,
       country,
       subject,
+      messageType,
     },
     handleSubmit,
     resetForm,

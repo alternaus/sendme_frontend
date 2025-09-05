@@ -17,48 +17,48 @@ export function useCampaignTriggerInputs(
     switch (dataType) {
       case 'string':
         return [
-          'is_empty',
-          'not_empty',
-          'equals',
-          'not_equals',
-          'contains',
-          'starts_with',
-          'ends_with'
+          'IS_EMPTY',
+          'NOT_EMPTY',
+          'EQUALS',
+          'NOT_EQUALS',
+          'CONTAINS',
+          'STARTS_WITH',
+          'ENDS_WITH'
         ]
       case 'number':
         return [
-          'is_empty',
-          'not_empty',
-          'equals',
-          'not_equals',
-          'greater_than',
-          'less_than',
-          'greater_or_equal',
-          'less_or_equal',
-          'between'
+          'IS_EMPTY',
+          'NOT_EMPTY',
+          'EQUALS',
+          'NOT_EQUALS',
+          'GREATER_THAN',
+          'LESS_THAN',
+          'GREATER_OR_EQUAL',
+          'LESS_OR_EQUAL',
+          'BETWEEN'
         ]
       case 'boolean':
         return [
-          'equals',
-          'not_equals'
+          'EQUALS',
+          'NOT_EQUALS'
         ]
       case 'date':
         return [
-          'is_empty',
-          'not_empty',
-          'equals',
-          'not_equals',
-          'greater_than',
-          'less_than',
-          'greater_or_equal',
-          'less_or_equal',
-          'between_dates',
-          'birthday_today',
-          'birthday_in_x_days',
-          'is_today',
-          'was_yesterday',
-          'is_tomorrow',
-          'in_x_days'
+          'IS_EMPTY',
+          'NOT_EMPTY',
+          'EQUALS',
+          'NOT_EQUALS',
+          'GREATER_THAN',
+          'LESS_THAN',
+          'GREATER_OR_EQUAL',
+          'LESS_OR_EQUAL',
+          'BETWEEN_DATES',
+          'BIRTHDAY_TODAY',
+          'BIRTHDAY_IN_X_DAYS',
+          'IS_TODAY',
+          'WAS_YESTERDAY',
+          'IS_TOMORROW',
+          'IN_X_DAYS'
         ]
       default:
         return []
@@ -80,42 +80,42 @@ export function useCampaignTriggerInputs(
 
   //Definir qué condiciones no necesitan input de valor
   const conditionsWithoutValue = [
-    'is_empty',
-    'not_empty',
-    'birthday_today',
-    'is_today',
-    'was_yesterday',
-    'is_tomorrow'
+    'IS_EMPTY',
+    'NOT_EMPTY',
+    'BIRTHDAY_TODAY',
+    'IS_TODAY',
+    'WAS_YESTERDAY',
+    'IS_TOMORROW'
   ]
 
   //Definir qué condiciones necesitan input numérico (independientemente del tipo de campo)
   const numericInputConditions = [
-    'birthday_in_x_days',
-    'in_x_days'
+    'BIRTHDAY_IN_X_DAYS',
+    'IN_X_DAYS'
   ]
 
   //Definir qué condiciones necesitan input de fecha (para campos de fecha)
   const dateInputConditions = [
-    'equals',
-    'not_equals',
-    'greater_than',
-    'less_than',
-    'greater_or_equal',
-    'less_or_equal'
+    'EQUALS',
+    'NOT_EQUALS',
+    'GREATER_THAN',
+    'LESS_THAN',
+    'GREATER_OR_EQUAL',
+    'LESS_OR_EQUAL'
   ]
 
   //Definir qué condiciones necesitan input numérico para campos numéricos
   const numericFieldConditions = [
-    'greater_than',
-    'less_than',
-    'greater_or_equal',
-    'less_or_equal'
+    'GREATER_THAN',
+    'LESS_THAN',
+    'GREATER_OR_EQUAL',
+    'LESS_OR_EQUAL'
   ]
 
   //Definir qué condiciones necesitan dos valores
   const betweenConditions = [
-    'between',
-    'between_dates'
+    'BETWEEN',
+    'BETWEEN_DATES'
   ]
 
   const needsValueInput = (conditionType: string) => {
@@ -156,12 +156,12 @@ export function useCampaignTriggerInputs(
   }
 
   const isDateBetweenInput = (conditionType: string) => {
-    return conditionType === 'between_dates'
+    return conditionType === 'BETWEEN_DATES'
   }
 
   const getPlaceholderText = (conditionType: string, t: (key: string) => string) => {
     //Condiciones específicas de fechas que necesitan días
-    if (conditionType === 'birthday_in_x_days' || conditionType === 'in_x_days') {
+    if (conditionType === 'BIRTHDAY_IN_X_DAYS' || conditionType === 'IN_X_DAYS') {
       return t('campaign.days_number')
     }
 

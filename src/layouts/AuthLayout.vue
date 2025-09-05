@@ -22,9 +22,8 @@ function goToRegistration() {
   <div class="w-full h-full flex flex-col">
     <header class="w-full p-4 flex items-center justify-between fixed">
       <div class="flex items-center gap-2 ml-auto">
-         <AppDarkMode />
+        <AppDarkMode />
         <AppLanguage />
-
       </div>
     </header>
 
@@ -37,7 +36,7 @@ function goToRegistration() {
             </div>
           </template>
           <template #content>
-            <div class="flex flex-col">
+            <div class="flex flex-col p-2">
               <div class="mb-6">
                 <slot />
               </div>

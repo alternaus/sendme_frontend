@@ -423,8 +423,8 @@ const headerActions = computed(() => [
     <template #custom-status="{ data }">
       <div class="flex justify-center">
         <AppTag
-          :label="$t(`status.contact.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
-          :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'contact')"
+          :label="$t(`status.contact.${getTableValueWithDefault<string>(data, 'status', 'INACTIVE')}`)"
+          :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'INACTIVE'), 'contact')"
         />
       </div>
     </template>

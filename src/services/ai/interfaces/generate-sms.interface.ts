@@ -1,6 +1,6 @@
 export interface IGenerateSmsRequest {
   context: string
-  type: 'sms' | 'email'
+  type: 'SMS' | 'EMAIL'
 }
 
 export interface IGenerateSmsResponse {

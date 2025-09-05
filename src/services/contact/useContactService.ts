@@ -81,7 +81,7 @@ export const useContactService = () => {
 
   const getImportStatus = async (jobId: string) => {
     return privateApi.get<{
-      status: 'processing' | 'completed' | 'error'
+      status: 'PROCESSING' | 'COMPLETED' | 'ERROR'
       progress: number
       total: number
       errors?: string[]

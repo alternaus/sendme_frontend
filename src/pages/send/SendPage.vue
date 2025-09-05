@@ -27,12 +27,12 @@ export default defineComponent({
     const { t } = useI18n()
     const router = useRouter()
     const sendOptions = [
-      { name: t('whatsapp.whatsapp'), value: 'whatsapp' },
-      { name: t('general.sms'), value: 'sms' },
-      { name: t('general.email_channel'), value: 'email' },
+      { name: t('whatsapp.whatsapp'), value: 'WHATSAPP' },
+      { name: t('general.sms'), value: 'SMS' },
+      { name: t('general.email_channel'), value: 'EMAIL' },
     ]
 
-    const selectedOption = ref('sms')
+    const selectedOption = ref('SMS')
     return {
       router,
       IconTypes,
@@ -47,11 +47,11 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.SEND" :text="$t('general.send_instant_message')" :actions="[]" />
 
   <!-- Diseño de teléfono para SMS y WhatsApp -->
-  <div v-if="selectedOption !== 'email'" class="container-phone ml-4">
+  <div v-if="selectedOption !== 'EMAIL'" class="container-phone ml-4">
     <div class="container-phone-inner">
       <div class="flex justify-center items-center text-center mb-4">
         <small class="text-base font-semibold">{{
-          selectedOption === 'sms'
+          selectedOption === 'SMS'
             ? $t('general.instant_message')
             : $t('general.whatsapp_instant_message')
         }}</small>
@@ -60,10 +60,10 @@ export default defineComponent({
         <template #icon><SendIcon class="w-4 h-4 dark:fill-white" /></template>
       </AppSelect>
 
-      <div v-if="selectedOption === 'sms'">
+      <div v-if="selectedOption === 'SMS'">
         <SendSmsFormPage />
       </div>
-      <div v-else-if="selectedOption === 'whatsapp'">
+      <div v-else-if="selectedOption === 'WHATSAPP'">
         <SendWhatsappFormPage />
       </div>
     </div>

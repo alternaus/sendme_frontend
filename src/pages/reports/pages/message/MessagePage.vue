@@ -352,8 +352,8 @@ export default defineComponent({
     <template #custom-status="{ data }">
       <div class="flex justify-center">
         <AppTag
-          :label="$t(`status.message.${String(data.status || 'failed')}`)"
-          :severity="getStatusSeverity(String(data.status || 'failed'), 'message')"
+          :label="$t(`status.message.${String(data.status || 'FAILED')}`)"
+          :severity="getStatusSeverity(String(data.status || 'FAILED'), 'message')"
         />
       </div>
     </template>

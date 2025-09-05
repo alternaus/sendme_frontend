@@ -41,7 +41,7 @@ const dialogVisible = computed({
 
 const statusVariant = computed(() => {
   if (!props.contact?.status) return 'secondary'
-  return props.contact.status === 'active' ? 'success' : 'warning'
+  return props.contact.status === 'ACTIVE' ? 'success' : 'warning'
 })
 
 const editContact = () => {
@@ -163,7 +163,7 @@ watch(
               {{ contact.name || t('general.not_defined') }}
             </h3>
           </div>
-          <AppTag :label="contact.status === 'active' ? t('general.active') : t('general.inactive')"
+          <AppTag :label="contact.status === 'ACTIVE' ? t('general.active') : t('general.inactive')"
             :severity="statusVariant" />
         </div>
       </AppCard>

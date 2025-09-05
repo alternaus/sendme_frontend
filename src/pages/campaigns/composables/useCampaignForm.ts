@@ -17,8 +17,8 @@ export interface CampaignFormData {
   name: string
   description: string
   content: string
-  contentType: 'plain_text' | 'html'
-  status: 'active' | 'inactive' | 'paused' | 'finished'
+  contentType: 'PLAIN_TEXT' | 'HTML'
+  status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'FINISHED'
   startDate: Date
   endDate: Date
   time: Date
@@ -62,12 +62,12 @@ export function useCampaignForm() {
         value: yup.string().when('conditionType', {
           is: (conditionType: string) => {
             const conditionsWithoutValue = [
-              'is_empty',
-              'not_empty',
-              'birthday_today',
-              'is_today',
-              'was_yesterday',
-              'is_tomorrow'
+              'IS_EMPTY',
+              'NOT_EMPTY',
+              'BIRTHDAY_TODAY',
+              'IS_TODAY',
+              'WAS_YESTERDAY',
+              'IS_TOMORROW'
             ]
             return !conditionsWithoutValue.includes(conditionType)
           },
@@ -81,7 +81,7 @@ export function useCampaignForm() {
 
   const messageSchema = yup.object({
     content: yup.string().required().label(t('campaign.form.message_content')),
-    contentType: yup.string().oneOf(['plain_text', 'html']).required().label(t('campaign.form.content_type'))
+    contentType: yup.string().oneOf(['PLAIN_TEXT', 'HTML']).required().label(t('campaign.form.content_type'))
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const steps: StepConfig<CampaignFormData>[] = [
@@ -112,8 +112,8 @@ export function useCampaignForm() {
     name: '',
     description: '',
     content: '',
-    contentType: 'plain_text',
-    status: 'active',
+    contentType: 'PLAIN_TEXT',
+    status: 'ACTIVE',
     startDate: new Date(),
     endDate: new Date(),
     time: new Date(0, 0, 0, 12, 0),
