@@ -8,12 +8,17 @@ import ActionIcon from '@/assets/svg/action.svg?component'
 import ChangeIcon from '@/assets/svg/change.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import UserIcon from '@/assets/svg/user.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
-import CardFilterAudit from '@/pages/reports/pages/audit/components/CardFilterAudit.vue'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import { useReportService } from '@/services/report/useReportServices'
@@ -27,12 +32,16 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    AppFilterPanel,
+    AppInput,
+    AppSelect,
+    AppDateRangePicker,
     DateIcon,
     UserIcon,
     ActionIcon,
     ModuleIcon,
     ChangeIcon,
-    CardFilterAudit,
+    SearchIcon,
     DialogChangesAudit,
   },
   setup() {
@@ -41,6 +50,7 @@ export default defineComponent({
     const { getAudits, exportAudits } = useReportService()
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ action, table, startDate, endDate, search })
 
     const dataChanges = ref<Record<string, unknown>>({})
     const isDialogVisible = ref(false)
@@ -95,6 +105,14 @@ export default defineComponent({
     }
 
     const headerActions = computed(() => [
+      {
+        label: t('actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => {
+          // Manejado por AppFilterPanel
+        },
+      },
       {
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
@@ -169,19 +187,72 @@ export default defineComponent({
       endDateString,
       loading,
       formatTableValue,
+      ActionAuditTypes,
+      ModuleTypes,
     }
   },
 })
 </script>
 <template>
   <AppHeader :icon="IconTypes.AUDIT" :text="$t('report.audit')" :actions="headerActions" />
-  <CardFilterAudit
-    v-model:action="action"
-    v-model:table="table"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-    v-model:search="search"
-  />
+
+  <AppFilterPanel :header-actions="headerActions">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <AppInput
+        :modelValue="search"
+        type="text"
+        class="w-full"
+        :label="$t('general.search')"
+        @input="search = $event.target.value"
+      >
+        <template #icon>
+          <SearchIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppInput>
+
+      <AppSelect
+        class="w-full"
+        :modelValue="action"
+        :options="
+          Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+        "
+        :label="$t('general.action')"
+        @update:modelValue="action = $event as string"
+      >
+        <template #icon>
+          <ActionIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppSelect>
+
+      <AppSelect
+        class="w-full"
+        :modelValue="table"
+        :options="
+          Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+        "
+        :label="$t('general.module')"
+        @update:modelValue="table = $event as string"
+      >
+        <template #icon>
+          <ModuleIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppSelect>
+
+      <AppDateRangePicker
+        class="w-full col-span-1 sm:col-span-2"
+        :startDate="startDateString"
+        :endDate="endDateString"
+        :startLabel="$t('general.start_date')"
+        :endLabel="$t('general.end_date')"
+        @update:startDate="startDateString = $event"
+        @update:endDate="endDateString = $event"
+      >
+        <template #icon>
+          <DateIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppDateRangePicker>
+    </div>
+  </AppFilterPanel>
   <DialogChangesAudit
     :changesData="dataChanges"
     :visible="isDialogVisible"

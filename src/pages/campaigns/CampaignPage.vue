@@ -8,24 +8,33 @@ import { useI18n } from 'vue-i18n'
 
 import ChannelIcon from '@/assets/svg/channel.svg?component'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
+import DateIcon from '@/assets/svg/date.svg?component'
 import DateEndIcon from '@/assets/svg/date_end.svg?component'
 import DateStartIcon from '@/assets/svg/date_start.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ITestCampaignRequest, ITestCampaignResponse } from '@/services/campaign/interfaces/test-rules.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
+import type { IChannel } from '@/services/channel/interfaces/channel.interface'
+import { useChannelService } from '@/services/channel/useChannelService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 
 import CampaignTestModal from './components/CampaignTestModal.vue'
-import CardFilterCampaigns from './components/CardFilterCampaigns.vue'
 import { useCampaignFilter } from './composables/useCampaignFilter'
 
 const { t } = useI18n()
@@ -34,6 +43,12 @@ const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
+const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, channelId, dateRange })
+const { getChannels } = useChannelService()
+
+const showMobileModal = ref(false)
+const channels = ref<IChannel[]>([])
+const loadingChannels = ref(false)
 const toast = useToast()
 
 const page = ref(1)
@@ -112,7 +127,22 @@ const fetchCampaigns = async (
 
 onMounted(() => {
   fetchCampaigns({ pageSize: 1, limitSize: 10 })
+  fetchChannels()
 })
+
+const fetchChannels = async () => {
+  loadingChannels.value = true
+  try {
+    const response = await getChannels()
+    if (response) {
+      channels.value = response
+    }
+  } catch (error) {
+    console.error('Error loading channels:', error)
+  } finally {
+    loadingChannels.value = false
+  }
+}
 
 watch([search, name, status, channelId], () => {
   if (debounceTimer) {
@@ -289,6 +319,12 @@ const handleTestRules = async () => {
 
 const headerActions = computed(() => [
   {
+    label: t('general.filters'),
+    onClick: () => { showMobileModal.value = !showMobileModal.value },
+    type: ActionTypes.FILTER,
+    badge: activeFiltersCount.value,
+  },
+  {
     label: t('actions.create'),
     onClick: () => push('/campaigns/create'),
     type: ActionTypes.CREATE,
@@ -296,26 +332,29 @@ const headerActions = computed(() => [
   ...(selected.value.length > 0
     ? [
         {
-          label: testingRules.value ? t('campaign.testing_rules') : t('campaign.test_rules'),
+          label: t('actions.test_rules'),
           onClick: handleTestRules,
           type: ActionTypes.VIEW,
-          disabled: testingRules.value || selected.value.length !== 1 || !selected.value[0]?.campaignRules?.length,
+          loading: testingRules.value,
         },
+      ]
+    : []),
+  ...(selected.value.length > 0
+    ? [
         {
           label: t('actions.delete'),
           onClick: handleDelete,
           type: ActionTypes.DELETE,
-          disabled: selected.value.length === 0,
         },
-        ...(selected.value.length === 1 ? [{
+      ]
+    : []),
+  ...(selected.value.length === 1
+    ? [
+        {
           label: t('actions.edit'),
-          onClick: () => {
-            if (selected.value[0]?.id) {
-              push(`/campaigns/edit/${selected.value[0].id}`)
-            }
-          },
+          onClick: () => selected.value[0] && push(`/campaigns/edit/${selected.value[0].id}`),
           type: ActionTypes.EDIT,
-        }] : []),
+        },
       ]
     : []),
 ])
@@ -329,13 +368,66 @@ const headerActions = computed(() => [
     :title="$t('campaign.campaigns')"
     :selectedItems="selected.length"
   />
-  <CardFilterCampaigns
-    v-model:search="search"
-    v-model:name="name"
-    v-model:status="status"
-    v-model:channelId="channelId"
-    v-model:dateRange="dateRange"
-  />
+
+  <AppFilterPanel
+    v-model:showMobileModal="showMobileModal"
+  >
+    <AppInput
+      v-model="search"
+      type="text"
+      class="w-full"
+      :label="$t('general.search')"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppInput
+      v-model="name"
+      type="text"
+      class="w-full"
+      :label="$t('general.name')"
+    >
+      <template #icon>
+        <CredentialIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppStatusSelect
+      class="w-full"
+      v-model="status"
+      status-type="campaign"
+      :label="$t('general.status')"
+      :show-colors="true"
+    >
+      <template #icon>
+        <StatusIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppStatusSelect>
+
+    <AppSelect
+      class="w-full"
+      v-model="channelId"
+      :options="channels.map(channel => ({ value: channel.id, name: channel.name }))"
+      :label="$t('general.channel')"
+      :loading="loadingChannels"
+    >
+      <template #icon>
+        <ChannelIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppDateRangePicker
+      v-model="dateRange"
+      class="w-full"
+      :label="$t('general.date_range')"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
+  </AppFilterPanel>
 
   <!-- Modal de Resultados del Test -->
   <CampaignTestModal

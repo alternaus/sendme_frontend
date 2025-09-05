@@ -7,17 +7,22 @@ import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
 
 import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
+import DateIcon from '@/assets/svg/date.svg?component'
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { ICampaignDispatch } from '@/services/report/interfaces/dispatch.interface'
 import { useReportService } from '@/services/report/useReportServices'
 
-import CardFilterDispatches from './components/CardFilterDispatches.vue'
 import { useDispatchFilter } from './composables/useDispatchFilter'
 import { DispatchStatusTypes } from './enums/dispatch-status.enum'
 
@@ -26,17 +31,22 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    AppFilterPanel,
+    AppInput,
+    AppDateRangePicker,
     NumberIcon,
     DateSendIcon,
     CampaignRouteIcon,
-    CardFilterDispatches,
+    SearchIcon,
+    DateIcon,
   },
   setup() {
     const { t } = useI18n()
     const toast = useToast()
     const router = useRouter()
     const { getDispatches, exportDispatches } = useReportService()
-    const { search, campaignId, startDate, endDate } = useDispatchFilter()
+    const { search, startDate, endDate } = useDispatchFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ search, startDate, endDate })
 
     const page = ref(1)
     const limit = ref(10)
@@ -51,7 +61,7 @@ export default defineComponent({
     })
     const loading = ref(false)
 
-    watch([search, campaignId, startDate, endDate], () => {
+    watch([search, startDate, endDate], () => {
       fetchDispatches()
     })
 
@@ -64,7 +74,6 @@ export default defineComponent({
           page: pageSize,
           limit: limitSize,
           search: search.value,
-          campaignId: campaignId.value,
           startDate: startDate.value?.toISOString(),
           endDate: endDate.value?.toISOString(),
         })
@@ -92,12 +101,19 @@ export default defineComponent({
 
     const headerActions = computed(() => [
       {
+        label: t('actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => {
+          // Manejado por AppFilterPanel
+        },
+      },
+      {
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
           exportDispatches({
             search: search.value,
-            campaignId: campaignId.value,
             startDate: startDate.value?.toISOString(),
             endDate: endDate.value?.toISOString(),
           })
@@ -153,7 +169,6 @@ export default defineComponent({
       dispatches,
       fetchDispatches,
       search,
-      campaignId,
       startDateString,
       endDateString,
       getStatusTranslation,
@@ -166,12 +181,36 @@ export default defineComponent({
 </script>
 <template>
   <AppHeader :icon="IconTypes.CAMPAIGNS" :text="$t('report.sending_by_campaign')" :actions="headerActions" />
-  <CardFilterDispatches
-    v-model:search="search"
-    v-model:campaignId="campaignId"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-  />
+
+  <AppFilterPanel :header-actions="headerActions">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <AppInput
+        :modelValue="search"
+        type="text"
+        class="w-full"
+        :label="$t('general.search')"
+        @input="search = $event.target.value"
+      >
+        <template #icon>
+          <SearchIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppInput>
+
+      <AppDateRangePicker
+        class="w-full"
+        :startDate="startDateString"
+        :endDate="endDateString"
+        :startLabel="$t('general.start_date')"
+        :endLabel="$t('general.end_date')"
+        @update:startDate="startDateString = $event"
+        @update:endDate="endDateString = $event"
+      >
+        <template #icon>
+          <DateIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppDateRangePicker>
+    </div>
+  </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
     :data="dispatches"

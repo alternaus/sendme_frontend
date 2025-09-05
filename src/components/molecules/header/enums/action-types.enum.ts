@@ -7,4 +7,5 @@ export enum ActionTypes {
   VIEW = 'VIEW',
   SEND = 'SEND',
   BULK_SMS = 'BULK_SMS',
+  FILTER = 'FILTER',
 }

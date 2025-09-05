@@ -11,13 +11,19 @@ import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import allCountriesData from '@/components/molecules/phone-input/all-countries'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
@@ -25,9 +31,9 @@ import { useContactService } from '@/services/contact/useContactService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 
 import BulkSmsModal from './components/BulkSmsModal.vue'
-import CardFilterContacts from './components/CardFilterContacts.vue'
 import ContactViewModal from './components/ContactViewModal.vue'
 import { useContactFilter } from './composables/useContactFilter'
+import { ContactOriginTypes } from './enums/contact-origin.enum'
 
 const { t } = useI18n()
 const { push } = useRouter()
@@ -35,6 +41,9 @@ const { getContacts, deleteContact, exportContacts } = useContactService()
 const { search, name, countryCode, status, origin } = useContactFilter()
 const { getTableValueWithDefault, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
+const { activeFiltersCount } = useActiveFiltersCount({ search, name, countryCode, status, origin })
+
+const showMobileModal = ref(false)
 
 const page = ref(1)
 const limit = ref(10)
@@ -212,6 +221,12 @@ const handleBulkSmsSuccess = () => {
 
 const headerActions = computed(() => [
   {
+    label: t('general.filters'),
+    onClick: () => { showMobileModal.value = !showMobileModal.value },
+    type: ActionTypes.FILTER,
+    badge: activeFiltersCount.value,
+  },
+  {
     label: t('actions.create'),
     onClick: () => push('/contacts/create'),
     type: ActionTypes.CREATE,
@@ -219,31 +234,26 @@ const headerActions = computed(() => [
   ...(selectedContacts.value.length > 0
     ? [
         {
-          label: t('bulk_sms.send_bulk_sms'),
+          label: t('actions.bulk_sms'),
           onClick: openBulkSmsModal,
-          type: ActionTypes.BULK_SMS,
+          type: ActionTypes.SEND,
         },
       ]
     : []),
   ...(selectedContacts.value.length > 0
     ? [
-        { label: t('actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE },
+        {
+          label: t('actions.delete'),
+          onClick: handleDelete,
+          type: ActionTypes.DELETE,
+        },
       ]
     : []),
   ...(selectedContacts.value.length === 1
     ? [
         {
-          label: t('actions.view'),
-          onClick: () => handleRowView(selectedContacts.value[0]),
-          type: ActionTypes.VIEW,
-        },
-        {
           label: t('actions.edit'),
-          onClick: () => {
-            if (selectedContacts.value[0]?.id) {
-              push(`/contacts/edit/${selectedContacts.value[0].id}`)
-            }
-          },
+          onClick: () => selectedContact.value && push(`/contacts/edit/${selectedContact.value.id}`),
           type: ActionTypes.EDIT,
         },
       ]
@@ -251,21 +261,13 @@ const headerActions = computed(() => [
   {
     label: t('actions.export'),
     onClick: () => {
-      try {
-        exportContacts()
-        toast.add({
-          severity: 'success',
-          detail: t('contact.success_exported'),
-          life: 3000,
-        })
-      } catch {
-        toast.add({
-          severity: 'error',
-          summary: t('general.error'),
-          detail: t('contact.error_exported'),
-          life: 3000,
-        })
-      }
+      exportContacts({
+        search: search.value,
+        name: name.value,
+        countryCode: countryCode.value,
+        status: status.value,
+        origin: origin.value,
+      })
     },
     type: ActionTypes.EXPORT,
   },
@@ -284,13 +286,82 @@ const headerActions = computed(() => [
     :title="$t('contact.contacts')"
     :selectedItems="selectedContacts.length"
   />
-  <CardFilterContacts
-    v-model:search="search"
-    v-model:name="name"
-    v-model:countryCode="countryCode"
-    v-model:status="status"
-    v-model:origin="origin"
-  />
+
+  <AppFilterPanel
+    v-model:showMobileModal="showMobileModal"
+  >
+    <AppInput
+      v-model="search"
+      type="text"
+      class="w-full"
+      :label="$t('general.search')"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppInput
+      v-model="name"
+      type="text"
+      class="w-full"
+      :label="$t('general.name')"
+    >
+      <template #icon>
+        <CredentialIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppSelect
+      class="w-full"
+      v-model="countryCode"
+      :options="[
+        { value: '1', name: '+1 (US/CA)' },
+        { value: '52', name: '+52 (MX)' },
+        { value: '34', name: '+34 (ES)' },
+        { value: '33', name: '+33 (FR)' },
+        { value: '44', name: '+44 (UK)' },
+        { value: '49', name: '+49 (DE)' },
+        { value: '39', name: '+39 (IT)' },
+        { value: '55', name: '+55 (BR)' },
+        { value: '54', name: '+54 (AR)' },
+        { value: '57', name: '+57 (CO)' },
+      ]"
+      :label="$t('general.country_code')"
+    >
+      <template #icon>
+        <PhoneIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppStatusSelect
+      class="w-full"
+      v-model="status"
+      status-type="contact"
+      :label="$t('general.status')"
+      :show-colors="true"
+    >
+      <template #icon>
+        <StatusIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppStatusSelect>
+
+    <AppSelect
+      class="w-full"
+      v-model="origin"
+      :options="
+        Object.entries(ContactOriginTypes).map(([key, value]) => ({
+          value: key,
+          name: $t(value),
+        }))
+      "
+      :label="$t('general.origin')"
+    >
+      <template #icon>
+        <DataOriginIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+  </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
     :data="contacts"

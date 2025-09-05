@@ -6,16 +6,24 @@ import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
 
+import DateIcon from '@/assets/svg/date.svg?component'
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
 import MessageTypeIcon from '@/assets/svg/message_type.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useStatusColors } from '@/composables/useStatusColors'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 // Interfaz para mensajes de reporte con contenido
@@ -29,10 +37,8 @@ interface IReportMessage {
   updatedAt: Date
   // Otras propiedades que pueda tener el mensaje
 }
-import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
 import { useReportService } from '@/services/report/useReportServices'
 
-import CardFilterMessages from './components/CardFilterMessages.vue'
 import { useMessageFilter } from './composables/useMessageFilter'
 import { TypeMessageTypes } from './enums/message-types.enum.ts'
 import { StatusMessageTypes } from './enums/status-types.enum'
@@ -43,12 +49,17 @@ export default defineComponent({
     AppTable,
     AppTag,
     AppHtmlViewerDialog,
+    AppFilterPanel,
+    AppInput,
+    AppSelect,
+    AppDateRangePicker,
     NumberIcon,
     MessageTypeIcon,
     DateSendIcon,
     StatusIcon,
     SmsIcon,
-    CardFilterMessages,
+    SearchIcon,
+    DateIcon,
   },
   setup() {
     const { t } = useI18n()
@@ -56,6 +67,7 @@ export default defineComponent({
     const router = useRouter()
     const { getMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ content, status, messageType, startDate, endDate })
     const { getStatusSeverity } = useStatusColors()
 
     const page = ref(1)
@@ -107,6 +119,14 @@ export default defineComponent({
     }
 
     const headerActions = computed(() => [
+      {
+        label: t('actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => {
+          // Manejado por AppFilterPanel
+        },
+      },
       {
         label: t('actions.export'),
         type: ActionTypes.EXPORT,
@@ -184,19 +204,78 @@ export default defineComponent({
       isHtmlViewerVisible,
       htmlContent,
       handleViewHtmlContent,
+      StatusMessageTypes,
+      TypeMessageTypes,
     }
   },
 })
 </script>
 <template>
   <AppHeader :icon="IconTypes.MESSAGES" :text="$t('general.messages')" :actions="headerActions" />
-  <CardFilterMessages
-    v-model:content="content"
-    v-model:status="status"
-    v-model:messageType="messageType"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-  />
+
+  <AppFilterPanel :header-actions="headerActions">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <AppInput
+        :modelValue="content"
+        type="text"
+        class="w-full"
+        :label="$t('general.search')"
+        @input="content = $event.target.value"
+      >
+        <template #icon>
+          <SearchIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppInput>
+
+      <AppSelect
+        class="w-full"
+        :modelValue="status"
+        :options="
+          Object.entries(StatusMessageTypes).map(([key, value]) => ({
+            value: key,
+            name: $t(value),
+          }))
+        "
+        :label="$t('general.status')"
+        @update:modelValue="status = $event as string"
+      >
+        <template #icon>
+          <StatusIcon class="w-6 h-4 dark:fill-white" />
+        </template>
+      </AppSelect>
+
+      <AppSelect
+        class="w-full"
+        :modelValue="messageType"
+        :options="
+          Object.entries(TypeMessageTypes).map(([key, value]) => ({
+            value: key,
+            name: $t(value),
+          }))
+        "
+        :label="$t('general.message_type')"
+        @update:modelValue="messageType = $event as string"
+      >
+        <template #icon>
+          <MessageTypeIcon class="w-6 h-4 dark:fill-white" />
+        </template>
+      </AppSelect>
+
+      <AppDateRangePicker
+        class="w-full col-span-1 sm:col-span-2"
+        :startDate="startDateString"
+        :endDate="endDateString"
+        :startLabel="$t('general.start_date')"
+        :endLabel="$t('general.end_date')"
+        @update:startDate="startDateString = $event"
+        @update:endDate="endDateString = $event"
+      >
+        <template #icon>
+          <DateIcon class="w-4 h-4 dark:fill-white" />
+        </template>
+      </AppDateRangePicker>
+    </div>
+  </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
     :data="messages"

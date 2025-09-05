@@ -481,7 +481,11 @@
     "update": "Actualizar",
     "view": "Ver",
     "deleted": "Eliminado",
-    "exported": "Exportado"
+    "exported": "Exportado",
+    "bulk_sms": "SMS Masivo",
+    "test_rules": "Probar Reglas",
+    "filter": "Filtrar",
+    "filters": "Filtros"
   },
   "recharge_status": {
     "pending": "Pendiente",
@@ -518,6 +522,8 @@
     "blocked": "Bloqueado",
     "country_code": "Código de País",
     "birth_date": "Fecha de Nacimiento",
+    "filters": "Filtros",
+    "selected": "seleccionado | seleccionados",
     "start_date": "Fecha de Inicio",
     "end_date": "Fecha de Fin",
     "date_range": "Rango de Fechas",

@@ -9,6 +9,7 @@ import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import ReportsIcon from '@/assets/svg/header/reports.svg?component'
 import SendIcon from '@/assets/svg/header/send.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
+import FilterIcon from '@/assets/svg/lucide/list-filter-plus.svg?component'
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
 import MessagesIcon from '@/assets/svg/report/messages.svg?component'
 import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
@@ -31,6 +32,7 @@ interface Props {
     label: string
     onClick: (id?: number) => void
     icon?: string
+    badge?: number
   }>
   selectedId?: number | null
   text?: string | null
@@ -66,6 +68,7 @@ const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.VIEW]: ViewIcon,
   [ActionTypes.SEND]: SendIcon,
   [ActionTypes.BULK_SMS]: SendIcon,
+  [ActionTypes.FILTER]: FilterIcon,
 }
 
 const IconComponents: Record<IconTypes, FunctionalComponent> = {
@@ -119,21 +122,33 @@ const getActionSize = (): 'small' | 'large' | undefined => {
     </div>
 
     <div class="flex items-center gap-1 md:gap-2">
-      <AppButton
+      <div
         v-for="(action, index) in actions"
         :key="index"
-        v-tooltip.bottom="action.label"
-        @click="action.onClick(selectedId ?? undefined)"
-        :severity="getActionSeverity(action.type)"
-        :size="getActionSize()"
-        rounded
-        class="!w-8 !h-8 md:!w-10 md:!h-10 !p-1 md:!p-2 flex-shrink-0 flex items-center justify-center"
+        class="relative"
       >
-        <component
-          :is="ActionIconComponents[action.type]"
-          class="w-5 h-5 md:w-6 md:h-6"
-        />
-      </AppButton>
+        <AppButton
+          v-tooltip.bottom="action.label"
+          @click="action.onClick(selectedId ?? undefined)"
+          :severity="getActionSeverity(action.type)"
+          :size="getActionSize()"
+          rounded
+          class="!w-8 !h-8 md:!w-10 md:!h-10 !p-1 md:!p-2 flex-shrink-0 flex items-center justify-center"
+        >
+          <component
+            :is="ActionIconComponents[action.type]"
+            class="w-5 h-5 md:w-6 md:h-6"
+          />
+        </AppButton>
+
+        <!-- Badge con contador para filtros u otras acciones -->
+        <span
+          v-if="action.badge && action.badge > 0"
+          class="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1 text-xs font-bold text-white bg-red-500 rounded-full"
+        >
+          {{ action.badge }}
+        </span>
+      </div>
     </div>
   </div>
 </template>

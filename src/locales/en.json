@@ -481,7 +481,11 @@
     "update": "Update",
     "view": "View",
     "deleted": "Deleted",
-    "exported": "Exported"
+    "exported": "Exported",
+    "bulk_sms": "Bulk SMS",
+    "test_rules": "Test Rules",
+    "filter": "Filter",
+    "filters": "Filters"
   },
   "recharge_status": {
     "pending": "Pending",
@@ -513,6 +517,7 @@
     "loading": "Loading...",
     "refresh": "Refresh",
     "copy": "Copy",
+    "filters": "Filters",
     "active": "Active",
     "inactive": "Inactive",
     "blocked": "Blocked",
