@@ -61,9 +61,9 @@ router.beforeEach((to, from, next) => {
     return next('/auth/sign-in')
   }
 
-  // Permitir acceso a rutas de enrollment y callback de Google incluso si el usuario está autenticado
-  // El callback de Google necesita ser accesible para completar el flujo de OAuth
-  if (!to.meta.requiresAuth && token && !to.path.startsWith('/enrollment') && !to.path.startsWith('/auth/google/callback')) {
+  // Permitir acceso a rutas de enrollment y callback de OAuth incluso si el usuario está autenticado
+  // El callback de OAuth necesita ser accesible para completar el flujo de OAuth
+  if (!to.meta.requiresAuth && token && !to.path.startsWith('/enrollment') && !to.path.startsWith('/auth/oauth/') && !to.path.startsWith('/auth/google/callback')) {
     return next('/')
   }
 

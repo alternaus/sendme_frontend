@@ -72,9 +72,15 @@ onMounted(async () => {
       const returnPath = localStorage.getItem(`${provider.value}AuthReturnPath`)
       if (returnPath) {
         localStorage.removeItem(`${provider.value}AuthReturnPath`)
-        router.push(returnPath)
+        // Agregar un poco de tiempo de espera antes de redirigir
+        setTimeout(() => {
+          router.push(returnPath)
+        }, 1500)
       } else {
-        router.push('/')
+        // Agregar un poco de tiempo de espera antes de redirigir
+        setTimeout(() => {
+          router.push('/')
+        }, 1500)
       }
     } else {
       throw new Error('No se recibió el token de acceso')
@@ -108,7 +114,7 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div  class="mt-8">
+      <div class="mt-8">
         <div v-if="loading" class="text-center">
           <div class="bg-white dark:bg-neutral-800 shadow rounded-lg p-6">
             <div class="animate-pulse">
@@ -118,7 +124,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div  v-else-if="error" class="text-center">
+        <div v-else-if="error" class="text-center">
           <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <div class="text-red-800 dark:text-red-200">
               <h3 class="text-lg font-medium mb-2">
@@ -129,7 +135,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div  v-else class="text-center">
+        <div v-else class="text-center">
           <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
             <div class="text-green-800 dark:text-green-200">
               <h3 class="text-lg font-medium mb-2">

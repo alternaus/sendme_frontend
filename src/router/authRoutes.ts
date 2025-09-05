@@ -22,7 +22,8 @@ const authRoutes: RouteRecordRaw = {
     {
       path: 'google/callback',
       name: 'sign-in-google',
-      redirect: to => `/auth/oauth/google/callback${to.fullPath.split('/callback')[1] || ''}`
+      redirect: to => `/auth/oauth/google/callback${to.fullPath.split('/callback')[1] || ''}`,
+      meta: { layout: 'AuthLayout', requiresAuth: false, title: 'oauth_callback' },
     },
     {
       path: 'forgot-password',

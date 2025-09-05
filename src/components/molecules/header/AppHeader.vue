@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { type FunctionalComponent } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
@@ -52,6 +54,8 @@ withDefaults(defineProps<Props>(), {
 defineEmits<{
   'update:modelValue': [value: string]
 }>()
+
+const { t } = useI18n()
 
 const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.CREATE]: CreateIcon,
@@ -109,7 +113,7 @@ const getActionSize = (): 'small' | 'large' | undefined => {
           v-if="selectedItems > 0"
           class="text-sm text-gray-500 dark:text-gray-400"
         >
-          ({{ selectedItems }} seleccionado{{ selectedItems > 1 ? 's' : '' }})
+          ({{ selectedItems }} {{ t('general.selected', selectedItems) }})
         </span>
       </div>
     </div>
