@@ -14,7 +14,8 @@ import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
-import { type IBatchMessage,MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MessageChannel } from '@/services/send/constants/message.constants'
+import { type IBatchMessage } from '@/services/send/interfaces/message.interface'
 import { useSendService } from '@/services/send/useSendService'
 
 interface Props {

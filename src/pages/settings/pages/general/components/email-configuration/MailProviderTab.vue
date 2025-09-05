@@ -14,7 +14,7 @@ import type {
   UpdateEmailConfigurationDto
 } from '@/services/email-configuration/emailConfigurationTypes'
 import { useMailProviderService } from '@/services/email-configuration/useMailProviderService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useMailProviderForm } from './composables/useMailProviderForm'
