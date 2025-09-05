@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
@@ -8,8 +10,7 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
-
-import { ContactOriginTypes } from '../enums/contact-origin.enum'
+import { createContactOriginOptions, createCountryCodeOptions } from '@/services/contact/helpers/contact-options.helper'
 
 interface Props {
   search?: string
@@ -27,6 +28,7 @@ interface Emits {
   'update:origin': [value: string]
 }
 
+const { t } = useI18n()
 const _props = withDefaults(defineProps<Props>(), {
   search: '',
   name: '',
@@ -58,18 +60,7 @@ const updateField = (field: string, value: string) => {
   }
 }
 
-const countryCodeOptions = [
-  { value: '1', name: '+1 (US/CA)' },
-  { value: '52', name: '+52 (MX)' },
-  { value: '34', name: '+34 (ES)' },
-  { value: '33', name: '+33 (FR)' },
-  { value: '44', name: '+44 (UK)' },
-  { value: '49', name: '+49 (DE)' },
-  { value: '39', name: '+39 (IT)' },
-  { value: '55', name: '+55 (BR)' },
-  { value: '54', name: '+54 (AR)' },
-  { value: '57', name: '+57 (CO)' },
-]
+const countryCodeOptions = createCountryCodeOptions()
 </script>
 
 <template>
@@ -128,12 +119,7 @@ const countryCodeOptions = [
         <AppSelect
           class="w-full mt-3"
           :modelValue="_props.origin"
-          :options="
-            Object.entries(ContactOriginTypes).map(([key, value]) => ({
-              value: key,
-              name: $t(value),
-            }))
-          "
+          :options="createContactOriginOptions(t)"
           :label="$t('general.origin')"
           @update:modelValue="updateField('origin', $event !== null ? String($event) : '')"
         >

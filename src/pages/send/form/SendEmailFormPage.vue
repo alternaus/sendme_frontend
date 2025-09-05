@@ -7,7 +7,7 @@ import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'

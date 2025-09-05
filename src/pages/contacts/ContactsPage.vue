@@ -26,6 +26,7 @@ import allCountriesData from '@/components/molecules/phone-input/all-countries'
 import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
+import { createContactOriginOptions } from '@/services/contact/helpers/contact-options.helper'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
 import { useContactService } from '@/services/contact/useContactService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
@@ -33,7 +34,6 @@ import type { IPaginationMeta } from '@/services/interfaces/pagination-response.
 import BulkSmsModal from './components/BulkSmsModal.vue'
 import ContactViewModal from './components/ContactViewModal.vue'
 import { useContactFilter } from './composables/useContactFilter'
-import { ContactOriginTypes } from './enums/contact-origin.enum'
 
 const { t } = useI18n()
 const { push } = useRouter()
@@ -349,12 +349,7 @@ const headerActions = computed(() => [
     <AppSelect
       class="w-full"
       v-model="origin"
-      :options="
-        Object.entries(ContactOriginTypes).map(([key, value]) => ({
-          value: key,
-          name: $t(value),
-        }))
-      "
+      :options="createContactOriginOptions($t)"
       :label="$t('general.origin')"
     >
       <template #icon>

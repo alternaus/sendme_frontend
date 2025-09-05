@@ -1,14 +1,4 @@
-export enum MessageChannel {
-  SMS = 'sms',
-  EMAIL = 'email',
-  WHATSAPP = 'whatsapp',
-}
-
-export enum SmsMessageType {
-  SMS = 'sms',
-  OTP = 'otp',
-  FLASH = 'flash',
-}
+import { MessageChannel, SmsMessageType } from '../constants/message.constants'
 
 export interface IBatchMessage {
   channel: MessageChannel;

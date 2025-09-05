@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
-import { MessageChannel, SmsMessageType } from '@/services/send/interfaces/message.interface'
+import { MessageChannel, SmsMessageType } from '@/services/send/constants/message.constants'
 import { validateContactsRequiredWhenSpecific } from '@/services/send/validators/contacts-required-when-specific.validator'
 
 export interface SendMessageForm {

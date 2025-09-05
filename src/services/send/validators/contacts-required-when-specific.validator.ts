@@ -1,4 +1,4 @@
-import { MessageChannel } from '../interfaces/message.interface'
+import { MessageChannel } from '../constants/message.constants'
 
 export const validateContactsRequiredWhenSpecific = (contacts: string[], sendToAll: boolean, channel: MessageChannel): boolean => {
   if (sendToAll) {

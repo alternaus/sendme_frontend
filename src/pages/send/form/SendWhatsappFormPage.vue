@@ -7,7 +7,7 @@ import PhoneIcon from '@/assets/svg/phone.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'
@@ -27,7 +27,7 @@ export default defineComponent({
     const sendService = useSendService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.WHATSAPP)
-    const MAX_CHARACTERS = 4096
+    const MAX_CHARACTERS = MESSAGE_LIMITS.WHATSAPP
 
     const fetchContactsCount = async () => {
       try {

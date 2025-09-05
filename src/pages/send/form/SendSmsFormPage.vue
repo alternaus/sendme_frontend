@@ -10,7 +10,8 @@ import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel, SmsMessageType } from '@/services/send/interfaces/message.interface'
+import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants/message.constants'
+import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'
@@ -32,13 +33,9 @@ export default defineComponent({
     const sendService = useSendService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.SMS)
-    const MAX_CHARACTERS = 459
+    const MAX_CHARACTERS = MESSAGE_LIMITS.SMS
 
-    const messageTypeOptions = [
-      { name: t('general.sms_standard'), value: SmsMessageType.SMS },
-      { name: t('general.sms_otp'), value: SmsMessageType.OTP },
-      { name: t('general.sms_flash'), value: SmsMessageType.FLASH },
-    ]
+    const messageTypeOptions = createSmsMessageTypeOptions(t)
 
     const fetchContactsCount = async () => {
       try {
