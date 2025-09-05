@@ -33,7 +33,7 @@ const showProviders = ref(false)
 const customerInfo = ref({ name: '', email: '', dni: '', company: '', phone: '' })
 
 const amount = computed<number>(() => selectedValue.value ?? customValue.value ?? 0)
-const isValidAmount = computed(() => amount.value >= 10000 && amount.value <= 500000)
+const isValidAmount = computed(() => amount.value >= 50000 && amount.value <= 500000)
 
 const selectOption = (v: number) => {
   selectedValue.value = selectedValue.value === v ? null : v

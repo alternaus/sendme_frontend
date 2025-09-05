@@ -96,7 +96,7 @@ const getActionSize = (): 'small' | 'large' | undefined => {
 
 <template>
   <div
-    class="flex flex-row justify-between items-center h-12 dark:border-gray-700 w-full px-4 gap-2"
+    class="flex flex-row justify-between items-center mb-2 h-12 dark:border-gray-700 w-full px-4 gap-2"
     v-if="showHeader && (text || title || icon)"
   >
     <div class="flex items-center gap-2 flex-shrink-0">

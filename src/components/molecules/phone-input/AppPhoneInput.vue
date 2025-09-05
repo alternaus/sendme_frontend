@@ -187,7 +187,7 @@ initializeDefaultCountry()
 
 <template>
   <div class="w-full">
-    <FloatLabel>
+    <FloatLabel variant="on">
       <InputGroup class="!w-full">
         <InputGroupAddon>
           <Select v-model="selectedCountry" :options="countries" option-label="name" :size="size" :disabled="disabled"

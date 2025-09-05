@@ -153,7 +153,7 @@ watch(internalNumber, (newValue) => {
 <template>
   <div :class="containerClasses">
     <!-- Con label y FloatLabel -->
-    <FloatLabel v-if="label && $slots.icon">
+    <FloatLabel variant="on" v-if="label && $slots.icon">
       <IconField>
         <InputIcon>
           <slot name="icon" />
@@ -204,7 +204,7 @@ watch(internalNumber, (newValue) => {
       <label class="text-sm" :for="id">{{ label }}</label>
     </FloatLabel>
 
-    <FloatLabel v-else-if="label">
+    <FloatLabel variant="on" v-else-if="label">
       <!-- Number input -->
       <InputNumber
         v-if="isNumber"

@@ -127,7 +127,7 @@ watch(
 </script>
 <template>
   <div :class="containerClasses">
-    <FloatLabel v-if="$slots.icon">
+    <FloatLabel variant="on" v-if="$slots.icon">
       <IconField>
         <InputIcon>
           <slot name="icon" />
@@ -166,7 +166,7 @@ watch(
       <label class="text-sm">{{ label }}</label>
     </FloatLabel>
 
-    <FloatLabel v-else>
+    <FloatLabel variant="on" v-else>
       <DatePicker
         v-bind="forwardedAttrs"
         :model-value="selectedDate"
