@@ -1,10 +1,5 @@
-<script lang="ts">
-import {
-  defineComponent,
-  type FunctionalComponent,
-  type PropType,
-  ref,
-} from 'vue'
+<script setup lang="ts">
+import { type FunctionalComponent } from 'vue'
 
 import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
@@ -22,16 +17,43 @@ import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import ViewIcon from '@/assets/svg/table-actions/view.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppSearchInput from '@/components/atoms/inputs/AppSearchInput.vue'
-import AppNotificationBell from '@/components/atoms/notifications/AppNotificationBell.vue'
-import AppDarkMode from '@/components/molecules/dark-mode/AppDarkMode.vue'
-import AppLanguage from '@/components/molecules/language/AppLanguage.vue'
-import AppProfile from '@/components/molecules/profile/AppProfile.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
 import { IconTypes } from './enums/icon-types.enum'
 
-export const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
+interface Props {
+  icon?: keyof typeof IconTypes
+  placeholder?: string
+  actions?: Array<{
+    type: ActionTypes
+    label: string
+    onClick: (id?: number) => void
+    icon?: string
+  }>
+  selectedId?: number | null
+  text?: string | null
+  title?: string
+  selectedItems?: number
+  showSearch?: boolean
+  showHeader?: boolean
+  modelValue?: string
+}
+
+withDefaults(defineProps<Props>(), {
+  placeholder: 'Buscar...',
+  selectedId: null,
+  text: null,
+  selectedItems: 0,
+  showSearch: false,
+  showHeader: true,
+  modelValue: '',
+})
+
+defineEmits<{
+  'update:modelValue': [value: string]
+}>()
+
+const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.CREATE]: CreateIcon,
   [ActionTypes.EDIT]: EditIcon,
   [ActionTypes.DELETE]: DeleteIcon,
@@ -42,7 +64,7 @@ export const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.BULK_SMS]: SendIcon,
 }
 
-export const IconComponents: Record<IconTypes, FunctionalComponent> = {
+const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.CONTACTS]: ContactsIcon,
   [IconTypes.CAMPAIGNS]: CampaignsIcon,
   [IconTypes.WHATSAPP]: ContactsIcon,
@@ -56,146 +78,58 @@ export const IconComponents: Record<IconTypes, FunctionalComponent> = {
   [IconTypes.CUSTOM_FIELDS]: InformationIcon,
 }
 
-export default defineComponent({
-  components: {
-    AppProfile,
-    AppSearchInput,
-    AppLanguage,
-    AppDarkMode,
-    AppNotificationBell,
-    AppButton
-  },
-  props: {
-    icon: {
-      type: String as PropType<keyof typeof IconTypes>,
-      required: false,
-    },
-    placeholder: {
-      type: String,
-      default: 'Buscar...',
-    },
-    actions: {
-      type: Array as PropType<
-        Array<{
-          type: ActionTypes
-          label: string
-          onClick: (id?: number) => void
-          icon?: string
-        }>
-      >,
-      required: false,
-    },
-    selectedId: {
-      type: Number,
-      default: null,
-    },
-    text: {
-      type: String,
-      default: null,
-    },
-    title: {
-      type: String,
-      required: false,
-    },
-    selectedItems: {
-      type: Number,
-      default: 0,
-    },
-    showSearch: {
-      type: Boolean,
-      default: false,
-    },
-    showHeader: {
-      type: Boolean,
-      default: true,
-    },
-    modelValue: {
-      type: String,
-      default: '',
-    },
-  },
-  emits: ['update:modelValue'],
-  setup() {
-    const searchQuery = ref('')
 
-    const getActionSeverity = (actionType: ActionTypes) => {
-      return actionType === ActionTypes.DELETE ? 'danger' : undefined
-    }
+const getActionSeverity = (actionType: ActionTypes) => {
+  return actionType === ActionTypes.DELETE ? 'danger' : undefined
+}
 
-    const getActionSize = (): 'small' | 'large' | undefined => {
-      return 'small'
-    }
-
-    return {
-      searchQuery,
-      ActionIconComponents,
-      IconComponents,
-      getActionSeverity,
-      getActionSize,
-    }
-  },
-})
+const getActionSize = (): 'small' | 'large' | undefined => {
+  return 'small'
+}
 </script>
+
+
 
 <template>
   <div
-    class="flex flex-col sm:flex-row md:flex-nowrap justify-between items-center sm:h-16 dark:border-gray-700 w-full px-4 gap-4"
+    class="flex flex-row justify-between items-center h-12 dark:border-gray-700 w-full px-4 gap-2"
     v-if="showHeader && (text || title || icon)"
   >
-    <!-- Sección izquierda: Icono y título -->
-    <div class="flex flex-col items-center md:flex-row md:gap-4 flex-shrink-0">
+    <div class="flex items-center gap-2 flex-shrink-0">
       <component
         :is="IconComponents[icon]"
         v-if="icon && IconComponents[icon]"
         class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]"
       />
-      <div class="flex flex-col md:flex-row md:items-center md:gap-2">
-        <span class="text-xl font-semibold text-center md:text-left">
+      <div class="hidden md:flex md:flex-row md:items-center md:gap-2">
+        <span class="text-xl font-semibold dark:text-[var(--p-primary-color)]">
           {{ title || text }}
         </span>
         <span
           v-if="selectedItems > 0"
-          class="text-sm text-gray-500 dark:text-gray-400 text-center md:text-left"
+          class="text-sm text-gray-500 dark:text-gray-400"
         >
           ({{ selectedItems }} seleccionado{{ selectedItems > 1 ? 's' : '' }})
         </span>
       </div>
     </div>
 
-    <!-- Sección central: Búsqueda y acciones -->
-    <div class="flex flex-col sm:flex-row justify-center items-center gap-2 flex-grow">
-      <AppSearchInput
-        v-if="showSearch"
-        v-model:search="searchQuery"
-        class="w-full md:w-auto"
-        @update:search="$emit('update:modelValue', $event)"
-        :placeholder="placeholder"
-      />
-      <div class="flex gap-2">
-        <AppButton
-          v-for="(action, index) in actions"
-          :key="index"
-          v-tooltip.bottom="action.label"
-          @click="action.onClick(selectedId)"
-          :severity="getActionSeverity(action.type)"
-          :size="getActionSize()"
-          rounded
-          class="!w-10 !h-10 flex-shrink-0"
-        >
-          <component
-            :is="ActionIconComponents[action.type]"
-            class="w-5 h-5"
-          />
-        </AppButton>
-      </div>
-    </div>
-
-    <!-- Sección derecha: Elementos de usuario -->
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <AppNotificationBell />
-      <AppDarkMode />
-      <AppLanguage />
-      <AppProfile />
+    <div class="flex items-center gap-1 md:gap-2">
+      <AppButton
+        v-for="(action, index) in actions"
+        :key="index"
+        v-tooltip.bottom="action.label"
+        @click="action.onClick(selectedId ?? undefined)"
+        :severity="getActionSeverity(action.type)"
+        :size="getActionSize()"
+        rounded
+        class="!w-8 !h-8 md:!w-10 md:!h-10 !p-1 md:!p-2 flex-shrink-0 flex items-center justify-center"
+      >
+        <component
+          :is="ActionIconComponents[action.type]"
+          class="w-5 h-5 md:w-6 md:h-6"
+        />
+      </AppButton>
     </div>
   </div>
 </template>

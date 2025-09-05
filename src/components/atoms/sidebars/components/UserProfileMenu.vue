@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import TieredMenu from 'primevue/tieredmenu'
 
@@ -18,6 +18,43 @@ const profileMenuVisible = ref(false)
 const toggleMenu = (event: Event) => {
   menu.value.toggle(event)
 }
+const userInitials = computed(() => {
+  if (authStore.user?.name) {
+    return authStore.user.name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+  }
+  return ''
+})
+
+const avatarColors = [
+  '!bg-blue-800 !text-white',
+  '!bg-green-800 !text-white',
+  '!bg-purple-800 !text-white',
+  '!bg-indigo-800 !text-white',
+  '!bg-teal-800 !text-white',
+  '!bg-rose-800 !text-white',
+  '!bg-emerald-800 !text-white',
+  '!bg-violet-800 !text-white',
+  '!bg-cyan-800 !text-white',
+  '!bg-amber-800 !text-white'
+]
+
+const randomAvatarColor = computed(() => {
+  if (!authStore.user?.email) return avatarColors[0]
+
+  let hash = 0
+  for (let i = 0; i < authStore.user.email.length; i++) {
+    const char = authStore.user.email.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+
+  const index = Math.abs(hash) % avatarColors.length
+  return avatarColors[index]
+})
 </script>
 
 <template>
@@ -31,7 +68,7 @@ const toggleMenu = (event: Event) => {
       @click="toggleMenu"
     >
       <div class="relative">
-        <AppAvatar class="flex-shrink-0" :image="authStore.user?.avatarUrl" size="large" />
+        <AppAvatar class="flex-shrink-0 ring-2 ring-neutral-500/30 dark:ring-neutral-300/40" :class="randomAvatarColor" :label="userInitials" :image="authStore.user?.avatarUrl" size="large" />
       </div>
 
       <div
