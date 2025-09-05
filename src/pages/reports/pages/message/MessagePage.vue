@@ -218,67 +218,65 @@ export default defineComponent({
     :header-actions="headerActions"
     v-model:showMobileModal="showMobileModal"
   >
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
-      <AppInput
-        :modelValue="content"
-        type="text"
-        class="w-full"
-        :label="$t('general.search')"
-        @input="content = $event.target.value"
-      >
-        <template #icon>
-          <SearchIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppInput>
+    <AppInput
+      :modelValue="content"
+      type="text"
+      class="w-full"
+      :label="$t('general.search')"
+      @input="content = $event.target.value"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
 
-      <AppSelect
-        class="w-full"
-        :modelValue="status"
-        :options="
-          Object.entries(StatusMessageTypes).map(([key, value]) => ({
-            value: key,
-            name: $t(value),
-          }))
-        "
-        :label="$t('general.status')"
-        @update:modelValue="status = $event as string"
-      >
-        <template #icon>
-          <StatusIcon class="w-6 h-4 dark:fill-white" />
-        </template>
-      </AppSelect>
+    <AppSelect
+      class="w-full"
+      :modelValue="status"
+      :options="
+        Object.entries(StatusMessageTypes).map(([key, value]) => ({
+          value: key,
+          name: $t(value),
+        }))
+      "
+      :label="$t('general.status')"
+      @update:modelValue="status = $event as string"
+    >
+      <template #icon>
+        <StatusIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
 
-      <AppSelect
-        class="w-full"
-        :modelValue="messageType"
-        :options="
-          Object.entries(TypeMessageTypes).map(([key, value]) => ({
-            value: key,
-            name: $t(value),
-          }))
-        "
-        :label="$t('general.message_type')"
-        @update:modelValue="messageType = $event as string"
-      >
-        <template #icon>
-          <MessageTypeIcon class="w-6 h-4 dark:fill-white" />
-        </template>
-      </AppSelect>
+    <AppSelect
+      class="w-full"
+      :modelValue="messageType"
+      :options="
+        Object.entries(TypeMessageTypes).map(([key, value]) => ({
+          value: key,
+          name: $t(value),
+        }))
+      "
+      :label="$t('general.message_type')"
+      @update:modelValue="messageType = $event as string"
+    >
+      <template #icon>
+        <MessageTypeIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
 
-      <AppDateRangePicker
-        class="w-full col-span-1 sm:col-span-2"
-        :startDate="startDateString"
-        :endDate="endDateString"
-        :startLabel="$t('general.start_date')"
-        :endLabel="$t('general.end_date')"
-        @update:startDate="startDateString = $event"
-        @update:endDate="endDateString = $event"
-      >
-        <template #icon>
-          <DateIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppDateRangePicker>
-    </div>
+    <AppDateRangePicker
+      class="w-full col-span-1 sm:col-span-2"
+      :startDate="startDateString"
+      :endDate="endDateString"
+      :startLabel="$t('general.start_date')"
+      :endLabel="$t('general.end_date')"
+      @update:startDate="startDateString = $event"
+      @update:endDate="endDateString = $event"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
   </AppFilterPanel>
   <AppTable
     class="w-full mt-4"

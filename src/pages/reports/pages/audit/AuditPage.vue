@@ -201,61 +201,59 @@ export default defineComponent({
     :header-actions="headerActions"
     v-model:showMobileModal="showMobileModal"
   >
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
-      <AppInput
-        :modelValue="search"
-        type="text"
-        class="w-full"
-        :label="$t('general.search')"
-        @input="search = $event.target.value"
-      >
-        <template #icon>
-          <SearchIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppInput>
+    <AppInput
+      :modelValue="search"
+      type="text"
+      class="w-full"
+      :label="$t('general.search')"
+      @input="search = $event.target.value"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
 
-      <AppSelect
-        class="w-full"
-        :modelValue="action"
-        :options="
-          Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
-        "
-        :label="$t('general.action')"
-        @update:modelValue="action = $event as string"
-      >
-        <template #icon>
-          <ActionIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppSelect>
+    <AppSelect
+      class="w-full"
+      :modelValue="action"
+      :options="
+        Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+      "
+      :label="$t('general.action')"
+      @update:modelValue="action = $event as string"
+    >
+      <template #icon>
+        <ActionIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
 
-      <AppSelect
-        class="w-full"
-        :modelValue="table"
-        :options="
-          Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
-        "
-        :label="$t('general.module')"
-        @update:modelValue="table = $event as string"
-      >
-        <template #icon>
-          <ModuleIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppSelect>
+    <AppSelect
+      class="w-full"
+      :modelValue="table"
+      :options="
+        Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+      "
+      :label="$t('general.module')"
+      @update:modelValue="table = $event as string"
+    >
+      <template #icon>
+        <ModuleIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
 
-      <AppDateRangePicker
-        class="w-full col-span-1 sm:col-span-2"
-        :startDate="startDateString"
-        :endDate="endDateString"
-        :startLabel="$t('general.start_date')"
-        :endLabel="$t('general.end_date')"
-        @update:startDate="startDateString = $event"
-        @update:endDate="endDateString = $event"
-      >
-        <template #icon>
-          <DateIcon class="w-4 h-4 dark:fill-white" />
-        </template>
-      </AppDateRangePicker>
-    </div>
+    <AppDateRangePicker
+      class="w-full col-span-1 sm:col-span-2"
+      :startDate="startDateString"
+      :endDate="endDateString"
+      :startLabel="$t('general.start_date')"
+      :endLabel="$t('general.end_date')"
+      @update:startDate="startDateString = $event"
+      @update:endDate="endDateString = $event"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
   </AppFilterPanel>
   <DialogChangesAudit
     :changesData="dataChanges"
