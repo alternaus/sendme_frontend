@@ -24,8 +24,8 @@ import { IconTypesSettings } from './components/enums/icon-types-settings.enum'
 
     <AppLinkCard
       :icon="IconTypesSettings.INTEGRATIONS"
-      :text="$t('general.integrations')"
-      :to="{ name: 'settings.integrations' }"
+      :text="$t('titles.general_settings')"
+      :to="{ name: 'settings.general' }"
     />
   </div>
 </template>
