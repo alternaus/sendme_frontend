@@ -48,6 +48,8 @@ export default defineComponent({
     const { search, startDate, endDate } = useDispatchFilter()
     const { activeFiltersCount } = useActiveFiltersCount({ search, startDate, endDate })
 
+    const showMobileModal = ref(false)
+
     const page = ref(1)
     const limit = ref(10)
     const dispatches = ref<ICampaignDispatch[]>([])
@@ -104,9 +106,7 @@ export default defineComponent({
         label: t('actions.filter'),
         type: ActionTypes.FILTER,
         badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
-        onClick: () => {
-          // Manejado por AppFilterPanel
-        },
+        onClick: () => { showMobileModal.value = !showMobileModal.value },
       },
       {
         label: t('actions.export'),
@@ -175,6 +175,7 @@ export default defineComponent({
       getStatusBadgeClass,
       formatDate,
       loading,
+      showMobileModal,
     }
   },
 })
@@ -182,7 +183,10 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.CAMPAIGNS" :text="$t('report.sending_by_campaign')" :actions="headerActions" />
 
-  <AppFilterPanel :header-actions="headerActions">
+  <AppFilterPanel
+    :header-actions="headerActions"
+    v-model:showMobileModal="showMobileModal"
+  >
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <AppInput
         :modelValue="search"

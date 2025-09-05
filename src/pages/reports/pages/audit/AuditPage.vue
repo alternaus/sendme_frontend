@@ -52,6 +52,8 @@ export default defineComponent({
     const { action, table, startDate, endDate, search } = useAuditFilter()
     const { activeFiltersCount } = useActiveFiltersCount({ action, table, startDate, endDate, search })
 
+    const showMobileModal = ref(false)
+
     const dataChanges = ref<Record<string, unknown>>({})
     const isDialogVisible = ref(false)
     const page = ref(1)
@@ -109,9 +111,7 @@ export default defineComponent({
         label: t('actions.filter'),
         type: ActionTypes.FILTER,
         badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
-        onClick: () => {
-          // Manejado por AppFilterPanel
-        },
+        onClick: () => { showMobileModal.value = !showMobileModal.value },
       },
       {
         label: t('actions.export'),
@@ -189,6 +189,7 @@ export default defineComponent({
       formatTableValue,
       ActionAuditTypes,
       ModuleTypes,
+      showMobileModal,
     }
   },
 })
@@ -196,7 +197,10 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.AUDIT" :text="$t('report.audit')" :actions="headerActions" />
 
-  <AppFilterPanel :header-actions="headerActions">
+  <AppFilterPanel
+    :header-actions="headerActions"
+    v-model:showMobileModal="showMobileModal"
+  >
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4">
       <AppInput
         :modelValue="search"

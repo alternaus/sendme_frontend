@@ -133,7 +133,8 @@ const getActionSize = (): 'small' | 'large' | undefined => {
           :severity="getActionSeverity(action.type)"
           :size="getActionSize()"
           rounded
-          class="!w-8 !h-8 md:!w-10 md:!h-10 !p-1 md:!p-2 flex-shrink-0 flex items-center justify-center"
+          class="!w-8 !h-8 md:!w-10 md:!h-10 !p-1 md:!p-2 flex-shrink-0 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
+
         >
           <component
             :is="ActionIconComponents[action.type]"
@@ -141,13 +142,21 @@ const getActionSize = (): 'small' | 'large' | undefined => {
           />
         </AppButton>
 
-        <!-- Badge con contador para filtros u otras acciones -->
-        <span
-          v-if="action.badge && action.badge > 0"
-          class="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1 text-xs font-bold text-white bg-red-500 rounded-full"
+        <Transition
+          enter-active-class="transition-all duration-200 ease-out"
+          enter-from-class="opacity-0 scale-0 transform"
+          enter-to-class="opacity-100 scale-100 transform"
+          leave-active-class="transition-all duration-150 ease-in"
+          leave-from-class="opacity-100 scale-100 transform"
+          leave-to-class="opacity-0 scale-0 transform"
         >
-          {{ action.badge }}
-        </span>
+          <span
+            v-if="action.badge && action.badge > 0"
+            class="absolute -top-1 -right-1 flex items-center justify-center min-w-5 h-5 px-1 text-xs font-bold text-white bg-red-500 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110"
+          >
+            {{ action.badge }}
+          </span>
+        </Transition>
       </div>
     </div>
   </div>
