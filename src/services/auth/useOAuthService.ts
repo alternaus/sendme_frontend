@@ -25,7 +25,7 @@ export const useOAuthService = () => {
 
   const checkStatus = async (provider: OAuthProviderType) => {
     const response = await privateApi.get<IOAuthBackendStatus>(`/auth/oauth/${provider}/status`)
-    
+
     // Mapear la respuesta del backend al formato esperado por el frontend
     return {
       hasValidTokens: response.hasOAuthTokens || false,
