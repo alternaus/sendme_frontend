@@ -7,18 +7,18 @@ import BuyIcon from '@/assets/svg/header/buy.svg?component'
 import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import ReportsIcon from '@/assets/svg/header/reports.svg?component'
-import SendIcon from '@/assets/svg/header/send.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
+import EyeIcon from '@/assets/svg/lucide/eye.svg?component'
 import FilterIcon from '@/assets/svg/lucide/list-filter-plus.svg?component'
+import PencilIcon from '@/assets/svg/lucide/pencil.svg?component'
+import PlusIcon from '@/assets/svg/lucide/plus.svg?component'
+import SendIcon from '@/assets/svg/lucide/send.svg?component'
+import TrashIcon from '@/assets/svg/lucide/trash.svg?component'
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
 import MessagesIcon from '@/assets/svg/report/messages.svg?component'
-import CreateIcon from '@/assets/svg/table-actions/create.svg?component'
-import DeleteIcon from '@/assets/svg/table-actions/delete.svg?component'
-import EditIcon from '@/assets/svg/table-actions/edit.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
-import ViewIcon from '@/assets/svg/table-actions/view.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
@@ -60,12 +60,12 @@ defineEmits<{
 const { t } = useI18n()
 
 const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
-  [ActionTypes.CREATE]: CreateIcon,
-  [ActionTypes.EDIT]: EditIcon,
-  [ActionTypes.DELETE]: DeleteIcon,
+  [ActionTypes.CREATE]: PlusIcon,
+  [ActionTypes.EDIT]: PencilIcon,
+  [ActionTypes.DELETE]: TrashIcon,
   [ActionTypes.EXPORT]: ExportIcon,
   [ActionTypes.IMPORT]: ImportIcon,
-  [ActionTypes.VIEW]: ViewIcon,
+  [ActionTypes.VIEW]: EyeIcon,
   [ActionTypes.SEND]: SendIcon,
   [ActionTypes.BULK_SMS]: SendIcon,
   [ActionTypes.FILTER]: FilterIcon,
