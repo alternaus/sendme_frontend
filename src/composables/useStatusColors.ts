@@ -2,6 +2,8 @@ import { computed } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
+import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
+
 export type StatusType = 'campaign' | 'contact' | 'message' | 'recharge' | 'audit' | 'dispatch'
 
 export type TagSeverity = 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast'
@@ -14,9 +16,9 @@ const STATUS_CONFIG = {
     finished: 'info' as TagSeverity
   },
   contact: {
-    active: 'success' as TagSeverity,
-    inactive: 'secondary' as TagSeverity,
-    blocked: 'danger' as TagSeverity
+    [ContactStatus.ACTIVE]: 'success' as TagSeverity,
+    [ContactStatus.INACTIVE]: 'secondary' as TagSeverity,
+    [ContactStatus.BLOCKED]: 'danger' as TagSeverity
   },
   message: {
     queued: 'info' as TagSeverity,
@@ -72,7 +74,7 @@ export const useStatusColors = () => {
 
     return Object.keys(typeConfig).map(status => ({
       value: status,
-      label: t(`status.${type}.${status}`, status), // Fallback al status si no hay traducción
+      label: t(`status.${type}.${status}`, status),
       severity: getStatusSeverity(status, type)
     }))
   }

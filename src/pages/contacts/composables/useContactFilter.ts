@@ -3,27 +3,28 @@ import type { Ref } from 'vue'
 import * as yup from 'yup'
 
 import { useStatusColors } from '@/composables/useStatusColors'
+import type { ContactOrigin } from '@/services/contact/enums/contact-origin.enum'
+import type { ContactStatus } from '@/services/contact/enums/contact-status.enum'
 
 export interface ContactFilterForm {
   search: string
   name: string
   countryCode: string
-  status: string
-  origin: string
+  status: ContactStatus
+  origin?: ContactOrigin
 }
 
 export interface ContactFilterFormRef {
   search: Ref<string>
   name: Ref<string>
   countryCode: Ref<string>
-  status: Ref<string>
-  origin: Ref<string>
+  status: Ref<ContactStatus | null>
+  origin: Ref<ContactOrigin | null>
 }
 
 export const useContactFilter = () => {
   const { getStatusesForType } = useStatusColors()
 
-  // Obtener estados válidos dinámicamente
   const validStatuses = ['', ...getStatusesForType('contact')]
 
   const schema = yup.object<ContactFilterForm>({
@@ -40,8 +41,8 @@ export const useContactFilter = () => {
       search: '',
       name: '',
       countryCode: '',
-      status: '',
-      origin: '',
+      status:undefined,
+      origin: undefined,
     },
     validateOnMount: false,
   })

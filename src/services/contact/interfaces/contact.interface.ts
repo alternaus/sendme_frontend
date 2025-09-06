@@ -1,3 +1,4 @@
+import type { ContactOrigin } from '../enums/contact-origin.enum'
 import type { ContactStatus } from '../enums/contact-status.enum'
 
 export interface IContact {
@@ -6,6 +7,7 @@ export interface IContact {
   email?: string
   phone: string
   countryCode: string
+  origin?: ContactOrigin
   status?: ContactStatus
   lastName?: string
   birthDate?: Date | null
@@ -18,7 +20,7 @@ export interface IContact {
 
 export interface ICustomValue {
   id:string
-  value: string | null // Permitir null para campos de fecha
+  value: string | null
   contactId:string
   customFieldId:string
   createdAt: Date

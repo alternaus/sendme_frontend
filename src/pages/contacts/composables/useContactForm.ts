@@ -8,7 +8,7 @@ import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
 
 export interface CustomValue {
   customFieldId?:string
-  value?: string | null // Permitir null para campos de fecha
+  value?: string | null
   id?:string
 }
 
@@ -39,27 +39,25 @@ export const useFormContact = () => {
   const { t } = useI18n()
   const { getStatusesForType } = useStatusColors()
 
-  // Obtener estados válidos dinámicamente
   const validStatuses = getStatusesForType('contact')
 
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('contacts.general.required_field'),
     },
     string: {
-      email: () => t('general.invalid_email'),
+      email: () => t('contacts.general.invalid_email'),
     },
   })
 
-  //✅ Definir esquema de validación con traducciones - Solo phone y countryCode requeridos
   const schema = yup.object<ContactForm>({
-    name: yup.string().optional().label(t('general.name')),
-    lastName: yup.string().optional().label(t('general.last_name')),
-    email: yup.string().email().optional().label(t('general.email')),
-    phone: yup.string().required().label(t('general.phone')),
-    countryCode: yup.string().required().label(t('general.country_code')),
-    status: yup.string().oneOf(validStatuses).optional().label(t('general.status')),
-    birthDate: yup.date().nullable().optional().label(t('general.birth_date')),
+    name: yup.string().optional().label(t('contacts.general.name')),
+    lastName: yup.string().optional().label(t('contacts.general.last_name')),
+    email: yup.string().email().optional().label(t('contacts.general.email')),
+    phone: yup.string().required().label(t('contacts.general.phone')),
+    countryCode: yup.string().required().label(t('contacts.general.country_code')),
+    status: yup.string().oneOf(validStatuses).optional().label(t('contacts.general.status')),
+    birthDate: yup.date().nullable().optional().label(t('contacts.general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({
         customFieldId: yup.number().integer().required().label('form.customFieldId'),

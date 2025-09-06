@@ -1,2 +1,5 @@
-// Re-export from centralized constants
-export { ContactStatus, ContactStatusTypes } from '../constants/contact.constants'
+export enum ContactStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  BLOCKED = 'BLOCKED'
+}

@@ -10,7 +10,8 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
-import { createContactOriginOptions, createCountryCodeOptions } from '@/services/contact/helpers/contact-options.helper'
+import { useEnumValues } from '@/composables/useEnumValues'
+import { ContactOrigin } from '@/services/contact/enums/contact-origin.enum'
 
 interface Props {
   search?: string
@@ -60,7 +61,19 @@ const updateField = (field: string, value: string) => {
   }
 }
 
-const countryCodeOptions = createCountryCodeOptions()
+const { enumOptions:originOptions } = useEnumValues(ContactOrigin)
+
+const countryCodeOptions = [
+  { name: 'US', value: '1' },
+  { name: 'UK', value: '44' },
+  { name: 'CA', value: '1' },
+  { name: 'AU', value: '61' },
+  { name: 'FR', value: '33' },
+  { name: 'DE', value: '49' },
+  { name: 'IN', value: '91' },
+  { name: 'JP', value: '81' },
+  { name: 'CN', value: '86' },
+]
 </script>
 
 <template>
@@ -71,7 +84,7 @@ const countryCodeOptions = createCountryCodeOptions()
           :modelValue="_props.search"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.search')"
+          :label="t('general.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -83,7 +96,7 @@ const countryCodeOptions = createCountryCodeOptions()
           :modelValue="_props.name"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.name')"
+          :label="t('general.name')"
           @input="updateField('name', $event.target.value)"
         >
           <template #icon>
@@ -95,7 +108,7 @@ const countryCodeOptions = createCountryCodeOptions()
           class="w-full mt-3"
           :modelValue="_props.countryCode"
           :options="countryCodeOptions"
-          :label="$t('general.country_code')"
+          :label="t('general.country_code')"
           @update:modelValue="updateField('countryCode', $event !== null ? String($event) : '')"
         >
           <template #icon>
@@ -107,7 +120,7 @@ const countryCodeOptions = createCountryCodeOptions()
           class="w-full mt-3"
           :modelValue="_props.status"
           status-type="contact"
-          :label="$t('general.status')"
+          :label="t('general.status')"
           :show-colors="true"
           @update:modelValue="updateField('status', $event !== null ? String($event) : '')"
         >
@@ -119,8 +132,8 @@ const countryCodeOptions = createCountryCodeOptions()
         <AppSelect
           class="w-full mt-3"
           :modelValue="_props.origin"
-          :options="createContactOriginOptions(t)"
-          :label="$t('general.origin')"
+          :options="originOptions"
+          :label="t('general.origin')"
           @update:modelValue="updateField('origin', $event !== null ? String($event) : '')"
         >
           <template #icon>
