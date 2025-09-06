@@ -2,6 +2,7 @@ import { computed } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
+import { CampaignStatus } from '@/services/campaign/enums/campaign-status.enum'
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
 
 export type StatusType = 'campaign' | 'contact' | 'message' | 'recharge' | 'audit' | 'dispatch'
@@ -10,10 +11,10 @@ export type TagSeverity = 'success' | 'info' | 'warning' | 'danger' | 'secondary
 
 const STATUS_CONFIG = {
   campaign: {
-    active: 'success' as TagSeverity,
-    inactive: 'secondary' as TagSeverity,
-    paused: 'warning' as TagSeverity,
-    finished: 'info' as TagSeverity
+    [CampaignStatus.ACTIVE]: 'success' as TagSeverity,
+    [CampaignStatus.INACTIVE]: 'secondary' as TagSeverity,
+    [CampaignStatus.PAUSED]: 'warning' as TagSeverity,
+    [CampaignStatus.FINISHED]: 'info' as TagSeverity
   },
   contact: {
     [ContactStatus.ACTIVE]: 'success' as TagSeverity,

@@ -1,5 +1,8 @@
+import type { CampaignConditionType } from "../enums/campaign-condition-type.enum"
+import type { CampaignFrequency } from "../enums/campaign-frequency.enum"
+
 export interface ITestRule {
-  conditionType: string
+  conditionType: CampaignConditionType
   value: string | number | number[]
   customFieldId:string
 }
@@ -9,7 +12,7 @@ export interface ITestExecutions {
   endDate: string
   time: string
   days: string[]
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  frequency: CampaignFrequency
   maxExecutions?: number
 }
 
@@ -34,7 +37,6 @@ export interface ITestCampaignResponse {
   executions?: ITestExecutionsResult
 }
 
-// Mantener compatibilidad con interfaces anteriores
 export interface ITestRulesRequest {
   rules: ITestRule[]
 }

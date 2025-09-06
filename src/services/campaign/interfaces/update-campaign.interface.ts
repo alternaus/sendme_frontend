@@ -1,3 +1,8 @@
+import type { CampaignFrequency } from "../enums/campaign-frequency.enum";
+import type { CampaignStatus } from "../enums/campaign-status.enum";
+import type { ContentType } from "../enums/content-type.enum";
+import type { CampaignDays } from "../enums/days.enum";
+
 export interface IUpdateCampaignRule {
   id?:string;
   conditionType?: string;
@@ -9,10 +14,10 @@ export interface IUpdateCampaign {
   name?: string;
   description?: string;
   content?: string;
-  contentType?: 'PLAIN_TEXT' | 'HTML';
-  status?: 'ACTIVE' | 'INACTIVE';
-  frequency?: 'DAILY' | 'WEEKLY' | 'MONTHLY';
-  days?: string[];
+  contentType?: ContentType;
+  status?: CampaignStatus;
+  frequency?: CampaignFrequency;
+  days?: CampaignDays[];
   startDate?: string;
   endDate?: string;
   time?: string;

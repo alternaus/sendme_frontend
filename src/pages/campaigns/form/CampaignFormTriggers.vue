@@ -10,6 +10,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 import { useCampaignTriggerInputs } from '@/pages/campaigns/composables/useCampaignTriggerInputs'
+import type { CampaignConditionType } from '@/services/campaign/enums/campaign-condition-type.enum'
 import type { ICustomField } from '@/services/custom-field/interfaces/custom-field.interface'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
@@ -42,7 +43,6 @@ const {
   isDateInput,
   isBetweenInput,
   isDateBetweenInput,
-  getPlaceholderText,
   updateBetweenValue,
   getBetweenValue,
   initializeBetweenValues,
@@ -147,7 +147,7 @@ const handleRemoveRule = (index: number) => {
 const handleConditionChange = (index: number, conditionType: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
-    rule.conditionType = typeof conditionType === 'string' ? conditionType : String(conditionType)
+    rule.conditionType = typeof conditionType === 'string' ? conditionType as CampaignConditionType : null
     rule.value = ''
   }
   clearBetweenValues(index)
@@ -158,7 +158,7 @@ const handleCustomFieldChange = (index: number, customFieldId: string | number |
   const rule = campaignRules.value[index]
   if (rule) {
     rule.customFieldId = typeof customFieldId === 'string' ? customFieldId : String(customFieldId) || ''
-    rule.conditionType = ''
+    rule.conditionType = null
     rule.value = ''
   }
   clearBetweenValues(index)
@@ -231,7 +231,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="isNumericInput(rule.conditionType, rule.customFieldId)"
                     v-model="rule.value"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.numeric_value')"
                     type="number"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
@@ -241,7 +241,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="isDateInput(rule.conditionType, rule.customFieldId)"
                     :modelValue="rule.value ? new Date(rule.value) : undefined"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.select_date')"
                     class="w-full"
                     @update:modelValue="(date) => { rule.value = date ? date.toISOString().split('T')[0] : ''; handleFieldChange(index); }" />
 
@@ -290,7 +290,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="needsValueInput(rule.conditionType)"
                     v-model="rule.value"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.value')"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
                 </div>

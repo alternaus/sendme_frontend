@@ -1,7 +1,9 @@
+import type { CampaignStatus } from "../enums/campaign-status.enum";
+
 export interface IFilterCampaign {
   search?: string;
   name?: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'FINISHED';
+  status?: CampaignStatus;
   startDate?: string;
   endDate?: string;
   channelId?:string;

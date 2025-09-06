@@ -4,10 +4,15 @@ import * as yup from 'yup'
 
 import { type StepConfig, useFormStepper } from '@/composables/useFormStepper'
 import { useStatusColors } from '@/composables/useStatusColors'
+import type { CampaignConditionType } from '@/services/campaign/enums/campaign-condition-type.enum'
+import { CampaignFrequency } from '@/services/campaign/enums/campaign-frequency.enum'
+import { CampaignStatus } from '@/services/campaign/enums/campaign-status.enum'
+import { ContentType } from '@/services/campaign/enums/content-type.enum'
+import type { CampaignDays } from '@/services/campaign/enums/days.enum'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface CampaignRule {
-  conditionType: string
+  conditionType: CampaignConditionType  | null
   value: string
   customFieldId: string
   campaignId?: string
@@ -17,13 +22,13 @@ export interface CampaignFormData {
   name: string
   description: string
   content: string
-  contentType: 'PLAIN_TEXT' | 'HTML'
-  status: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'FINISHED'
+  contentType: ContentType
+  status: CampaignStatus
   startDate: Date
   endDate: Date
   time: Date
-  days: string[]
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  days: CampaignDays[]
+  frequency: CampaignFrequency
   channelId: string
   organizationId: string
   campaignRules: CampaignRule[]
@@ -112,13 +117,13 @@ export function useCampaignForm() {
     name: '',
     description: '',
     content: '',
-    contentType: 'PLAIN_TEXT',
-    status: 'ACTIVE',
+    contentType: ContentType.PLAIN_TEXT,
+    status: CampaignStatus.ACTIVE,
     startDate: new Date(),
     endDate: new Date(),
     time: new Date(0, 0, 0, 12, 0),
     days: [],
-    frequency: 'DAILY',
+    frequency: CampaignFrequency.DAILY,
     channelId: '1',
     organizationId: userOrganizationId,
     campaignRules: []
@@ -151,7 +156,7 @@ export function useCampaignForm() {
 
   const addRule = () => {
     addCampaignRule({
-      conditionType: '',
+      conditionType: null,
       value: '',
       customFieldId: ''
     })
