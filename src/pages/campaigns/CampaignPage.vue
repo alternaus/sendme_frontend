@@ -120,7 +120,7 @@ const fetchCampaigns = async (
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('campaign.errors.load_campaigns'),
+      detail: t('campaigns.errors.load_campaigns'),
     })
   } finally {
     loading.value = false
@@ -211,8 +211,8 @@ const handleDelete = async () => {
       severity: 'success',
       summary: t('general.success'),
       detail: campaignsToDelete.length === 1
-        ? t('campaign.success.removed')
-        : t('campaign.success.removed_multiple', { count: campaignsToDelete.length }),
+        ? t('campaigns.actions.success_removed')
+        : t('campaigns.actions.success_removed_multiple', { count: campaignsToDelete.length }),
       life: 3000,
     })
     await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
@@ -220,7 +220,7 @@ const handleDelete = async () => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('campaign.errors.removed'),
+      detail: t('campaigns.errors.removed'),
       life: 3000,
     })
   }
@@ -246,7 +246,7 @@ const handleTestRules = async () => {
     toast.add({
       severity: 'warn',
       summary: t('general.warning'),
-      detail: t('campaign.no_selection_warning'),
+      detail: t('campaigns.test_rules.no_selection_warning'),
       life: 3000,
     })
     return
@@ -257,7 +257,7 @@ const handleTestRules = async () => {
     toast.add({
       severity: 'warn',
       summary: t('general.warning'),
-      detail: t('campaign.single_test_warning'),
+      detail: t('campaigns.test_rules.single_test_warning'),
       life: 3000,
     })
     return
@@ -268,7 +268,7 @@ const handleTestRules = async () => {
     toast.add({
       severity: 'warn',
       summary: t('general.warning'),
-      detail: t('campaign.no_rules_warning'),
+      detail: t('campaigns.test_rules.no_rules_warning'),
       life: 3000,
     })
     return
@@ -302,18 +302,18 @@ const handleTestRules = async () => {
     toast.add({
       severity: 'success',
       summary: t('general.success'),
-      detail: response.rules ? t('campaign.test_completed', {
-        selected: response.rules.selected.toLocaleString(),
-        total: response.rules.total.toLocaleString(),
-        percent: response.rules.percent.toFixed(2)
-      }) : t('campaign.test_completed_executions'),
+            detail: response.rules ? t('campaigns.test_rules.test_completed', {
+        selected: response.rules.selected,
+        total: response.rules.total,
+        percent: response.rules.percent.toFixed(1)
+      }) : t('campaigns.test_rules.test_completed_executions'),
       life: 5000,
     })
   } catch {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('campaign.test_error'),
+      detail: t('campaigns.test_rules.test_error'),
       life: 3000,
     })
   } finally {
@@ -367,7 +367,7 @@ const headerActions = computed(() => {
   <AppHeader
     :icon="IconTypes.CAMPAIGNS"
     :actions="headerActions"
-    :title="$t('campaign.campaigns')"
+    :title="$t('campaigns.general.campaigns')"
     :selectedItems="selected.length"
   />
 
@@ -442,56 +442,56 @@ const headerActions = computed(() => {
     class="w-full mt-4"
     :data="campaigns"
     :headers="[
-      { field: 'name', header: $t('campaign.name') },
-      { field: 'frequency', header: $t('campaign.frequency') },
-      { field: 'channelName', header: $t('campaign.channel') },
-      { field: 'startDate', header: $t('campaign.start_date') },
-      { field: 'endDate', header: $t('campaign.end_date') },
-      { field: 'status', header: $t('campaign.status') },
+      { field: 'name', header: $t('campaigns.form.name') },
+      { field: 'frequency', header: $t('campaigns.form.frequency') },
+      { field: 'channelName', header: $t('campaigns.form.channel') },
+      { field: 'startDate', header: $t('campaigns.form.start_date') },
+      { field: 'endDate', header: $t('campaigns.form.end_date') },
+      { field: 'status', header: $t('campaigns.form.status') },
     ]"
     :pageSize="campaignMeta.limit"
     :pageCurrent="campaignMeta.currentPage"
     :totalItems="campaignMeta.totalRecords"
     :multipleSelection="true"
     :loading="loading"
-    textTotalItems="campaign.campaigns"
+    textTotalItems="campaigns.general.campaigns"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >
     <template #header-name>
       <div class="flex items-center">
         <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.name') }}</span>
+        <span>{{ $t('campaigns.form.name') }}</span>
       </div>
     </template>
     <template #header-frequency>
       <div class="flex items-center">
         <ModuleIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.frequency') }}</span>
+        <span>{{ $t('campaigns.form.frequency') }}</span>
       </div>
     </template>
     <template #header-channelName>
       <div class="flex items-center">
         <ChannelIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.channel') }}</span>
+        <span>{{ $t('campaigns.form.channel') }}</span>
       </div>
     </template>
     <template #header-startDate>
       <div class="flex items-center">
         <DateStartIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.start_date') }}</span>
+        <span>{{ $t('campaigns.form.start_date') }}</span>
       </div>
     </template>
     <template #header-endDate>
       <div class="flex items-center">
         <DateEndIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.end_date') }}</span>
+        <span>{{ $t('campaigns.form.end_date') }}</span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span>{{ $t('campaign.status') }}</span>
+        <span>{{ $t('campaigns.form.status') }}</span>
       </div>
     </template>
     <template #custom-channelName="{ data }">
@@ -500,10 +500,10 @@ const headerActions = computed(() => {
     <template #custom-frequency="{ data }">
       <div>
         <template v-if="hasTableValue(data, 'days') && getTableValueWithDefault<string[]>(data, 'days', []).length">
-          {{ getTableValueWithDefault<string[]>(data, 'days', []).map((day: string) => $t(`campaign.days_abbr.${day}`)).join(', ') }} {{ getTableValueWithDefault<string>(data, 'time', '') }}
+          {{ getTableValueWithDefault<string[]>(data, 'days', []).map((day: string) => $t(`campaigns.days_abbr.${day}`)).join(', ') }} {{ getTableValueWithDefault<string>(data, 'time', '') }}
         </template>
         <template v-else-if="hasTableValue(data, 'frequency')">
-          {{ $t(`campaign.frequency_types.${getTableValueWithDefault<string>(data, 'frequency', '')}`) }}
+          {{ $t(`campaigns.frequency_types.${getTableValueWithDefault<string>(data, 'frequency', '')}`) }}
         </template>
         <template v-else>-</template>
       </div>
@@ -523,7 +523,7 @@ const headerActions = computed(() => {
     <template #custom-status="{ data }">
       <div class="flex justify-center">
         <AppTag
-          :label="$t(`status.campaign.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
+          :label="$t(`campaigns.status.${getTableValueWithDefault<string>(data, 'status', 'inactive')}`)"
           :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'inactive'), 'campaign')"
         />
       </div>

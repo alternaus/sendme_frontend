@@ -137,7 +137,7 @@ onMounted(() => {
           class="w-full mt-3"
           :modelValue="channelId"
           :options="channelOptions"
-          :label="$t('campaign.channel')"
+          :label="$t('campaigns.form.channel')"
           @update:modelValue="updateField('channelId', $event as string)"
         >
           <template #icon>

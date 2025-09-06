@@ -15,7 +15,7 @@ export const useSidebarRoutes = () => {
 
   const routes = computed(() => [
     { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
-    { path: '/campaigns', icon: Campaigns, title: t('campaign.campaigns') },
+    { path: '/campaigns', icon: Campaigns, title: t('campaigns.general.campaigns') },
     { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
     { path: '/send', icon: Send, title: t('general.send') },
     { path: '/report', icon: Reports, title: t('report.reports') },

@@ -74,10 +74,15 @@ export const useStatusColors = () => {
     if (!typeConfig) return []
 
     return Object.keys(typeConfig).map(status => {
-      // Para contactos, usar las traducciones del archivo contacts.json
-      const translationKey = type === 'contact'
-        ? `contacts.status.${status}`
-        : `status.${type}.${status.toLowerCase()}`
+      // Para contactos y campañas, usar las traducciones de sus archivos modulares
+      let translationKey: string
+      if (type === 'contact') {
+        translationKey = `contacts.status.${status}`
+      } else if (type === 'campaign') {
+        translationKey = `campaigns.status.${status}`
+      } else {
+        translationKey = `status.${type}.${status.toLowerCase()}`
+      }
 
       return {
         value: status,

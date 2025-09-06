@@ -1,16 +1,18 @@
 import { createI18n,type I18n } from 'vue-i18n'
 
 import en from '@/locales/en.json'
+import enCampaigns from '@/locales/en/campaigns.json'
 import enContacts from '@/locales/en/contacts.json'
 import es from '@/locales/es.json'
+import esCampaigns from '@/locales/es/campaigns.json'
 import esContacts from '@/locales/es/contacts.json'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MessageSchema = any
 
 const messages: Record<'es' | 'en', MessageSchema> = {
-  es: { ...es, contacts: esContacts },
-  en: { ...en, contacts: enContacts }
+  es: { ...es, contacts: esContacts, campaigns: esCampaigns },
+  en: { ...en, contacts: enContacts, campaigns: enCampaigns }
 }
 
 const savedLang = (localStorage.getItem('lang') as 'es' | 'en') || 'es'

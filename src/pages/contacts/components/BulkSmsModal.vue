@@ -245,7 +245,7 @@ const closeDialog = () => {
     </div>
 
     <template #footer>
-      <div class="flex justify-end gap-2">
+      <div class="flex w-auto justify-end gap-2">
         <AppButton
           @click="closeDialog"
           severity="secondary"
@@ -260,7 +260,6 @@ const closeDialog = () => {
           :disabled="!canSend || (selectedChannel === MessageChannel.SMS && messageLength > MAX_CHARACTERS)"
           size="small"
         >
-          <i class="pi pi-send mr-2"></i>
           {{
             isSending
               ? t('contacts.bulk_sms.sending')

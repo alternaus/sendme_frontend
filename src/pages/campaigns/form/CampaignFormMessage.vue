@@ -28,13 +28,13 @@
       <!-- Campos dinámicos -->
       <div class="flex flex-col items-center justify-center gap-2 col-span-12 lg:col-span-2">
         <p class="text-gray-700 dark:text-neutral-300 font-medium">
-          {{ t('campaign.dynamic_data') }}
+          {{ t('campaigns.triggers.dynamic_data') }}
         </p>
 
         <AppSelect v-model="selectedField" :options="availableFields" class="w-full" />
 
         <AppButton
-          :label="t('campaign.insert_in_message')"
+          :label="t('campaigns.triggers.insert_in_message')"
           @click="insertPlaceholder"
         />
       </div>
