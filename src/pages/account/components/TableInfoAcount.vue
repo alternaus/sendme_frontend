@@ -191,7 +191,7 @@ export default defineComponent({
         <div class="flex justify-center items-center">
           <AppTag
             :label="$t(`account.recharge_status.${getTableValueWithDefault<string>(data, 'status', 'PENDING').toUpperCase()}`)"
-            :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'PENDING'), 'recharge')"
+            :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'PENDING').toUpperCase(), 'recharge')"
           />
         </div>
       </template>

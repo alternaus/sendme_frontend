@@ -34,6 +34,17 @@ const STATUS_CONFIG = {
     read: 'contrast' as TagSeverity
   },
   recharge: {
+    ACCEPTED: 'success' as TagSeverity,
+    REJECTED: 'danger' as TagSeverity,
+    PENDING: 'warning' as TagSeverity,
+    FAILED: 'danger' as TagSeverity,
+    REVERSED: 'secondary' as TagSeverity,
+    HELD: 'warning' as TagSeverity,
+    INITIATED: 'info' as TagSeverity,
+    EXPIRED: 'secondary' as TagSeverity,
+    ABANDONED: 'secondary' as TagSeverity,
+    CANCELLED: 'secondary' as TagSeverity,
+    // Mantener también las versiones en minúsculas para compatibilidad
     accepted: 'success' as TagSeverity,
     rejected: 'danger' as TagSeverity,
     pending: 'warning' as TagSeverity,
