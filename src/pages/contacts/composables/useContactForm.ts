@@ -5,6 +5,7 @@ import * as yup from 'yup'
 
 import { useStatusColors } from '@/composables/useStatusColors'
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
+import { generateUUID } from '@/utils/uuid.helper'
 
 export interface CustomValue {
   customFieldId?:string
@@ -60,16 +61,9 @@ export const useFormContact = () => {
     birthDate: yup.date().nullable().optional().label(t('contacts.general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({
-        customFieldId: yup.number().integer().required().label('form.customFieldId'),
-        value: yup.string().when('customFieldId', {
-          is: (_customFieldId:string) => {
-            // Para campos de fecha en customValues, permitir valores vacíos/null
-            return false // Por ahora permitimos valores opcionales
-          },
-          then: (schema) => schema.optional(),
-          otherwise: (schema) => schema.optional()
-        }).label('form.customValue'),
-        id: yup.number().integer().nullable().label('form.customId'),
+        customFieldId: yup.string().required().label('form.customFieldId'),
+        value: yup.string().nullable().optional().label('form.customValue'),
+        id: yup.string().nullable().optional(),
       }),
     ).optional(),
   })
@@ -83,7 +77,7 @@ export const useFormContact = () => {
       phone: '',
       countryCode: '',
       status: ContactStatus.ACTIVE,
-      birthDate: null, // Permitir null por defecto
+      birthDate: null,
       customValues: [],
     },
     validateOnMount: false,
@@ -104,7 +98,11 @@ export const useFormContact = () => {
   } = useFieldArray<CustomValue>('customValues')
 
   const addCustomField = (field: { customFieldId:string; value?: string; id?:string }) => {
-    addCustomValue(field)
+    const fieldWithId = {
+      ...field,
+      id: field.id || generateUUID(),
+    }
+    addCustomValue(fieldWithId)
   }
 
   const removeCustomField = (index: number) => {

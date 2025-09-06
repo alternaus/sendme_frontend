@@ -147,6 +147,7 @@ export default defineComponent({
 
     const onSubmitForm = handleSubmit(
       async (values) => {
+        console.log('Form values:', values) // Debug log
         try {
           const payload = {
             ...values,
@@ -160,6 +161,7 @@ export default defineComponent({
               })) : [],
           }
 
+          console.log('Payload being sent:', payload) // Debug log
 
           if (contactId) {
             await updateContact(contactId, payload)
@@ -180,7 +182,8 @@ export default defineComponent({
           }
 
           router.push('/contacts')
-        } catch {
+        } catch (error) {
+          console.error('Error submitting form:', error) // Debug log
           toast.add({
             severity: 'error',
             summary: t('general.error'),
@@ -189,7 +192,8 @@ export default defineComponent({
           })
         }
       },
-      (_errors) => {
+      (validationErrors) => {
+        console.log('Validation errors:', validationErrors) // Debug log
         form.customValues.value.forEach((_, index) => {
           touchedFields.value[`customValues[${index}].value`] = true
         })

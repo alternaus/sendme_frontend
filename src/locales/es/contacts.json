@@ -6,8 +6,6 @@
   "success_removed_multiple": "Se eliminaron {count} contactos exitosamente",
   "error_removed": "Error al eliminar el contacto",
   "error_getting_contacts": "Error al obtener los contactos",
-  "no_custom_fields": "No hay campos personalizados configurados",
-  "unknown_field_type": "Tipo de campo desconocido",
   "import_contacts": "Importar contactos",
   "delete_confirmation": {
     "title": "Confirmar eliminación",
@@ -74,7 +72,9 @@
     "enter_all_fields_send_message": "Ingresa todos los campos para enviar el mensaje",
     "error_sending_message": "Error al enviar el mensaje",
     "error_loading_file": "Error al cargar el archivo",
-    "unknown_field": "Campo desconocido"
+    "unknown_field": "Campo desconocido",
+    "no_custom_fields": "No hay campos personalizados configurados",
+    "unknown_field_type": "Tipo de campo desconocido"
   },
   "actions": {
     "create": "Crear",
@@ -105,6 +105,7 @@
   },
   "status": {
     "ACTIVE": "Activo",
-    "INACTIVE": "Inactivo"
+    "INACTIVE": "Inactivo",
+    "BLOCKED": "Bloqueado"
   }
 }

@@ -1035,11 +1035,6 @@
       "paused": "Paused",
       "finished": "Finished"
     },
-    "contact": {
-      "active": "Active",
-      "inactive": "Inactive",
-      "blocked": "Blocked"
-    },
     "message": {
       "queued": "Queued",
       "sending": "Sending",

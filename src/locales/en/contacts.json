@@ -74,7 +74,9 @@
     "enter_all_fields_send_message": "Enter all fields to send message",
     "error_sending_message": "Error sending message",
     "error_loading_file": "Error loading file",
-    "unknown_field": "Unknown field"
+    "unknown_field": "Unknown field",
+    "no_custom_fields": "No custom fields configured",
+    "unknown_field_type": "Unknown field type"
   },
   "actions": {
     "create": "Create",
@@ -105,6 +107,7 @@
   },
   "status": {
     "ACTIVE": "Active",
-    "INACTIVE": "Inactive"
+    "INACTIVE": "Inactive",
+    "BLOCKED": "Blocked"
   }
 }

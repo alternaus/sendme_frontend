@@ -73,11 +73,18 @@ export const useStatusColors = () => {
     const typeConfig = STATUS_CONFIG[type]
     if (!typeConfig) return []
 
-    return Object.keys(typeConfig).map(status => ({
-      value: status,
-      label: t(`status.${type}.${status}`, status),
-      severity: getStatusSeverity(status, type)
-    }))
+    return Object.keys(typeConfig).map(status => {
+      // Para contactos, usar las traducciones del archivo contacts.json
+      const translationKey = type === 'contact'
+        ? `contacts.status.${status}`
+        : `status.${type}.${status.toLowerCase()}`
+
+      return {
+        value: status,
+        label: t(translationKey, status),
+        severity: getStatusSeverity(status, type)
+      }
+    })
   }
 
   const isValidStatus = (status: string, type: StatusType): boolean => {

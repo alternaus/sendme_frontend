@@ -12,6 +12,7 @@ import InformationIcon from '@/assets/svg/table-actions/information.svg?componen
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import { CustomFieldDataType } from '@/services/campaign/enums/custom-field-data-type.enum'
 
 import { type CustomValue } from '../composables/useContactForm'
 
@@ -112,7 +113,7 @@ const containerClasses = computed(() => ({
             {{ getFieldName(custom.value.customFieldId) }}
           </label>
 
-          <template v-if="getFieldDataType(custom.value.customFieldId) === 'string'">
+          <template v-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.STRING">
             <AppInput
               v-model="custom.value.value"
               type="text"
@@ -126,7 +127,7 @@ const containerClasses = computed(() => ({
             </AppInput>
           </template>
 
-          <template v-else-if="getFieldDataType(custom.value.customFieldId) === 'number'">
+          <template v-else-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.NUMBER">
             <AppInput
               v-model="custom.value.value"
               type="number"
@@ -140,7 +141,7 @@ const containerClasses = computed(() => ({
             </AppInput>
           </template>
 
-          <template v-else-if="getFieldDataType(custom.value.customFieldId) === 'date'">
+          <template v-else-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.DATE">
             <AppDatePicker
               :model-value="custom.value.value ? new Date(custom.value.value) : null"
               @update:model-value="(val) => handleDateChange(val, custom, index)"
