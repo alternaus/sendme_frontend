@@ -1,7 +1,7 @@
 export interface ITestRule {
   conditionType: string
   value: string | number | number[]
-  customFieldId: number
+  customFieldId:string
 }
 
 export interface ITestExecutions {

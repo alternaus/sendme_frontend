@@ -28,7 +28,7 @@ const { sendBatchMessage } = useSendService()
 const loading = ref(false)
 const saving = ref(false)
 const testing = ref(false)
-const currentId = ref<number | null>(null)
+const currentId = ref<string | null>(null)
 
 // Opciones de puerto SMTP con mapeo de seguridad
 const portSecurityMap = {
@@ -50,7 +50,7 @@ onMounted(async () => {
     const list: EmailConfigurationResponseDto[] = Array.isArray(res) ? res : []
     const item = list?.[0]
     if (item) {
-      currentId.value = (item).id as number
+      currentId.value = (item).id
       setValues({
         name: (item).name,
         host: (item).host,
@@ -122,7 +122,7 @@ const onSubmit = handleSubmit(async (values) => {
 
       const created = await createEmailConfiguration(createPayload)
       const createdData: EmailConfigurationResponseDto = (created)
-      currentId.value = (createdData).id as number
+      currentId.value = (createdData).id
       toast.add({ severity: 'success', summary: 'Guardado', detail: 'Configuración creada', life: 2500 })
     }
   } catch {

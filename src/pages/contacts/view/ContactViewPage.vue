@@ -102,7 +102,7 @@ export default defineComponent({
     const { getCustomFields } = useCustomFieldService()
 
     const contact = ref<IContact | null>(null)
-    const customFields = ref<{ id: number; fieldName: string }[]>([])
+    const customFields = ref<{ id:string; fieldName: string }[]>([])
     const toast = useToast()
 
     const breadcrumbData = computed(() => [
@@ -164,7 +164,7 @@ export default defineComponent({
         type: ActionTypes.DELETE,
         onClick: async () => {
           try {
-            await deleteContact(Number(contactId))
+            await deleteContact((contactId))
             toast.add({
               severity: 'success',
               summary: t('contact.contact_deleted'),

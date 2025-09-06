@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -22,7 +21,7 @@ const authStore = useAuthStore()
 const MAX_USERS = 3
 
 const users = ref<Array<{
-  id?: number;
+  id?:string;
   name: string;
   email: string;
   isEditing: boolean;
@@ -127,22 +126,23 @@ const saveUsers = async () => {
 
   if (hasErrors) return
 
-  //Obtener el ID de la organización del usuario actual
-  const organizationId = authStore.user?.organizationId || 1
+  const organizationId = authStore.user?.organizationId
 
   try {
     for (const user of usersWithData) {
       if (user.id) {
-        //Actualizar usuario existente
         await updateUser(user.id, {
           name: user.name,
           email: user.email
         })
       } else {
+        if (!organizationId) {
+          throw new Error('No organization ID found for the current user.')
+        }
         await createUser({
           name: user.name,
           email: user.email,
-          roleId: 1,
+          roleId: 'user',
           organizationId,
           password: generateRandomPassword(),
         })

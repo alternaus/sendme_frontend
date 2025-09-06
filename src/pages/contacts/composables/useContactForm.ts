@@ -7,9 +7,9 @@ import { useStatusColors } from '@/composables/useStatusColors'
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
 
 export interface CustomValue {
-  customFieldId?: number
+  customFieldId?:string
   value?: string | null // Permitir null para campos de fecha
-  id?: number
+  id?:string
 }
 
 export interface ContactForm {
@@ -64,7 +64,7 @@ export const useFormContact = () => {
       yup.object().shape({
         customFieldId: yup.number().integer().required().label('form.customFieldId'),
         value: yup.string().when('customFieldId', {
-          is: (_customFieldId: number) => {
+          is: (_customFieldId:string) => {
             // Para campos de fecha en customValues, permitir valores vacíos/null
             return false // Por ahora permitimos valores opcionales
           },
@@ -105,7 +105,7 @@ export const useFormContact = () => {
     remove: removeCustomValue,
   } = useFieldArray<CustomValue>('customValues')
 
-  const addCustomField = (field: { customFieldId: number; value?: string; id?: number }) => {
+  const addCustomField = (field: { customFieldId:string; value?: string; id?:string }) => {
     addCustomValue(field)
   }
 

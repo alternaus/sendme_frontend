@@ -4,9 +4,9 @@ export interface IFilterAudit {
   action?: string
   correlationId?: string
   path?: string
-  recordId?: number
+  recordId?:string
   table?: string
-  userId?: number
+  userId?:string
   startDate?: string
   endDate?: string
 }

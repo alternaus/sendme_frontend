@@ -28,7 +28,7 @@ import { useStatusColors } from '@/composables/useStatusColors'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 // Interfaz para mensajes de reporte con contenido
 interface IReportMessage {
-  id: number
+  id:string
   content: string
   type: string
   status: string

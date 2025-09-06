@@ -30,11 +30,11 @@ interface Props {
   actions?: Array<{
     type: ActionTypes
     label: string
-    onClick: (id?: number) => void
+    onClick: (id?:string) => void
     icon?: string
     badge?: number
   }>
-  selectedId?: number | null
+  selectedId?:string | null
   text?: string | null
   title?: string
   selectedItems?: number

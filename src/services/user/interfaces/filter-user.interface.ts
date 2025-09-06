@@ -1,8 +1,8 @@
 export interface IFilterUser {
   name?: string;
   email?: string;
-  roleId?: number;
-  organizationId?: number;
+  roleId?:string;
+  organizationId?:string;
   page?: number;
   limit?: number;
 }

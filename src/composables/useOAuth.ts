@@ -19,7 +19,7 @@ export const useOAuth = () => {
     microsoft: null
   })
 
-  const initiateOAuth = async (provider: OAuthProviderType, returnPath?: string, userId?: number) => {
+  const initiateOAuth = async (provider: OAuthProviderType, returnPath?: string, userId?:string) => {
     try {
       loading.value = true
 

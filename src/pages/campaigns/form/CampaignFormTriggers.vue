@@ -157,7 +157,7 @@ const handleConditionChange = (index: number, conditionType: string | number | b
 const handleCustomFieldChange = (index: number, customFieldId: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
-    rule.customFieldId = typeof customFieldId === 'number' ? customFieldId : Number(customFieldId) || 0
+    rule.customFieldId = typeof customFieldId === 'string' ? customFieldId : String(customFieldId) || ''
     rule.conditionType = ''
     rule.value = ''
   }

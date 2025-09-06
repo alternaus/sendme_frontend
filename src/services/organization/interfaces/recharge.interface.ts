@@ -1,7 +1,7 @@
 export interface IRecharge {
-  id:                number;
-  paymentId:         number;
-  organizationId:    number;
+  id:string;
+  paymentId:string;
+  organizationId:string;
   currencyCode:      string;
   amount:            number;
   messageCount:      number;

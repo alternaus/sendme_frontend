@@ -12,6 +12,6 @@ export interface IUpdateContact {
 }
 
 export interface IUpdateCustomValue {
-  customFieldId: number
+  customFieldId:string
   value: string | null // Permitir null para campos de fecha
 }

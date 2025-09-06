@@ -1,7 +1,7 @@
 import type { ContactStatus } from '../enums/contact-status.enum'
 
 export interface IContact {
-  id: number
+  id:string
   name?: string
   email?: string
   phone: string
@@ -10,17 +10,17 @@ export interface IContact {
   lastName?: string
   birthDate?: Date | null
   customValues?: ICustomValue[]
-  organizationId: number
+  organizationId:string
   createdAt: Date
   updatedAt: Date
   deletedAt?: Date
 }
 
 export interface ICustomValue {
-  id: number
+  id:string
   value: string | null // Permitir null para campos de fecha
-  contactId: number
-  customFieldId: number
+  contactId:string
+  customFieldId:string
   createdAt: Date
   updatedAt: Date
   deletedAt?: Date

@@ -38,13 +38,9 @@ const loadingEvents = ref(false)
 const isSchemaDialogVisible = ref(false)
 const selectedEvent = ref<WebhookEvent | null>(null)
 
-// Opciones para los selects
 const methodOptions = [
   { name: 'GET', value: 'GET' },
   { name: 'POST', value: 'POST' },
-  { name: 'PUT', value: 'PUT' },
-  { name: 'PATCH', value: 'PATCH' },
-  { name: 'DELETE', value: 'DELETE' }
 ]
 
 const authTypeOptions = [
@@ -76,23 +72,12 @@ const timeoutOptions = [
   { name: '120 ' + t('webhooks.seconds'), value: 120000 }
 ]
 
-// Cargar eventos disponibles
 const loadEvents = async () => {
   loadingEvents.value = true
   try {
     availableEvents.value = await getEvents()
   } catch {
-    // Fallback a eventos por defecto si falla la carga
     availableEvents.value = [
-      { id: 1, key: 'message.sent', category: 'message', description: t('webhooks.event_message_sent'), status: 'ACTIVE' },
-      { id: 2, key: 'message.delivered', category: 'message', description: t('webhooks.event_message_delivered'), status: 'ACTIVE' },
-      { id: 3, key: 'message.failed', category: 'message', description: t('webhooks.event_message_failed'), status: 'ACTIVE' },
-      { id: 4, key: 'message.opened', category: 'message', description: t('webhooks.event_message_opened'), status: 'ACTIVE' },
-      { id: 5, key: 'message.clicked', category: 'message', description: t('webhooks.event_message_clicked'), status: 'ACTIVE' },
-      { id: 6, key: 'message.bounced', category: 'message', description: t('webhooks.event_message_bounced'), status: 'ACTIVE' },
-      { id: 7, key: 'campaign.started', category: 'campaign', description: t('webhooks.event_campaign_started'), status: 'ACTIVE' },
-      { id: 8, key: 'campaign.completed', category: 'campaign', description: t('webhooks.event_campaign_completed'), status: 'ACTIVE' },
-      { id: 9, key: 'campaign.failed', category: 'campaign', description: t('webhooks.event_campaign_failed'), status: 'ACTIVE' }
     ]
   } finally {
     loadingEvents.value = false

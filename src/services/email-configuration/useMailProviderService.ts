@@ -12,11 +12,11 @@ export const useMailProviderService = () => {
     return privateApi.post<EmailConfigurationResponseDto>('/email-configurations', data)
   }
 
-  const updateEmailConfiguration = async (id: number, data: UpdateEmailConfigurationDto) => {
+  const updateEmailConfiguration = async (id:string, data: UpdateEmailConfigurationDto) => {
     return privateApi.patch<EmailConfigurationResponseDto>(`/email-configurations/${id}`, data)
   }
 
-  const deleteEmailConfiguration = async (id: number) => {
+  const deleteEmailConfiguration = async (id:string) => {
     return privateApi.delete<void>(`/email-configurations/${id}`)
   }
 

@@ -27,7 +27,7 @@ export const useOrganizationService = () => {
     showToast('error', messageKey)
   }
 
-  const getOrganization = async (id: number) => {
+  const getOrganization = async (id:string) => {
     try {
       return await privateApi.get<IOrganization>(`/organizations/${id}`)
     } catch (error) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, nextTick,onMounted, ref, watchEffect } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -24,7 +24,7 @@ import { useCustomFieldService } from '@/services/custom-field/useCustomFieldSer
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 import CustomFieldsForm from '../components/CustomFieldsForm.vue'
-import { type CustomValue,useFormContact } from '../composables/useContactForm'
+import { type CustomValue, useFormContact } from '../composables/useContactForm'
 
 export default defineComponent({
   components: {
@@ -52,7 +52,7 @@ export default defineComponent({
     const { getCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
-    const customFields = ref<{ id: number; fieldName: string; dataType: string }[]>([])
+    const customFields = ref<{ id: string; fieldName: string; dataType: string }[]>([])
     const touchedFields = ref<Record<string, boolean>>({})
 
     const breadcrumbData = computed(() => [
@@ -99,12 +99,12 @@ export default defineComponent({
               value: custom.value || '',
               id: custom.id,
             })
-            addedFields.add(custom.customFieldId)
+            addedFields.add(custom.customFieldId.toString())
           })
 
 
           response.forEach((field) => {
-            if (!addedFields.has(field.id)) {
+            if (!addedFields.has(field.id.toString())) {
               addCustomField({
                 customFieldId: field.id,
                 value: '',
@@ -152,9 +152,9 @@ export default defineComponent({
             ...values,
             birthDate: values.birthDate ? values.birthDate : new Date(),
             customValues: values.customValues ? values.customValues
-              .filter((customValue) => customValue.customFieldId !== undefined)
+              .filter((customValue) => customValue.customFieldId !== undefined && customValue.customFieldId !== null)
               .map((customValue) => ({
-                customFieldId: customValue.customFieldId as number,
+                customFieldId: customValue.customFieldId as string,
                 value: customValue.value || '',
                 id: customValue.id,
               })) : [],

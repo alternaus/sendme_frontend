@@ -1,5 +1,5 @@
 export interface IPaymentProvider {
-  id: number
+  id: string
   name: string
   logo: string
   testMode: boolean

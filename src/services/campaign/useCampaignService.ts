@@ -29,7 +29,7 @@ export const useCampaignService = () => {
     return privateApi.patch<IUpdateCampaign>(`/campaigns/${id}`, campaign)
   }
 
-  const deleteCampaign = async (id: number) => {
+  const deleteCampaign = async (id:string) => {
     return privateApi.delete(`/campaigns/${id}`)
   }
 

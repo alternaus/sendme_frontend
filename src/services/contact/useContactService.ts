@@ -32,7 +32,7 @@ export const useContactService = () => {
     return privateApi.patch<IUpdateContact>(`/contacts/${id}`, contact)
   }
 
-  const deleteContact = async (id: number) => {
+  const deleteContact = async (id:string) => {
     return privateApi.delete(`/contacts/${id}`)
   }
 

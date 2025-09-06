@@ -12,7 +12,7 @@ export const useOAuthService = () => {
   const publicApi = useApiClient(false)
   const privateApi = useApiClient(true)
 
-  const getAuthUrl = async (provider: OAuthProviderType, userId?: number) => {
+  const getAuthUrl = async (provider: OAuthProviderType, userId?:string) => {
     const params = userId ? `?userId=${userId}` : ''
     return publicApi.get<IOAuthAuthUrl>(`/auth/oauth/${provider}${params}`)
   }

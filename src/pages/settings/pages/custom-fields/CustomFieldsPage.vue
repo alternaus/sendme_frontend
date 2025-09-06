@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { nextTick,onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 
-// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -13,6 +12,7 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 import { useCustomFieldForm } from './composables/useCustomFieldsForm'
 
@@ -30,8 +30,10 @@ const {
   resetForm,
 } = useCustomFieldForm()
 
-const customFieldIds = ref<Record<number, number>>({})
+const customFieldIds = ref<Record<number, string>>({})
 const editingFieldIndices = ref<number[]>([])
+
+const { user } = useAuthStore()
 
 const dataTypes = [
   { name: t('customFields.data_types.text'), value: 'string' },
@@ -55,7 +57,7 @@ const loadCustomFields = async () => {
         fieldName: field.fieldName,
         dataType: field.dataType as 'string' | 'number' | 'date'
       })
-      customFieldIds.value[index] = field.id
+      customFieldIds.value[index] = field.id.toString()
     })
 
     await nextTick()
@@ -88,7 +90,7 @@ const handleRemoveField = async (idx: number) => {
       await deleteCustomField(customFieldIds.value[idx])
       delete customFieldIds.value[idx]
 
-      const newIds: Record<number, number> = {}
+      const newIds: Record<number, string> = {}
       Object.entries(customFieldIds.value).forEach(([key, value]) => {
         const numKey = Number(key)
         if (numKey > idx) {
@@ -160,14 +162,14 @@ const onSubmit = () => {
               fieldName: field.fieldName,
               dataType: field.dataType,
               elementType: 'input',
-              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || 1
+              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || user?.organizationId || '1'
             })
           } else {
             await createCustomField({
               fieldName: field.fieldName,
               dataType: field.dataType,
               elementType: 'input',
-              organizationId: 1
+              organizationId: user?.organizationId as string
             })
           }
         }

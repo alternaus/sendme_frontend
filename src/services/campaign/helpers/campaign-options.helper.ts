@@ -53,7 +53,7 @@ export const getConditionsForDataType = (dataType: string): readonly string[] =>
 
 // Get filtered condition options for a custom field
 export const getFilteredConditionOptions = (
-  customFieldId: number,
+  customFieldId:string,
   customFields: ICustomField[],
   conditionOptions: SelectOption[]
 ): SelectOption[] => {

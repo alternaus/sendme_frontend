@@ -12,6 +12,6 @@ export interface ICreateContact {
 }
 
 export interface ICreateCustomValue {
-  customFieldId: number
-  value: string | null // Permitir null para campos de fecha
+  customFieldId:string
+  value: string | null
 }

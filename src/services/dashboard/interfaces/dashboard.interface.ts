@@ -9,7 +9,7 @@ export interface DashboardStats {
 }
 
 export interface RecentMessage {
-  id: number
+  id:string
   status: string
   createdAt: string
   campaignName: string

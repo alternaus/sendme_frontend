@@ -16,7 +16,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import { type CustomValue } from '../composables/useContactForm'
 
 interface CustomField {
-  id: number
+  id:string
   fieldName: string
   dataType: string
 }
@@ -54,17 +54,17 @@ const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>, i
   }
 }
 
-const getFieldDataType = (customFieldId?: number): string => {
+const getFieldDataType = (customFieldId?:string): string => {
   if (!customFieldId) return 'string'
   return props.customFields.find((field) => field.id === customFieldId)?.dataType || 'string'
 }
 
-const getFieldName = (customFieldId?: number): string => {
+const getFieldName = (customFieldId?:string): string => {
   if (!customFieldId) return ''
   return props.customFields.find((field) => field.id === customFieldId)?.fieldName || `Campo #${customFieldId}`
 }
 
-const getFieldIcon = (customFieldId?: number) => {
+const getFieldIcon = (customFieldId?:string) => {
   if (!customFieldId) return CredentialIcon
   const dataType = getFieldDataType(customFieldId)
   switch (dataType) {

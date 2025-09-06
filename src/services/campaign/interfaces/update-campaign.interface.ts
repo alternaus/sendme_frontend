@@ -1,8 +1,8 @@
 export interface IUpdateCampaignRule {
-  id?: number;
+  id?:string;
   conditionType?: string;
   value?: string|number;
-  customFieldId?: number;
+  customFieldId?:string;
 }
 
 export interface IUpdateCampaign {
@@ -17,7 +17,7 @@ export interface IUpdateCampaign {
   endDate?: string;
   time?: string;
   rrule?: string;
-  channelId?: number;
-  organizationId?: number;
+  channelId?:string;
+  organizationId?:string;
   campaignRules?: IUpdateCampaignRule[];
 }

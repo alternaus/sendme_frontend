@@ -31,7 +31,7 @@ export const usePaymentProviderService = () => {
     } catch (error) {
       if (providerName === 'epayco') {
         return {
-          id: 1,
+          id: 'epayco',
           name: 'epayco',
           displayName: 'ePayco',
           logo: 'https://multimedia.epayco.co/epayco.png',

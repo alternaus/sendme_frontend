@@ -1,5 +1,5 @@
 export interface IMessage {
-  id: number
+  id:string
   action: string
   changes: null
   correlationId: string
@@ -7,9 +7,8 @@ export interface IMessage {
   recordId: null
   table: string
   timestamp: Date
-  userId: number
-  organizationId: number
+  userId:string
+  organizationId:string
   createdAt: Date
   updatedAt: Date
 }
- 

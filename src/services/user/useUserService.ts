@@ -17,7 +17,7 @@ export const useUserService = () => {
     return privateApi.get<number>('/users/count')
   }
 
-  const getUser = async (id: number) => {
+  const getUser = async (id:string) => {
     return privateApi.get<IUser>(`/users/${id}`)
   }
 
@@ -25,11 +25,11 @@ export const useUserService = () => {
     return privateApi.post<IUser, ICreateUser>('/users', user)
   }
 
-  const updateUser = async (id: number, user: IUpdateUser) => {
+  const updateUser = async (id:string, user: IUpdateUser) => {
     return privateApi.patch<IUser, IUpdateUser>(`/users/${id}`, user)
   }
 
-  const deleteUser = async (id: number) => {
+  const deleteUser = async (id:string) => {
     return privateApi.delete<IUser>(`/users/${id}`)
   }
 

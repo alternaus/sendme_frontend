@@ -25,8 +25,8 @@ export interface UpdateEmailConfigurationDto {
 }
 
 export interface EmailConfigurationResponseDto {
-  id: number;
-  organizationId: number;
+  id:string;
+  organizationId:string;
   name: string;
   host: string;
   port: number;

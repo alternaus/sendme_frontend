@@ -22,7 +22,7 @@ export function useCampaignTriggerInputs(
 
   //Obtener las opciones de condiciones filtradas para un custom field específico
   //Obtener las opciones de condiciones filtradas para un custom field específico
-  const getFilteredConditionOptionsForField = (customFieldId: number): SelectOption[] => {
+  const getFilteredConditionOptionsForField = (customFieldId:string): SelectOption[] => {
     return getFilteredConditionOptions(customFieldId, customFieldsDataRef.value, conditionOptionsRef.value)
   }
 
@@ -30,7 +30,7 @@ export function useCampaignTriggerInputs(
     return conditionRequiresValue(conditionType)
   }
 
-  const isNumericInput = (conditionType: string, customFieldId?: number) => {
+  const isNumericInput = (conditionType: string, customFieldId?:string) => {
     //Condiciones que siempre necesitan input numérico (días)
     if (conditionRequiresNumericInput(conditionType)) {
       return true
@@ -47,7 +47,7 @@ export function useCampaignTriggerInputs(
     return false
   }
 
-  const isDateInput = (conditionType: string, customFieldId?: number) => {
+  const isDateInput = (conditionType: string, customFieldId?:string) => {
     //Para campos de fecha, ciertas condiciones necesitan input de fecha
     if (customFieldId) {
       const customField = customFieldsDataRef.value.find((field: ICustomField) => field.id === customFieldId)

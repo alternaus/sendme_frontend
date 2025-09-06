@@ -1,16 +1,16 @@
 export interface ICampaignRule {
-  id: number;
+  id:string;
   conditionType: string;
   value: string|number;
-  campaignId: number;
-  customFieldId: number;
+  campaignId:string;
+  customFieldId:string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
 }
 
 export interface ICampaign {
-  id: number;
+  id:string;
   name: string;
   description: string;
   content: string;
@@ -22,8 +22,8 @@ export interface ICampaign {
   endDate: string;
   time: string;
   rrule: string;
-  channelId: number;
-  organizationId: number;
+  channelId:string;
+  organizationId:string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

@@ -65,16 +65,16 @@ const loadCustomFields = async () => {
   }
 }
 
-const getCustomFieldInfo = (customFieldId: number) => {
+const getCustomFieldInfo = (customFieldId:string) => {
   return customFields.value.find(field => field.id === customFieldId)
 }
 
-const getCustomFieldName = (customFieldId: number): string => {
+const getCustomFieldName = (customFieldId:string): string => {
   const field = getCustomFieldInfo(customFieldId)
   return field?.fieldName || `${t('general.field')} #${customFieldId}`
 }
 
-const getCustomFieldDataType = (customFieldId: number): string => {
+const getCustomFieldDataType = (customFieldId:string): string => {
   const field = getCustomFieldInfo(customFieldId)
   return field?.dataType || 'string'
 }
@@ -85,7 +85,7 @@ const allCustomFields = computed(() => {
   return props.contact.customValues
 })
 
-const formatCustomFieldValue = (value: string | null, customFieldId: number): string => {
+const formatCustomFieldValue = (value: string | null, customFieldId:string): string => {
   if (!value) return t('general.not_defined')
 
   const dataType = getCustomFieldDataType(customFieldId)
@@ -101,7 +101,7 @@ const formatCustomFieldValue = (value: string | null, customFieldId: number): st
   return value
 }
 
-const getCustomFieldIcon = (customFieldId: number): string => {
+const getCustomFieldIcon = (customFieldId:string): string => {
   const dataType = getCustomFieldDataType(customFieldId)
 
   switch (dataType) {

@@ -9,8 +9,8 @@ import { useAuthStore } from '@/stores/useAuthStore'
 export interface CampaignRule {
   conditionType: string
   value: string
-  customFieldId: number
-  campaignId?: number
+  customFieldId: string
+  campaignId?: string
 }
 
 export interface CampaignFormData {
@@ -24,8 +24,8 @@ export interface CampaignFormData {
   time: Date
   days: string[]
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
-  channelId: number
-  organizationId: number
+  channelId: string
+  organizationId: string
   campaignRules: CampaignRule[]
 }
 
@@ -38,20 +38,20 @@ export function useCampaignForm() {
   const authStore = useAuthStore()
   const { getStatusesForType } = useStatusColors()
 
-  const userOrganizationId = authStore.user?.organizationId || 1
+  const userOrganizationId = authStore.user?.organizationId || '1'
 
   const validStatuses = getStatusesForType('campaign')
 
   const detailsSchema = yup.object({
     name: yup.string().required().label(t('campaign.form.campaign_name')),
     description: yup.string().required().label(t('campaign.form.description')),
-    channelId: yup.number().integer().min(1).required().label(t('campaign.form.channel_id')),
+    channelId: yup.string().required().label(t('campaign.form.channel_id')),
     status: yup.string().oneOf(validStatuses).required().label(t('campaign.form.status')),
     startDate: yup.date().required().label(t('campaign.form.start_date')),
     endDate: yup.date().required().label(t('campaign.form.end_date')),
     time: yup.date().required().label(t('campaign.form.execution_time')),
     days: yup.array().of(yup.string()).min(1).required().label(t('campaign.form.execution_days')),
-    organizationId: yup.number().integer().min(1).required().label(t('campaign.form.organization_id'))
+    organizationId: yup.string().required().label(t('campaign.form.organization_id'))
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const triggersSchema = yup.object({
@@ -74,7 +74,7 @@ export function useCampaignForm() {
           then: (schema) => schema.required().label(t('campaign.form.condition_value')),
           otherwise: (schema) => schema.notRequired()
         }),
-        customFieldId: yup.number().integer().required().label(t('campaign.form.custom_field_id'))
+        customFieldId: yup.string().required().label(t('campaign.form.custom_field_id'))
       })
     ).required()
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
@@ -119,7 +119,7 @@ export function useCampaignForm() {
     time: new Date(0, 0, 0, 12, 0),
     days: [],
     frequency: 'DAILY',
-    channelId: 1,
+    channelId: '1',
     organizationId: userOrganizationId,
     campaignRules: []
   }
@@ -153,7 +153,7 @@ export function useCampaignForm() {
     addCampaignRule({
       conditionType: '',
       value: '',
-      customFieldId: 0
+      customFieldId: ''
     })
   }
 

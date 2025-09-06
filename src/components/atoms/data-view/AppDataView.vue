@@ -73,7 +73,7 @@ import { useStatusColors } from '@/composables/useStatusColors'
 
 interface Props {
   data: Array<{
-    id: number
+    id:string
     status: string
     createdAt: string
     campaignName: string

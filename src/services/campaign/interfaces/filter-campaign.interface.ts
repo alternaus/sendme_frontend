@@ -4,8 +4,8 @@ export interface IFilterCampaign {
   status?: 'ACTIVE' | 'INACTIVE' | 'PAUSED' | 'FINISHED';
   startDate?: string;
   endDate?: string;
-  channelId?: number;
-  organizationId?: number;
+  channelId?:string;
+  organizationId?:string;
   page?: number;
   limit?: number;
 }

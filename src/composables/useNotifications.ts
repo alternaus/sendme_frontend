@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 //Interfaces simplificadas
 export interface INotification {
-  id?: number
+  id?:string
   type: 'success' | 'error' | 'warning' | 'info'
   title: string
   message: string
@@ -131,7 +131,7 @@ export const useNotifications = () => {
   }
 
   const markAsRead = async (notification: INotification) => {
-    if (!notification.id || notification.id <= 0) {
+    if (!notification.id) {
       //Notificación local
       const index = notifications.value.findIndex(n =>
         n.title === notification.title &&
@@ -159,7 +159,7 @@ export const useNotifications = () => {
   }
 
   const deleteNotification = async (notification: INotification) => {
-    if (!notification.id || notification.id <= 0) {
+    if (!notification.id) {
       //Eliminar notificación local
       notifications.value = notifications.value.filter(n =>
         !(n.title === notification.title &&
@@ -286,7 +286,7 @@ export const useNotifications = () => {
       const uniqueNotifications = new Map<string, INotification>()
 
       fetchedNotifications.forEach(notification => {
-        const key = notification.id && notification.id > 0
+        const key = notification.id
           ? `id:${notification.id}`
           : `content:${notification.title}:${notification.message}:${notification.timestamp}`
 

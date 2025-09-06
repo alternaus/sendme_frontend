@@ -25,7 +25,7 @@ export default defineComponent({
   },
   props: {
     idOrganization: {
-      type: Number as PropType<number | undefined>,
+      type: String as PropType<string | undefined>,
       required: true,
     },
   },

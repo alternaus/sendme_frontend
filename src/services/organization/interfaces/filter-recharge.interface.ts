@@ -1,5 +1,5 @@
 export interface IFilterRecharge {
-  organizationId?: number
+  organizationId?:string
   page?: number
   limit?: number
   toDate ?: string

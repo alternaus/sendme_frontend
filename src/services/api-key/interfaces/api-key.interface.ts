@@ -1,8 +1,8 @@
 export interface IApiKey {
-  id: number
+  id:string
   key: string
   name: string
-  organizationId: number
+  organizationId:string
   createdAt: string
   updatedAt: string
   isActive: boolean

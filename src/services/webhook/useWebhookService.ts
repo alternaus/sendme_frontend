@@ -20,16 +20,16 @@ export const useWebhookService = () => {
     return response
   }
 
-  const update = async (id: number, data: UpdateWebhookEndpointDto): Promise<WebhookEndpoint> => {
+  const update = async (id:string, data: UpdateWebhookEndpointDto): Promise<WebhookEndpoint> => {
     const response = await apiClient.put<WebhookEndpoint, UpdateWebhookEndpointDto>(`/webhook-endpoints/${id}`, data)
     return response
   }
 
-  const remove = async (id: number): Promise<void> => {
+  const remove = async (id:string): Promise<void> => {
     await apiClient.delete(`/webhook-endpoint/${id}`)
   }
 
-  const toggleStatus = async (id: number, isActive: boolean): Promise<WebhookEndpoint> => {
+  const toggleStatus = async (id:string, isActive: boolean): Promise<WebhookEndpoint> => {
     const response = await apiClient.patch<WebhookEndpoint, { isActive: boolean }>(`/webhook-endpoints/${id}`, { isActive })
     return response
   }

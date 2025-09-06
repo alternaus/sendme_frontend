@@ -1,7 +1,7 @@
 export interface ICreateCampaignRule {
   conditionType: string;
   value: string|number;
-  customFieldId: number;
+  customFieldId:string;
 }
 
 export interface ICreateCampaign {
@@ -16,7 +16,7 @@ export interface ICreateCampaign {
   endDate: string;
   time: string;
   rrule: string;
-  channelId: number;
-  organizationId: number;
+  channelId:string;
+  organizationId:string;
   campaignRules: ICreateCampaignRule[];
 }
