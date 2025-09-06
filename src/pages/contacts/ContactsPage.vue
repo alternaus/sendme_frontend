@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -40,6 +41,7 @@ import { useContactFilter } from './composables/useContactFilter'
 const { t } = useI18n()
 const { push } = useRouter()
 const toast = useToast()
+const confirm = useConfirm()
 
 const { getContacts, deleteContact, exportContacts } = useContactService()
 const { getTableValueWithDefault, hasTableValue } = useTableTypes()
@@ -117,22 +119,39 @@ const handleSelectionChange = (sel: Record<string, unknown> | Record<string, unk
 
 const handleDelete = async () => {
   if (selectedContacts.value.length === 0) return
-  try {
-    await Promise.all(selectedContacts.value.map(c => deleteContact(c.id)))
-    toast.add({
-      severity: 'success',
-      summary: t('contacts.general.success'),
-      detail: selectedContacts.value.length === 1
-        ? t('contacts.success_removed')
-        : t('contacts.success_removed_multiple', { count: selectedContacts.value.length }),
-      life: 3000,
-    })
-    selectedContacts.value = []
-    selectedContact.value = null
-    await fetchContacts({ pageSize: page.value, limitSize: limit.value })
-  } catch {
-    toast.add({ severity: 'error', summary: t('contacts.general.error'), detail: t('contacts.error_removed'), life: 3000 })
-  }
+
+  const isMultiple = selectedContacts.value.length > 1
+  const contactName = isMultiple ? '' : selectedContacts.value[0].name || selectedContacts.value[0].phone || ''
+
+  confirm.require({
+    message: isMultiple
+      ? t('contacts.delete_confirmation.message_multiple', { count: selectedContacts.value.length })
+      : t('contacts.delete_confirmation.message_single', { name: contactName }),
+    header: t('contacts.delete_confirmation.title'),
+    icon: 'pi pi-exclamation-triangle',
+    rejectClass: 'p-button-secondary p-button-outlined',
+    acceptClass: 'p-button-danger',
+    rejectLabel: t('contacts.general.cancel'),
+    acceptLabel: t('contacts.actions.delete'),
+    accept: async () => {
+      try {
+        await Promise.all(selectedContacts.value.map(c => deleteContact(c.id)))
+        toast.add({
+          severity: 'success',
+          summary: t('contacts.general.success'),
+          detail: selectedContacts.value.length === 1
+            ? t('contacts.success_removed')
+            : t('contacts.success_removed_multiple', { count: selectedContacts.value.length }),
+          life: 3000,
+        })
+        selectedContacts.value = []
+        selectedContact.value = null
+        await fetchContacts({ pageSize: page.value, limitSize: limit.value })
+      } catch {
+        toast.add({ severity: 'error', summary: t('contacts.general.error'), detail: t('contacts.error_removed'), life: 3000 })
+      }
+    }
+  })
 }
 
 const handleRowDoubleClick = (row: Record<string, unknown>) => {
@@ -176,6 +195,17 @@ const headerActions = computed(() => {
     actions.push({ label: t('contacts.actions.delete'), onClick: handleDelete, type: ActionTypes.DELETE })
   }
   if (selectedContacts.value.length === 1) {
+    actions.push({
+      label: t('contacts.actions.view'),
+      onClick: async () => {
+        if (selectedContact.value) {
+          contactToView.value = selectedContact.value
+          showContactViewModal.value = true
+        }
+        return Promise.resolve()
+      },
+      type: ActionTypes.VIEW
+    })
     actions.push({
       label: t('contacts.actions.edit'),
       onClick: async () => {

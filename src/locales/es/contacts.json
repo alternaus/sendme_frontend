@@ -9,6 +9,11 @@
   "no_custom_fields": "No hay campos personalizados configurados",
   "unknown_field_type": "Tipo de campo desconocido",
   "import_contacts": "Importar contactos",
+  "delete_confirmation": {
+    "title": "Confirmar eliminación",
+    "message_single": "¿Estás seguro de que deseas eliminar el contacto \"{name}\"?",
+    "message_multiple": "¿Estás seguro de que deseas eliminar {count} contactos seleccionados?"
+  },
   "contact_view": {
     "title": "Información del contacto"
   },
@@ -73,6 +78,7 @@
   },
   "actions": {
     "create": "Crear",
+    "view": "Ver",
     "edit": "Editar",
     "delete": "Eliminar",
     "export": "Exportar",
