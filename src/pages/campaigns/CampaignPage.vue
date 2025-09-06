@@ -25,6 +25,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
+import { useDateFormat } from '@/composables/useDateFormat'
 import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
@@ -43,6 +44,7 @@ const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
+const { formatDate } = useDateFormat()
 const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, channelId, dateRange })
 const { getChannels } = useChannelService()
 
@@ -154,15 +156,10 @@ watch([search, name, status, channelId], () => {
   }, 300)
 })
 
-// Watch separado para dateRange sin deep watching
 watch(dateRange, (newValue, oldValue) => {
-  // Verificar que las fechas sean válidas (no null)
   const oldValidDates = oldValue?.filter(date => date !== null && date instanceof Date)?.length || 0
   const newValidDates = newValue?.filter(date => date !== null && date instanceof Date)?.length || 0
 
-  // Solo ejecutar watch si:
-  // 1. Se completó el rango (llegó a 2 fechas VÁLIDAS)
-  // 2. Se limpió el rango (de 2 válidas a 0)
   if ((newValidDates === 2) || (oldValidDates === 2 && newValidDates === 0)) {
     if (debounceTimer) {
       clearTimeout(debounceTimer)
@@ -175,6 +172,8 @@ watch(dateRange, (newValue, oldValue) => {
 })
 
 const handleSelectionChange = (selection: Record<string, unknown> | Record<string, unknown>[] | null) => {
+  const previousSelection = [...selected.value]
+
   if (selection === null || selection === undefined) {
     selected.value = []
   } else if (Array.isArray(selection)) {
@@ -183,9 +182,14 @@ const handleSelectionChange = (selection: Record<string, unknown> | Record<strin
     selected.value = [selection as unknown as ICampaign]
   }
 
-  // Limpiar resultados de test cuando cambia la selección
-  testResults.value = null
-  showTestResultsModal.value = false
+  // Solo limpiar resultados de test si realmente cambió la selección
+  const selectionChanged = previousSelection.length !== selected.value.length ||
+    !previousSelection.every((prev, index) => prev.id === selected.value[index]?.id)
+
+  if (selectionChanged) {
+    testResults.value = null
+    showTestResultsModal.value = false
+  }
 }
 
 const handleDelete = async () => {
@@ -317,47 +321,45 @@ const handleTestRules = async () => {
   }
 }
 
-const headerActions = computed(() => [
-  {
-    label: t('general.filters'),
-    onClick: () => { showMobileModal.value = !showMobileModal.value },
-    type: ActionTypes.FILTER,
-    badge: activeFiltersCount.value,
-  },
-  {
-    label: t('actions.create'),
-    onClick: () => push('/campaigns/create'),
-    type: ActionTypes.CREATE,
-  },
-  ...(selected.value.length > 0
-    ? [
-        {
-          label: t('actions.test_rules'),
-          onClick: handleTestRules,
-          type: ActionTypes.VIEW,
-          loading: testingRules.value,
-        },
-      ]
-    : []),
-  ...(selected.value.length > 0
-    ? [
-        {
-          label: t('actions.delete'),
-          onClick: handleDelete,
-          type: ActionTypes.DELETE,
-        },
-      ]
-    : []),
-  ...(selected.value.length === 1
-    ? [
-        {
-          label: t('actions.edit'),
-          onClick: () => selected.value[0] && push(`/campaigns/edit/${selected.value[0].id}`),
-          type: ActionTypes.EDIT,
-        },
-      ]
-    : []),
-])
+const headerActions = computed(() => {
+  const baseActions = [
+    {
+      label: t('general.filters'),
+      onClick: () => { showMobileModal.value = !showMobileModal.value },
+      type: ActionTypes.FILTER,
+      badge: activeFiltersCount.value,
+    },
+    {
+      label: t('actions.create'),
+      onClick: () => push('/campaigns/create'),
+      type: ActionTypes.CREATE,
+    },
+  ]
+
+  if (selected.value.length > 0) {
+    baseActions.push({
+      label: t('actions.test_rules'),
+      onClick: handleTestRules,
+      type: ActionTypes.VIEW,
+    })
+
+    baseActions.push({
+      label: t('actions.delete'),
+      onClick: handleDelete,
+      type: ActionTypes.DELETE,
+    })
+  }
+
+  if (selected.value.length === 1) {
+    baseActions.push({
+      label: t('actions.edit'),
+      onClick: () => selected.value[0] && push(`/campaigns/edit/${selected.value[0].id}`),
+      type: ActionTypes.EDIT,
+    })
+  }
+
+  return baseActions
+})
 
 
 </script>
@@ -453,7 +455,6 @@ const headerActions = computed(() => [
     :multipleSelection="true"
     :loading="loading"
     textTotalItems="campaign.campaigns"
-    :autoDetectDateFields="true"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >
@@ -505,6 +506,18 @@ const headerActions = computed(() => [
           {{ $t(`campaign.frequency_types.${getTableValueWithDefault<string>(data, 'frequency', '')}`) }}
         </template>
         <template v-else>-</template>
+      </div>
+    </template>
+    <template #custom-startDate="{ data }">
+      <div>
+        {{ getTableValueWithDefault<string>(data, 'startDate', '') ?
+           formatDate(getTableValueWithDefault<string>(data, 'startDate', '')) : '-' }}
+      </div>
+    </template>
+    <template #custom-endDate="{ data }">
+      <div>
+        {{ getTableValueWithDefault<string>(data, 'endDate', '') ?
+           formatDate(getTableValueWithDefault<string>(data, 'endDate', '')) : '-' }}
       </div>
     </template>
     <template #custom-status="{ data }">

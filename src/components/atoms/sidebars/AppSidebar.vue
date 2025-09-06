@@ -30,7 +30,7 @@ const handleNotifications = () => {
     class="w-16 h-screen bg-[var(--p-primary-color)] dark:bg-neutral-800 text-black dark:text-white flex flex-col fixed top-0 left-0 transition-all duration-300 ease-in-out"
     :class="{ 'w-[200px]': isExpanded }"
   >
-    <SidebarToggle :is-expanded="isExpanded" @toggle="toggleExpand" />
+    <SidebarToggle :is-expanded="isExpanded" @toggle="toggleExpand" :class="{'self-end': isExpanded}" />
 
     <div class="flex items-center py-4">
       <router-link to="/" class="flex-1 flex items-center justify-center">
