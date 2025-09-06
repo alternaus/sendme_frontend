@@ -38,7 +38,7 @@ export function useUserMenu() {
     {
       label: t('user.profile'),
       icon: 'pi pi-user',
-      command: () => handleNavigation('/profile')
+      command: () => handleNavigation('/account')
     },
     {
       label: t('user.settings'),

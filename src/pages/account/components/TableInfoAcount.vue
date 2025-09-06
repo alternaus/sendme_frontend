@@ -1,8 +1,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, type PropType, ref, watch } from 'vue'
 
-import { useI18n } from 'vue-i18n'
-
 import DateIcon from '@/assets/svg/date.svg?component'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
@@ -14,7 +12,6 @@ import { useOrganizationService } from '@/services/organization/useOrganizationS
 import { formatTableValue,getTableValueWithDefault } from '@/utils/table-type-utils'
 
 import { useRechargesFilter } from '../composables/useRechargesFilter'
-import { RechargeStatus } from './enums/status-recharge-types.enum'
 
 export default defineComponent({
   components: {
@@ -30,7 +27,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { t } = useI18n()
     const { getRecharges } = useOrganizationService()
     const { startDate, endDate } = useRechargesFilter()
     const { getStatusSeverity } = useStatusColors()
@@ -88,19 +84,6 @@ export default defineComponent({
       }).format(amount)
     }
 
-    const getStatusTranslation = (status: string): string => {
-      switch (status) {
-        case 'ACCEPTED':
-          return t(RechargeStatus.ACCEPTED)
-        case 'PENDING':
-          return t(RechargeStatus.PENDING)
-        case 'REJECTED':
-          return t(RechargeStatus.REJECTED)
-        default:
-          return t(RechargeStatus[status as keyof typeof RechargeStatus] || status)
-      }
-    }
-
     onMounted(() => {
       fetchRecharges()
     })
@@ -113,7 +96,6 @@ export default defineComponent({
       loading,
       rechargesMeta,
       formatCurrency,
-      getStatusTranslation,
       startDate,
       endDate,
       getTableValueWithDefault,
@@ -137,7 +119,7 @@ export default defineComponent({
             'bg-gray-300 text-gray-700 hover:bg-gray-400': optionSelected !== '1',
           }"
         >
-          <small>{{ $t('general.movements') }}</small>
+          <small>{{ $t('account.recharges.movements') }}</small>
         </div>
 
         <!-- <div
@@ -157,7 +139,7 @@ export default defineComponent({
         <AppDatePicker
           v-model="startDate"
 
-          :label="$t('general.start_date')"
+          :label="$t('account.recharges.start_date')"
           class="w-full mt-3"
         >
           <template #icon>
@@ -167,7 +149,7 @@ export default defineComponent({
         <AppDatePicker
           v-model="endDate"
 
-          :label="$t('general.end_date')"
+          :label="$t('account.recharges.end_date')"
           class="w-full mt-3"
         >
           <template #icon>
@@ -181,19 +163,19 @@ export default defineComponent({
       class="w-full mt-4"
       :data="recharges"
       :headers="[
-        { field: 'createdAt', header: $t('general.date') },
-        { field: 'amount', header: $t('general.amount') },
-        { field: 'messageCount', header: $t('general.messages_count') },
-        { field: 'remainingMessages', header: $t('general.remaining_messages') },
-        { field: 'status', header: $t('general.status') },
+        { field: 'createdAt', header: $t('account.recharges.date') },
+        { field: 'amount', header: $t('account.recharges.amount') },
+        { field: 'messageCount', header: $t('account.recharges.messages_count') },
+        { field: 'remainingMessages', header: $t('account.recharges.remaining_messages') },
+        { field: 'status', header: $t('account.recharges.status') },
       ]"
       :pageSize="rechargesMeta.limit"
       :pageCurrent="rechargesMeta.currentPage"
       :totalItems="rechargesMeta.totalRecords"
       :multipleSelection="false"
       :loading="loading"
-      :emptyMessage="'general.error_getting_recharges'"
-      textTotalItems="general.recharges"
+      :emptyMessage="'account.recharges.error_getting_recharges'"
+      textTotalItems="account.recharges.title"
       :autoDetectDateFields="true"
       @page-change="fetchRecharges"
     >
@@ -208,7 +190,7 @@ export default defineComponent({
       <template #custom-status="{ data }">
         <div class="flex justify-center items-center">
           <AppTag
-            :label="$t(`status.recharge.${getTableValueWithDefault<string>(data, 'status', 'PENDING')}`)"
+            :label="$t(`account.recharge_status.${getTableValueWithDefault<string>(data, 'status', 'PENDING').toUpperCase()}`)"
             :severity="getStatusSeverity(getTableValueWithDefault<string>(data, 'status', 'PENDING'), 'recharge')"
           />
         </div>

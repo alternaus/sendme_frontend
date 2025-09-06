@@ -337,18 +337,6 @@
     "filter": "Filtrar",
     "filters": "Filtros"
   },
-  "recharge_status": {
-    "pending": "Pendiente",
-    "accepted": "Aceptado",
-    "rejected": "Rechazado",
-    "failed": "Fallido",
-    "reversed": "Revertido",
-    "held": "Retenido",
-    "initiated": "Iniciado",
-    "expired": "Expirado",
-    "abandoned": "Abandonado",
-    "cancelled": "Cancelado"
-  },
   "general": {
     "home": "Inicio",
     "name": "Nombre",
@@ -880,18 +868,6 @@
       "scheduled": "Programado",
       "canceled": "Cancelado",
       "read": "Leído"
-    },
-    "recharge": {
-      "accepted": "Aceptado",
-      "rejected": "Rechazado",
-      "pending": "Pendiente",
-      "failed": "Fallido",
-      "reversed": "Reversado",
-      "held": "Retenido",
-      "initiated": "Iniciado",
-      "expired": "Expirado",
-      "abandoned": "Abandonado",
-      "cancelled": "Cancelado"
     },
     "audit": {
       "create": "Crear",

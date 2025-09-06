@@ -6,15 +6,6 @@ const baseBreadcrumb = {
   active: false
 }
 
-//const generateBreadcrumb = (text: string, name: string) => [
-//baseBreadcrumb,
-//{
-//text,
-//to: { name },
-//active: true
-//}
-//]
-
 const accountRoutes: RouteRecordRaw = {
   path: '/account',
   name: 'account',

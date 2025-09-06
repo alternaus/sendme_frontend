@@ -1,0 +1,46 @@
+{
+  "organization": {
+    "title": "Organization information",
+    "name": "Name",
+    "address": "Address",
+    "city": "City",
+    "country": "Country",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "plan": {
+    "title": "Plan information",
+    "name": "Name",
+    "description": "Description",
+    "contact_limit": "Contact limit",
+    "campaign_limit": "Campaign limit",
+    "price_per_message": "Price per message",
+    "cost": "Cost"
+  },
+  "recharges": {
+    "title": "Recharges",
+    "movements": "Movements",
+    "history": "History",
+    "date": "Date",
+    "amount": "Amount",
+    "messages_count": "Messages count",
+    "remaining_messages": "Remaining messages",
+    "status": "Status",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "error_getting_recharges": "Error getting recharges",
+    "no_recharges_found": "No recharges found"
+  },
+  "recharge_status": {
+    "PENDING": "Pending",
+    "ACCEPTED": "Accepted",
+    "REJECTED": "Rejected",
+    "FAILED": "Failed",
+    "REVERSED": "Reversed",
+    "HELD": "Held",
+    "INITIATED": "Initiated",
+    "EXPIRED": "Expired",
+    "ABANDONED": "Abandoned",
+    "CANCELLED": "Cancelled"
+  }
+}
