@@ -23,10 +23,10 @@ const isLoading = ref(false)
 // Configurar validaciones
 yup.setLocale({
   mixed: {
-    required: () => t('general.required_field'),
+    required: () => t('auth.validation.email_required'),
   },
   string: {
-    email: () => t('general.invalid_email'),
+    email: () => t('auth.validation.email_invalid'),
   },
 })
 
@@ -51,7 +51,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.add({
       severity: 'success',
       summary: t('general.success'),
-      detail: t('auth.reset_link_sent'),
+      detail: t('auth.forgot_password.success_message'),
       life: 5000
     })
 
@@ -64,7 +64,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('auth.reset_link_error'),
+      detail: t('auth.forgot_password.error_message'),
       life: 5000
     })
   } finally {
@@ -82,7 +82,7 @@ function goBackToLogin() {
     <!-- Header -->
     <div class="text-center">
       <p class="text-surface-600 dark:text-surface-400">
-        {{ t('auth.forgot_password_description') }}
+        {{ t('auth.forgot_password.description') }}
       </p>
     </div>
 
@@ -97,7 +97,7 @@ function goBackToLogin() {
 
       <AppButton
         type="submit"
-        :label="isLoading ? t('general.loading') : t('auth.send_reset_link')"
+        :label="isLoading ? t('general.loading') : t('auth.forgot_password.send_button')"
         :loading="isLoading"
         :disabled="isLoading"
         class="w-full"
@@ -107,7 +107,7 @@ function goBackToLogin() {
     <!-- Back to login -->
     <div class="text-center">
       <AppLink
-        :label="t('auth.back_to_login')"
+        :label="t('auth.forgot_password.back_to_login')"
         @click="goBackToLogin"
       />
     </div>

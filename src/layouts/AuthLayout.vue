@@ -42,10 +42,10 @@ function goToRegistration() {
               </div>
               <div class="flex flex-col items-center gap-3 pt-4">
                 <div class="text-sm text-surface-500 dark:text-surface-400">
-                  {{ t('auth.no_account') }}
+                  {{ t('auth.layout.no_account') }}
                 </div>
                 <AppButton
-                  :label="t('auth.register_here')"
+                  :label="t('auth.layout.register_here')"
                   severity="primary"
                   size="small"
                   @click="goToRegistration"

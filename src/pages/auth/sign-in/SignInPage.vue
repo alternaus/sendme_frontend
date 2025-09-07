@@ -45,10 +45,10 @@ export default defineComponent({
 
     yup.setLocale({
       mixed: {
-        required: () => t('general.required_field'),
+        required: () => t('auth.validation.email_required'),
       },
       string: {
-        email: () => t('general.invalid_email'),
+        email: () => t('auth.validation.email_invalid'),
       },
     })
 
@@ -116,18 +116,18 @@ export default defineComponent({
 
 <template>
   <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-6 flex-col w-full">
-    <AppInput v-model="email" :error-message="errors.email" :placeholder="$t('general.email')" />
+    <AppInput v-model="email" :error-message="errors.email" :placeholder="$t('auth.sign_in.email_placeholder')" />
 
-    <AppInputPassword v-model="password" :error-message="errors.password" :placeholder="$t('general.password')" />
+    <AppInputPassword v-model="password" :error-message="errors.password" :placeholder="$t('auth.sign_in.password_placeholder')" />
 
-    <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
+    <AppButton type="submit" :label="$t('auth.sign_in.enter')" class="w-full" />
 
-    <AppLink severity="secondary" :label="$t('auth.forgot_password')" @click="goToForgotPassword" />
+    <AppLink severity="secondary" :label="$t('auth.forgot_password.title')" @click="goToForgotPassword" />
 
     <AppDivider />
 
     <div class="w-full grid grid-cols-1 gap-4">
-      <AppButton label="Google" severity="contrast" variant="outlined" @click="handleGoogleLogin">
+      <AppButton :label="$t('auth.oauth.google_button')" severity="contrast" variant="outlined" @click="handleGoogleLogin">
         <template #icon-start>
           <GoogleIcon class="w-5 h-5" />
         </template>

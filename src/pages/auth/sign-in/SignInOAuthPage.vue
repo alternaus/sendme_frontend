@@ -23,11 +23,11 @@ const error = ref<string | null>(null)
 
 const getDescription = () => {
   if (loading.value) {
-    return t('auth.oauth_processing_description', { provider: getProviderDisplayName() })
+    return t('auth.oauth.processing_description', { provider: getProviderDisplayName() })
   } else if (error.value) {
-    return t('auth.oauth_error_description')
+    return t('auth.oauth.error_description')
   } else {
-    return t('auth.oauth_success_description', { provider: getProviderDisplayName() })
+    return t('auth.oauth.success_description', { provider: getProviderDisplayName() })
   }
 }
 
@@ -87,7 +87,7 @@ onMounted(async () => {
     }
   } catch (err: unknown) {
     console.error(`Error en callback de ${provider.value}:`, err)
-    error.value = t('auth.oauth_callback_error', { provider: provider.value })
+    error.value = t('auth.oauth.callback_error', { provider: provider.value })
 
     toast.add({
       severity: 'error',
@@ -128,7 +128,7 @@ onMounted(async () => {
           <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <div class="text-red-800 dark:text-red-200">
               <h3 class="text-lg font-medium mb-2">
-                {{ t('auth.oauth_error_title') }}
+                {{ t('auth.oauth.error_title') }}
               </h3>
               <p class="text-sm mb-4">{{ error }}</p>
             </div>
@@ -139,10 +139,10 @@ onMounted(async () => {
           <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6">
             <div class="text-green-800 dark:text-green-200">
               <h3 class="text-lg font-medium mb-2">
-                {{ t('auth.oauth_success_title') }}
+                {{ t('auth.oauth.success_title') }}
               </h3>
               <p class="text-sm">
-                {{ t('auth.oauth_success_description', { provider: getProviderDisplayName() }) }}
+                {{ t('auth.oauth.success_description', { provider: getProviderDisplayName() }) }}
               </p>
             </div>
           </div>

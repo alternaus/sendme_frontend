@@ -1,0 +1,38 @@
+{
+  "page": {
+    "title": "Buy messages",
+    "header_title": "Choose the value of your recharge",
+    "header_description": "Choose a predefined amount or enter the value you need"
+  },
+  "recharge": {
+    "title": "Recharge Value",
+    "predefined_amounts": "Predefined amounts",
+    "custom_value": "Custom value",
+    "range_info": "Range: $10,000 - $500,000 COP",
+    "minimum_amount": "The minimum amount is $10,000 COP",
+    "maximum_amount": "The maximum amount is $500,000 COP",
+    "enter_amount": "Enter amount",
+    "invalid_amount": "Invalid amount"
+  },
+  "payment": {
+    "pay": "Pay",
+    "pay_amount": "Pay {amount}",
+    "select_amount": "Select a valid recharge value",
+    "processing": "Processing payment...",
+    "success": "Payment completed successfully",
+    "error": "Error processing payment",
+    "organization_required": "Organization ID required"
+  },
+  "messages": {
+    "important_note": "Important",
+    "recharge_info": "Remember that as long as you have the plan active your messages do not expire, the recharge will be applied immediately to your account.",
+    "amount_warning": "Select a valid recharge value",
+    "minimum_warning": "The minimum amount is $10,000 COP"
+  },
+  "validation": {
+    "amount_required": "Amount is required",
+    "amount_minimum": "Amount must be greater than {min}",
+    "amount_maximum": "Amount must be less than {max}",
+    "valid_range": "Amount must be between {min} and {max}"
+  }
+}

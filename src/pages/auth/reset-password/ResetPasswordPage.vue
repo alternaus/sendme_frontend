@@ -27,10 +27,10 @@ const email = ref('')
 // Configurar validaciones
 yup.setLocale({
   mixed: {
-    required: () => t('general.required_field'),
+    required: () => t('auth.validation.password_required'),
   },
   string: {
-    min: (params) => `Password must be at least ${params.min} characters`,
+    min: (params) => t('auth.validation.password_min_length', { min: params.min }),
   },
 })
 
@@ -38,7 +38,7 @@ const validationSchema = yup.object({
   password: yup.string().required().min(8),
   confirmPassword: yup.string()
     .required()
-    .oneOf([yup.ref('password')], t('auth.passwords_must_match')),
+    .oneOf([yup.ref('password')], t('auth.reset_password.passwords_must_match')),
 })
 
 const { defineField, errors, handleSubmit } = useForm({
@@ -55,7 +55,7 @@ onMounted(() => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('auth.invalid_reset_token'),
+      detail: t('auth.reset_password.invalid_token'),
       life: 5000
     })
     router.push('/auth/sign-in')
@@ -77,7 +77,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.add({
       severity: 'success',
       summary: t('general.success'),
-      detail: t('auth.password_reset_success'),
+      detail: t('auth.reset_password.success_title'),
       life: 8000
     })
 
@@ -90,7 +90,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('auth.password_reset_error'),
+      detail: t('auth.reset_password.error_message'),
       life: 5000
     })
   } finally {
@@ -113,13 +113,13 @@ function goBackToLogin() {
         </div>
       </div>
       <h2 class="text-xl font-semibold text-green-800 dark:text-green-200 mb-2">
-        {{ t('auth.password_reset_success') }}
+        {{ t('auth.reset_password.success_title') }}
       </h2>
       <p class="text-green-700 dark:text-green-300 mb-4">
-        {{ t('auth.password_reset_success_description', { email }) }}
+        {{ t('auth.reset_password.success_message', { email }) }}
       </p>
       <p class="text-sm text-green-600 dark:text-green-400">
-        {{ t('auth.redirecting_to_login') }}
+        {{ t('auth.reset_password.redirecting_message') }}
       </p>
     </div>
 
@@ -128,7 +128,7 @@ function goBackToLogin() {
       <!-- Header -->
       <div class="text-center">
         <p class="text-surface-600 dark:text-surface-400">
-          {{ t('auth.reset_password_description') }}
+          {{ t('auth.reset_password.description') }}
         </p>
         <p class="text-sm text-surface-500 dark:text-surface-500 mt-2">
           {{ email }}
@@ -140,18 +140,18 @@ function goBackToLogin() {
         <AppInputPassword
           v-model="password"
           :error-message="errors.password"
-          :label="t('auth.new_password')"
+          :label="t('auth.reset_password.new_password_label')"
         />
 
         <AppInputPassword
           v-model="confirmPassword"
           :error-message="errors.confirmPassword"
-          :label="t('auth.confirm_password')"
+          :label="t('auth.reset_password.confirm_password_label')"
         />
 
         <AppButton
           type="submit"
-          :label="isLoading ? t('general.loading') : t('auth.reset_password')"
+          :label="isLoading ? t('general.loading') : t('auth.reset_password.submit_button')"
           :loading="isLoading"
           :disabled="isLoading"
           class="w-full"
@@ -161,7 +161,7 @@ function goBackToLogin() {
       <!-- Back to login -->
       <div class="text-center">
         <AppLink
-          :label="t('auth.back_to_login')"
+          :label="t('auth.reset_password.back_to_login')"
           @click="goBackToLogin"
         />
       </div>
