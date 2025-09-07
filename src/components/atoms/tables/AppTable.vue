@@ -494,10 +494,14 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                 <div
                   v-for="(item, index) in data"
                   :key="index"
-                  class="bg-white dark:bg-neutral-800 rounded-xl p-4 flex items-center shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-all duration-200 cursor-pointer active:scale-[0.98]"
+                  class="rounded-xl p-4 flex items-center shadow-sm border transition-all duration-200 cursor-pointer active:scale-[0.95]"
                   :class="[
-                    mobileNameField ? 'gap-4' : 'gap-0'
+                    mobileNameField ? 'gap-4' : 'gap-0',
+                    selectedRow === item
+                      ? 'border-2'
+                      : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 hover:shadow-md'
                   ]"
+                  :data-selected="selectedRow === item"
                   @click="
                     () => {
                       selectedRow = selectedRow === item ? null : item
@@ -640,5 +644,20 @@ const getStatusClass = (item: Record<string, unknown>): string => {
 
 :deep(.p-paginator) {
   justify-content: end;
+}
+
+// Estilos para selección móvil con modo oscuro
+[data-selected="true"] {
+  // Modo claro
+  background-color: var(--p-primary-50) !important;
+  border-color: var(--p-primary-color) !important;
+  color: var(--p-primary-800) !important;
+
+  // Modo oscuro
+  html.dark & {
+    background-color: var(--p-primary-900) !important;
+    border-color: var(--p-primary-color) !important;
+    color: var(--p-primary-100) !important;
+  }
 }
 </style>
