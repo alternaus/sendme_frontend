@@ -102,11 +102,15 @@ export const useStatusColors = () => {
       // Para contactos y campañas, usar las traducciones de sus archivos modulares
       let translationKey: string
       if (type === 'contact') {
-        translationKey = `contacts.status.${status}`
+        translationKey = `contact.status.${status}`
       } else if (type === 'campaign') {
-        translationKey = `campaigns.status.${status}`
+        translationKey = `campaign.status.${status}`
+      } else if (type === 'message') {
+        translationKey = `reports.message_status.${status.toLowerCase()}`
+      } else if (type === 'recharge') {
+        translationKey = `account.recharge_status.${status.toUpperCase()}`
       } else {
-        translationKey = `status.${type}.${status.toLowerCase()}`
+        translationKey = `reports.${type}_status.${status.toLowerCase()}`
       }
 
       return {

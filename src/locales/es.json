@@ -459,31 +459,6 @@
       "date": "Fecha"
     }
   },
-  "home": {
-    "welcome": "Hola {name}, bienvenido a Sendme",
-    "contacts": "Contactos",
-    "available": "Disponibles",
-    "sent": "Enviados",
-    "pending": "Pendientes",
-    "failed": "Fallidos",
-    "inactive": "Inactivas",
-    "totalContacts": "Total de Contactos",
-    "sentMessages": "Mensajes Enviados",
-    "pendingMessages": "Mensajes Pendientes",
-    "failedMessages": "Mensajes Fallidos",
-    "messagesStatus": "Estado de Mensajes",
-    "messagesStatusSubtext": "Distribución de mensajes por estado",
-    "messages": "Mensajes",
-    "phone": "Teléfono",
-    "content": "Contenido",
-    "status": "Estado",
-    "date": "Fecha",
-    "recentMessages": "Mensajes Recientes",
-    "pie_chart": "Gráfica Circular",
-    "line_chart": "Gráfica de Líneas",
-    "bar_chart": "Gráfica de Barras",
-    "radar_chart": "Gráfica de Radar"
-  },
   "notifications": {
     "title": "Notificaciones",
     "no_notifications": "No hay notificaciones",

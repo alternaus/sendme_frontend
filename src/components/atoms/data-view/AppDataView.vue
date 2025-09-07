@@ -34,7 +34,7 @@
               <!-- Estado y botón de vista -->
               <div class="flex items-center gap-2 flex-shrink-0">
                 <AppTag
-                  :label="$t(`status.message.${item.status}`)"
+                  :label="$t(`reports.message_status.${item.status.toLowerCase()}`)"
                   :severity="getStatusSeverity(item.status, 'message')"
                   size="small"
                 />

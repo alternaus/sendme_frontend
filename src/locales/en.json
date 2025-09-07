@@ -457,31 +457,6 @@
       "date": "Date"
     }
   },
-  "home": {
-    "welcome": "Hello {name}, welcome to Sendme",
-    "contacts": "Contacts",
-    "available": "Available",
-    "sent": "Sent",
-    "pending": "Pending",
-    "failed": "Failed",
-    "inactive": "Inactive",
-    "totalContacts": "Total Contacts",
-    "sentMessages": "Sent Messages",
-    "pendingMessages": "Pending Messages",
-    "failedMessages": "Failed Messages",
-    "messagesStatus": "Messages Status",
-    "messagesStatusSubtext": "Distribution of messages by status",
-    "messages": "Messages",
-    "phone": "Phone",
-    "content": "Content",
-    "status": "Status",
-    "date": "Date",
-    "recentMessages": "Recent Messages",
-    "pie_chart": "Pie Chart",
-    "line_chart": "Line Chart",
-    "bar_chart": "Bar Chart",
-    "radar_chart": "Radar Chart"
-  },
   "notifications": {
     "title": "Notifications",
     "no_notifications": "No notifications",
