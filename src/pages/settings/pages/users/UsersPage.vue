@@ -49,7 +49,7 @@ const loadUsers = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('settings.users.error_loading'),
       life: 3000
     })
@@ -79,13 +79,13 @@ const validateUser = (user: { name: string, email: string }) => {
   const errors = []
 
   if (!user.name.trim()) {
-    errors.push(t('settings.users.name') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.name') + ': ' + t('settings.common.required_field'))
   }
 
   if (!user.email.trim()) {
-    errors.push(t('settings.users.email') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.email') + ': ' + t('settings.common.required_field'))
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-    errors.push(t('settings.users.email') + ': ' + t('general.invalid_email'))
+    errors.push(t('settings.users.email') + ': ' + t('settings.common.invalid_email'))
   }
 
   return errors
@@ -103,7 +103,7 @@ const saveUsers = async () => {
   if (usersWithData.length === 0) {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('settings.users.no_users_added'),
       life: 3000
     })
@@ -117,7 +117,7 @@ const saveUsers = async () => {
       hasErrors = true
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('settings.common.error'),
         detail: errors.join(', '),
         life: 5000
       })
@@ -151,7 +151,7 @@ const saveUsers = async () => {
 
     toast.add({
       severity: 'success',
-      summary: t('general.success'),
+      summary: t('settings.common.success'),
       detail: t('settings.users.users_updated'),
       life: 3000
     })
@@ -160,7 +160,7 @@ const saveUsers = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('user.error_saving'),
       life: 3000
     })
@@ -176,14 +176,14 @@ const handleRemoveUser = async (index: number) => {
       await deleteUser(user.id)
       toast.add({
         severity: 'success',
-        summary: t('general.success'),
+        summary: t('settings.common.success'),
         detail: t('user.user_deleted'),
         life: 3000
       })
     } catch  {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('settings.common.error'),
         detail: t('user.error_deleting'),
         life: 3000
       })
@@ -280,7 +280,7 @@ onMounted(() => {
               v-if="hasEditingUsers()"
               type="button"
               class="!w-fit"
-              :label="$t('general.save')"
+              :label="$t('settings.common.save')"
               @click="saveUsers"
               icon="pi pi-save" />
           </div>

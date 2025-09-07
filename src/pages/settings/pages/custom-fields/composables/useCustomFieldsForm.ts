@@ -18,7 +18,7 @@ export const useCustomFieldForm = () => {
   //Configurar Yup con los mensajes traducidos
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('settings.common.required_field'),
     }
   })
 

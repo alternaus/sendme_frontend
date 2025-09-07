@@ -114,7 +114,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('campaigns.common.error'),
+          summary: t('campaign.common.error'),
           detail: t('campaign.errors.load_channels'),
           life: 3000,
         })
@@ -152,7 +152,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('campaigns.common.error'),
+          summary: t('campaign.common.error'),
           detail: t('campaign.errors.load_campaign'),
           life: 3000,
         })
@@ -228,7 +228,7 @@ export default defineComponent({
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)
             toast.add({
               severity: 'success',
-              summary: t('campaigns.common.success'),
+              summary: t('campaign.common.success'),
               detail: t('campaign.success.updated'),
               life: 3000,
             })
@@ -236,7 +236,7 @@ export default defineComponent({
             await createCampaign(formattedData as unknown as ICreateCampaign)
             toast.add({
               severity: 'success',
-              summary: t('campaigns.common.success'),
+              summary: t('campaign.common.success'),
               detail: t('campaign.success.created'),
               life: 3000,
             })
@@ -246,7 +246,7 @@ export default defineComponent({
         } catch {
           toast.add({
             severity: 'error',
-            summary: t('campaigns.common.error'),
+            summary: t('campaign.common.error'),
             detail: isEditMode.value ? t('campaign.errors.update_campaign') : t('campaign.errors.create_campaign'),
             life: 3000,
           })
@@ -257,7 +257,7 @@ export default defineComponent({
       (_error) => {
         toast.add({
           severity: 'warn',
-          summary: t('campaigns.common.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.validation_failed'),
           life: 3000,
         })
@@ -269,7 +269,7 @@ export default defineComponent({
       if (!success) {
         toast.add({
           severity: 'warn',
-          summary: t('campaigns.common.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
@@ -285,7 +285,7 @@ export default defineComponent({
       if (!success) {
         toast.add({
           severity: 'warn',
-          summary: t('campaigns.common.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
@@ -348,7 +348,7 @@ export default defineComponent({
       :can-navigate-to-step="canNavigateToStep"
       :has-step-errors="hasStepErrors"
       :is-loading="isLoading"
-      :submit-label="isEditMode ? t('campaigns.common.update') : t('campaigns.common.save')"
+      :submit-label="isEditMode ? t('campaign.common.update') : t('campaign.common.save')"
       @next="handleNext"
       @prev="handlePrev"
       @go-to="handleGoToStep"

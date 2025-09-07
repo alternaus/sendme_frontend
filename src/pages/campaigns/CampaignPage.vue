@@ -119,7 +119,7 @@ const fetchCampaigns = async (
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('campaigns.common.error'),
+      summary: t('campaign.common.error'),
       detail: t('campaign.errors.load_campaigns'),
     })
   } finally {
@@ -209,7 +209,7 @@ const handleDelete = async () => {
     selected.value = []
     toast.add({
       severity: 'success',
-      summary: t('campaigns.common.success'),
+      summary: t('campaign.common.success'),
       detail: campaignsToDelete.length === 1
         ? t('campaign.actions.success_removed')
         : t('campaign.actions.success_removed_multiple', { count: campaignsToDelete.length }),
@@ -219,7 +219,7 @@ const handleDelete = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('campaigns.common.error'),
+      summary: t('campaign.common.error'),
       detail: t('campaign.errors.removed'),
       life: 3000,
     })
@@ -245,7 +245,7 @@ const handleTestRules = async () => {
   if (!selected.value.length) {
     toast.add({
       severity: 'warn',
-      summary: t('campaigns.common.warning'),
+      summary: t('campaign.common.warning'),
       detail: t('campaign.test_rules.no_selection_warning'),
       life: 3000,
     })
@@ -256,7 +256,7 @@ const handleTestRules = async () => {
   if (selected.value.length > 1) {
     toast.add({
       severity: 'warn',
-      summary: t('campaigns.common.warning'),
+      summary: t('campaign.common.warning'),
       detail: t('campaign.test_rules.single_test_warning'),
       life: 3000,
     })
@@ -267,7 +267,7 @@ const handleTestRules = async () => {
   if (!campaign?.campaignRules?.length) {
     toast.add({
       severity: 'warn',
-      summary: t('campaigns.common.warning'),
+      summary: t('campaign.common.warning'),
       detail: t('campaign.test_rules.no_rules_warning'),
       life: 3000,
     })
@@ -301,7 +301,7 @@ const handleTestRules = async () => {
 
     toast.add({
       severity: 'success',
-      summary: t('campaigns.common.success'),
+      summary: t('campaign.common.success'),
             detail: response.rules ? t('campaign.test_rules.test_completed', {
         selected: response.rules.selected,
         total: response.rules.total,
@@ -312,7 +312,7 @@ const handleTestRules = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('campaigns.common.error'),
+      summary: t('campaign.common.error'),
       detail: t('campaign.test_rules.test_error'),
       life: 3000,
     })
@@ -324,7 +324,7 @@ const handleTestRules = async () => {
 const headerActions = computed(() => {
   const baseActions = [
     {
-      label: t('campaigns.common.filters'),
+      label: t('campaign.common.filters'),
       onClick: () => { showMobileModal.value = !showMobileModal.value },
       type: ActionTypes.FILTER,
       badge: activeFiltersCount.value,
@@ -378,7 +378,7 @@ const headerActions = computed(() => {
       v-model="search"
       type="text"
       class="w-full"
-      :label="$t('campaigns.common.search')"
+      :label="$t('campaign.common.search')"
     >
       <template #icon>
         <SearchIcon class="w-4 h-4 dark:fill-white" />
@@ -389,7 +389,7 @@ const headerActions = computed(() => {
       v-model="name"
       type="text"
       class="w-full"
-      :label="$t('campaigns.common.name')"
+      :label="$t('campaign.common.name')"
     >
       <template #icon>
         <CredentialIcon class="w-4 h-4 dark:fill-white" />
@@ -400,7 +400,7 @@ const headerActions = computed(() => {
       class="w-full"
       v-model="status"
       status-type="campaign"
-      :label="$t('campaigns.common.status')"
+      :label="$t('campaign.common.status')"
       :show-colors="true"
     >
       <template #icon>
@@ -412,7 +412,7 @@ const headerActions = computed(() => {
       class="w-full"
       v-model="channelId"
       :options="channels.map(channel => ({ value: channel.id, name: channel.name }))"
-      :label="$t('campaigns.common.channel')"
+      :label="$t('campaign.common.channel')"
       :loading="loadingChannels"
     >
       <template #icon>
@@ -423,7 +423,7 @@ const headerActions = computed(() => {
     <AppDateRangePicker
       v-model="dateRange"
       class="w-full"
-      :label="$t('campaigns.common.date_range')"
+      :label="$t('campaign.common.date_range')"
     >
       <template #icon>
         <DateIcon class="w-4 h-4 dark:fill-white" />

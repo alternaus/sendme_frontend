@@ -36,13 +36,13 @@
             class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
             <div class="flex flex-col gap-2">
               <h4 class="text-surface-900 dark:text-surface-0 font-bold text-md leading-tight">
-                {{ $t('enrollment.payment.payment_details') }}
+                {{ $t('enrollment.enrollment.payment_details') }}
               </h4>
             </div>
             <div class="w-full h-px bg-surface-200 dark:bg-surface-700" />
             <div class="mb-8">
               <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{
-                $t('enrollment.payment.account_information') }}</h3>
+                $t('enrollment.enrollment.account_information') }}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="flex flex-col gap-2">
                   <label for="name" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{
@@ -76,14 +76,14 @@
 
             <div class="mt-8">
               <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{
-                $t('enrollment.payment.payment_information') }}</h3>
+                $t('enrollment.enrollment.payment_information') }}</h3>
 
               <div v-if="!paymentForm.isFormValid"
                 class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <div class="flex items-center gap-2">
                   <i class="pi pi-exclamation-triangle text-yellow-600 dark:text-yellow-400"></i>
                   <p class="text-yellow-800 dark:text-yellow-200 text-sm">
-                    {{ $t('enrollment.payment.complete_form_to_pay') }}
+                    {{ $t('enrollment.enrollment.complete_form_to_pay') }}
                   </p>
                 </div>
               </div>

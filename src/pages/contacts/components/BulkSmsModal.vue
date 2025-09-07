@@ -48,8 +48,8 @@ const dialogVisible = computed({
 })
 
 const channelOptions = computed(() => [
-  { name: t('contacts.general.sms'), value: MessageChannel.SMS },
-  { name: t('contact.contacts.contacts.general.email_channel'), value: MessageChannel.EMAIL },
+  { name: t('contact.general.sms'), value: MessageChannel.SMS },
+  { name: t('contact.contacts.contact.general.email_channel'), value: MessageChannel.EMAIL },
 ])
 
 const validContacts = computed(() => {
@@ -124,7 +124,7 @@ const sendBulkMessage = async () => {
   if (!canSend.value) {
     toast.add({
       severity: 'warn',
-      summary: t('contacts.general.warning'),
+      summary: t('contact.general.warning'),
       detail: t('contact.bulk_sms.enter_all_fields_send_message'),
       life: 3000,
     })
@@ -150,14 +150,14 @@ const sendBulkMessage = async () => {
     const count = contactNumbers.value.length
     toast.add({
       severity: 'success',
-      summary: t('contacts.general.success'),
+      summary: t('contact.general.success'),
       detail: t('contact.bulk_sms.messages_sent_successfully', { count }),
       life: 4000,
     })
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('contacts.general.error'),
+      summary: t('contact.general.error'),
       detail: t('contact.bulk_sms.error_sending_message'),
       life: 3000,
     })
@@ -221,7 +221,7 @@ const closeDialog = () => {
       <div v-if="selectedChannel === MessageChannel.EMAIL">
         <AppInput
           v-model="subject"
-          :placeholder="t('contact.contacts.contacts.general.email_subject')"
+          :placeholder="t('contact.contacts.contact.general.email_subject')"
           :disabled="isSending"
           class="w-full"
         >
@@ -235,7 +235,7 @@ const closeDialog = () => {
           :content-type="selectedChannel === MessageChannel.SMS ? 'text' : 'html'"
           :ai-attach="true"
           :ai-insert-mode="'replace'"
-          :placeholder="selectedChannel === MessageChannel.SMS ? t('contact.bulk_sms.message_placeholder') : t('contacts.general.write_email_message')"
+          :placeholder="selectedChannel === MessageChannel.SMS ? t('contact.bulk_sms.message_placeholder') : t('contact.general.write_email_message')"
           :disabled="isSending"
           :maxlength="selectedChannel === MessageChannel.SMS ? maxLength : undefined"
           :rows="selectedChannel === MessageChannel.SMS ? 6 : 8"
@@ -252,7 +252,7 @@ const closeDialog = () => {
           :disabled="isSending"
           size="small"
         >
-          {{ t('contacts.general.cancel') }}
+          {{ t('contact.general.cancel') }}
         </AppButton>
         <AppButton
           @click="sendBulkMessage"

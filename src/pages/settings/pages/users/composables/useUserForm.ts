@@ -17,10 +17,10 @@ export const useUserForm = () => {
 
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('settings.common.required_field'),
     },
     string: {
-      email: () => t('general.invalid_email')
+      email: () => t('settings.common.invalid_email')
     }
   })
 

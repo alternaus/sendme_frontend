@@ -2,7 +2,7 @@
   <div class="payment-provider-selector">
     <div v-if="loading" class="flex justify-center items-center py-8">
       <i class="pi pi-spin pi-spinner text-2xl text-[var(--p-primary-color)]"></i>
-      <span class="ml-2 text-sm text-surface-600">{{ $t('payment.loading_providers') }}</span>
+      <span class="ml-2 text-sm text-surface-600">{{ $t('enrollment.loading_providers') }}</span>
     </div>
 
     <div v-else-if="error" class="text-center py-8">
@@ -26,13 +26,13 @@
       </div>
 
       <div v-if="processing" class="mt-4 text-center">
-        <p class="text-surface-600 dark:text-surface-400">{{ $t('payment.processing_payment') }}</p>
+        <p class="text-surface-600 dark:text-surface-400">{{ $t('enrollment.processing_payment') }}</p>
       </div>
     </div>
 
     <div v-else class="text-center py-8">
       <i class="pi pi-info-circle text-3xl text-surface-400 mb-4"></i>
-      <p class="text-surface-600 dark:text-surface-400 mb-4">{{ $t('payment.no_providers_available') }}</p>
+      <p class="text-surface-600 dark:text-surface-400 mb-4">{{ $t('enrollment.no_providers_available') }}</p>
     </div>
   </div>
 </template>

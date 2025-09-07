@@ -103,7 +103,7 @@ const errorMessages = computed(() => ({
         type="text"
         class="w-full"
         :error-message="errorMessages.name"
-        :label="t('campaigns.common.name')"
+        :label="t('campaign.common.name')"
         :disabled="disabled"
       >
         <template #icon>
@@ -117,7 +117,7 @@ const errorMessages = computed(() => ({
         :error-message="errorMessages.description"
         type="text"
         class="w-full"
-        :label="t('campaigns.common.description')"
+        :label="t('campaign.common.description')"
         :disabled="disabled"
       >
         <template #icon>
@@ -144,7 +144,7 @@ const errorMessages = computed(() => ({
         @update:modelValue="updateField('status', $event)"
         status-type="campaign"
         :error-message="errorMessages.status"
-        :label="t('campaigns.common.status')"
+        :label="t('campaign.common.status')"
         class="w-full"
         :disabled="disabled"
         :show-colors="true"

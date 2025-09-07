@@ -1,4 +1,11 @@
 {
+  "common": {
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "required_field": "Required field",
+    "invalid_email": "Invalid email"
+  },
   "title": "Settings",
   "general_settings": "General Settings",
   "personalized_information": "Personalized Information",

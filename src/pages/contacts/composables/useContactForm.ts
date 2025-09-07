@@ -44,21 +44,21 @@ export const useFormContact = () => {
 
   yup.setLocale({
     mixed: {
-      required: () => t('contacts.general.required_field'),
+      required: () => t('contact.general.required_field'),
     },
     string: {
-      email: () => t('contacts.general.invalid_email'),
+      email: () => t('contact.general.invalid_email'),
     },
   })
 
   const schema = yup.object<ContactForm>({
-    name: yup.string().optional().label(t('contacts.general.name')),
-    lastName: yup.string().optional().label(t('contacts.general.last_name')),
-    email: yup.string().email().optional().label(t('contacts.general.email')),
-    phone: yup.string().required().label(t('contacts.general.phone')),
-    countryCode: yup.string().required().label(t('contacts.general.country_code')),
-    status: yup.string().oneOf(validStatuses).optional().label(t('contacts.general.status')),
-    birthDate: yup.date().nullable().optional().label(t('contacts.general.birth_date')),
+    name: yup.string().optional().label(t('contact.general.name')),
+    lastName: yup.string().optional().label(t('contact.general.last_name')),
+    email: yup.string().email().optional().label(t('contact.general.email')),
+    phone: yup.string().required().label(t('contact.general.phone')),
+    countryCode: yup.string().required().label(t('contact.general.country_code')),
+    status: yup.string().oneOf(validStatuses).optional().label(t('contact.general.status')),
+    birthDate: yup.date().nullable().optional().label(t('contact.general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({
         customFieldId: yup.string().required().label('form.customFieldId'),

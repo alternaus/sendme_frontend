@@ -68,7 +68,7 @@ const loadCustomFields = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('settings.custom_fields.error_loading'),
       life: 3000
     })
@@ -103,7 +103,7 @@ const handleRemoveField = async (idx: number) => {
 
       toast.add({
         severity: 'success',
-        summary: t('general.success'),
+        summary: t('settings.common.success'),
         detail: t('settings.custom_fields.field_deleted'),
         life: 3000
       })
@@ -117,7 +117,7 @@ const handleRemoveField = async (idx: number) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('settings.custom_fields.error_deleting'),
       life: 3000
     })
@@ -134,7 +134,7 @@ const validateForm = () => {
   if (hasEmptyFields) {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('settings.custom_fields.error_saving'),
       life: 3000
     })
@@ -180,14 +180,14 @@ const onSubmit = () => {
 
         toast.add({
           severity: 'success',
-          summary: t('general.success'),
+          summary: t('settings.common.success'),
           detail: t('settings.custom_fields.field_updated'),
           life: 3000
         })
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('settings.common.error'),
           detail: t('settings.custom_fields.error_saving'),
           life: 3000
         })
@@ -196,7 +196,7 @@ const onSubmit = () => {
     (_formErrors) => {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('settings.common.error'),
         detail: t('settings.custom_fields.error_saving'),
         life: 3000
       })
@@ -306,7 +306,7 @@ onMounted(() => {
               v-if="editingFieldIndices.length > 0"
               type="button"
               class="!w-fit"
-              :label="$t('general.save')"
+              :label="$t('settings.common.save')"
               @click="onSubmit"
               icon="pi pi-save" />
           </div>

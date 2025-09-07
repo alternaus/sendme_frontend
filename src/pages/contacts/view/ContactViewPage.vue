@@ -1,7 +1,7 @@
 <template>
   <AppHeader
-    :icon="IconTypes.CONTACTS"
     :text="$t('contact.contact_information') + ': ' + fullName"
+    :icon="IconTypes.CONTACTS"
     :actions="headerActions"
   />
 
@@ -26,7 +26,7 @@
         class="flex items-center gap-2 bg-[var(--p-primary-color)] px-3 py-1 rounded-lg text-sm text-black"
       >
         <StatusIcon class="w-4 h-4" />
-        {{ contact.status === 'ACTIVE' ? $t('contacts.general.active') : $t('contacts.general.inactive') }}
+        {{ contact.status === 'ACTIVE' ? $t('contact.general.active') : $t('contact.general.inactive') }}
       </span>
     </div>
   </div>
@@ -36,7 +36,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
         <div class="flex flex-col items-center gap-2">
           <InformationIcon class="w-8 h-8 fill-current" />
-          <span class="text-lg font-semibold">{{ $t('contacts.general.personalized_information') }}</span>
+          <span class="text-lg font-semibold">{{ $t('contact.general.personalized_information') }}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -129,7 +129,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('contacts.general.error'),
+          summary: t('contact.general.error'),
           detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
@@ -147,8 +147,8 @@ export default defineComponent({
       return contact.value.customValues.map((customValue) => {
         const field = customFields.value.find((f) => f.id === customValue.customFieldId)
         return {
-          name: field ? field.fieldName : t('contacts.general.unknown_field'),
-          value: customValue.value || t('contacts.general.not_defined'),
+          name: field ? field.fieldName : t('contact.general.unknown_field'),
+          value: customValue.value || t('contact.general.not_defined'),
         }
       })
     })
@@ -175,7 +175,7 @@ export default defineComponent({
           } catch {
             toast.add({
               severity: 'error',
-              summary: t('contacts.general.error'),
+              summary: t('contact.general.error'),
               detail: t('contact.error_removed'),
               life: 3000,
             })

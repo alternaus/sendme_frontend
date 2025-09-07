@@ -20,7 +20,7 @@
           :modelValue="(form.content.value as string)"
           :errorMessage="errors.content"
           :aiAttach="true"
-          :placeholder="isEmailChannel ? $t('campaigns.common.write_email_message') : $t('campaigns.common.editor.sms_placeholder')"
+          :placeholder="isEmailChannel ? $t('campaign.common.write_email_message') : $t('campaign.common.editor.sms_placeholder')"
           @update:modelValue="updateContent"
         />
       </div>
@@ -99,7 +99,7 @@ const channelIcon = computed(() => {
 
 // Nombre del canal
 const channelName = computed(() => {
-  return isEmailChannel.value ? t('campaigns.common.email') : t('campaigns.common.sms')
+  return isEmailChannel.value ? t('campaign.common.email') : t('campaign.common.sms')
 })
 
 // Actualizar el tipo de contenido cuando cambie el canal
@@ -151,13 +151,13 @@ onMounted(async () => {
   try {
     const response = await getCustomFields()
     const contactFields = [
-      { name: t('campaigns.common.name'), value: '{name}' },
-      { name: t('campaigns.common.last_name'), value: '{lastName}' },
-      { name: t('campaigns.common.email'), value: '{email}' },
-      { name: t('campaigns.common.phone'), value: '{phone}' },
-      { name: t('campaigns.common.country_code'), value: '{countryCode}' },
-      { name: t('campaigns.common.birth_date'), value: '{birthDate}' },
-      { name: t('campaigns.common.status'), value: '{status}' },
+      { name: t('campaign.common.name'), value: '{name}' },
+      { name: t('campaign.common.last_name'), value: '{lastName}' },
+      { name: t('campaign.common.email'), value: '{email}' },
+      { name: t('campaign.common.phone'), value: '{phone}' },
+      { name: t('campaign.common.country_code'), value: '{countryCode}' },
+      { name: t('campaign.common.birth_date'), value: '{birthDate}' },
+      { name: t('campaign.common.status'), value: '{status}' },
     ]
 
     const customFields = response.map((field) => ({

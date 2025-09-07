@@ -132,7 +132,7 @@ const formatExecutionDate = (dateString: string): string => {
 
     <template #footer>
       <div class="flex justify-end gap-2 pt-3">
-        <AppButton @click="dialogVisible = false" :label="t('campaigns.common.close')" severity="secondary" size="small" />
+        <AppButton @click="dialogVisible = false" :label="t('campaign.common.close')" severity="secondary" size="small" />
       </div>
     </template>
   </AppDialog>

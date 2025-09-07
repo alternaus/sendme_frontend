@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">
-      {{ $t('enrollment.payment.account_information') }}
+      {{ $t('enrollment.enrollment.account_information') }}
     </h3>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
