@@ -326,6 +326,28 @@ const getMobileTitle = (item: Record<string, unknown>): string => {
   return getFieldValue(item, autoField)
 }
 
+// Función para verificar si un elemento está seleccionado (compatible con selección simple y múltiple)
+const isItemSelected = (item: Record<string, unknown>): boolean => {
+  if (!selectedRow.value) return false
+
+  if (Array.isArray(selectedRow.value)) {
+    // Selección múltiple: buscar en el array
+    return selectedRow.value.some(selected => {
+      // Comparar por ID si existe, sino por referencia
+      if (selected.id && item.id) {
+        return selected.id === item.id
+      }
+      return selected === item
+    })
+  } else {
+    // Selección simple: comparación directa
+    if (selectedRow.value.id && item.id) {
+      return selectedRow.value.id === item.id
+    }
+    return selectedRow.value === item
+  }
+}
+
 const getMobileSubtitle = (item: Record<string, unknown>): { value: string; isDate: boolean; field: string } => {
   const subtitleConfig = props.mobileConfig?.subtitle
   let field = ''
@@ -554,25 +576,48 @@ const getStatusSeverity = (item: Record<string, unknown>): TagSeverity => {
                   class="rounded-xl p-4 flex items-center shadow-sm transition-all duration-200 cursor-pointer active:scale-[0.95]"
                   :class="[
                     shouldShowAvatar ? 'gap-4' : 'gap-0',
-                    selectedRow === item
-                      ? 'border-2'
+                    isItemSelected(item)
+                      ? 'border-1'
                       : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 hover:shadow-md'
                   ]"
-                  :data-selected="selectedRow === item"
+                  :data-selected="isItemSelected(item)"
                   @click="
                     () => {
-                      selectedRow = selectedRow === item ? null : item
+                      if (props.multipleSelection) {
+                        // Selección múltiple: agregar/quitar del array
+                        if (!Array.isArray(selectedRow)) {
+                          selectedRow = []
+                        }
+                        const currentSelection = selectedRow as Record<string, unknown>[]
+                        const isCurrentlySelected = isItemSelected(item)
+
+                        if (isCurrentlySelected) {
+                          // Quitar elemento
+                          selectedRow = currentSelection.filter(selected => {
+                            if (selected.id && item.id) {
+                              return selected.id !== item.id
+                            }
+                            return selected !== item
+                          })
+                        } else {
+                          // Agregar elemento
+                          selectedRow = [...currentSelection, item]
+                        }
+                      } else {
+                        // Selección simple: toggle
+                        selectedRow = isItemSelected(item) ? null : item
+                      }
                     }
                   "
                   @dblclick="() => handleRowDoubleClick({ data: item })"
                 >
                   <!-- Avatar -->
                   <div v-if="shouldShowAvatar" class="flex-shrink-0">
-                    <slot name="avatar" :data="item">
-                      <div class="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-neutral-700 dark:text-neutral-300 font-semibold text-lg">
+                    <div class="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-neutral-700 dark:text-neutral-300 font-semibold text-lg">
+                      <slot name="avatar" :data="item">
                         {{ getInitials(item) }}
-                      </div>
-                    </slot>
+                      </slot>
+                    </div>
                   </div>
 
                   <!-- Content -->
@@ -632,25 +677,27 @@ const getStatusSeverity = (item: Record<string, unknown>): TagSeverity => {
 
                   <!-- Status and Arrow -->
                   <div class="flex items-center gap-3 flex-shrink-0">
-                    <slot name="mobile-status" :data="item">
-                      <AppTag
-                        v-if="getMobileStatus(item)"
-                        :label="getMobileStatus(item)"
-                        :severity="getStatusSeverity(item)"
-                      />
-                    </slot>
+                    <div class="flex items-center">
+                      <slot name="mobile-status" :data="item">
+                        <AppTag
+                          v-if="getMobileStatus(item)"
+                          :label="getMobileStatus(item)"
+                          :severity="getStatusSeverity(item)"
+                        />
+                      </slot>
+                    </div>
 
-                    <slot name="mobile-arrow" :data="item">
-                      <div class="w-6 h-6 flex items-center justify-center">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                      <slot name="mobile-arrow" :data="item" :selected="isItemSelected(item)">
                         <div
-                          v-if="selectedRow === item"
+                          v-if="isItemSelected(item)"
                           class="w-6 h-6 rounded-full flex items-center justify-center shadow-sm transition-all duration-200"
                           style="background-color: var(--p-primary-color);"
                         >
                           <i class="pi pi-check text-sm font-semibold" style="color: var(--p-primary-contrast-color);"></i>
                         </div>
-                      </div>
-                    </slot>
+                      </slot>
+                    </div>
                   </div>
                 </div>
               </template>
