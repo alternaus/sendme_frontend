@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
-    meta: { layout: 'DashboardLayout', requiresAuth: true, title: 'home' },
+    meta: { layout: 'DashboardLayout', requiresAuth: true, title: 'common.titles.home' },
   },
   contactRoutes,
   campaignRoutes,
@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
-    meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'not_found' },
+    meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'common.titles.not_found' },
   },
 ]
 

@@ -13,14 +13,14 @@ const accountRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'account'
+    title: 'common.titles.account'
   },
   children: [
     {
       path: '',
       name: 'account.index',
       component: () => import('@/pages/account/AccountPage.vue'),
-      meta: { title: 'account_settings' }
+      meta: { title: 'common.titles.account_settings' }
     },
   ],
 }

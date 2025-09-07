@@ -32,14 +32,14 @@ const campaignRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'campaigns'
+    title: 'common.titles.campaigns'
   },
   children: [
     {
       path: '',
       name: 'campaigns.index',
       component: () => import('@/pages/campaigns/CampaignPage.vue'),
-      meta: { title: 'campaigns_list' }
+      meta: { title: 'common.titles.campaigns_list' }
     },
     {
       path: 'create',
@@ -47,7 +47,7 @@ const campaignRoutes: RouteRecordRaw = {
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
       meta: {
         breadcrumb: generateBreadcrumb('actions.create', 'campaigns.create'),
-        title: 'create_campaign'
+        title: 'common.titles.create_campaign'
       },
     },
     {
@@ -55,7 +55,7 @@ const campaignRoutes: RouteRecordRaw = {
       name: 'campaigns.edit',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
       beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'campaigns.edit'),
-      meta: { title: 'edit_campaign' }
+      meta: { title: 'common.titles.edit_campaign' }
     },
   ],
 }

@@ -4,7 +4,7 @@ const enrollmentRoutes: RouteRecordRaw = {
   path: '/enrollment',
   name: 'enrollment',
   component: () => import('@/pages/enrollment/EnrollmentPage.vue'),
-  meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'enrollment' },
+  meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'common.titles.enrollment' },
   children: [
     {
       path: 'plans',
@@ -13,7 +13,7 @@ const enrollmentRoutes: RouteRecordRaw = {
       meta: {
         layout: 'DefaultLayout',
         requiresAuth: false,
-        title: 'enrollment_plans',
+        title: 'common.titles.enrollment_plans',
         breadcrumb: [
           { name: 'enrollment.plans', path: '/enrollment/plans' }
         ]
@@ -26,7 +26,7 @@ const enrollmentRoutes: RouteRecordRaw = {
       meta: {
         layout: 'DefaultLayout',
         requiresAuth: false,
-        title: 'enrollment_payment',
+        title: 'common.titles.enrollment_payment',
         breadcrumb: [
           { name: 'enrollment.plans', path: '/enrollment/plans' },
           { name: 'enrollment.payment', path: '/enrollment/payment' }
@@ -40,7 +40,7 @@ const enrollmentRoutes: RouteRecordRaw = {
       meta: {
         layout: 'DefaultLayout',
         requiresAuth: false,
-        title: 'enrollment_confirmation',
+        title: 'common.titles.enrollment_confirmation',
         breadcrumb: [
           { name: 'enrollment.plans', path: '/enrollment/plans' },
           { name: 'enrollment.confirmation', path: '/enrollment/confirmation' }

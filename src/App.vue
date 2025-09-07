@@ -42,7 +42,7 @@ export default defineComponent({
 
     const pageTitle = computed<string>(() => {
       const titleKey = route.meta.title as string
-      return titleKey ? i18n.t(`titles.${titleKey}`) : i18n.t('titles.home')
+      return titleKey ? i18n.t(`${titleKey}`) : i18n.t('titles.home')
     })
 
     useSeoMeta({

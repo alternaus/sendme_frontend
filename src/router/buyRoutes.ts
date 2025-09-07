@@ -13,14 +13,14 @@ const buyRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'buy_credits'
+    title: 'common.titles.buy_credits'
   },
   children: [
     {
       path: '',
       name: 'buy.index',
       component: () => import('@/pages/buy/BuyPage.vue'),
-      meta: { title: 'plans_and_pricing' }
+      meta: { title: 'common.titles.plans_and_pricing' }
     },
 
   ],

@@ -22,14 +22,14 @@ const sendRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'send.instant_message'
+    title: 'common.titles.instant_message'
   },
   children: [
     {
       path: '',
       name: 'send.index',
       component: () => import('@/pages/send/SendPage.vue'),
-      meta: { title: 'send.send_instant_message' }
+      meta: { title: 'common.titles.send_instant_message' }
     },
   ],
 }
