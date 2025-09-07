@@ -39,7 +39,7 @@ const updateMenuItems = () => {
       command: () => router.push({ name: 'settings.general' }) // Ahora lleva a la página principal de settings
     },
     {
-      label: t('auth.logout'),
+      label: t('auth.session.logout'),
       icon: 'pi pi-sign-out',
       command: () => (showLogoutDialog.value = true),
     },
@@ -89,7 +89,7 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
         <AppButton
           type="button"
           size="small"
-          :label="$t('auth.logout')"
+          :label="$t('auth.session.logout')"
           severity="danger"
           @click="confirmLogout"
         />

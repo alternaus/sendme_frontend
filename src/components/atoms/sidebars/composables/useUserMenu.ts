@@ -22,7 +22,7 @@ export function useUserMenu() {
       icon: 'pi pi-exclamation-triangle',
       rejectClass: 'p-button-secondary p-button-outlined',
       rejectLabel: t('general.cancel'),
-      acceptLabel: t('auth.logout'),
+      acceptLabel: t('auth.session.logout'),
       acceptClass: 'p-button-danger',
       accept: () => {
         authStore.logout()

@@ -26,7 +26,7 @@ const confirmLogout = () => {
     icon: 'pi pi-exclamation-triangle',
     rejectClass: 'p-button-secondary p-button-outlined',
     rejectLabel: t('general.cancel'),
-    acceptLabel: t('auth.logout'),
+    acceptLabel: t('auth.session.logout'),
     acceptClass: 'p-button-danger',
     accept: () => {
       authStore.logout()
@@ -109,7 +109,7 @@ const menuItems = computed(() => [
     },
   },
   {
-    label: t('auth.logout'),
+    label: t('auth.session.logout'),
     icon: 'pi pi-sign-out',
     action: () => confirmLogout(),
     class: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20',
