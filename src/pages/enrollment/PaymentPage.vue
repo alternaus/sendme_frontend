@@ -11,7 +11,7 @@
       <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
         <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
         <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-        <AppButton @click="fetchPlanDetails(planId)" :label="$t('general.retry')" severity="secondary" class="mt-4" />
+        <AppButton @click="fetchPlanDetails(planId)" :label="$t('enrollment.common.retry')" severity="secondary" class="mt-4" />
       </div>
 
       <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">

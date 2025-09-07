@@ -8,7 +8,7 @@
     <div v-else-if="error" class="text-center py-8">
       <i class="pi pi-exclamation-triangle text-3xl text-red-500 mb-4"></i>
       <p class="text-red-500 mb-4">{{ error }}</p>
-      <AppButton :label="$t('general.retry')" @click="loadProviders" severity="secondary" size="small" />
+      <AppButton :label="$t('enrollment.common.retry')" @click="loadProviders" severity="secondary" size="small" />
     </div>
 
     <div v-else-if="availableProviders.length > 0" class="space-y-4">

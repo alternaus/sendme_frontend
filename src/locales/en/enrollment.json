@@ -1,4 +1,14 @@
 {
+  "common": {
+    "loading": "Loading",
+    "retry": "Retry",
+    "copy": "Copy",
+    "refresh": "Refresh",
+    "status": "Status",
+    "error": "Error",
+    "copied": "Copied",
+    "copy_failed": "Copy failed"
+  },
   "page": {
     "select_plan": "Select your plan",
     "select_plan_description": "Choose the plan that best fits your needs",

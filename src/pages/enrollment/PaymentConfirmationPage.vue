@@ -10,7 +10,7 @@
       <div class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
         <div class="flex flex-col items-center gap-4 py-10">
           <i class="pi pi-spin pi-spinner text-4xl text-[var(--p-primary-color)]" aria-hidden="true"></i>
-          <span class="text-surface-500 dark:text-surface-400">{{ $t('general.loading') }}</span>
+          <span class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.common.loading') }}</span>
         </div>
 
         <div class="mt-6 space-y-3 animate-pulse">
@@ -28,7 +28,7 @@
           <h2 class="text-red-500 font-semibold text-xl text-center">{{ $t(error) }}</h2>
           <AppButton
             class="mt-2"
-            :label="$t('general.retry')"
+            :label="$t('enrollment.common.retry')"
             :disabled="loading"
             @click="checkTransactionStatus"
           />
@@ -69,7 +69,7 @@
                 type="button"
                 @click="copy(transactionInfo.x_ref_payco)"
               >
-                <i class="pi pi-copy text-xs"></i> {{ $t('general.copy') }}
+                <i class="pi pi-copy text-xs"></i> {{ $t('enrollment.common.copy') }}
               </button>
             </dd>
           </div>
@@ -98,7 +98,7 @@
           <AppButton
             v-else-if="statusProps.state === 'pending'"
             rounded
-            :label="$t('general.refresh')"
+            :label="$t('enrollment.common.refresh')"
             :disabled="loading"
             @click="checkTransactionStatus"
           />
@@ -165,7 +165,7 @@ const statusProps = computed(() => {
       fg: 'text-surface-500 dark:text-surface-400',
       bgSoft: 'bg-surface-100 dark:bg-surface-900',
       bgRing: 'ring-surface-100 dark:ring-surface-900',
-      titleKey: 'general.status',
+      titleKey: 'enrollment.common.status',
     } as const
   }
   if (info.success || info.x_response === 'Aceptada') {
@@ -241,7 +241,7 @@ async function checkTransactionStatus() {
     error.value = 'enrollment.error_loading_transaction'
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('enrollment.common.error'),
       detail: t('enrollment.error_loading_transaction'),
       life: 5000
     })
@@ -262,9 +262,9 @@ function navigateToPlans() {
 async function copy(text: string) {
   try {
     await navigator.clipboard.writeText(text)
-    toast.add({ severity: 'info', summary: t('general.copied'), life: 2000 })
+    toast.add({ severity: 'info', summary: t('enrollment.common.copied'), life: 2000 })
   } catch {
-    toast.add({ severity: 'warn', summary: t('general.copy_failed'), life: 2000 })
+    toast.add({ severity: 'warn', summary: t('enrollment.common.copy_failed'), life: 2000 })
   }
 }
 

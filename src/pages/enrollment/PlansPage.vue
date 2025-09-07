@@ -13,7 +13,7 @@
       <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
         <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
         <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-        <AppButton @click="fetchPlansData" :label="$t('general.retry')" class="mt-4" />
+        <AppButton @click="fetchPlansData" :label="$t('enrollment.common.retry')" class="mt-4" />
       </div>
 
       <Carousel v-else :value="plans" :responsiveOptions="carouselResponsiveOptions" :numVisible="3" :numScroll="1"
@@ -143,7 +143,7 @@ const fetchPlansData = async () => {
     error.value = 'enrollment.plans.error_loading_plans'
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('enrollment.common.error'),
       detail: t('enrollment.plans.error_loading_plans'),
       life: 5000
     })
