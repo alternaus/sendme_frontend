@@ -277,10 +277,15 @@ export default defineComponent({
     :loading="loading"
     :emptyMessage="'reports.error_getting_audit'"
     textTotalItems="reports.audits"
-    mobileTitleField="table"
-    mobilePhoneField="action"
-    mobileEmailField="userId"
-    mobileSourceField="createdAt"
+    :mobile-config="{
+      title: { field: 'table' },
+      subtitle: { field: 'action' },
+      metadata: [
+        { field: 'userId', position: 'left', label: 'Usuario' },
+        { field: 'createdAt', position: 'right' }
+      ],
+      showAvatar: false
+    }"
     @page-change="fetchAudits"
   >
     <template #header-createdAt>

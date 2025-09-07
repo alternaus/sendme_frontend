@@ -177,11 +177,16 @@ export default defineComponent({
       :emptyMessage="'account.recharges.error_getting_recharges'"
       textTotalItems="account.recharges.title"
       :autoDetectDateFields="true"
-      mobileTitleField="amount"
-      mobilePhoneField="messageCount"
-      mobileEmailField="remainingMessages"
-      mobileSourceField="createdAt"
-      mobileStatusField="status"
+      :mobile-config="{
+        title: { field: 'amount' },
+        subtitle: { field: 'messageCount' },
+        metadata: [
+          { field: 'remainingMessages', position: 'left', label: 'Restantes' },
+          { field: 'createdAt', position: 'right' }
+        ],
+        status: { field: 'status' },
+        showAvatar: false
+      }"
       @page-change="fetchRecharges"
     >
       <template #custom-amount="{ data }">

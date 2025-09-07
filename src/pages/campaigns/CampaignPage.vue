@@ -361,6 +361,28 @@ const headerActions = computed(() => {
   return baseActions
 })
 
+// Función para formatear la frecuencia concatenando días y hora
+const getFormattedFrequency = (campaign: Record<string, unknown>): string => {
+  if (hasTableValue(campaign, 'days') && getTableValueWithDefault<string[]>(campaign, 'days', []).length) {
+    const days = getTableValueWithDefault<string[]>(campaign, 'days', [])
+      .map((day: string) => t(`campaign.days_abbr.${day}`))
+      .join(', ')
+    const time = getTableValueWithDefault<string>(campaign, 'time', '')
+    return `${days} ${time}`.trim()
+  } else if (hasTableValue(campaign, 'frequency')) {
+    return t(`campaign.frequency_types.${getTableValueWithDefault<string>(campaign, 'frequency', '')}`)
+  }
+  return '-'
+}
+
+// Agregar el campo calculado a los datos de campaigns
+const campaignsWithFormattedFrequency = computed(() => {
+  return campaigns.value.map(campaign => ({
+    ...campaign,
+    formattedFrequency: getFormattedFrequency(campaign)
+  }))
+})
+
 
 </script>
 <template>
@@ -440,7 +462,7 @@ const headerActions = computed(() => {
 
   <AppTable
     class="w-full mt-4"
-    :data="campaigns"
+    :data="campaignsWithFormattedFrequency"
     :headers="[
       { field: 'name', header: $t('campaign.form.name') },
       { field: 'frequency', header: $t('campaign.form.frequency') },
@@ -455,11 +477,16 @@ const headerActions = computed(() => {
     :multipleSelection="true"
     :loading="loading"
     textTotalItems="campaign.general.campaigns"
-    mobileTitleField="name"
-    mobilePhoneField="frequency"
-    mobileEmailField="channelName"
-    mobileSourceField="startDate"
-    mobileStatusField="status"
+    :mobile-config="{
+      title: { field: 'name' },
+      subtitle: { field: 'formattedFrequency' },
+      metadata: [
+        { field: 'channelName', position: 'left', label: 'Canal' },
+        { field: 'startDate', position: 'right', label: 'Inicio' }
+      ],
+      status: { field: 'status' },
+      showAvatar: false
+    }"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >

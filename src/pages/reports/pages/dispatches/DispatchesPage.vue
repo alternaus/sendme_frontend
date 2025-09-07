@@ -230,11 +230,16 @@ export default defineComponent({
     :multipleSelection="false"
     :loading="loading"
     textTotalItems="reports.common.dispatches"
-    mobileTitleField="campaignName"
-    mobilePhoneField="providerName"
-    mobileEmailField="totalSent"
-    mobileSourceField="sentAt"
-    mobileStatusField="totalDelivered"
+    :mobile-config="{
+      title: { field: 'campaignName' },
+      subtitle: { field: 'providerName' },
+      metadata: [
+        { field: 'totalSent', position: 'left', label: 'Enviados' },
+        { field: 'sentAt', position: 'right' }
+      ],
+      status: { field: 'totalDelivered' },
+      showAvatar: false
+    }"
     @page-change="fetchDispatches"
   >
     <template #header-campaignName>

@@ -295,11 +295,16 @@ export default defineComponent({
     :multipleSelection="false"
     :loading="loading"
     textTotalItems="reports.common.messages"
-    mobileTitleField="recipientDetails"
-    mobilePhoneField="contentType"
-    mobileEmailField="content"
-    mobileSourceField="sentAt"
-    mobileStatusField="status"
+    :mobile-config="{
+      title: { field: 'recipientDetails' },
+      subtitle: { field: 'contentType' },
+      metadata: [
+        { field: 'content', position: 'left' },
+        { field: 'sentAt', position: 'right' }
+      ],
+      status: { field: 'status' },
+      showAvatar: false
+    }"
     @page-change="fetchMessages"
   >
     <template #header-recipientDetails>

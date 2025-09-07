@@ -10,8 +10,12 @@ import Paginator from 'primevue/paginator'
 import dayjs from 'dayjs'
 
 import FormattedDate from '@/components/atoms/formatted-date/FormattedDate.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 
+import type { MobileConfig } from './types/mobile-config.type'
 import type { TableHeader } from './types/table-header.type'
+
+type TagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'warning' | 'danger' | 'contrast'
 
 export interface DateFormatConfig {
   field: string
@@ -69,12 +73,7 @@ interface Props {
   ptOptions?: object
 
   // Configuración para vista móvil
-  mobileNameField?: string
-  mobilePhoneField?: string
-  mobileEmailField?: string
-  mobileSourceField?: string
-  mobileStatusField?: string
-  mobileTitleField?: string
+  mobileConfig?: MobileConfig
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -269,16 +268,44 @@ const tableContentClasses = computed(() => {
   return baseClasses.join(' ')
 })
 
-// Funciones para la vista móvil tipo tarjeta
-const getInitials = (item: Record<string, unknown>): string => {
-  const nameField = props.mobileNameField || props.headers.find(h =>
-    h.field.toLowerCase().includes('name') ||
-    h.field.toLowerCase().includes('nombre')
-  )?.field
+// Utilidades para la configuración móvil genérica
+const getFieldValue = (item: Record<string, unknown>, field: string | undefined, fallbackFields?: string[]): string => {
+  if (field && item[field]) {
+    return String(item[field])
+  }
 
-  if (nameField && item[nameField]) {
-    const name = String(item[nameField])
-    return name
+  if (fallbackFields) {
+    for (const fallbackField of fallbackFields) {
+      if (item[fallbackField]) {
+        return String(item[fallbackField])
+      }
+    }
+  }
+
+  return ''
+}
+
+const findFieldByKeywords = (keywords: string[]): string | undefined => {
+  return props.headers.find(h =>
+    keywords.some(keyword => h.field.toLowerCase().includes(keyword))
+  )?.field
+}
+
+// Funciones para la vista móvil
+const getInitials = (item: Record<string, unknown>): string => {
+  const avatarConfig = props.mobileConfig?.avatar
+  let value = ''
+
+  if (avatarConfig?.field) {
+    value = getFieldValue(item, avatarConfig.field, avatarConfig.fallbackFields)
+  } else {
+    // Fallback automático para compatibilidad
+    const autoField = findFieldByKeywords(['name', 'nombre'])
+    value = getFieldValue(item, autoField)
+  }
+
+  if (value) {
+    return value
       .split(' ')
       .slice(0, 2)
       .map(word => word.charAt(0).toUpperCase())
@@ -287,83 +314,113 @@ const getInitials = (item: Record<string, unknown>): string => {
   return 'NA'
 }
 
-const getMainTitle = (item: Record<string, unknown>): string => {
-  const nameField = props.mobileNameField || props.headers.find(h =>
-    h.field.toLowerCase().includes('name') ||
-    h.field.toLowerCase().includes('nombre')
-  )?.field
+const getMobileTitle = (item: Record<string, unknown>): string => {
+  const titleConfig = props.mobileConfig?.title
 
-  return nameField ? String(item[nameField] || '') : ''
+  if (titleConfig?.field) {
+    return getFieldValue(item, titleConfig.field, titleConfig.fallbackFields)
+  }
+
+  // Fallback automático
+  const autoField = findFieldByKeywords(['name', 'nombre', 'title', 'titulo'])
+  return getFieldValue(item, autoField)
 }
 
-const getPhoneFormatted = (item: Record<string, unknown>): { value: string; isDate: boolean; field: string } => {
-  const phoneField = props.mobilePhoneField || props.headers.find(h =>
-    h.field.toLowerCase().includes('phone') ||
-    h.field.toLowerCase().includes('telefono') ||
-    h.field.toLowerCase().includes('tel') ||
-    h.field.toLowerCase().includes('frequency') ||
-    h.field.toLowerCase().includes('frecuencia')
-  )?.field
+const getMobileSubtitle = (item: Record<string, unknown>): { value: string; isDate: boolean; field: string } => {
+  const subtitleConfig = props.mobileConfig?.subtitle
+  let field = ''
+  let value = ''
 
-  if (phoneField && item[phoneField]) {
-    return {
-      value: String(item[phoneField]),
-      isDate: isDateField(phoneField),
-      field: phoneField
+  if (subtitleConfig?.field) {
+    field = subtitleConfig.field
+    value = getFieldValue(item, subtitleConfig.field, subtitleConfig.fallbackFields)
+  } else {
+    // Fallback automático
+    const autoField = findFieldByKeywords(['phone', 'telefono', 'tel', 'frequency', 'frecuencia', 'email', 'correo'])
+    if (autoField) {
+      field = autoField
+      value = getFieldValue(item, autoField)
     }
   }
-  return { value: '', isDate: false, field: '' }
-}
 
-const getEmail = (item: Record<string, unknown>): string => {
-  const emailField = props.mobileEmailField || props.headers.find(h =>
-    h.field.toLowerCase().includes('email') ||
-    h.field.toLowerCase().includes('correo')
-  )?.field
-
-  return emailField ? String(item[emailField] || '') : ''
-}
-
-const getSourceFormatted = (item: Record<string, unknown>): { value: string; isDate: boolean; field: string } => {
-  const sourceField = props.mobileSourceField || props.headers.find(h => {
-    const sourceFields = ['source', 'origen', 'canal', 'channel', 'type', 'tipo', 'date', 'fecha', 'start', 'end']
-    return sourceFields.some(field => h.field.toLowerCase().includes(field))
-  })?.field
-
-  if (sourceField && item[sourceField]) {
-    return {
-      value: String(item[sourceField]),
-      isDate: isDateField(sourceField),
-      field: sourceField
-    }
+  return {
+    value,
+    isDate: isDateField(field),
+    field
   }
-  return { value: '', isDate: false, field: '' }
 }
 
-const getStatus = (item: Record<string, unknown>): string => {
-  const statusField = props.mobileStatusField || props.headers.find(h =>
-    h.field.toLowerCase().includes('status') ||
-    h.field.toLowerCase().includes('estado') ||
-    h.field.toLowerCase().includes('state')
-  )?.field
+const getMobileMetadata = (item: Record<string, unknown>): Array<{ value: string; label?: string; isDate: boolean; field: string; position: 'left' | 'right'; separator?: string }> => {
+  if (!props.mobileConfig?.metadata) {
+    // Fallback automático para compatibilidad
+    const emailField = findFieldByKeywords(['email', 'correo'])
+    const sourceField = findFieldByKeywords(['source', 'origen', 'canal', 'channel', 'type', 'tipo', 'date', 'fecha', 'start', 'end'])
 
-  return statusField ? String(item[statusField] || '') : ''
+    const metadata = []
+    if (emailField && item[emailField]) {
+      metadata.push({
+        value: String(item[emailField]),
+        isDate: isDateField(emailField),
+        field: emailField,
+        position: 'left' as const
+      })
+    }
+    if (sourceField && item[sourceField]) {
+      metadata.push({
+        value: String(item[sourceField]),
+        isDate: isDateField(sourceField),
+        field: sourceField,
+        position: 'right' as const
+      })
+    }
+    return metadata
+  }
+
+  return props.mobileConfig.metadata
+    .map(config => {
+      const value = getFieldValue(item, config.field)
+      return {
+        value,
+        label: config.label,
+        isDate: isDateField(config.field),
+        field: config.field,
+        position: config.position || 'left',
+        separator: config.separator
+      }
+    })
+    .filter(meta => meta.value)
 }
 
-const getStatusClass = (item: Record<string, unknown>): string => {
-  const status = getStatus(item).toLowerCase()
+const getMobileStatus = (item: Record<string, unknown>): string => {
+  const statusConfig = props.mobileConfig?.status
+
+  if (statusConfig?.field) {
+    return getFieldValue(item, statusConfig.field, statusConfig.fallbackFields)
+  }
+
+  // Fallback automático
+  const autoField = findFieldByKeywords(['status', 'estado', 'state'])
+  return getFieldValue(item, autoField)
+}
+
+const shouldShowAvatar = computed(() => {
+  return props.mobileConfig?.showAvatar !== false && (props.mobileConfig?.avatar?.field || findFieldByKeywords(['name', 'nombre']))
+})
+
+const getStatusSeverity = (item: Record<string, unknown>): TagSeverity => {
+  const status = getMobileStatus(item).toLowerCase()
 
   if (status.includes('activ') || status.includes('active')) {
-    return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+    return 'success'
   }
   if (status.includes('pendient') || status.includes('pending')) {
-    return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+    return 'warn'
   }
   if (status.includes('inactiv') || status.includes('inactive')) {
-    return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+    return 'secondary'
   }
 
-  return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+  return 'info'
 }
 </script>
 
@@ -494,9 +551,9 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                 <div
                   v-for="(item, index) in data"
                   :key="index"
-                  class="rounded-xl p-4 flex items-center shadow-sm border transition-all duration-200 cursor-pointer active:scale-[0.95]"
+                  class="rounded-xl p-4 flex items-center shadow-sm transition-all duration-200 cursor-pointer active:scale-[0.95]"
                   :class="[
-                    mobileNameField ? 'gap-4' : 'gap-0',
+                    shouldShowAvatar ? 'gap-4' : 'gap-0',
                     selectedRow === item
                       ? 'border-2'
                       : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 hover:shadow-md'
@@ -510,7 +567,7 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                   @dblclick="() => handleRowDoubleClick({ data: item })"
                 >
                   <!-- Avatar -->
-                  <div v-if="mobileNameField" class="flex-shrink-0">
+                  <div v-if="shouldShowAvatar" class="flex-shrink-0">
                     <slot name="avatar" :data="item">
                       <div class="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-neutral-700 dark:text-neutral-300 font-semibold text-lg">
                         {{ getInitials(item) }}
@@ -521,38 +578,54 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                   <!-- Content -->
                   <div class="flex-1 min-w-0">
                     <slot name="mobile-content" :data="item">
-                      <!-- Contenido basado en props -->
-                      <!-- Title/Name -->
-                      <h3 v-if="mobileNameField || mobileTitleField" class="font-semibold text-neutral-900 dark:text-white text-base truncate leading-tight">
-                        {{ mobileTitleField ? item[mobileTitleField] : getMainTitle(item) }}
+                      <!-- Title -->
+                      <h3 v-if="getMobileTitle(item)" class="font-semibold text-neutral-900 dark:text-white text-base truncate leading-tight">
+                        {{ getMobileTitle(item) }}
                       </h3>
 
-                      <!-- Phone/Secondary info -->
-                      <p v-if="mobilePhoneField" class="text-neutral-600 dark:text-neutral-300 text-sm truncate mt-0.5">
+                      <!-- Subtitle -->
+                      <p v-if="getMobileSubtitle(item).value" class="text-neutral-600 dark:text-neutral-300 text-sm truncate mt-0.5">
                         <FormattedDate
-                          v-if="getPhoneFormatted(item).isDate && getPhoneFormatted(item).value"
-                          :date="getPhoneFormatted(item).value"
-                          :format="getDateConfig(getPhoneFormatted(item).field)?.format"
-                          :custom-format="getDateConfig(getPhoneFormatted(item).field)?.customFormat"
-                          :show-timezone="getDateConfig(getPhoneFormatted(item).field)?.showTimezone"
+                          v-if="getMobileSubtitle(item).isDate"
+                          :date="getMobileSubtitle(item).value"
+                          :format="getDateConfig(getMobileSubtitle(item).field)?.format"
+                          :custom-format="getDateConfig(getMobileSubtitle(item).field)?.customFormat"
+                          :show-timezone="getDateConfig(getMobileSubtitle(item).field)?.showTimezone"
                         />
-                        <span v-else>{{ getPhoneFormatted(item).value }}</span>
+                        <span v-else>{{ getMobileSubtitle(item).value }}</span>
                       </p>
 
-                      <!-- Email and source -->
-                      <div v-if="mobileEmailField || mobileSourceField" class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                        <span v-if="mobileEmailField" class="truncate max-w-[150px]">{{ getEmail(item) }}</span>
-                        <span v-if="mobileEmailField && mobileSourceField && getEmail(item) && getSourceFormatted(item).value" class="text-neutral-300 dark:text-neutral-600">•</span>
-                        <span v-if="mobileSourceField" class="flex-shrink-0 font-medium">
-                          <FormattedDate
-                            v-if="getSourceFormatted(item).isDate && getSourceFormatted(item).value"
-                            :date="getSourceFormatted(item).value"
-                            :format="getDateConfig(getSourceFormatted(item).field)?.format"
-                            :custom-format="getDateConfig(getSourceFormatted(item).field)?.customFormat"
-                            :show-timezone="getDateConfig(getSourceFormatted(item).field)?.showTimezone"
-                          />
-                          <span v-else>{{ getSourceFormatted(item).value }}</span>
-                        </span>
+                      <!-- Metadata -->
+                      <div v-if="getMobileMetadata(item).length > 0" class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                        <template v-for="(meta, metaIndex) in getMobileMetadata(item)" :key="metaIndex">
+                          <span v-if="meta.position === 'left'" class="truncate max-w-[150px]">
+                            <span v-if="meta.label" class="font-medium">{{ meta.label }}: </span>
+                            <FormattedDate
+                              v-if="meta.isDate"
+                              :date="meta.value"
+                              :format="getDateConfig(meta.field)?.format"
+                              :custom-format="getDateConfig(meta.field)?.customFormat"
+                              :show-timezone="getDateConfig(meta.field)?.showTimezone"
+                            />
+                            <span v-else>{{ meta.value }}</span>
+                          </span>
+                        </template>
+
+                        <span v-if="getMobileMetadata(item).some(m => m.position === 'left') && getMobileMetadata(item).some(m => m.position === 'right')" class="text-neutral-300 dark:text-neutral-600">•</span>
+
+                        <template v-for="(meta, metaIndex) in getMobileMetadata(item)" :key="`right-${metaIndex}`">
+                          <span v-if="meta.position === 'right'" class="flex-shrink-0 font-medium">
+                            <span v-if="meta.label" class="font-medium">{{ meta.label }}: </span>
+                            <FormattedDate
+                              v-if="meta.isDate"
+                              :date="meta.value"
+                              :format="getDateConfig(meta.field)?.format"
+                              :custom-format="getDateConfig(meta.field)?.customFormat"
+                              :show-timezone="getDateConfig(meta.field)?.showTimezone"
+                            />
+                            <span v-else>{{ meta.value }}</span>
+                          </span>
+                        </template>
                       </div>
                     </slot>
                   </div>
@@ -560,13 +633,11 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                   <!-- Status and Arrow -->
                   <div class="flex items-center gap-3 flex-shrink-0">
                     <slot name="mobile-status" :data="item">
-                      <span
-                        v-if="mobileStatusField && getStatus(item)"
-                        class="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap"
-                        :class="getStatusClass(item)"
-                      >
-                        {{ getStatus(item) }}
-                      </span>
+                      <AppTag
+                        v-if="getMobileStatus(item)"
+                        :label="getMobileStatus(item)"
+                        :severity="getStatusSeverity(item)"
+                      />
                     </slot>
 
                     <slot name="mobile-arrow" :data="item">

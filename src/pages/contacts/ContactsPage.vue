@@ -316,11 +316,17 @@ const headerActions = computed(() => {
     :multipleSelection="true"
     :loading="loading"
     textTotalItems="contact.contacts"
-    mobileNameField="name"
-    mobilePhoneField="phone"
-    mobileEmailField="email"
-    mobileSourceField="origin"
-    mobileStatusField="status"
+    :mobile-config="{
+      avatar: { field: 'name' },
+      title: { field: 'name' },
+      subtitle: { field: 'phone' },
+      metadata: [
+        { field: 'email', position: 'left' },
+        { field: 'origin', position: 'right' }
+      ],
+      status: { field: 'status' },
+      showAvatar: true
+    }"
     @selection-change="handleSelectionChange"
     @page-change="fetchContacts"
     @row-double-click="handleRowDoubleClick"
