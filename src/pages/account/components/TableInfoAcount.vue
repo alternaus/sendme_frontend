@@ -131,7 +131,7 @@ export default defineComponent({
             'bg-gray-300 text-gray-700 hover:bg-gray-400': optionSelected !== '2',
           }"
         >
-          <small>{{ $t('general.history') }}</small>
+          <small>{{ $t('account.recharges.history') }}</small>
         </div> -->
       </div>
 
