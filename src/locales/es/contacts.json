@@ -74,7 +74,10 @@
     "error_loading_file": "Error al cargar el archivo",
     "unknown_field": "Campo desconocido",
     "no_custom_fields": "No hay campos personalizados configurados",
-    "unknown_field_type": "Tipo de campo desconocido"
+    "unknown_field_type": "Tipo de campo desconocido",
+    "drag_drop_file": "Arrastra y suelta tu archivo aquí",
+    "save": "Guardar",
+    "phone_placeholder": "Número de teléfono"
   },
   "actions": {
     "create": "Crear",

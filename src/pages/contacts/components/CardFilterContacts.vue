@@ -84,7 +84,7 @@ const countryCodeOptions = [
           :modelValue="_props.search"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="t('general.search')"
+          :label="t('contacts.general.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -96,7 +96,7 @@ const countryCodeOptions = [
           :modelValue="_props.name"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="t('general.name')"
+          :label="t('contacts.general.name')"
           @input="updateField('name', $event.target.value)"
         >
           <template #icon>
@@ -108,7 +108,7 @@ const countryCodeOptions = [
           class="w-full mt-3"
           :modelValue="_props.countryCode"
           :options="countryCodeOptions"
-          :label="t('general.country_code')"
+          :label="t('contacts.general.country_code')"
           @update:modelValue="updateField('countryCode', $event !== null ? String($event) : '')"
         >
           <template #icon>
@@ -120,7 +120,7 @@ const countryCodeOptions = [
           class="w-full mt-3"
           :modelValue="_props.status"
           status-type="contact"
-          :label="t('general.status')"
+          :label="t('contacts.general.status')"
           :show-colors="true"
           @update:modelValue="updateField('status', $event !== null ? String($event) : '')"
         >
@@ -133,7 +133,7 @@ const countryCodeOptions = [
           class="w-full mt-3"
           :modelValue="_props.origin"
           :options="originOptions"
-          :label="t('general.origin')"
+          :label="t('contacts.general.origin')"
           @update:modelValue="updateField('origin', $event !== null ? String($event) : '')"
         >
           <template #icon>

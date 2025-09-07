@@ -136,7 +136,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('contacts.general.error'),
           detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
@@ -167,7 +167,7 @@ export default defineComponent({
             await updateContact(contactId, payload)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
+              summary: t('contacts.general.success'),
               detail: t('contact.contact_updated'),
               life: 3000,
             })
@@ -175,7 +175,7 @@ export default defineComponent({
             await createContact(payload)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
+              summary: t('contacts.general.success'),
               detail: t('contact.contact_created'),
               life: 3000,
             })
@@ -186,7 +186,7 @@ export default defineComponent({
           console.error('Error submitting form:', error) // Debug log
           toast.add({
             severity: 'error',
-            summary: t('general.error'),
+            summary: t('contacts.general.error'),
             detail: t('contact.error_saving_contact'),
             life: 3000,
           })
@@ -250,14 +250,14 @@ export default defineComponent({
   <form @submit.prevent="onSubmitForm" class="w-full pt-4">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput v-model="form.name.value" type="text" class="w-full rounded-md mt-3" :error-message="errors.name"
-        :label="$t('general.name')">
+        :label="$t('contacts.general.name')">
         <template #icon>
           <CredentialIcon class="w-4 h-4 dark:fill-white" />
         </template>
       </AppInput>
 
       <AppInput v-model="form.lastName.value" type="text" class="w-full rounded-md mt-3"
-        :error-message="errors.lastName" :label="$t('general.last_name')">
+        :error-message="errors.lastName" :label="$t('contacts.general.last_name')">
         <template #icon>
           <CredentialIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -267,8 +267,8 @@ export default defineComponent({
         v-model="form.phone.value"
         v-model:countryCode="form.countryCode.value"
         class="w-full mt-3"
-        :label="$t('general.phone')"
-        :placeholder="$t('general.phone_placeholder')"
+        :label="$t('contacts.general.phone')"
+        :placeholder="$t('contacts.general.phone_placeholder')"
         :error-message="errors.phone || errors.countryCode"
         default-country="CO"
         :preferred-countries="['CO', 'US', 'MX', 'ES', 'PE', 'AR', 'CL', 'EC']"
@@ -276,7 +276,7 @@ export default defineComponent({
       />
 
       <AppInput v-model="form.email.value" type="email" class="w-full rounded-md mt-3" :error-message="errors.email"
-        :label="$t('general.email')">
+        :label="$t('contacts.general.email')">
         <template #icon>
           <EmailIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -285,7 +285,7 @@ export default defineComponent({
 
 
       <AppDatePicker v-model="form.birthDate.value" class="w-full mt-3"
-        :error-message="errors.birthDate" :label="$t('general.birth_date')">
+        :error-message="errors.birthDate" :label="$t('contacts.general.birth_date')">
         <template #icon>
           <BirthdayIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -296,7 +296,7 @@ export default defineComponent({
         status-type="contact"
         class="w-full mt-3"
         :error-message="errors.status"
-        :label="$t('general.status')"
+        :label="$t('contacts.general.status')"
         :show-colors="true"
       >
         <template #icon>
@@ -314,8 +314,8 @@ export default defineComponent({
       @date-change="handleCustomDateChange"
     />
     <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
-      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('general.save')" />
-      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('general.cancel')" @click="goBack" />
+      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('contacts.general.save')" />
+      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('contacts.general.cancel')" @click="goBack" />
     </div>
   </form>
 </template>

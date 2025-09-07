@@ -5,7 +5,7 @@ import * as yup from 'yup'
 
 export interface CustomFieldForm {
   fieldName: string
-  dataType: 'string' | 'number' | 'date'
+  dataType: 'STRING' | 'NUMBER' | 'DATE'
 }
 
 export interface CustomFieldFormRef {
@@ -28,7 +28,7 @@ export const useCustomFieldForm = () => {
         fieldName: yup.string().required().label(t('settings.custom_fields.field_label')),
         dataType: yup
           .string()
-          .oneOf(['string', 'number', 'date'])
+          .oneOf(['STRING', 'NUMBER', 'DATE'])
           .required()
           .label(t('settings.custom_fields.field_type')),
       }),
@@ -54,7 +54,7 @@ export const useCustomFieldForm = () => {
     if (customFields.value.length < 10) {
       addCustomField({
         fieldName: '',
-        dataType: 'string',
+        dataType: 'STRING',
       })
     }
   }

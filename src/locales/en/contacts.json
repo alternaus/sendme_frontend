@@ -76,7 +76,10 @@
     "error_loading_file": "Error loading file",
     "unknown_field": "Unknown field",
     "no_custom_fields": "No custom fields configured",
-    "unknown_field_type": "Unknown field type"
+    "unknown_field_type": "Unknown field type",
+    "drag_drop_file": "Drag and drop your file here",
+    "save": "Save",
+    "phone_placeholder": "Phone number"
   },
   "actions": {
     "create": "Create",

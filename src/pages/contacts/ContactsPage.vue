@@ -94,7 +94,7 @@ const fetchContacts = async ({ pageSize = 1, limitSize = 10 } = {}) => {
     contacts.value = data ?? []
     contactsMeta.value = meta ?? contactsMeta.value
   } catch {
-    toast.add({ severity: 'error', summary: t('contact.general.error'), detail: t('contact.error_getting_contacts') })
+    toast.add({ severity: 'error', summary: t('contacts.general.error'), detail: t('contact.error_getting_contacts') })
   } finally {
     loading.value = false
   }
@@ -131,14 +131,14 @@ const handleDelete = async () => {
     icon: 'pi pi-exclamation-triangle',
     rejectClass: 'p-button-secondary p-button-outlined',
     acceptClass: 'p-button-danger',
-    rejectLabel: t('contact.general.cancel'),
+    rejectLabel: t('contacts.general.cancel'),
     acceptLabel: t('contact.actions.delete'),
     accept: async () => {
       try {
         await Promise.all(selectedContacts.value.map(c => deleteContact(c.id)))
         toast.add({
           severity: 'success',
-          summary: t('contact.general.success'),
+          summary: t('contacts.general.success'),
           detail: selectedContacts.value.length === 1
             ? t('contact.success_removed')
             : t('contact.success_removed_multiple', { count: selectedContacts.value.length }),
@@ -148,7 +148,7 @@ const handleDelete = async () => {
         selectedContact.value = null
         await fetchContacts({ pageSize: page.value, limitSize: limit.value })
       } catch {
-        toast.add({ severity: 'error', summary: t('contact.general.error'), detail: t('contact.error_removed'), life: 3000 })
+        toast.add({ severity: 'error', summary: t('contacts.general.error'), detail: t('contact.error_removed'), life: 3000 })
       }
     }
   })
@@ -170,7 +170,7 @@ const handleEditContact = (contact: IContact) => {
 
 const openBulkSmsModal = async () => {
   if (selectedContacts.value.length === 0) {
-    toast.add({ severity: 'warn', summary: t('contact.general.warning'), detail: t('contact.bulk_sms.no_contacts_selected'), life: 3000 })
+    toast.add({ severity: 'warn', summary: t('contacts.general.warning'), detail: t('contact.bulk_sms.no_contacts_selected'), life: 3000 })
     return
   }
   showBulkSmsModal.value = true
@@ -183,7 +183,7 @@ const handleBulkSmsSuccess = () => {
 
 const headerActions = computed(() => {
   const actions = [
-    { label: t('contact.general.filters'), onClick: () => { showMobileModal.value = !showMobileModal.value }, type: ActionTypes.FILTER, badge: activeFiltersCount.value },
+    { label: t('contacts.general.filters'), onClick: () => { showMobileModal.value = !showMobileModal.value }, type: ActionTypes.FILTER, badge: activeFiltersCount.value },
     { label: t('contact.actions.create'), onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
     { label: t('contact.actions.export'), onClick: () => exportContacts({
         search: search.value, name: name.value, countryCode: countryCode.value, status: status.value, origin: origin.value,
@@ -236,7 +236,7 @@ const headerActions = computed(() => {
       v-model="search"
       type="text"
       class="w-full"
-      :label="$t('contact.general.search')"
+      :label="$t('contacts.general.search')"
     >
       <template #icon>
         <SearchIcon class="w-4 h-4 dark:fill-white" />
@@ -247,7 +247,7 @@ const headerActions = computed(() => {
       v-model="name"
       type="text"
       class="w-full"
-      :label="$t('contact.general.name')"
+      :label="$t('contacts.general.name')"
     >
       <template #icon>
         <CredentialIcon class="w-4 h-4 dark:fill-white" />
@@ -269,7 +269,7 @@ const headerActions = computed(() => {
         { value: '54', name: 'AR' },
         { value: '57', name: 'CO' },
       ]"
-      :label="$t('contact.general.country_code')"
+      :label="$t('contacts.general.country_code')"
     >
       <template #icon>
         <PhoneIcon class="w-6 h-4 dark:fill-white" />
@@ -280,7 +280,7 @@ const headerActions = computed(() => {
       class="w-full"
       v-model="status"
       status-type="contact"
-      :label="$t('contact.general.status')"
+      :label="$t('contacts.general.status')"
       :show-colors="true"
     >
       <template #icon>
@@ -292,7 +292,7 @@ const headerActions = computed(() => {
       class="w-full"
       v-model="origin"
       :options="originOptions"
-      :label="$t('contact.general.origin')"
+      :label="$t('contacts.general.origin')"
     >
       <template #icon>
         <DataOriginIcon class="w-6 h-4 dark:fill-white" />
@@ -324,37 +324,37 @@ const headerActions = computed(() => {
     <template #header-name>
       <div class="flex items-center">
         <CredentialIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.name') }} </span>
+        <span> {{ $t('contacts.general.name') }} </span>
       </div>
     </template>
     <template #header-phone>
       <div class="flex items-center">
         <PhoneIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.phone') }} </span>
+        <span> {{ $t('contacts.general.phone') }} </span>
       </div>
     </template>
     <template #header-email>
       <div class="flex items-center">
         <EmailIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.email') }} </span>
+        <span> {{ $t('contacts.general.email') }} </span>
       </div>
     </template>
     <template #header-createdAt>
       <div class="flex items-center">
         <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.date') }} </span>
+        <span> {{ $t('contacts.general.date') }} </span>
       </div>
     </template>
     <template #header-origin>
       <div class="flex items-center">
         <DataOriginIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.origin') }} </span>
+        <span> {{ $t('contacts.general.origin') }} </span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('contact.general.status') }} </span>
+        <span> {{ $t('contacts.general.status') }} </span>
       </div>
     </template>
     <template #custom-status="{ data }">

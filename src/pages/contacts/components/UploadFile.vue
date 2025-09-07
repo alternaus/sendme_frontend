@@ -45,12 +45,12 @@ const importProgress = ref<{ progress: number; total: number; percentage: number
 const requiredFields = ['phone']
 
 const fieldsOptions = [
-  { label: t('contact.general.name'), value: 'name' },
-  { label: t('contact.general.last_name'), value: 'lastName' },
-  { label: t('contact.general.email'), value: 'email' },
-  { label: t('contact.general.phone'), value: 'phone' },
-  { label: t('contact.general.country_code'), value: 'countryCode' },
-  { label: t('contact.general.birth_date'), value: 'birthDate' }
+  { label: t('contacts.general.name'), value: 'name' },
+  { label: t('contacts.general.last_name'), value: 'lastName' },
+  { label: t('contacts.general.email'), value: 'email' },
+  { label: t('contacts.general.phone'), value: 'phone' },
+  { label: t('contacts.general.country_code'), value: 'countryCode' },
+  { label: t('contacts.general.birth_date'), value: 'birthDate' }
 ]
 
 const openFileDialog = () => {
@@ -90,7 +90,7 @@ const onUpload = async (event: FileUploadSelectEvent) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('contact.general.error'),
+      summary: t('contacts.general.error'),
       detail: t('contact.import.error_loading_file'),
       life: 3000,
     })
@@ -129,7 +129,7 @@ const handleFinalUpload = async () => {
     //Mostrar mensaje de éxito
     toast.add({
       severity: 'success',
-      summary: t('contact.general.success'),
+      summary: t('contacts.general.success'),
       detail: t('contact.import.upload_success'),
       life: 3000,
     })
@@ -141,7 +141,7 @@ const handleFinalUpload = async () => {
     if (apiError.response?.data?.message) {
       toast.add({
         severity: 'error',
-        summary: t('contact.general.error'),
+        summary: t('contacts.general.error'),
         detail: Array.isArray(apiError.response.data.message)
           ? apiError.response.data.message.join(', ')
           : apiError.response.data.message,
@@ -150,7 +150,7 @@ const handleFinalUpload = async () => {
     } else {
       toast.add({
         severity: 'error',
-        summary: t('contact.general.error'),
+        summary: t('contacts.general.error'),
         detail: t('contact.import.error'),
         life: 3000,
       })
@@ -274,7 +274,7 @@ const handleCancel = () => {
           <div class="border-2 border-gray-300 p-4 rounded-full">
             <CloudUploadIcon class="w-12 h-12 text-gray-300" />
           </div>
-          <p class="mt-4 text-sm text-gray-500">{{ $t('general.drag_drop_file') }}</p>
+          <p class="mt-4 text-sm text-gray-500">{{ $t('contacts.general.drag_drop_file') }}</p>
           <AppButton class="mt-6 !w-auto !mx-auto" :label="$t('contact.import.select_file')" @click="openFileDialog">
             <template #icon>
               <ImportIcon class="w-5 h-5 fill-current" />

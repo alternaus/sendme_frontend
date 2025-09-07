@@ -85,7 +85,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('contacts.general.error'),
           detail: t('contact.import.google_connect_error'),
           life: 4000
         })
@@ -105,7 +105,7 @@ export default defineComponent({
 
         toast.add({
           severity: 'info',
-          summary: t('general.processing'),
+          summary: t('contacts.general.processing'),
           detail: t('contact.import.google_sync_processing'),
           life: 3000
         })
@@ -120,7 +120,7 @@ export default defineComponent({
 
         toast.add({
           severity: 'success',
-          summary: t('general.success'),
+          summary: t('contacts.general.success'),
           detail: t('contact.import.google_sync_success', { count: result.value.imported }),
           life: 4000
         })
@@ -135,7 +135,7 @@ export default defineComponent({
         } else {
           toast.add({
             severity: 'error',
-            summary: t('general.error'),
+            summary: t('contacts.general.error'),
             detail: t('contact.import.google_sync_error', { message: errorMessage }),
             life: 4000
           })

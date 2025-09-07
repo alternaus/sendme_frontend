@@ -36,9 +36,9 @@ const editingFieldIndices = ref<number[]>([])
 const { user } = useAuthStore()
 
 const dataTypes = [
-  { name: t('settings.custom_fields.data_types.text'), value: 'string' },
-  { name: t('settings.custom_fields.data_types.number'), value: 'number' },
-  { name: t('settings.custom_fields.data_types.date'), value: 'date' },
+  { name: t('settings.custom_fields.data_types.text'), value: 'STRING' },
+  { name: t('settings.custom_fields.data_types.number'), value: 'NUMBER' },
+  { name: t('settings.custom_fields.data_types.date'), value: 'DATE' },
 ]
 
 const getError = (idx: number, field: keyof typeof customFields.value[0]['value']) => {
@@ -55,7 +55,7 @@ const loadCustomFields = async () => {
     fields.forEach((field, index) => {
       addCustomField({
         fieldName: field.fieldName,
-        dataType: field.dataType as 'string' | 'number' | 'date'
+        dataType: field.dataType as 'STRING' | 'NUMBER' | 'DATE'
       })
       customFieldIds.value[index] = field.id.toString()
     })
@@ -161,14 +161,14 @@ const onSubmit = () => {
             await updateCustomField(existingFieldId, {
               fieldName: field.fieldName,
               dataType: field.dataType,
-              elementType: 'input',
+              elementType: 'INPUT',
               organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || user?.organizationId || '1'
             })
           } else {
             await createCustomField({
               fieldName: field.fieldName,
               dataType: field.dataType,
-              elementType: 'input',
+              elementType: 'INPUT',
               organizationId: user?.organizationId as string
             })
           }
