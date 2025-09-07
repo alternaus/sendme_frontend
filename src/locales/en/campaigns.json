@@ -1,4 +1,30 @@
 {
+  "common": {
+    "search": "Search",
+    "name": "Name",
+    "last_name": "Last Name",
+    "status": "Status",
+    "date_range": "Date range",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "validation_error": "Validation error",
+    "update": "Update",
+    "save": "Save",
+    "email": "Email",
+    "sms": "SMS",
+    "phone": "Phone",
+    "country_code": "Country code",
+    "birth_date": "Birth date",
+    "filters": "Filters",
+    "close": "Close",
+    "description": "Description",
+    "channel": "Channel",
+    "write_email_message": "Write your email message here...",
+    "editor": {
+      "sms_placeholder": "Write your SMS message here..."
+    }
+  },
   "general": {
     "campaign": "Campaign",
     "campaigns": "Campaigns",

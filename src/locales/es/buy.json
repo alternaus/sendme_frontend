@@ -1,4 +1,9 @@
 {
+  "common": {
+    "warning": "Advertencia",
+    "success": "Éxito",
+    "error": "Error"
+  },
   "page": {
     "title": "Comprar mensajes",
     "header_title": "Selecciona el valor de tu recarga",

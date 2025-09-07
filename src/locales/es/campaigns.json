@@ -1,4 +1,30 @@
 {
+  "common": {
+    "search": "Buscar",
+    "name": "Nombre",
+    "last_name": "Apellido",
+    "status": "Estado",
+    "date_range": "Rango de fechas",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "validation_error": "Error de validación",
+    "update": "Actualizar",
+    "save": "Guardar",
+    "email": "Email",
+    "sms": "SMS",
+    "phone": "Teléfono",
+    "country_code": "Código de país",
+    "birth_date": "Fecha de nacimiento",
+    "filters": "Filtros",
+    "close": "Cerrar",
+    "description": "Descripción",
+    "channel": "Canal",
+    "write_email_message": "Escribe tu mensaje de email aquí...",
+    "editor": {
+      "sms_placeholder": "Escribe tu mensaje SMS aquí..."
+    }
+  },
   "general": {
     "campaign": "Campaña",
     "campaigns": "Campañas",

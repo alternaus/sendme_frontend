@@ -100,7 +100,7 @@ onMounted(() => {
           :modelValue="search"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.search')"
+          :label="$t('campaigns.common.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -112,7 +112,7 @@ onMounted(() => {
           :modelValue="name"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.name')"
+          :label="$t('campaigns.common.name')"
           @input="updateField('name', $event.target.value)"
         >
           <template #icon>
@@ -124,7 +124,7 @@ onMounted(() => {
           class="w-full mt-3"
           :modelValue="status"
           status-type="campaign"
-          :label="$t('general.status')"
+          :label="$t('campaigns.common.status')"
           :show-colors="true"
           @update:modelValue="updateField('status', $event as string)"
         >
@@ -149,7 +149,7 @@ onMounted(() => {
 
           class="w-full mt-3"
           :modelValue="props.dateRange"
-          :label="$t('general.date_range')"
+          :label="$t('campaigns.common.date_range')"
           @update:modelValue="updateField('dateRange', $event)"
         >
           <template #icon>

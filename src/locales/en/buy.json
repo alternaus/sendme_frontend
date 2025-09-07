@@ -1,4 +1,9 @@
 {
+  "common": {
+    "warning": "Warning",
+    "success": "Success",
+    "error": "Error"
+  },
   "page": {
     "title": "Buy messages",
     "header_title": "Choose the value of your recharge",

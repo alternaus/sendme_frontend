@@ -56,7 +56,7 @@ const handlePayClick = () => {
   if (!amount.value || amount.value <= 0) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
+      summary: t('buy.common.warning'),
       detail: t('buy.messages.amount_warning'),
       life: 3000
     })
@@ -66,7 +66,7 @@ const handlePayClick = () => {
   if (!isValidAmount.value) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
+      summary: t('buy.common.warning'),
       detail: t('buy.messages.minimum_warning'),
       life: 3000
     })
@@ -76,7 +76,7 @@ const handlePayClick = () => {
   if (!organizationId.value) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
+      summary: t('buy.common.warning'),
       detail: t('buy.payment.organization_required'),
       life: 3000
     })
@@ -89,7 +89,7 @@ const handlePayClick = () => {
 const onPaymentSuccess = () => {
   toast.add({
     severity: 'success',
-    summary: t('general.success'),
+    summary: t('buy.common.success'),
     detail: t('buy.payment.success'),
     life: 3000
   })
@@ -99,7 +99,7 @@ const onPaymentSuccess = () => {
 const onPaymentError = (e: { message: string }) => {
   toast.add({
     severity: 'error',
-    summary: t('general.error'),
+    summary: t('buy.common.error'),
     detail: e.message,
     life: 4000
   })
