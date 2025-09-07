@@ -36,9 +36,9 @@ const editingFieldIndices = ref<number[]>([])
 const { user } = useAuthStore()
 
 const dataTypes = [
-  { name: t('customFields.data_types.text'), value: 'string' },
-  { name: t('customFields.data_types.number'), value: 'number' },
-  { name: t('customFields.data_types.date'), value: 'date' },
+  { name: t('settings.custom_fields.data_types.text'), value: 'string' },
+  { name: t('settings.custom_fields.data_types.number'), value: 'number' },
+  { name: t('settings.custom_fields.data_types.date'), value: 'date' },
 ]
 
 const getError = (idx: number, field: keyof typeof customFields.value[0]['value']) => {
@@ -69,7 +69,7 @@ const loadCustomFields = async () => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('customFields.error_loading'),
+      detail: t('settings.custom_fields.error_loading'),
       life: 3000
     })
   }
@@ -104,7 +104,7 @@ const handleRemoveField = async (idx: number) => {
       toast.add({
         severity: 'success',
         summary: t('general.success'),
-        detail: t('customFields.field_deleted'),
+        detail: t('settings.custom_fields.field_deleted'),
         life: 3000
       })
     }
@@ -118,7 +118,7 @@ const handleRemoveField = async (idx: number) => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('customFields.error_deleting'),
+      detail: t('settings.custom_fields.error_deleting'),
       life: 3000
     })
   }
@@ -135,7 +135,7 @@ const validateForm = () => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('customFields.error_saving'),
+      detail: t('settings.custom_fields.error_saving'),
       life: 3000
     })
     return false
@@ -181,14 +181,14 @@ const onSubmit = () => {
         toast.add({
           severity: 'success',
           summary: t('general.success'),
-          detail: t('customFields.field_updated'),
+          detail: t('settings.custom_fields.field_updated'),
           life: 3000
         })
       } catch {
         toast.add({
           severity: 'error',
           summary: t('general.error'),
-          detail: t('customFields.error_saving'),
+          detail: t('settings.custom_fields.error_saving'),
           life: 3000
         })
       }
@@ -197,7 +197,7 @@ const onSubmit = () => {
       toast.add({
         severity: 'error',
         summary: t('general.error'),
-        detail: t('customFields.error_saving'),
+        detail: t('settings.custom_fields.error_saving'),
         life: 3000
       })
     },
@@ -222,14 +222,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CUSTOM_FIELDS" :text="$t('customFields.title')" :actions="[]" />
+  <AppHeader :icon="IconTypes.CUSTOM_FIELDS" :text="$t('settings.custom_fields.title')" :actions="[]" />
   <div class="">
     <AppCard class="h-full max-h-[calc(100vh-140px-4rem)]">
       <template #content>
         <div class="h-full flex flex-col">
           <div class="flex-none">
             <p class="text-center text-neutral-600 dark:text-neutral-300">
-              {{ $t('customFields.max_fields') }}
+              {{ $t('settings.custom_fields.max_fields') }}
             </p>
           </div>
 
@@ -266,25 +266,25 @@ onMounted(() => {
                     <template v-if="editingFieldIndices.includes(idx)">
                       <AppInput
                         v-model="field.value.fieldName"
-                        :label="$t('customFields.field_label')"
+                        :label="$t('settings.custom_fields.field_label')"
                         :errorMessage="getError(idx, 'fieldName')"
                         class="w-full" />
 
                       <AppSelect
                         v-model="field.value.dataType"
                         :options="dataTypes"
-                        :label="$t('customFields.field_type')"
+                        :label="$t('settings.custom_fields.field_type')"
                         :errorMessage="getError(idx, 'dataType')"
                         class="w-full" />
                     </template>
                     <template v-else>
                       <div class="flex flex-col gap-2">
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_label') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.custom_fields.field_label') }}</small>
                           <p class="font-medium">{{ field.value.fieldName }}</p>
                         </div>
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_type') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.custom_fields.field_type') }}</small>
                           <p class="font-medium">{{ dataTypes.find(type => type.value === field.value.dataType)?.name }}</p>
                         </div>
                       </div>
@@ -299,7 +299,7 @@ onMounted(() => {
             <AppButton
               type="button"
               class="!w-fit"
-              :label="$t('customFields.add_field')"
+              :label="$t('settings.custom_fields.add_field')"
               @click="handleAddField"
               icon="pi pi-plus" />
             <AppButton

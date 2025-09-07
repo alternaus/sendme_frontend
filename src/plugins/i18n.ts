@@ -1,5 +1,6 @@
 import { createI18n, type I18n } from 'vue-i18n'
 
+import en from '../locales/en.json'
 import enAccount from '../locales/en/account.json'
 import enAuth from '../locales/en/auth.json'
 import enBuy from '../locales/en/buy.json'
@@ -10,6 +11,8 @@ import enEnrollment from '../locales/en/enrollment.json'
 import enHome from '../locales/en/home.json'
 import enReports from '../locales/en/reports.json'
 import enSend from '../locales/en/send.json'
+import enSettings from '../locales/en/settings.json'
+import es from '../locales/es.json'
 import esAccount from '../locales/es/account.json'
 import esAuth from '../locales/es/auth.json'
 import esBuy from '../locales/es/buy.json'
@@ -20,6 +23,7 @@ import esEnrollment from '../locales/es/enrollment.json'
 import esHome from '../locales/es/home.json'
 import esReports from '../locales/es/reports.json'
 import esSend from '../locales/es/send.json'
+import esSettings from '../locales/es/settings.json'
 
 export type MessageSchema = {
   account: typeof esAccount
@@ -32,10 +36,12 @@ export type MessageSchema = {
   home: typeof esHome
   reports: typeof esReports
   send: typeof esSend
+  settings: typeof esSettings
 }
 
 const messages: Record<'es' | 'en', MessageSchema> = {
   es: {
+    ...es,
     account: esAccount,
     auth: esAuth,
     buy: esBuy,
@@ -46,8 +52,10 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     home: esHome,
     reports: esReports,
     send: esSend,
+    settings: esSettings,
   },
   en: {
+    ...en,
     account: enAccount,
     auth: enAuth,
     buy: enBuy,
@@ -58,6 +66,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     home: enHome,
     reports: enReports,
     send: enSend,
+    settings: enSettings,
   },
 }
 

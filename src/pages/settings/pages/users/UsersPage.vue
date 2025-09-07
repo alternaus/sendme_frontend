@@ -50,7 +50,7 @@ const loadUsers = async () => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('user.error_loading'),
+      detail: t('settings.users.error_loading'),
       life: 3000
     })
 
@@ -79,13 +79,13 @@ const validateUser = (user: { name: string, email: string }) => {
   const errors = []
 
   if (!user.name.trim()) {
-    errors.push(t('user.name') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.name') + ': ' + t('general.required_field'))
   }
 
   if (!user.email.trim()) {
-    errors.push(t('user.email') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.email') + ': ' + t('general.required_field'))
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-    errors.push(t('user.email') + ': ' + t('general.invalid_email'))
+    errors.push(t('settings.users.email') + ': ' + t('general.invalid_email'))
   }
 
   return errors
@@ -104,7 +104,7 @@ const saveUsers = async () => {
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('user.no_users_added'),
+      detail: t('settings.users.no_users_added'),
       life: 3000
     })
     return
@@ -152,7 +152,7 @@ const saveUsers = async () => {
     toast.add({
       severity: 'success',
       summary: t('general.success'),
-      detail: t('user.users_updated'),
+      detail: t('settings.users.users_updated'),
       life: 3000
     })
 
@@ -206,14 +206,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('user.manage_users')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('settings.users.title')" :actions="[]" />
   <div class="">
     <AppCard class="h-full max-h-[calc(100vh-140px-4rem)]">
       <template #content>
         <div class="h-full flex flex-col">
           <div class="flex-none">
             <p class="text-center text-neutral-600 dark:text-neutral-300">
-              {{ $t('user.add_users_limit', { max: MAX_USERS }) }}
+              {{ $t('settings.users.add_users_limit', { max: MAX_USERS }) }}
             </p>
           </div>
 
@@ -248,23 +248,23 @@ onMounted(() => {
                     <template v-if="user.isEditing">
                       <AppInput
                         v-model="user.name"
-                        :label="$t('user.name')"
+                        :label="$t('settings.users.name')"
                         class="w-full" />
 
                       <AppInput
                         v-model="user.email"
-                        :label="$t('user.email')"
+                        :label="$t('settings.users.email')"
                         type="email"
                         class="w-full" />
                     </template>
                     <template v-else>
                       <div class="flex flex-col gap-2">
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('user.name') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.users.name') }}</small>
                           <p class="font-medium">{{ user.name }}</p>
                         </div>
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('user.email') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.users.email') }}</small>
                           <p class="font-medium">{{ user.email }}</p>
                         </div>
                       </div>

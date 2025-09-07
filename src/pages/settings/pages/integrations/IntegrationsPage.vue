@@ -4,7 +4,7 @@ import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('general.settings')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('settings.title')" :actions="[]" />
 </template>
 
 <style lang='scss' scoped></style>

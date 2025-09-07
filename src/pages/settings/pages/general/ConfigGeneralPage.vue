@@ -15,21 +15,21 @@ import WebhookTab from './components/webhooks/WebhookTab.vue'
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('general.settings')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('settings.title')" :actions="[]" />
 
   <Tabs value="0" class="rounded-xl overflow-hidden mt-4">
     <TabList class="rounded-t-lg text-sm">
       <Tab value="0" class="px-3 py-2">
-        <span class="font-bold whitespace-nowrap">{{ $t('email_configuration.tab_header') }}</span>
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.email_configuration.tab_header') }}</span>
       </Tab>
       <Tab value="1" class="px-3 py-2">
-        <span class="font-bold whitespace-nowrap">{{ $t('settings.tab_header') }}</span>
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.organization.tab_header') }}</span>
       </Tab>
       <Tab value="2" class="px-3 py-2">
-        <span class="font-bold whitespace-nowrap">{{ $t('api_keys.tab_header') }}</span>
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.api_keys.tab_header') }}</span>
       </Tab>
       <Tab value="3" class="px-3 py-2">
-        <span class="font-bold whitespace-nowrap">{{ $t('webhooks.tab_header') }}</span>
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.webhooks.tab_header') }}</span>
       </Tab>
     </TabList>
 

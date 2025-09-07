@@ -27,8 +27,8 @@ export const useUserForm = () => {
   const schema = yup.object({
     users: yup.array().of(
       yup.object({
-        name: yup.string().required().label(t('user.name')),
-        email: yup.string().email().required().label(t('user.email')),
+        name: yup.string().required().label(t('settings.users.name')),
+        email: yup.string().email().required().label(t('settings.users.email')),
       }),
     ).max(3),
   })

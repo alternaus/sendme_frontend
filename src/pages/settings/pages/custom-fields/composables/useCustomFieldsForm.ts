@@ -25,12 +25,12 @@ export const useCustomFieldForm = () => {
   const schema = yup.object({
     customFields: yup.array().of(
       yup.object({
-        fieldName: yup.string().required().label(t('customFields.field_label')),
+        fieldName: yup.string().required().label(t('settings.custom_fields.field_label')),
         dataType: yup
           .string()
           .oneOf(['string', 'number', 'date'])
           .required()
-          .label(t('customFields.field_type')),
+          .label(t('settings.custom_fields.field_type')),
       }),
     ),
   })
