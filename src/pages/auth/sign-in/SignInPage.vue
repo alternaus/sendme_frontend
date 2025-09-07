@@ -53,8 +53,8 @@ export default defineComponent({
     })
 
     const schema = yup.object({
-      email: yup.string().email().required().label(t('general.email')),
-      password: yup.string().required().label(t('general.password')),
+      email: yup.string().email().required().label(t('auth.common.email')),
+      password: yup.string().required().label(t('auth.common.password')),
     })
 
     const { defineField, handleSubmit, errors } = useForm({

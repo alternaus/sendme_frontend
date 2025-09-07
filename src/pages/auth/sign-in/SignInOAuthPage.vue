@@ -91,7 +91,7 @@ onMounted(async () => {
 
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('auth.common.error'),
       detail: error.value,
       life: 5000
     })

@@ -54,7 +54,7 @@ onMounted(() => {
   if (!token.value) {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('auth.common.error'),
       detail: t('auth.reset_password.invalid_token'),
       life: 5000
     })
@@ -76,7 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
 
     toast.add({
       severity: 'success',
-      summary: t('general.success'),
+      summary: t('auth.common.success'),
       detail: t('auth.reset_password.success_title'),
       life: 8000
     })
@@ -89,7 +89,7 @@ const onSubmit = handleSubmit(async (values) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('auth.common.error'),
       detail: t('auth.reset_password.error_message'),
       life: 5000
     })
@@ -151,7 +151,7 @@ function goBackToLogin() {
 
         <AppButton
           type="submit"
-          :label="isLoading ? t('general.loading') : t('auth.reset_password.submit_button')"
+          :label="isLoading ? t('auth.common.loading') : t('auth.reset_password.submit_button')"
           :loading="isLoading"
           :disabled="isLoading"
           class="w-full"
