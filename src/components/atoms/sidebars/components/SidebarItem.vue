@@ -26,7 +26,7 @@ const handleClick = () => {
     <router-link
       v-if="route"
       :to="route"
-      active-class="bg-black dark:bg-[var(--p-primary-color)] transition-all duration-300 ease-in-out"
+      active-class="sidebar-active"
       class="group flex items-center p-2 rounded-lg transition-all duration-300 ease-in-out text-neutral-800 hover:bg-primary-400 dark:text-white dark:hover:bg-[var(--p-primary-color)]"
       :class="{ 'justify-center': !isExpanded }"
       @click="handleClick"
@@ -37,21 +37,13 @@ const handleClick = () => {
       >
         <component
           :is="icon"
-          class="w-9 h-9 transition-all duration-300 ease-in-out flex-shrink-0"
-          :class="{
-            'dark:fill-black fill-[var(--p-primary-color)]': isActive,
-            'group-hover:fill-black dark:group-hover:fill-black': true,
-            'dark:fill-[var(--p-primary-color)]': !isActive,
-          }"
+          class="w-9 h-9 transition-all duration-300 ease-in-out flex-shrink-0 fill-black dark:fill-[var(--p-primary-color)] group-hover:fill-black dark:group-hover:fill-black"
         />
         <span
-          class="text-sm whitespace-nowrap font-semibold overflow-hidden transition-all duration-300 ease-in-out"
+          class="text-sm whitespace-nowrap font-semibold overflow-hidden transition-all duration-300 ease-in-out text-black dark:text-[var(--p-primary-color)] group-hover:text-black dark:group-hover:text-black"
           :class="{
             'w-0 opacity-0 ml-0': !isExpanded,
             'w-auto opacity-100 ml-3': isExpanded,
-            'dark:text-black text-[var(--p-primary-color)]': isActive,
-            'group-hover:text-black dark:group-hover:text-black': true,
-            'dark:text-[var(--p-primary-color)]': !isActive,
           }"
         >
           {{ label }}
@@ -86,3 +78,31 @@ const handleClick = () => {
     </button>
   </li>
 </template>
+
+<style scoped>
+.sidebar-active {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  color: var(--p-primary-color) !important;
+}
+
+.sidebar-active :deep(svg) {
+  fill: var(--p-primary-color) !important;
+}
+
+.sidebar-active :deep(span) {
+  color: var(--p-primary-color) !important;
+}
+
+html.dark .sidebar-active {
+  background-color: var(--p-primary-color) !important;
+  color: black !important;
+}
+
+html.dark .sidebar-active :deep(svg) {
+  fill: black !important;
+}
+
+html.dark .sidebar-active :deep(span) {
+  color: black !important;
+}
+</style>
