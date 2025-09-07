@@ -116,7 +116,7 @@ const getActionSize = (): 'small' | 'large' | undefined => {
           v-if="selectedItems > 0"
           class="text-sm text-gray-500 dark:text-gray-400"
         >
-          ({{ selectedItems }} {{ t('general.selected', selectedItems) }})
+          ({{ selectedItems }} {{ t('common.general.selected', selectedItems) }})
         </span>
       </div>
     </div>

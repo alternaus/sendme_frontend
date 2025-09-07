@@ -108,13 +108,13 @@ export default defineComponent({
 
     const headerActions = computed(() => [
       {
-        label: t('actions.filter'),
+        label: t('common.actions.filter'),
         type: ActionTypes.FILTER,
         badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
         onClick: () => { showMobileModal.value = !showMobileModal.value },
       },
       {
-        label: t('actions.export'),
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
           exportAudits({

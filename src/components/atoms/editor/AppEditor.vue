@@ -149,7 +149,7 @@ defineExpose({ insertContent })
         :show-error-message="showErrorMessage"
         :use-float-label="false"
         :auto-resize="true"
-        :placeholder="placeholder || t('general.editor.sms_placeholder')"
+        :placeholder="placeholder || t('common.general.editor.sms_placeholder')"
         :disabled="disabled || readonly"
         :maxlength="maxlength"
         class="w-full"
@@ -158,7 +158,7 @@ defineExpose({ insertContent })
       />
 
       <div v-if="smsStats" class="mt-2 text-sm text-neutral-600 dark:text-neutral-400 flex justify-center items-center">
-        <span>{{ smsStats.charCount }}/{{ smsStats.maxChars }} - {{ smsStats.messageCount }} {{ t('general.sms') }}</span>
+        <span>{{ smsStats.charCount }}/{{ smsStats.maxChars }} - {{ smsStats.messageCount }} {{ t('common.general.sms') }}</span>
       </div>
 
       <div

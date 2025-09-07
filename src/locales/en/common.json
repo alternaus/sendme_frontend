@@ -1,5 +1,6 @@
 {
   "general": {
+    "account": "Account",
     "send": "Send",
     "buy": "Buy",
     "settings": "Settings",
@@ -43,9 +44,32 @@
     "sms_otp": "OTP SMS",
     "sms_flash": "Flash SMS",
     "message_send_success": "Message sent successfully",
-    "error_sending_message": "Error sending message"
+    "error_sending_message": "Error sending message",
+    "selected": "selected",
+    "save": "Save",
+    "previous": "Previous",
+    "next": "Next",
+    "cancel": "Cancel",
+    "filters": "Filters",
+    "no_records_found": "No records found",
+    "editor": {
+      "sms_placeholder": "Write your SMS message here...",
+      "email_placeholder": "Write your email message here...",
+      "sms_limit_exceeded": "SMS character limit exceeded",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strike": "Strikethrough",
+      "font_size": "Font size",
+      "ordered_list": "Numbered list",
+      "bullet_list": "Bullet list",
+      "align_left": "Align left",
+      "align_center": "Center",
+      "align_right": "Align right"
+    }
   },
   "titles": {
+    "app_name": "SendMe",
     "reports_list": "Reports list",
     "account": "Account",
     "account_settings": "Account settings",
@@ -122,7 +146,12 @@
   "actions": {
     "update": "Update",
     "create": "Create",
-    "delete": "Delete"
+    "delete": "Delete",
+    "filter": "Filter",
+    "export": "Export",
+    "edit": "Edit",
+    "view": "View",
+    "import": "Import"
   },
   "campaign": {
     "campaigns": "Campaigns",
@@ -155,5 +184,35 @@
     "title": "Scheduled maintenance",
     "description": "We are making improvements. We'll be back soon.",
     "estimatedTime": "Estimated time: {time}"
+  },
+  "ai": {
+    "title": "AI Assistant",
+    "tabs": {
+      "generate": "Generate",
+      "translate": "Translate"
+    },
+    "labels": {
+      "prompt": "Instructions",
+      "result": "Result",
+      "target_language": "Target language",
+      "text_to_translate": "Text to translate",
+      "translation": "Translation"
+    },
+    "placeholders": {
+      "prompt": "Describe the message you want to generate...",
+      "result": "Generated content will appear here",
+      "text_to_translate": "Enter the text you want to translate"
+    },
+    "buttons": {
+      "generate": "Generate",
+      "generating": "Generating...",
+      "translate": "Translate",
+      "translating": "Translating...",
+      "insert": "Insert"
+    },
+    "errors": {
+      "generate_failed": "Could not generate content",
+      "translate_failed": "Could not translate content"
+    }
   }
 }

@@ -29,12 +29,12 @@ const items = ref<MenuItem[]>([])
 const updateMenuItems = () => {
   items.value = [
     {
-      label: t('general.account'),
+      label: t('common.general.account'),
       icon: 'pi pi-user',
       command: () => router.push({ name: 'account.index' })
     },
     {
-      label: t('general.settings'),
+      label: t('common.general.settings'),
       icon: 'pi pi-cog',
       command: () => router.push({ name: 'settings.general' }) // Ahora lleva a la página principal de settings
     },
@@ -82,7 +82,7 @@ const firstLetter = computed(() => user?.name?.charAt(0)?.toUpperCase() || '')
         <AppButton
           type="button"
           size="small"
-          :label="$t('general.cancel')"
+          :label="$t('common.general.cancel')"
           severity="secondary"
           @click="showLogoutDialog = false"
         />

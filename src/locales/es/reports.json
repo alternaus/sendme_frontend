@@ -35,7 +35,9 @@
       "normal": "Normal",
       "high": "Alta",
       "urgent": "Urgente"
-    }
+    },
+    "recipient_details": "Detalles del destinatario",
+    "content": "Contenido"
   },
   "reports": "Reportes",
   "audit": "Auditoría",

@@ -183,7 +183,7 @@ export default defineComponent({
         },
       },
       {
-        label: t('actions.export'),
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => console.log('Exportar contacto'),
       },

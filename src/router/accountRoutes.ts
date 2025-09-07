@@ -1,7 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'general.account',
+  text: 'common.general.account',
   to: { name: 'account.index' },
   active: false
 }

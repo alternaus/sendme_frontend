@@ -363,7 +363,7 @@ const tableContentClasses = computed(() => {
                   <div class="flex flex-col items-center justify-center p-4 text-center">
                     <i class="pi pi-inbox text-5xl text-neutral-300 dark:text-neutral-600 mb-4"></i>
                     <p class="text-neutral-500 dark:text-neutral-400">
-                      {{ $t('general.no_records_found') }}
+                      {{ $t('common.general.no_records_found') }}
                     </p>
                   </div>
                 </slot>
@@ -381,7 +381,7 @@ const tableContentClasses = computed(() => {
                 <slot name="empty">
                   <i class="pi pi-inbox text-8xl text-neutral-300 dark:text-neutral-600 mb-4"></i>
                   <p class="text-neutral-500 dark:text-neutral-400">
-                    {{ $t('general.no_records_found') }}
+                    {{ $t('common.general.no_records_found') }}
                   </p>
                 </slot>
               </div>

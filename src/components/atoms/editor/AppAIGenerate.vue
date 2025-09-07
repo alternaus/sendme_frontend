@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -48,7 +48,7 @@ async function generate() {
     const res = await aiService.generateSms({ context: prompt.value,type:props.type })
     result.value = res.generatedText
   } catch {
-    result.value = t('ai.errors.generate_failed') || 'No se pudo generar el contenido.'
+    result.value = t('common.ai.errors.generate_failed') || 'No se pudo generar el contenido.'
   } finally {
     isGenerating.value = false
   }
@@ -62,7 +62,7 @@ async function translate() {
     const res = await aiService.translate({ text: translateSource.value, targetLanguage: translateTargetLanguage.value })
     translateResult.value = res.translatedText
   } catch {
-    translateResult.value = t('ai.errors.translate_failed') || 'No se pudo traducir el contenido.'
+    translateResult.value = t('common.ai.errors.translate_failed') || 'No se pudo traducir el contenido.'
   } finally {
     isTranslating.value = false
   }
@@ -71,10 +71,10 @@ async function translate() {
 function insertGenerated() { emit('insert', result.value); close() }
 function insertTranslated() { emit('insert', translateResult.value); close() }
 
-const tabOptions = computed(() => [
-  { name: t('ai.tabs.generate'), value: 'generate' },
-  { name: t('ai.tabs.translate'), value: 'translate' },
-])
+const tabOptions = [
+  { name: t('common.ai.tabs.generate'), value: 'generate' },
+  { name: t('common.ai.tabs.translate'), value: 'translate' },
+]
 </script>
 
 <template>
@@ -95,7 +95,7 @@ const tabOptions = computed(() => [
       :dismissableMask="true"
       :blockScroll="true"
       :closable="true"
-      :header="t('ai.title')"
+      :header="t('common.ai.title')"
       :breakpoints="{ '960px': '70vw', '640px': '95vw' }"
       :pt="{
         root: 'w-[min(92vw,48rem)]',
@@ -123,14 +123,14 @@ const tabOptions = computed(() => [
         <div v-if="activeTab === 'generate'" class="flex flex-col gap-3">
           <AppTextarea
             v-model="prompt"
-            :label="t('ai.labels.prompt')"
+            :label="t('common.ai.labels.prompt')"
             :rows="4"
-            :placeholder="t('ai.placeholders.prompt')"
+            :placeholder="t('common.ai.placeholders.prompt')"
             :useFloatLabel="false"
           />
           <div class="flex items-center gap-2">
             <AppButton
-              :label="isGenerating ? t('ai.buttons.generating') : t('ai.buttons.generate')"
+              :label="isGenerating ? t('common.ai.buttons.generating') : t('common.ai.buttons.generate')"
               :loading="isGenerating"
               severity="primary"
               :disabled="isGenerating || !prompt.trim()"
@@ -138,7 +138,7 @@ const tabOptions = computed(() => [
             />
             <AppButton
               class="ml-auto"
-              :label="t('ai.buttons.insert')"
+              :label="t('common.ai.buttons.insert')"
               severity="secondary"
               :disabled="!result.length"
               @click="insertGenerated"
@@ -146,10 +146,10 @@ const tabOptions = computed(() => [
           </div>
           <AppTextarea
             v-model="result"
-            :label="t('ai.labels.result')"
+            :label="t('common.ai.labels.result')"
             :readonly="true"
             :rows="6"
-            :placeholder="t('ai.placeholders.result')"
+            :placeholder="t('common.ai.placeholders.result')"
             :useFloatLabel="false"
           />
         </div>
@@ -166,18 +166,18 @@ const tabOptions = computed(() => [
               { name: 'Deutsch', value: 'de' },
               { name: 'Italiano', value: 'it' },
             ]"
-            :label="t('ai.labels.target_language')"
+            :label="t('common.ai.labels.target_language')"
           />
           <AppTextarea
             v-model="translateSource"
-            :label="t('ai.labels.text_to_translate')"
+            :label="t('common.ai.labels.text_to_translate')"
             :rows="4"
-            :placeholder="t('ai.placeholders.text_to_translate')"
+            :placeholder="t('common.ai.placeholders.text_to_translate')"
             :useFloatLabel="false"
           />
           <div class="flex items-center gap-2">
             <AppButton
-              :label="isTranslating ? t('ai.buttons.translating') : t('ai.buttons.translate')"
+              :label="isTranslating ? t('common.ai.buttons.translating') : t('common.ai.buttons.translate')"
               :loading="isTranslating"
               severity="primary"
               :disabled="!translateSource.trim()"
@@ -185,7 +185,7 @@ const tabOptions = computed(() => [
             />
             <AppButton
               class="ml-auto"
-              :label="t('ai.buttons.insert')"
+              :label="t('common.ai.buttons.insert')"
               severity="secondary"
               :disabled="!translateResult.length"
               @click="insertTranslated"
@@ -193,10 +193,10 @@ const tabOptions = computed(() => [
           </div>
           <AppTextarea
             v-model="translateResult"
-            :label="t('ai.labels.translation')"
+            :label="t('common.ai.labels.translation')"
             :readonly="true"
             :rows="6"
-            :placeholder="t('ai.placeholders.result')"
+            :placeholder="t('common.ai.placeholders.result')"
             :useFloatLabel="false"
           />
         </div>

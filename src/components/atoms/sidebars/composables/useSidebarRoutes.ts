@@ -17,10 +17,10 @@ export const useSidebarRoutes = () => {
     { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
     { path: '/campaigns', icon: Campaigns, title: t('campaign.general.campaigns') },
     { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
-    { path: '/send', icon: Send, title: t('general.send') },
+    { path: '/send', icon: Send, title: t('common.general.send') },
     { path: '/report', icon: Reports, title: t('reports.reports') },
-    { path: '/buy', icon: Buy, title: t('general.buy') },
-    { path: '/settings', icon: Settings, title: t('general.settings') },
+    { path: '/buy', icon: Buy, title: t('common.general.buy') },
+    { path: '/settings', icon: Settings, title: t('common.general.settings') },
   ])
 
   return {

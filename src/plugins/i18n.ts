@@ -1,6 +1,5 @@
 import { createI18n, type I18n } from 'vue-i18n'
 
-import en from '../locales/en.json'
 import enAccount from '../locales/en/account.json'
 import enAuth from '../locales/en/auth.json'
 import enBuy from '../locales/en/buy.json'
@@ -12,7 +11,6 @@ import enHome from '../locales/en/home.json'
 import enReports from '../locales/en/reports.json'
 import enSend from '../locales/en/send.json'
 import enSettings from '../locales/en/settings.json'
-import es from '../locales/es.json'
 import esAccount from '../locales/es/account.json'
 import esAuth from '../locales/es/auth.json'
 import esBuy from '../locales/es/buy.json'
@@ -41,7 +39,6 @@ export type MessageSchema = {
 
 const messages: Record<'es' | 'en', MessageSchema> = {
   es: {
-    ...es,
     account: esAccount,
     auth: esAuth,
     buy: esBuy,
@@ -55,7 +52,6 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     settings: esSettings,
   },
   en: {
-    ...en,
     account: enAccount,
     auth: enAuth,
     buy: enBuy,

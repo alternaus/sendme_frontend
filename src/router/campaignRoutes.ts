@@ -6,7 +6,7 @@ import {
 } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'campaign.campaigns',
+  text: 'common.campaign.campaigns',
   to: { name: 'campaigns.index' },
   active: false,
 }
@@ -46,7 +46,7 @@ const campaignRoutes: RouteRecordRaw = {
       name: 'campaigns.create',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.create', 'campaigns.create'),
+        breadcrumb: generateBreadcrumb('common.actions.create', 'campaigns.create'),
         title: 'common.titles.create_campaign'
       },
     },
@@ -54,7 +54,7 @@ const campaignRoutes: RouteRecordRaw = {
       path: 'edit/:id',
       name: 'campaigns.edit',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'campaigns.edit'),
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.edit', 'campaigns.edit'),
       meta: { title: 'common.titles.edit_campaign' }
     },
   ],

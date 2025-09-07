@@ -1,5 +1,6 @@
 {
   "general": {
+    "account": "Cuenta",
     "send": "Enviar",
     "buy": "Comprar",
     "settings": "Configuración",
@@ -43,9 +44,32 @@
     "sms_otp": "SMS OTP",
     "sms_flash": "SMS Flash",
     "message_send_success": "Mensaje enviado exitosamente",
-    "error_sending_message": "Error al enviar el mensaje"
+    "error_sending_message": "Error al enviar el mensaje",
+    "selected": "seleccionado{count} | seleccionados",
+    "save": "Guardar",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "cancel": "Cancelar",
+    "filters": "Filtros",
+    "no_records_found": "No se encontraron registros",
+    "editor": {
+      "sms_placeholder": "Escribe tu mensaje SMS aquí...",
+      "email_placeholder": "Escribe tu mensaje de email aquí...",
+      "sms_limit_exceeded": "Se ha excedido el límite de caracteres para SMS",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "font_size": "Tamaño de fuente",
+      "ordered_list": "Lista numerada",
+      "bullet_list": "Lista con viñetas",
+      "align_left": "Alinear a la izquierda",
+      "align_center": "Centrar",
+      "align_right": "Alinear a la derecha"
+    }
   },
   "titles": {
+    "app_name": "SendMe",
     "reports_list": "Lista de reportes",
     "account": "Cuenta",
     "account_settings": "Configuración de cuenta",
@@ -122,7 +146,12 @@
   "actions": {
     "update": "Actualizar",
     "create": "Crear",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "edit": "Editar",
+    "view": "Ver",
+    "import": "Importar"
   },
   "campaign": {
     "campaigns": "Campañas",
@@ -155,5 +184,35 @@
     "title": "Mantenimiento programado",
     "description": "Estamos realizando mejoras. Volveremos pronto.",
     "estimatedTime": "Tiempo estimado: {time}"
+  },
+  "ai": {
+    "title": "Asistente IA",
+    "tabs": {
+      "generate": "Generar",
+      "translate": "Traducir"
+    },
+    "labels": {
+      "prompt": "Instrucciones",
+      "result": "Resultado",
+      "target_language": "Idioma destino",
+      "text_to_translate": "Texto a traducir",
+      "translation": "Traducción"
+    },
+    "placeholders": {
+      "prompt": "Describe el mensaje que quieres generar...",
+      "result": "El contenido generado aparecerá aquí",
+      "text_to_translate": "Ingresa el texto que quieres traducir"
+    },
+    "buttons": {
+      "generate": "Generar",
+      "generating": "Generando...",
+      "translate": "Traducir",
+      "translating": "Traduciendo...",
+      "insert": "Insertar"
+    },
+    "errors": {
+      "generate_failed": "No se pudo generar el contenido",
+      "translate_failed": "No se pudo traducir el contenido"
+    }
   }
 }

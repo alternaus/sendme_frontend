@@ -35,7 +35,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="box-search" :class="{ expanded: isInputExpanded }" v-tooltip.bottom="$t('general.search')">
+  <div class="box-search" :class="{ expanded: isInputExpanded }" v-tooltip.bottom="$t('common.general.search')">
     <input
       type="text"
       class="input sm"
@@ -55,21 +55,21 @@ export default defineComponent({
 .input {
   padding: 10px;
   height: 35px;
-  width: 100%; 
+  width: 100%;
   border: 1px solid var(--p-primary-color);
   border-radius: var(--radius-xl);
   box-sizing: border-box;
   font-size: 0.9rem;
   outline: none;
-  transition: none; 
+  transition: none;
 }
 
 @media (min-width: 640px) {
   .input {
     width: 40px;
-    height: 40px; 
+    height: 40px;
     border-radius: 50px;
-    transition: width 0.5s ease; 
+    transition: width 0.5s ease;
   }
 
   .box-search:hover .input,

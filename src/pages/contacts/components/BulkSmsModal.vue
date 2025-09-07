@@ -48,8 +48,8 @@ const dialogVisible = computed({
 })
 
 const channelOptions = computed(() => [
-  { name: t('contact.general.sms'), value: MessageChannel.SMS },
-  { name: t('contact.contacts.contact.general.email_channel'), value: MessageChannel.EMAIL },
+  { name: t('common.general.sms'), value: MessageChannel.SMS },
+  { name: t('common.general.email_channel'), value: MessageChannel.EMAIL },
 ])
 
 const validContacts = computed(() => {

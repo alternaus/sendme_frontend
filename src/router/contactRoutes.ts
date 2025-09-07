@@ -47,7 +47,7 @@ const contactRoutes: RouteRecordRaw = {
       name: 'contacts.create',
       component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.create', 'contacts.create'),
+        breadcrumb: generateBreadcrumb('common.actions.create', 'contacts.create'),
         title: 'create_contact'
       },
     },
@@ -55,14 +55,14 @@ const contactRoutes: RouteRecordRaw = {
       path: 'edit/:id',
       name: 'contacts.edit',
       component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'contacts.edit'),
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.edit', 'contacts.edit'),
       meta: { title: 'common.titles.edit_contact' }
     },
     {
       path: 'view/:id',
       name: 'contacts.view',
       component: () => import('@/pages/contacts/view/ContactViewPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.view', 'contacts.view'),
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.view', 'contacts.view'),
       meta: { title: 'common.titles.view_contact' }
     },
     {
@@ -70,7 +70,7 @@ const contactRoutes: RouteRecordRaw = {
       name: 'contacts.import',
       component: () => import('@/pages/contacts/import/ContactImportPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.import', 'contacts.import'),
+        breadcrumb: generateBreadcrumb('common.actions.import', 'contacts.import'),
         title: 'common.titles.import_contacts'
       },
     },

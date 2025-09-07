@@ -42,13 +42,13 @@ export default defineComponent({
 
     const pageTitle = computed<string>(() => {
       const titleKey = route.meta.title as string
-      return titleKey ? i18n.t(`${titleKey}`) : i18n.t('titles.home')
+      return titleKey ? i18n.t(`${titleKey}`) : i18n.t('common.titles.home')
     })
 
     useSeoMeta({
       title: pageTitle,
       description: 'meta description',
-      titleTemplate: `%s | ${i18n.t('titles.app_name')}`,
+      titleTemplate: `%s | ${i18n.t('common.titles.app_name')}`,
     })
 
     watch(() => i18nStore.language, (newLang) => {

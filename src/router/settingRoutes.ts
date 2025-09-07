@@ -1,7 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'general.settings',
+  text: 'common.general.settings',
   to: { name: 'settings.index' },
   active: false,
 }
