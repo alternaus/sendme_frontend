@@ -277,6 +277,10 @@ export default defineComponent({
     :loading="loading"
     :emptyMessage="'reports.error_getting_audit'"
     textTotalItems="reports.audits"
+    mobileTitleField="table"
+    mobilePhoneField="action"
+    mobileEmailField="userId"
+    mobileSourceField="createdAt"
     @page-change="fetchAudits"
   >
     <template #header-createdAt>

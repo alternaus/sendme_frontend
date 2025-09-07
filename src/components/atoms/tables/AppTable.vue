@@ -566,7 +566,15 @@ const getStatusClass = (item: Record<string, unknown>): string => {
                     </slot>
 
                     <slot name="mobile-arrow" :data="item">
-                      <i class="pi pi-chevron-right text-neutral-400 text-sm"></i>
+                      <div class="w-6 h-6 flex items-center justify-center">
+                        <div
+                          v-if="selectedRow === item"
+                          class="w-6 h-6 rounded-full flex items-center justify-center shadow-sm transition-all duration-200"
+                          style="background-color: var(--p-primary-color);"
+                        >
+                          <i class="pi pi-check text-sm font-semibold" style="color: var(--p-primary-contrast-color);"></i>
+                        </div>
+                      </div>
                     </slot>
                   </div>
                 </div>

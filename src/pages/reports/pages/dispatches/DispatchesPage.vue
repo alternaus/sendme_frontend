@@ -230,6 +230,11 @@ export default defineComponent({
     :multipleSelection="false"
     :loading="loading"
     textTotalItems="reports.common.dispatches"
+    mobileTitleField="campaignName"
+    mobilePhoneField="providerName"
+    mobileEmailField="totalSent"
+    mobileSourceField="sentAt"
+    mobileStatusField="totalDelivered"
     @page-change="fetchDispatches"
   >
     <template #header-campaignName>
