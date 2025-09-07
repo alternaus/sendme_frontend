@@ -64,7 +64,7 @@ export default defineComponent({
           :modelValue="content"
           type="tel"
           class="w-full rounded-md mt-3"
-          :label="$t('common.general.search')"
+          :label="$t('reports.common.search')"
           @input="updateField('content', $event.target.value)"
         >
           <template #icon>
@@ -80,7 +80,7 @@ export default defineComponent({
               name: $t(value),
             }))
           "
-          :label="$t('common.general.status')"
+          :label="$t('reports.common.status')"
           @update:modelValue="updateField('status', $event)"
         >
           <template #icon>
@@ -96,7 +96,7 @@ export default defineComponent({
               name: $t(value),
             }))
           "
-          :label="$t('common.general.message_type')"
+          :label="$t('reports.common.message_type')"
           @update:modelValue="updateField('messageType', $event)"
         >
           <template #icon>
@@ -108,7 +108,7 @@ export default defineComponent({
           class="w-full mt-3"
           :modelValue="startDateValue"
           :showTime="true"
-          :label="$t('common.general.start_date')"
+          :label="$t('reports.common.start_date')"
           @update:modelValue="updateField('startDate', $event)"
         >
           <template #icon>
@@ -120,7 +120,7 @@ export default defineComponent({
           class="w-full mt-3"
           :modelValue="endDateValue"
           :showTime="true"
-          :label="$t('common.general.end_date')"
+          :label="$t('reports.common.end_date')"
           @update:modelValue="updateField('endDate', $event)"
         >
           <template #icon>

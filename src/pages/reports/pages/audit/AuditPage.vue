@@ -205,7 +205,7 @@ export default defineComponent({
       :modelValue="search"
       type="text"
       class="w-full"
-      :label="$t('common.general.search')"
+      :label="$t('reports.common.search')"
       @input="search = $event.target.value"
     >
       <template #icon>
@@ -219,7 +219,7 @@ export default defineComponent({
       :options="
         Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
       "
-      :label="$t('common.general.action')"
+      :label="$t('reports.common.action')"
       @update:modelValue="action = $event as string"
     >
       <template #icon>
@@ -233,7 +233,7 @@ export default defineComponent({
       :options="
         Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
       "
-      :label="$t('common.general.module')"
+      :label="$t('reports.common.module')"
       @update:modelValue="table = $event as string"
     >
       <template #icon>
@@ -245,8 +245,8 @@ export default defineComponent({
       class="w-full col-span-1 sm:col-span-2"
       :startDate="startDateString"
       :endDate="endDateString"
-      :startLabel="$t('common.general.start_date')"
-      :endLabel="$t('common.general.end_date')"
+      :startLabel="$t('reports.common.start_date')"
+      :endLabel="$t('reports.common.end_date')"
       @update:startDate="startDateString = $event"
       @update:endDate="endDateString = $event"
     >
@@ -282,7 +282,7 @@ export default defineComponent({
     <template #header-createdAt>
       <div class="flex items-center">
         <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.date') }} </span>
+        <span> {{ $t('reports.common.date') }} </span>
       </div>
     </template>
     <template #header-userId>
@@ -294,19 +294,19 @@ export default defineComponent({
     <template #header-table>
       <div class="flex items-center">
         <ModuleIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.module') }} </span>
+        <span> {{ $t('reports.common.module') }} </span>
       </div>
     </template>
     <template #header-changes>
       <div class="flex items-center">
         <ChangeIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.changes') }} </span>
+        <span> {{ $t('reports.common.changes') }} </span>
       </div>
     </template>
     <template #header-action>
       <div class="flex items-center">
         <ActionIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.action') }} </span>
+        <span> {{ $t('reports.common.action') }} </span>
       </div>
     </template>
     <template #custom-table="{ data }">

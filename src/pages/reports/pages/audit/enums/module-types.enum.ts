@@ -1,8 +1,8 @@
 export enum ModuleTypes {
-  Organization = 'general.organizations',
+  Organization = 'reports.common.organizations',
   User = 'user.users',
-  Role = 'general.roles',
-  Permission = 'general.permissions',
+  Role = 'reports.common.roles',
+  Permission = 'reports.common.permissions',
   Contact = 'contact.contacts',
   CustomField = 'contact.custom_fields',
   CustomValue = 'contact.custom_values',

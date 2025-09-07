@@ -93,7 +93,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('reports.common.error'),
           detail: t('reports.error_getting_dispatches'),
         })
       } finally {
@@ -191,7 +191,7 @@ export default defineComponent({
       :modelValue="search"
       type="text"
       class="w-full"
-      :label="$t('common.general.search')"
+      :label="$t('reports.common.search')"
       @input="search = $event.target.value"
     >
       <template #icon>
@@ -203,8 +203,8 @@ export default defineComponent({
       class="w-full"
       :startDate="startDateString"
       :endDate="endDateString"
-      :startLabel="$t('common.general.start_date')"
-      :endLabel="$t('common.general.end_date')"
+      :startLabel="$t('reports.common.start_date')"
+      :endLabel="$t('reports.common.end_date')"
       @update:startDate="startDateString = $event"
       @update:endDate="endDateString = $event"
     >
@@ -229,43 +229,43 @@ export default defineComponent({
     :totalItems="dispatchMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    textTotalItems="general.dispatches"
+    textTotalItems="reports.common.dispatches"
     @page-change="fetchDispatches"
   >
     <template #header-campaignName>
       <div class="flex items-center">
         <CampaignRouteIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.campaign') }} </span>
+        <span> {{ $t('reports.common.campaign') }} </span>
       </div>
     </template>
     <template #header-providerName>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.provider') }} </span>
+        <span> {{ $t('reports.common.provider') }} </span>
       </div>
     </template>
     <template #header-totalSent>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.total_sent') }} </span>
+        <span> {{ $t('reports.common.total_sent') }} </span>
       </div>
     </template>
     <template #header-totalDelivered>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.total_delivered') }} </span>
+        <span> {{ $t('reports.common.total_delivered') }} </span>
       </div>
     </template>
     <template #header-totalFailed>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.total_failed') }} </span>
+        <span> {{ $t('reports.common.total_failed') }} </span>
       </div>
     </template>
     <template #header-sentAt>
       <div class="flex items-center">
         <DateSendIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.shipment_date') }} </span>
+        <span> {{ $t('reports.common.shipment_date') }} </span>
       </div>
     </template>
 

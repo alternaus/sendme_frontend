@@ -67,7 +67,7 @@ export default defineComponent({
           :modelValue="search"
           type="tel"
           class="w-full rounded-md mt-3"
-          :label="$t('common.general.search')"
+          :label="$t('reports.common.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -80,7 +80,7 @@ export default defineComponent({
           :options="
             Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: t(value) }))
           "
-          :label="$t('common.general.action')"
+          :label="$t('reports.common.action')"
           @update:modelValue="updateField('action', $event)"
         >
           <template #icon>
@@ -93,7 +93,7 @@ export default defineComponent({
           :options="
             Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: t(value) }))
           "
-          :label="$t('common.general.module')"
+          :label="$t('reports.common.module')"
           @update:modelValue="updateField('table', $event)"
         >
           <template #icon>
@@ -103,7 +103,7 @@ export default defineComponent({
         <AppDatePicker
           :modelValue="startDateValue"
 
-          :label="$t('common.general.start_date')"
+          :label="$t('reports.common.start_date')"
           class="w-full mt-3"
           @update:modelValue="updateField('startDate', $event)"
         >
@@ -114,7 +114,7 @@ export default defineComponent({
         <AppDatePicker
           :modelValue="endDateValue"
 
-          :label="$t('common.general.end_date')"
+          :label="$t('reports.common.end_date')"
           class="w-full mt-3"
           @update:modelValue="updateField('endDate', $event)"
         >

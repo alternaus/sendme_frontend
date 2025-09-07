@@ -12,7 +12,7 @@ import { IconTypesReports } from './components/enums/icon-types-reports.enum'
   <div class="flex flex-wrap justify-center lg:justify-start gap-6 p-6 w-fit mx-auto lg:mx-8">
     <AppLinkCard
       :icon="IconTypesReports.MESSAGES"
-      :text="$t('common.general.messages')"
+      :text="$t('reports.common.messages')"
       :to="{ name: 'report.message' }"
     />
 

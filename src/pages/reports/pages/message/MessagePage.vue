@@ -112,7 +112,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('reports.common.error'),
           detail: t('report.error_getting_messages'),
         })
       } finally {
@@ -154,10 +154,10 @@ export default defineComponent({
       const typeString = typeof type === 'string' ? type : String(type)
       // Manejar los tipos específicos de contenido
       if (typeString === 'plain_text') {
-        return t('general.sms')
+        return t('reports.common.sms')
       }
       if (typeString === 'html') {
-        return t('general.email_channel')
+        return t('reports.common.email_channel')
       }
 
       // Fallback para otros tipos usando el enum existente
@@ -212,7 +212,7 @@ export default defineComponent({
 })
 </script>
 <template>
-  <AppHeader :icon="IconTypes.MESSAGES" :text="$t('common.general.messages')" :actions="headerActions" />
+  <AppHeader :icon="IconTypes.MESSAGES" :text="$t('reports.common.messages')" :actions="headerActions" />
 
   <AppFilterPanel
     :header-actions="headerActions"
@@ -222,7 +222,7 @@ export default defineComponent({
       :modelValue="content"
       type="text"
       class="w-full"
-      :label="$t('common.general.search')"
+      :label="$t('reports.common.search')"
       @input="content = $event.target.value"
     >
       <template #icon>
@@ -239,7 +239,7 @@ export default defineComponent({
           name: $t(value),
         }))
       "
-      :label="$t('common.general.status')"
+      :label="$t('reports.common.status')"
       @update:modelValue="status = $event as string"
     >
       <template #icon>
@@ -256,7 +256,7 @@ export default defineComponent({
           name: $t(value),
         }))
       "
-      :label="$t('common.general.message_type')"
+      :label="$t('reports.common.message_type')"
       @update:modelValue="messageType = $event as string"
     >
       <template #icon>
@@ -268,8 +268,8 @@ export default defineComponent({
       class="w-full col-span-1 sm:col-span-2"
       :startDate="startDateString"
       :endDate="endDateString"
-      :startLabel="$t('common.general.start_date')"
-      :endLabel="$t('common.general.end_date')"
+      :startLabel="$t('reports.common.start_date')"
+      :endLabel="$t('reports.common.end_date')"
       @update:startDate="startDateString = $event"
       @update:endDate="endDateString = $event"
     >
@@ -294,37 +294,37 @@ export default defineComponent({
     :totalItems="messageMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    textTotalItems="common.general.messages"
+    textTotalItems="reports.common.messages"
     @page-change="fetchMessages"
   >
     <template #header-recipientDetails>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.recipient_details') }} </span>
+        <span> {{ $t('reports.common.recipient_details') }} </span>
       </div>
     </template>
     <template #header-sentAt>
       <div class="flex items-center">
         <DateSendIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.shipment_date') }} </span>
+        <span> {{ $t('reports.common.shipment_date') }} </span>
       </div>
     </template>
     <template #header-messageType>
       <div class="flex items-center">
         <MessageTypeIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.message_type') }} </span>
+        <span> {{ $t('reports.common.message_type') }} </span>
       </div>
     </template>
     <template #header-content>
       <div class="flex items-center">
         <SmsIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.content') }} </span>
+        <span> {{ $t('reports.common.content') }} </span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('common.general.status') }} </span>
+        <span> {{ $t('reports.common.status') }} </span>
       </div>
     </template>
     <template #custom-contentType="{ data }">
