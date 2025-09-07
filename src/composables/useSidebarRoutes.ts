@@ -14,13 +14,13 @@ export const useSidebarRoutes = () => {
   const { t } = useI18n()
 
   const routes = computed(() => [
-    { path: '/contacts', icon: Contacts, title: t('contact.contacts') },
-    { path: '/campaigns', icon: Campaigns, title: t('campaigns.general.campaigns') },
+    { path: '/contacts', icon: Contacts, title: t('common.contact.contacts') },
+    { path: '/campaigns', icon: Campaigns, title: t('common.campaign.campaigns') },
     { path: '/whatsapp', icon: Whatsapp, title: 'Whatsapp' },
-    { path: '/send', icon: Send, title: t('general.send') },
-    { path: '/report', icon: Reports, title: t('report.reports') },
-    { path: '/buy', icon: Buy, title: t('general.buy') },
-    { path: '/settings', icon: Settings, title: t('general.settings') },
+    { path: '/send', icon: Send, title: t('common.general.send') },
+    { path: '/report', icon: Reports, title: t('common.report.reports') },
+    { path: '/buy', icon: Buy, title: t('common.general.buy') },
+    { path: '/settings', icon: Settings, title: t('common.general.settings') },
   ])
 
   return {

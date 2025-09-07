@@ -77,7 +77,7 @@ export default defineComponent({
   <div>
     <AppDialog
       v-model="internalVisible"
-      :header="$t('general.visualize_changes')"
+      :header="$t('common.general.visualize_changes')"
       :closable="true"
       :maximizable="true"
       customClass="custom-style"
@@ -87,9 +87,9 @@ export default defineComponent({
         <div class="flex flex-col p-3 gap-3">
           <div class="flex justify-between items-center">
             <div class="text-sm text-gray-500">
-              <span class="font-medium">{{ changedCount }}</span> {{ $t('general.changes_detected') }}
+              <span class="font-medium">{{ changedCount }}</span> {{ $t('common.general.changes_detected') }}
               <span class="mx-2">|</span>
-              <span>{{ changes.length }} {{ $t('general.fields_total') }}</span>
+              <span>{{ changes.length }} {{ $t('common.general.fields_total') }}</span>
             </div>
 
             <div class="relative">
@@ -97,7 +97,7 @@ export default defineComponent({
                 v-model="searchTerm"
                 type="text"
                 class="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                :placeholder="$t('general.search')"
+                :placeholder="$t('common.general.search')"
               />
               <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,10 +111,10 @@ export default defineComponent({
             <AppCard class="w-full shadow-sm">
               <template #content>
                 <div class="flex flex-col">
-                  <p class="text-md font-bold text-gray-600 dark:text-gray-300 mb-2">{{ $t('general.before') }}</p>
+                  <p class="text-md font-bold text-gray-600 dark:text-gray-300 mb-2">{{ $t('common.general.before') }}</p>
                   <div class="max-h-[60vh] overflow-y-auto overflow-x-hidden pr-2 relative">
                     <div v-if="filteredChanges.length === 0" class="text-center py-4 text-gray-500 italic">
-                      {{ $t('general.no_results') }}
+                      {{ $t('common.general.no_results') }}
                     </div>
                     <div v-for="(change, index) in filteredChanges" :key="change.key" class="text-sm text-gray-700 dark:text-gray-200 mb-2 relative py-1 hover:bg-gray-50 dark:hover:bg-gray-800 rounded">
                       <div class="field-row">
@@ -131,10 +131,10 @@ export default defineComponent({
             <AppCard class="w-full shadow-sm">
               <template #content>
                 <div class="flex flex-col">
-                  <p class="text-md font-bold text-gray-600 dark:text-gray-300 mb-2">{{ $t('general.after') }}</p>
+                  <p class="text-md font-bold text-gray-600 dark:text-gray-300 mb-2">{{ $t('common.general.after') }}</p>
                   <div class="max-h-[60vh] overflow-y-auto overflow-x-hidden pr-2 relative">
                     <div v-if="filteredChanges.length === 0" class="text-center py-4 text-gray-500 italic">
-                      {{ $t('general.no_results') }}
+                      {{ $t('common.general.no_results') }}
                     </div>
                     <div v-for="(change, index) in filteredChanges" :key="change.key" class="text-sm text-gray-700 dark:text-gray-200 mb-2 relative py-1 hover:bg-gray-50 dark:hover:bg-gray-800 rounded">
                       <div class="field-row">

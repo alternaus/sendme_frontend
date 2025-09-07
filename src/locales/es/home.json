@@ -1,0 +1,59 @@
+{
+  "page": {
+    "title": "Inicio"
+  },
+  "welcome": {
+    "message": "Bienvenido, {name}"
+  },
+  "stats": {
+    "totalCampaigns": "Total de campañas",
+    "activeCampaigns": "Campañas activas",
+    "totalContacts": "Total de contactos",
+    "available": "Disponibles",
+    "sentMessages": "Mensajes enviados",
+    "pendingMessages": "Mensajes pendientes",
+    "failedMessages": "Mensajes fallidos"
+  },
+  "charts": {
+    "messages": "Mensajes",
+    "pie_chart": "Gráfico circular",
+    "line_chart": "Gráfico lineal",
+    "bar_chart": "Gráfico de barras",
+    "radar_chart": "Gráfico radar"
+  },
+  "message_status": {
+    "sent": "Enviados",
+    "pending": "Pendientes",
+    "failed": "Fallidos",
+    "available": "Disponibles"
+  },
+  "sections": {
+    "recentMessages": "Mensajes recientes"
+  },
+  "status": {
+    "message": {
+      "QUEUED": "En Cola",
+      "SENDING": "Enviando", 
+      "SENT": "Enviado",
+      "DELIVERED": "Entregado",
+      "UNDELIVERED": "No Entregado",
+      "FAILED": "Fallido",
+      "RECEIVED": "Recibido",
+      "SCHEDULED": "Programado",
+      "CANCELED": "Cancelado",
+      "READ": "Leído",
+      "PENDING": "Pendiente",
+      "queued": "En Cola",
+      "sending": "Enviando",
+      "sent": "Enviado",
+      "delivered": "Entregado",
+      "undelivered": "No Entregado",
+      "failed": "Fallido",
+      "received": "Recibido",
+      "scheduled": "Programado",
+      "canceled": "Cancelado",
+      "read": "Leído",
+      "pending": "Pendiente"
+    }
+  }
+}

@@ -71,7 +71,7 @@ const getCustomFieldInfo = (customFieldId:string) => {
 
 const getCustomFieldName = (customFieldId:string): string => {
   const field = getCustomFieldInfo(customFieldId)
-  return field?.fieldName || `${t('contacts.general.field')} #${customFieldId}`
+  return field?.fieldName || `${t('contact.general.field')} #${customFieldId}`
 }
 
 const getCustomFieldDataType = (customFieldId:string): string => {
@@ -86,7 +86,7 @@ const allCustomFields = computed(() => {
 })
 
 const formatCustomFieldValue = (value: string | null, customFieldId:string): string => {
-  if (!value) return t('contacts.general.not_defined')
+  if (!value) return t('contact.general.not_defined')
 
   const dataType = getCustomFieldDataType(customFieldId)
 
@@ -153,17 +153,17 @@ watch(
 </script>
 
 <template>
-  <AppDialog v-model:modelValue="dialogVisible" modal :header="t('contacts.contact_view.title')" :style="{ width: '500px' }">
+  <AppDialog v-model:modelValue="dialogVisible" modal :header="t('contact.contact_view.title')" :style="{ width: '500px' }">
     <div v-if="contact" class="space-y-4">
       <AppCard cardClass="dark:bg-neutral-900!">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <AppAvatar :label="getAvatarInitials" shape="circle" />
             <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-              {{ contact.name || t('contacts.general.not_defined') }}
+              {{ contact.name || t('contact.general.not_defined') }}
             </h3>
           </div>
-          <AppTag :label="contact.status === 'ACTIVE' ? t('contacts.general.active') : t('contacts.general.inactive')"
+          <AppTag :label="contact.status === 'ACTIVE' ? t('contact.general.active') : t('contact.general.inactive')"
             :severity="statusVariant" />
         </div>
       </AppCard>
@@ -178,12 +178,12 @@ watch(
             <div class="flex items-center gap-2">
               <i class="pi pi-phone text-neutral-500 dark:text-neutral-400"></i>
               <span class="text-xs text-neutral-600 dark:text-neutral-400">
-                {{ t('contacts.general.phone') }}:
+                {{ t('contact.general.phone') }}:
               </span>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.phone }}</span>
-              <AppButton v-tooltip="t('contacts.general.copy')" @click="copyToClipboard(contact.phone!)" icon="pi pi-copy"
+              <AppButton v-tooltip="t('contact.general.copy')" @click="copyToClipboard(contact.phone!)" icon="pi pi-copy"
                 size="small" severity="secondary" text class="p-1" />
             </div>
           </div>
@@ -192,7 +192,7 @@ watch(
             <div class="flex items-center gap-2">
               <i class="pi pi-globe text-neutral-500 dark:text-neutral-400"></i>
               <span class="text-xs text-neutral-600 dark:text-neutral-400">
-                {{ t('contacts.general.country_code') }}:
+                {{ t('contact.general.country_code') }}:
               </span>
             </div>
             <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ contact.countryCode }}</span>
@@ -204,7 +204,7 @@ watch(
             <div class="flex items-center gap-2">
               <i class="pi pi-calendar text-neutral-500 dark:text-neutral-400"></i>
               <span class="text-xs text-neutral-600 dark:text-neutral-400">
-                {{ t('contacts.general.birth_date') }}:
+                {{ t('contact.general.birth_date') }}:
               </span>
             </div>
             <FormattedDate :date="contact.birthDate" format="date"
@@ -217,7 +217,7 @@ watch(
       <!-- Sección CAMPOS PERSONALIZADOS - todos los custom fields -->
       <div v-if="allCustomFields.length">
   <h4 class="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2 tracking-wide">
-    {{ t('contacts.general.custom_fields') }}
+    {{ t('contact.general.custom_fields') }}
   </h4>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -251,7 +251,7 @@ watch(
 
         <AppButton
           v-if="customValue.value"
-          v-tooltip="t('contacts.general.copy')"
+          v-tooltip="t('contact.general.copy')"
           @click="copyToClipboard(formatCustomFieldValue(customValue.value, customValue.customFieldId))"
           icon="pi pi-copy"
           size="small"
@@ -271,10 +271,10 @@ watch(
     <template #footer>
       <div class="flex justify-end gap-2">
         <AppButton @click="dialogVisible = false" severity="secondary">
-          {{ t('contacts.general.cancel') }}
+          {{ t('contact.general.cancel') }}
         </AppButton>
         <AppButton @click="editContact" :disabled="!contact">
-          {{ t('contacts.actions.edit') }}
+          {{ t('contact.actions.edit') }}
         </AppButton>
       </div>
     </template>

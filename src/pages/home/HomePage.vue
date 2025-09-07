@@ -26,7 +26,7 @@ type ECOption = ComposeOption<
 const { t } = useI18n()
 const authStore = useAuthStore()
 const isDark = useDark()
-useHead({ title: t('titles.home') })
+useHead({ title: t('home.page.title') })
 
 const { getDashboardData } = useDashboardService()
 const dashboardData = ref<DashboardResponse | null>(null)
@@ -42,7 +42,7 @@ onMounted(() => {
 })
 
 /** Datos comunes */
-const labels = computed(() => [t('home.sent'), t('home.pending'), t('home.failed'), t('home.available')])
+const labels = computed(() => [t('home.message_status.sent'), t('home.message_status.pending'), t('home.message_status.failed'), t('home.message_status.available')])
 const values = computed(() => [
   dashboardData.value?.stats.sentMessages ?? 0,
   dashboardData.value?.stats.pendingMessages ?? 0,
@@ -70,7 +70,7 @@ function buildOption(
       ...base,
       tooltip: { trigger: 'item', formatter: '{b} : {c} ({d}%)' },
       series: [{
-        name: t('home.messages'),
+        name: t('home.charts.messages'),
         type: 'pie',
         radius: [20, 140],
         center: ['50%', '50%'],
@@ -91,7 +91,7 @@ function buildOption(
       xAxis: { type: 'category', data: labels, axisLabel: text },
       yAxis: { type: 'value', axisLabel: text },
       series: [{
-        name: t('home.messages'),
+        name: t('home.charts.messages'),
         type,
         data: vals,
         smooth: type === 'line',
@@ -113,9 +113,9 @@ function buildOption(
       splitArea: { show: false }
     },
     series: [{
-      name: t('home.messages'),
+      name: t('home.charts.messages'),
       type: 'radar',
-      data: [{ value: vals, name: t('home.messages'), areaStyle: { color: colors[0], opacity: 0.3 } }]
+      data: [{ value: vals, name: t('home.charts.messages'), areaStyle: { color: colors[0], opacity: 0.3 } }]
     }]
   }
 }
@@ -125,10 +125,10 @@ const globalChartType = ref<'pie' | 'line' | 'bar' | 'radar'>('pie')
 
 /** Opciones para el select button de gráficas */
 const chartOptions = [
-  { name: t('home.pie_chart'), value: 'pie', icon: 'pi pi-chart-pie' },
-  { name: t('home.line_chart'), value: 'line', icon: 'pi pi-chart-line' },
-  { name: t('home.bar_chart'), value: 'bar', icon: 'pi pi-chart-bar' },
-  { name: t('home.radar_chart'), value: 'radar', icon: 'pi pi-chart-scatter' }
+  { name: t('home.charts.pie_chart'), value: 'pie', icon: 'pi pi-chart-pie' },
+  { name: t('home.charts.line_chart'), value: 'line', icon: 'pi pi-chart-line' },
+  { name: t('home.charts.bar_chart'), value: 'bar', icon: 'pi pi-chart-bar' },
+  { name: t('home.charts.radar_chart'), value: 'radar', icon: 'pi pi-chart-scatter' }
 ]
 
 /** Opciones reactivas (reúsalas en tantas <AppEChart> como quieras) */
@@ -161,7 +161,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
       <template #content>
         <div class="flex justify-between items-center">
           <p class="text-sm md:text-base">
-            {{ t('home.welcome', { name: authStore.user?.name }) }}
+            {{ t('home.welcome.message', { name: authStore.user?.name }) }}
           </p>
         </div>
       </template>
@@ -174,7 +174,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-megaphone text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.totalCampaigns') }}
+                {{ t('home.stats.totalCampaigns') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -190,7 +190,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-play-circle text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.activeCampaigns') }}
+                {{ t('home.stats.activeCampaigns') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -206,7 +206,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-user text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.totalContacts') }}
+                {{ t('home.stats.totalContacts') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -222,7 +222,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-comments text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.available') }}
+                {{ t('home.stats.available') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -240,7 +240,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-check-circle text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.sentMessages') }}
+                {{ t('home.stats.sentMessages') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -256,7 +256,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-clock text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.pendingMessages') }}
+                {{ t('home.stats.pendingMessages') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -272,7 +272,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-exclamation-triangle text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.failedMessages') }}
+                {{ t('home.stats.failedMessages') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -288,7 +288,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             <div class="flex items-center gap-2">
               <i class="pi pi-pause-circle text-xs md:text-sm"></i>
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.available') }}
+                {{ t('home.stats.available') }}
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
@@ -321,8 +321,8 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
       <AppCard class="flex flex-col">
         <template #content>
           <div class="flex-1 min-h-0 flex flex-col">
-            <h3 class="text-base font-semibold mb-2 text-neutral-700 dark:text-white">
-              {{ t('home.recentMessages') }}
+                        <h3 class="text-base font-semibold mb-2 text-neutral-700 dark:text-white">
+              {{ t('home.sections.recentMessages') }}
             </h3>
             <div class="flex-1 min-h-0 overflow-y-auto">
               <AppDataView :data="dashboardData?.recentMessages || []"

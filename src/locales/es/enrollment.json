@@ -1,0 +1,60 @@
+{
+  "page": {
+    "select_plan": "Selecciona tu plan",
+    "select_plan_description": "Elige el plan que mejor se adapte a tus necesidades",
+    "payment_title": "Información de pago",
+    "payment_description": "Completa tu información para el plan {plan}",
+    "payment_confirmation": "Confirmación de pago",
+    "payment_confirmation_description": "Verificando el estado de tu transacción"
+  },
+  "plans": {
+    "month": "mes",
+    "select_plan_button": "Seleccionar plan",
+    "loading_plan": "Cargando información del plan...",
+    "plan_summary": "Resumen del plan",
+    "error_loading_plans": "Error al cargar los planes",
+    "plan_not_found": "Plan no encontrado",
+    "error_loading_plan": "Error al cargar el plan"
+  },
+  "features": {
+    "contacts_limit": "{count} contactos",
+    "campaigns_limit": "{count} campañas",
+    "price_per_message": "${price} por mensaje",
+    "priority_support": "Soporte prioritario",
+    "standard_support": "Soporte estándar",
+    "limited_features": "Funciones limitadas",
+    "full_features": "Funciones completas"
+  },
+  "payment": {
+    "payment_details": "Detalles de pago",
+    "account_information": "Información de la cuenta",
+    "payment_information": "Información de pago",
+    "complete_form_to_pay": "Complete todos los campos requeridos para continuar con el pago"
+  },
+  "form": {
+    "full_name": "Nombre completo",
+    "email": "Correo electrónico",
+    "dni": "Documento de identidad",
+    "company_name": "Nombre de la empresa"
+  },
+  "transaction": {
+    "transaction_ref": "Referencia de transacción",
+    "transaction_date": "Fecha de transacción",
+    "transaction_amount": "Monto de transacción",
+    "go_to_dashboard": "Ir al panel de control",
+    "try_again": "Intentar nuevamente"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "approved": "Aprobado",
+    "declined": "Rechazado",
+    "failed": "Fallido",
+    "processing": "Procesando"
+  },
+  "messages": {
+    "payment_processing": "Procesando tu pago...",
+    "payment_success": "Pago realizado exitosamente",
+    "payment_failed": "El pago ha fallado",
+    "checking_status": "Verificando estado del pago..."
+  }
+}

@@ -38,13 +38,13 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const daysOptions: SelectButtonOption[] = [
-  { name: t('campaigns.days.monday'), value: 'MO' },
-  { name: t('campaigns.days.tuesday'), value: 'TU' },
-  { name: t('campaigns.days.wednesday'), value: 'WE' },
-  { name: t('campaigns.days.thursday'), value: 'TH' },
-  { name: t('campaigns.days.friday'), value: 'FR' },
-  { name: t('campaigns.days.saturday'), value: 'SA' },
-  { name: t('campaigns.days.sunday'), value: 'SU' },
+  { name: t('campaign.days.monday'), value: 'MO' },
+  { name: t('campaign.days.tuesday'), value: 'TU' },
+  { name: t('campaign.days.wednesday'), value: 'WE' },
+  { name: t('campaign.days.thursday'), value: 'TH' },
+  { name: t('campaign.days.friday'), value: 'FR' },
+  { name: t('campaign.days.saturday'), value: 'SA' },
+  { name: t('campaign.days.sunday'), value: 'SU' },
 ]
 
 const updateField = (key: string, value: unknown) => {
@@ -130,7 +130,7 @@ const errorMessages = computed(() => ({
         @update:modelValue="updateField('channelId', $event)"
         :options="channels"
         :error-message="errorMessages.channelId"
-        :label="t('campaigns.form.channel')"
+        :label="t('campaign.form.channel')"
         class="w-full"
         :disabled="disabled"
       >
@@ -162,7 +162,7 @@ const errorMessages = computed(() => ({
 
         <div class="grid grid-cols-1 justify-center items-center lg:col-span-3">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaigns.form.duration') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.duration') }}</p>
           </div>
           <div class="grid grid-cols-1 gap-2">
             <AppDateRangePicker
@@ -180,7 +180,7 @@ const errorMessages = computed(() => ({
         <!-- Días de ejecución -->
         <div class="grid grid-rows-2 items-center justify-center lg:col-span-4">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaigns.form.execution_days') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.execution_days') }}</p>
           </div>
           <div class="w-full">
             <AppSelectButton
@@ -197,7 +197,7 @@ const errorMessages = computed(() => ({
         <!-- Hora de ejecución -->
         <div class="grid grid-rows-2 lg:col-span-3 w-full">
           <div class="flex flex-col justify-center items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaigns.form.execution_time') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.execution_time') }}</p>
           </div>
           <div class="w-full flex items-center justify-center">
             <AppTimePicker

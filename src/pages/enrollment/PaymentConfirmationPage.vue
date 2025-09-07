@@ -1,8 +1,8 @@
 <template>
   <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
     <EnrollmentHeader
-      :title="$t('enrollment.payment_confirmation')"
-      :description="$t('enrollment.payment_confirmation_description')"
+      :title="$t('enrollment.page.payment_confirmation')"
+      :description="$t('enrollment.page.payment_confirmation_description')"
     />
 
     <div class="px-6 py-4 md:px-12 lg:px-20">
@@ -59,7 +59,7 @@
 
         <dl class="mt-4 divide-y divide-surface-200 dark:divide-surface-700 text-sm">
           <div class="py-2 grid grid-cols-1 sm:grid-cols-3 gap-2 items-center">
-            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction_ref') }}</dt>
+            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction.transaction_ref') }}</dt>
             <dd class="sm:col-span-2 flex items-center justify-between sm:justify-start gap-3">
               <span class="font-semibold text-surface-900 dark:text-surface-50">
                 {{ transactionInfo.x_ref_payco }}
@@ -75,12 +75,12 @@
           </div>
 
           <div class="py-2 grid grid-cols-1 sm:grid-cols-3 gap-2 items-center">
-            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction_date') }}</dt>
+            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction.transaction_date') }}</dt>
             <dd class="sm:col-span-2 font-semibold text-surface-900 dark:text-surface-50">{{ formattedDate }}</dd>
           </div>
 
           <div class="py-2 grid grid-cols-1 sm:grid-cols-3 gap-2 items-center">
-            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction_amount') }}</dt>
+            <dt class="text-surface-500 dark:text-surface-400">{{ $t('enrollment.transaction.transaction_amount') }}</dt>
             <dd class="sm:col-span-2 font-semibold text-surface-900 dark:text-surface-50">
               {{ formattedAmount }}
             </dd>
@@ -92,7 +92,7 @@
           <AppButton
             v-if="statusProps.state === 'success'"
             rounded
-            :label="$t('enrollment.go_to_dashboard')"
+            :label="$t('enrollment.transaction.go_to_dashboard')"
             @click="navigateToHome"
           />
           <AppButton
@@ -105,7 +105,7 @@
           <AppButton
             v-else
             rounded
-            :label="$t('enrollment.try_again')"
+            :label="$t('enrollment.transaction.try_again')"
             @click="navigateToPlans"
           />
         </div>

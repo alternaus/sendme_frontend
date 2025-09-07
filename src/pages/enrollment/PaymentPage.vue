@@ -1,7 +1,7 @@
 <template>
   <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
-    <EnrollmentHeader :title="$t('enrollment.payment_title')"
-      :description="$t('enrollment.payment_description', { plan: selectedPlanName })" />
+    <EnrollmentHeader :title="$t('enrollment.page.payment_title')"
+      :description="$t('enrollment.page.payment_description', { plan: selectedPlanName })" />
 
     <div class="px-6 py-4 md:px-12 lg:px-20">
       <div v-if="loading" class="flex justify-center items-center py-16">
@@ -20,13 +20,13 @@
             class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
             <div class="flex flex-col gap-2">
               <h4 class="text-surface-900 dark:text-surface-0 font-bold text-md leading-tight">
-                {{ $t('enrollment.plan_summary') }}
+                {{ $t('enrollment.plans.plan_summary') }}
               </h4>
             </div>
             <div class="w-full h-px bg-surface-200 dark:bg-surface-700" />
             <PlanSummary v-if="selectedPlan" :plan="selectedPlan" />
             <div v-else class="py-4 text-center text-surface-500 dark:text-surface-400">
-              {{ $t('enrollment.loading_plan') }}
+              {{ $t('enrollment.plans.loading_plan') }}
             </div>
           </div>
         </div>
@@ -36,37 +36,37 @@
             class="w-full h-full flex-1 p-4 md:p-6 flex rounded-2xl flex-col bg-surface-0 dark:bg-neutral-800 shadow-sm gap-4">
             <div class="flex flex-col gap-2">
               <h4 class="text-surface-900 dark:text-surface-0 font-bold text-md leading-tight">
-                {{ $t('enrollment.payment_details') }}
+                {{ $t('enrollment.payment.payment_details') }}
               </h4>
             </div>
             <div class="w-full h-px bg-surface-200 dark:bg-surface-700" />
             <div class="mb-8">
               <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{
-                $t('enrollment.account_information') }}</h3>
+                $t('enrollment.payment.account_information') }}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="flex flex-col gap-2">
                   <label for="name" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{
-                    $t('enrollment.full_name') }}</label>
+                    $t('enrollment.form.full_name') }}</label>
                   <AppInput id="name" v-model="paymentForm.name.value" type="text" size="small"
-                    :placeholder="$t('enrollment.full_name')" :error-message="paymentForm.nameError?.value || ''" />
+                    :placeholder="$t('enrollment.form.full_name')" :error-message="paymentForm.nameError?.value || ''" />
                 </div>
                 <div class="flex flex-col gap-2">
                   <label for="email" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{
-                    $t('enrollment.email') }}</label>
+                    $t('enrollment.form.email') }}</label>
                   <AppInput id="email" v-model="paymentForm.email.value" type="email" size="small"
-                    :placeholder="$t('enrollment.email')" :error-message="paymentForm.emailError?.value || ''" />
+                    :placeholder="$t('enrollment.form.email')" :error-message="paymentForm.emailError?.value || ''" />
                 </div>
                 <div class="flex flex-col gap-2">
                   <label for="dni" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{
-                    $t('enrollment.dni') }}</label>
+                    $t('enrollment.form.dni') }}</label>
                   <AppInput id="dni" v-model="paymentForm.dni.value" type="text" size="small"
-                    :placeholder="$t('enrollment.dni')" :error-message="paymentForm.dniError?.value || ''" />
+                    :placeholder="$t('enrollment.form.dni')" :error-message="paymentForm.dniError?.value || ''" />
                 </div>
                 <div class="flex flex-col gap-2">
                   <label for="company" class="block text-surface-800 dark:text-surface-200 font-medium text-sm">{{
-                    $t('enrollment.company_name') }}</label>
+                    $t('enrollment.form.company_name') }}</label>
                   <AppInput id="company" v-model="paymentForm.company.value" type="text" size="small"
-                    :placeholder="$t('enrollment.company_name')"
+                    :placeholder="$t('enrollment.form.company_name')"
                     :error-message="paymentForm.companyError?.value || ''" />
                 </div>
               </div>
@@ -76,14 +76,14 @@
 
             <div class="mt-8">
               <h3 class="text-surface-900 dark:text-surface-0 font-bold text-lg mb-4">{{
-                $t('enrollment.payment_information') }}</h3>
+                $t('enrollment.payment.payment_information') }}</h3>
 
               <div v-if="!paymentForm.isFormValid"
                 class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <div class="flex items-center gap-2">
                   <i class="pi pi-exclamation-triangle text-yellow-600 dark:text-yellow-400"></i>
                   <p class="text-yellow-800 dark:text-yellow-200 text-sm">
-                    {{ $t('enrollment.complete_form_to_pay') }}
+                    {{ $t('enrollment.payment.complete_form_to_pay') }}
                   </p>
                 </div>
               </div>
@@ -146,7 +146,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
     const plan = await planService.getPlanById(parseInt(id))
 
     if (!plan) {
-      error.value = 'enrollment.plan_not_found'
+      error.value = 'enrollment.plans.plan_not_found'
       return null
     }
 
@@ -167,7 +167,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
       features
     }
   } catch {
-    error.value = 'enrollment.error_loading_plan'
+    error.value = 'enrollment.plans.error_loading_plan'
     return null
   } finally {
     loading.value = false

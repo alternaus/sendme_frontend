@@ -22,6 +22,7 @@ const STATUS_CONFIG = {
     [ContactStatus.BLOCKED]: 'danger' as TagSeverity
   },
   message: {
+    // Estados en minúsculas
     queued: 'info' as TagSeverity,
     sending: 'warning' as TagSeverity,
     sent: 'success' as TagSeverity,
@@ -31,7 +32,20 @@ const STATUS_CONFIG = {
     received: 'info' as TagSeverity,
     scheduled: 'secondary' as TagSeverity,
     canceled: 'secondary' as TagSeverity,
-    read: 'contrast' as TagSeverity
+    read: 'contrast' as TagSeverity,
+    pending: 'warning' as TagSeverity,
+    // Estados en mayúsculas
+    QUEUED: 'info' as TagSeverity,
+    SENDING: 'warning' as TagSeverity,
+    SENT: 'success' as TagSeverity,
+    DELIVERED: 'success' as TagSeverity,
+    UNDELIVERED: 'danger' as TagSeverity,
+    FAILED: 'danger' as TagSeverity,
+    RECEIVED: 'info' as TagSeverity,
+    SCHEDULED: 'secondary' as TagSeverity,
+    CANCELED: 'secondary' as TagSeverity,
+    READ: 'contrast' as TagSeverity,
+    PENDING: 'warning' as TagSeverity
   },
   recharge: {
     ACCEPTED: 'success' as TagSeverity,

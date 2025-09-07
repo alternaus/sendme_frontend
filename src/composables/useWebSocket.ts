@@ -66,8 +66,8 @@ export const useWebSocket = () => {
     socket.value.on('connect_error', (_err) => {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
-        detail: t('general.connection_error'),
+        summary: t('common.general.error'),
+        detail: t('common.general.connection_error'),
         life: 3000,
       })
     })

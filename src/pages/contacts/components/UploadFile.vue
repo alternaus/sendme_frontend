@@ -45,12 +45,12 @@ const importProgress = ref<{ progress: number; total: number; percentage: number
 const requiredFields = ['phone']
 
 const fieldsOptions = [
-  { label: t('contacts.general.name'), value: 'name' },
-  { label: t('contacts.general.last_name'), value: 'lastName' },
-  { label: t('contacts.general.email'), value: 'email' },
-  { label: t('contacts.general.phone'), value: 'phone' },
-  { label: t('contacts.general.country_code'), value: 'countryCode' },
-  { label: t('contacts.general.birth_date'), value: 'birthDate' }
+  { label: t('contact.general.name'), value: 'name' },
+  { label: t('contact.general.last_name'), value: 'lastName' },
+  { label: t('contact.general.email'), value: 'email' },
+  { label: t('contact.general.phone'), value: 'phone' },
+  { label: t('contact.general.country_code'), value: 'countryCode' },
+  { label: t('contact.general.birth_date'), value: 'birthDate' }
 ]
 
 const openFileDialog = () => {
@@ -90,8 +90,8 @@ const onUpload = async (event: FileUploadSelectEvent) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('contacts.general.error'),
-      detail: t('contacts.import.error_loading_file'),
+      summary: t('contact.general.error'),
+      detail: t('contact.import.error_loading_file'),
       life: 3000,
     })
   } finally {
@@ -129,8 +129,8 @@ const handleFinalUpload = async () => {
     //Mostrar mensaje de éxito
     toast.add({
       severity: 'success',
-      summary: t('contacts.general.success'),
-      detail: t('contacts.import.upload_success'),
+      summary: t('contact.general.success'),
+      detail: t('contact.import.upload_success'),
       life: 3000,
     })
 
@@ -141,7 +141,7 @@ const handleFinalUpload = async () => {
     if (apiError.response?.data?.message) {
       toast.add({
         severity: 'error',
-        summary: t('contacts.general.error'),
+        summary: t('contact.general.error'),
         detail: Array.isArray(apiError.response.data.message)
           ? apiError.response.data.message.join(', ')
           : apiError.response.data.message,
@@ -150,8 +150,8 @@ const handleFinalUpload = async () => {
     } else {
       toast.add({
         severity: 'error',
-        summary: t('contacts.general.error'),
-        detail: t('contacts.import.error'),
+        summary: t('contact.general.error'),
+        detail: t('contact.import.error'),
         life: 3000,
       })
     }
@@ -183,12 +183,12 @@ const handleCancel = () => {
       <template #content>
         <div v-if="!fileData.length" class="w-full flex justify-center mb-6">
           <div class="max-w-auto w-full text-center">
-            <p class="text-xl font-bold my-2">{{ $t('contacts.import.notice.title') }}</p>
+            <p class="text-xl font-bold my-2">{{ $t('contact.import.notice.title') }}</p>
             <ul class="list-inside list-disc text-sm text-left mx-auto w-fit">
-              <li>{{ $t('contacts.import.notice.first_row') }}</li>
-              <li>{{ $t('contacts.import.notice.phone_required') }}</li>
-              <li>{{ $t('contacts.import.notice.supported_formats') }}</li>
-              <li>{{ $t('contacts.import.notice.final_message') }}</li>
+              <li>{{ $t('contact.import.notice.first_row') }}</li>
+              <li>{{ $t('contact.import.notice.phone_required') }}</li>
+              <li>{{ $t('contact.import.notice.supported_formats') }}</li>
+              <li>{{ $t('contact.import.notice.final_message') }}</li>
             </ul>
           </div>
         </div>
@@ -212,7 +212,7 @@ const handleCancel = () => {
               </div>
 
               <div class="flex justify-between text-xs text-neutral-600 dark:text-neutral-400 mb-2">
-                <span><strong>{{ $t('contacts.import.size') }}</strong> {{ formatFileSize }}</span>
+                <span><strong>{{ $t('contact.import.size') }}</strong> {{ formatFileSize }}</span>
                 <span><strong>{{ $t('contact.import.rows') }}</strong> {{ totalRows }}</span>
               </div>
 

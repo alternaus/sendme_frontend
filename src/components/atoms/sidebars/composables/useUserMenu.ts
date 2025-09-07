@@ -36,12 +36,12 @@ export function useUserMenu() {
 
   const menuItems = computed(() => [
     {
-      label: t('user.profile'),
+      label: t('common.user.profile'),
       icon: 'pi pi-user',
       command: () => handleNavigation('/account')
     },
     {
-      label: t('user.settings'),
+      label: t('common.user.settings'),
       icon: 'pi pi-cog',
       command: () => handleNavigation('/settings')
     },
@@ -49,16 +49,16 @@ export function useUserMenu() {
       separator: true
     },
     {
-      label: themeStore.isDark ? t('theme.lightMode') : t('theme.darkMode'),
+      label: themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode'),
       icon: themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon',
       command: () => themeStore.toggleDark()
     },
     {
-      label: t('languages.language'),
+      label: t('common.languages.language'),
       icon: 'pi pi-globe',
       items: [
         {
-          label: t('languages.es'),
+          label: t('common.languages.es'),
           icon: locale.value === 'es' ? 'pi pi-check' : '',
           class: locale.value === 'es' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
@@ -66,7 +66,7 @@ export function useUserMenu() {
           }
         },
         {
-          label: t('languages.en'),
+          label: t('common.languages.en'),
           icon: locale.value === 'en' ? 'pi pi-check' : '',
           class: locale.value === 'en' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
@@ -79,7 +79,7 @@ export function useUserMenu() {
       separator: true
     },
     {
-      label: t('auth.logout'),
+      label: t('common.auth.logout'),
       icon: 'pi pi-sign-out',
       command: () => confirmLogout(),
       class: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'

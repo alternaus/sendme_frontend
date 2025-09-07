@@ -1,8 +1,8 @@
 <template>
   <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
     <EnrollmentHeader
-      :title="$t('enrollment.select_plan')"
-      :description="$t('enrollment.select_plan_description')"
+      :title="$t('enrollment.page.select_plan')"
+      :description="$t('enrollment.page.select_plan_description')"
     />
 
     <div class="px-6 py-4 md:px-12 lg:px-20">
@@ -37,7 +37,7 @@
                 ${{ slotProps.data.cost }}
               </span>
               <span class="font-medium text-xs text-surface-500 dark:text-surface-400 leading-tight">
-                /{{ $t('enrollment.month') }}
+                /{{ $t('enrollment.plans.month') }}
               </span>
             </div>
             <div class="w-full h-px bg-surface-200 dark:bg-surface-600" />
@@ -47,8 +47,8 @@
                 <span class="text-surface-800 text-sm dark:text-surface-100 leading-tight">{{ feature }}</span>
               </li>
             </ul>
-            <AppButton @click="selectPlan(slotProps.data)" :label="$t('enrollment.select_plan_button')"
-              :aria-label="`${$t('enrollment.select_plan_button')} ${slotProps.data.name}`" rounded class="w-full" />
+            <AppButton @click="selectPlan(slotProps.data)" :label="$t('enrollment.plans.select_plan_button')"
+              :aria-label="`${$t('enrollment.plans.select_plan_button')} ${slotProps.data.name}`" rounded class="w-full" />
           </div>
         </div>
       </template>
@@ -140,11 +140,11 @@ const fetchPlansData = async () => {
     error.value = null
     apiPlans.value = await planService.fetchPlans()
   } catch {
-    error.value = 'enrollment.error_loading_plans'
+    error.value = 'enrollment.plans.error_loading_plans'
     toast.add({
       severity: 'error',
       summary: t('general.error'),
-      detail: t('enrollment.error_loading_plans'),
+      detail: t('enrollment.plans.error_loading_plans'),
       life: 5000
     })
   } finally {

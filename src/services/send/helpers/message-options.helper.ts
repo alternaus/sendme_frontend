@@ -6,7 +6,7 @@ export interface MessageTypeOption {
 }
 
 export const createSmsMessageTypeOptions = (t: (key: string) => string): MessageTypeOption[] => [
-  { name: t('general.sms_standard'), value: SmsMessageType.SMS },
-  { name: t('general.sms_otp'), value: SmsMessageType.OTP },
-  { name: t('general.sms_flash'), value: SmsMessageType.FLASH },
+  { name: t('send.message_types.SMS'), value: SmsMessageType.SMS },
+  { name: t('send.message_types.OTP'), value: SmsMessageType.OTP },
+  { name: t('send.message_types.FLASH'), value: SmsMessageType.FLASH },
 ]

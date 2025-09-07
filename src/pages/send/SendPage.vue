@@ -27,9 +27,9 @@ export default defineComponent({
     const { t } = useI18n()
     const router = useRouter()
     const sendOptions = [
-      { name: t('whatsapp.whatsapp'), value: 'WHATSAPP' },
-      { name: t('general.sms'), value: 'SMS' },
-      { name: t('general.email_channel'), value: 'EMAIL' },
+      { name: t('send.channels.WHATSAPP'), value: 'WHATSAPP' },
+      { name: t('send.channels.SMS'), value: 'SMS' },
+      { name: t('send.channels.EMAIL'), value: 'EMAIL' },
     ]
 
     const selectedOption = ref('SMS')
@@ -44,7 +44,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SEND" :text="$t('general.send_instant_message')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
   <!-- Diseño de teléfono para SMS y WhatsApp -->
   <div v-if="selectedOption !== 'EMAIL'" class="container-phone ml-4">
@@ -52,8 +52,8 @@ export default defineComponent({
       <div class="flex justify-center items-center text-center mb-4">
         <small class="text-base font-semibold">{{
           selectedOption === 'SMS'
-            ? $t('general.instant_message')
-            : $t('general.whatsapp_instant_message')
+            ? $t('send.instant_message')
+            : $t('send.whatsapp_instant_message')
         }}</small>
       </div>
       <AppSelect v-model="selectedOption" :options="sendOptions" class="w-full mb-4">
@@ -74,7 +74,7 @@ export default defineComponent({
     <div class="container-email-inner">
       <div class="flex justify-center items-center text-center mb-4">
         <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
-        <small class="text-base font-semibold">{{ $t('general.email_instant_message') }}</small>
+        <small class="text-base font-semibold">{{ $t('send.email_instant_message') }}</small>
       </div>
       <AppSelect v-model="selectedOption" :options="sendOptions" class="w-full mb-4">
         <template #icon><SendIcon class="w-4 h-4 dark:fill-white" /></template>

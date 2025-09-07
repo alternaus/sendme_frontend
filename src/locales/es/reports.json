@@ -1,0 +1,36 @@
+{
+  "reports": "Reportes",
+  "audit": "Auditoría",
+  "audits": "Auditorías",
+  "sending_by_campaign": "Envío por Campaña",
+  "error_getting_audit": "Error al obtener la auditoría",
+  "audit_success_exported": "Auditoría exportada exitosamente",
+  "audit_error_exported": "Error al exportar la auditoría",
+  "error_getting_messages": "Error al obtener los mensajes",
+  "messages_success_exported": "Mensajes exportados exitosamente",
+  "messages_error_exported": "Error al exportar los mensajes",
+  "error_getting_dispatches": "Error al obtener los envíos",
+  "dispatches_success_exported": "Envíos exportados exitosamente",
+  "error_exporting_dispatches": "Error al exportar los envíos",
+  "message_status": {
+    "queued": "En cola",
+    "sending": "Enviando",
+    "sent": "Enviado",
+    "delivered": "Entregado",
+    "undelivered": "No entregado",
+    "failed": "Fallido",
+    "received": "Recibido",
+    "scheduled": "Programado",
+    "canceled": "Cancelado",
+    "read": "Leído"
+  },
+  "dispatch_status": {
+    "pending": "Pendiente",
+    "processing": "Procesando",
+    "sent": "Enviado",
+    "delivered": "Entregado",
+    "failed": "Fallido",
+    "cancelled": "Cancelado",
+    "scheduled": "Programado"
+  }
+}

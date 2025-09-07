@@ -117,8 +117,8 @@ export default defineComponent({
     <AppSelect
       v-model="form.messageType.value"
       :options="messageTypeOptions"
-      :label="$t('general.message_type')"
-      :placeholder="$t('general.select_message_type')"
+      :label="$t('send.message_type')"
+      :placeholder="$t('send.select_message_type')"
       class="w-full"
     />
 
@@ -126,7 +126,7 @@ export default defineComponent({
       v-if="!form.sendToAll.value"
       v-model="contactsInput"
       :rows="2"
-      :placeholder="$t('general.enter_numbers_separated_by_commas')"
+      :placeholder="$t('send.enter_numbers_separated_by_commas')"
       class="w-full"
     >
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -136,7 +136,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="text"
       :ai-attach="true"
-      :placeholder="$t('general.editor.sms_placeholder')"
+      :placeholder="$t('send.editor.sms_placeholder')"
       :maxlength="MAX_CHARACTERS"
       :rows="10"
       class="w-full"

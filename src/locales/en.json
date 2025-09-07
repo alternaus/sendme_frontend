@@ -222,42 +222,6 @@
     "plan": "Plan",
     "plans": "Plans"
   },
-  "report": {
-    "report": "Report",
-    "reports": "Reports",
-    "audit": "Audit",
-    "audits": "Audits",
-    "error_getting_audit": "Error getting audit",
-    "audit_success_exported": "Audit exported successfully",
-    "audit_error_exported": "Error exporting audit",
-    "error_getting_messages": "Error getting messages",
-    "messages_success_exported": "Messages exported successfully",
-    "messages_error_exported": "Error exporting messages",
-    "error_getting_dispatches": "Error getting dispatches",
-    "dispatches_success_exported": "Dispatches exported successfully",
-    "error_exporting_dispatches": "Error exporting dispatches",
-    "message_status": {
-      "queued": "Queued",
-      "sending": "Sending",
-      "sent": "Sent",
-      "delivered": "Delivered",
-      "undelivered": "Undelivered",
-      "failed": "Failed",
-      "received": "Received",
-      "scheduled": "Scheduled",
-      "canceled": "Canceled",
-      "read": "Read"
-    },
-    "dispatch_status": {
-      "pending": "Pending",
-      "processing": "Processing",
-      "sent": "Sent",
-      "delivered": "Delivered",
-      "failed": "Failed",
-      "cancelled": "Cancelled",
-      "scheduled": "Scheduled"
-    }
-  },
   "whatsapp": {
     "whatsapp": "WhatsApp"
   },

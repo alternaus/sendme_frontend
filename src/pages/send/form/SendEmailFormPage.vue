@@ -105,7 +105,7 @@ export default defineComponent({
     <AppInput
       v-if="!form.sendToAll.value"
       v-model="contactsInput"
-      :placeholder="$t('general.enter_emails_separated_by_commas')"
+      :placeholder="$t('send.enter_emails_separated_by_commas')"
       class="w-full"
     >
       <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -113,7 +113,7 @@ export default defineComponent({
 
     <AppInput
       v-model="form.subject.value"
-      :placeholder="$t('general.email_subject')"
+      :placeholder="$t('send.email_subject')"
       class="w-full"
     >
       <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -123,7 +123,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="html"
       :ai-attach="true"
-      :placeholder="$t('general.editor.email_placeholder')"
+      :placeholder="$t('send.editor.email_placeholder')"
       class="w-full"
     />
 

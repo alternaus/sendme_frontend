@@ -1,0 +1,59 @@
+{
+  "page": {
+    "title": "Home"
+  },
+  "welcome": {
+    "message": "Welcome, {name}"
+  },
+  "stats": {
+    "totalCampaigns": "Total campaigns",
+    "activeCampaigns": "Active campaigns",
+    "totalContacts": "Total contacts",
+    "available": "Available",
+    "sentMessages": "Sent messages",
+    "pendingMessages": "Pending messages",
+    "failedMessages": "Failed messages"
+  },
+  "charts": {
+    "messages": "Messages",
+    "pie_chart": "Pie chart",
+    "line_chart": "Line chart",
+    "bar_chart": "Bar chart",
+    "radar_chart": "Radar chart"
+  },
+  "message_status": {
+    "sent": "Sent",
+    "pending": "Pending",
+    "failed": "Failed",
+    "available": "Available"
+  },
+  "sections": {
+    "recentMessages": "Recent messages"
+  },
+  "status": {
+    "message": {
+      "QUEUED": "Queued",
+      "SENDING": "Sending",
+      "SENT": "Sent",
+      "DELIVERED": "Delivered",
+      "UNDELIVERED": "Undelivered",
+      "FAILED": "Failed",
+      "RECEIVED": "Received",
+      "SCHEDULED": "Scheduled",
+      "CANCELED": "Canceled",
+      "READ": "Read",
+      "PENDING": "Pending",
+      "queued": "Queued",
+      "sending": "Sending",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "undelivered": "Undelivered",
+      "failed": "Failed",
+      "received": "Received",
+      "scheduled": "Scheduled",
+      "canceled": "Canceled",
+      "read": "Read",
+      "pending": "Pending"
+    }
+  }
+}

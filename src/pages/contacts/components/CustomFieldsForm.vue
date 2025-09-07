@@ -92,7 +92,7 @@ const containerClasses = computed(() => ({
       <div class="flex items-center justify-center gap-2 mb-4">
         <InformationIcon class="w-8 h-8 dark:fill-white" />
         <h2 class="text-center text-xl font-semibold">
-          {{ t('contacts.general.personalized_information') }}
+          {{ t('contact.general.personalized_information') }}
         </h2>
       </div>
 
@@ -101,7 +101,7 @@ const containerClasses = computed(() => ({
         :class="containerClasses"
       >
         <div v-if="customValues.length === 0" class="col-span-full text-center py-8">
-          {{ t('contacts.general.no_custom_fields') }}
+          {{ t('contact.general.no_custom_fields') }}
         </div>
 
         <div
@@ -156,7 +156,7 @@ const containerClasses = computed(() => ({
           </template>
 
           <template v-else>
-            <div class="text-xs text-gray-500">{{ t('contacts.general.unknown_field_type') }}</div>
+            <div class="text-xs text-gray-500">{{ t('contact.general.unknown_field_type') }}</div>
             <AppInput
               v-model="custom.value.value"
               type="text"

@@ -1,0 +1,31 @@
+{
+  "title": "Send Instant Message",
+  "instant_message": "Instant Message",
+  "whatsapp_instant_message": "WhatsApp instant message",
+  "email_instant_message": "Email instant message",
+  "send_instant_message": "Send instant message",
+  "message_type": "Message type",
+  "select_message_type": "Select message type",
+  "email_subject": "Email subject",
+  "enter_numbers_separated_by_commas": "Enter numbers separated by commas",
+  "enter_emails_separated_by_commas": "Enter emails separated by commas",
+  "required_field": "This field is required",
+  "contacts_required": "Contacts are required",
+  "message_send_success": "Message sent successfully",
+  "error_sending_message": "Error sending message",
+  "channels": {
+    "SMS": "SMS",
+    "EMAIL": "Email",
+    "WHATSAPP": "WhatsApp"
+  },
+  "message_types": {
+    "SMS": "Standard",
+    "OTP": "OTP",
+    "FLASH": "Flash"
+  },
+  "editor": {
+    "sms_placeholder": "Write your SMS message here...",
+    "whatsapp_placeholder": "Write your WhatsApp message here...",
+    "email_placeholder": "Write your email message here..."
+  }
+}

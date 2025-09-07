@@ -1,9 +1,9 @@
 export enum DispatchStatusTypes {
-  pending = 'report.dispatch_status.pending',
-  processing = 'report.dispatch_status.processing',
-  sent = 'report.dispatch_status.sent',
-  delivered = 'report.dispatch_status.delivered',
-  failed = 'report.dispatch_status.failed',
-  cancelled = 'report.dispatch_status.cancelled',
-  scheduled = 'report.dispatch_status.scheduled',
+  pending = 'reports.dispatch_status.pending',
+  processing = 'reports.dispatch_status.processing',
+  sent = 'reports.dispatch_status.sent',
+  delivered = 'reports.dispatch_status.delivered',
+  failed = 'reports.dispatch_status.failed',
+  cancelled = 'reports.dispatch_status.cancelled',
+  scheduled = 'reports.dispatch_status.scheduled',
 }

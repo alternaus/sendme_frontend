@@ -1,0 +1,60 @@
+{
+  "page": {
+    "select_plan": "Select your plan",
+    "select_plan_description": "Choose the plan that best fits your needs",
+    "payment_title": "Payment information",
+    "payment_description": "Complete your information for the {plan} plan",
+    "payment_confirmation": "Payment confirmation",
+    "payment_confirmation_description": "Verifying your transaction status"
+  },
+  "plans": {
+    "month": "month",
+    "select_plan_button": "Select plan",
+    "loading_plan": "Loading plan information...",
+    "plan_summary": "Plan summary",
+    "error_loading_plans": "Error loading plans",
+    "plan_not_found": "Plan not found",
+    "error_loading_plan": "Error loading plan"
+  },
+  "features": {
+    "contacts_limit": "{count} contacts",
+    "campaigns_limit": "{count} campaigns",
+    "price_per_message": "${price} per message",
+    "priority_support": "Priority support",
+    "standard_support": "Standard support",
+    "limited_features": "Limited features",
+    "full_features": "Full features"
+  },
+  "payment": {
+    "payment_details": "Payment details",
+    "account_information": "Account information",
+    "payment_information": "Payment information",
+    "complete_form_to_pay": "Complete all required fields to continue with payment"
+  },
+  "form": {
+    "full_name": "Full name",
+    "email": "Email address",
+    "dni": "Identity document",
+    "company_name": "Company name"
+  },
+  "transaction": {
+    "transaction_ref": "Transaction reference",
+    "transaction_date": "Transaction date",
+    "transaction_amount": "Transaction amount",
+    "go_to_dashboard": "Go to dashboard",
+    "try_again": "Try again"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "declined": "Declined",
+    "failed": "Failed",
+    "processing": "Processing"
+  },
+  "messages": {
+    "payment_processing": "Processing your payment...",
+    "payment_success": "Payment completed successfully",
+    "payment_failed": "Payment has failed",
+    "checking_status": "Checking payment status..."
+  }
+}

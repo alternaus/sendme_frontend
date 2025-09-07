@@ -46,7 +46,7 @@ const formatExecutionDate = (dateString: string): string => {
 </script>
 
 <template>
-  <AppDialog v-model:modelValue="dialogVisible" modal :header="t('campaigns.test_rules.test_results')" :style="{ width: '900px' }"
+  <AppDialog v-model:modelValue="dialogVisible" modal :header="t('campaign.test_rules.test_results')" :style="{ width: '900px' }"
     class="campaign-test-modal">
     <div v-if="testResults && currentCampaign" class="space-y-4">
       <!-- Grid de métricas en 3 columnas compacto -->
@@ -56,14 +56,14 @@ const formatExecutionDate = (dateString: string): string => {
           <div class="text-center bg-white dark:bg-neutral-900 rounded-lg p-4">
             <div class="flex items-center justify-center gap-2 mb-2">
               <i class="pi pi-users text-neutral-500 dark:text-neutral-400 text-sm"></i>
-              <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">{{ t('campaigns.test_rules.total_contacts')
+              <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">{{ t('campaign.test_rules.total_contacts')
                 }}</span>
             </div>
             <div class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
               {{ testResults.rules.total.toLocaleString() }}
             </div>
             <div class="text-xs text-neutral-500 dark:text-neutral-500">
-              {{ t('campaigns.test_rules.contacts_available') }}
+              {{ t('campaign.test_rules.contacts_available') }}
             </div>
           </div>
 
@@ -72,13 +72,13 @@ const formatExecutionDate = (dateString: string): string => {
             <div class="flex items-center justify-center gap-2 mb-2">
               <i class="pi pi-check-circle text-neutral-500 dark:text-neutral-400 text-sm"></i>
               <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">{{
-                t('campaigns.test_rules.selected_contacts') }}</span>
+                t('campaign.test_rules.selected_contacts') }}</span>
             </div>
             <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
               {{ testResults.rules.selected.toLocaleString() }}
             </div>
             <div class="text-xs text-neutral-500 dark:text-neutral-500">
-              {{ t('campaigns.test_rules.contacts_match_rules') }}
+              {{ t('campaign.test_rules.contacts_match_rules') }}
             </div>
           </div>
 
@@ -86,14 +86,14 @@ const formatExecutionDate = (dateString: string): string => {
           <div class="text-center bg-white dark:bg-neutral-900 rounded-lg p-4">
             <div class="flex items-center justify-center gap-2 mb-2">
               <i class="pi pi-percentage text-neutral-500 dark:text-neutral-400 text-sm"></i>
-              <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">{{ t('campaigns.test_rules.match_percentage')
+              <span class="text-xs text-neutral-600 dark:text-neutral-400 font-medium">{{ t('campaign.test_rules.match_percentage')
                 }}</span>
             </div>
             <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
               {{ testResults.rules.percent.toFixed(1) }}%
             </div>
             <div class="text-xs text-neutral-500 dark:text-neutral-500">
-              {{ t('campaigns.test_rules.percentage_matched') }}
+              {{ t('campaign.test_rules.percentage_matched') }}
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@ const formatExecutionDate = (dateString: string): string => {
         <div class="flex items-center gap-2 mb-3">
           <i class="pi pi-clock text-neutral-500 dark:text-neutral-400"></i>
           <h4 class="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-            {{ t('campaigns.test_rules.upcoming_executions') }}
+            {{ t('campaign.test_rules.upcoming_executions') }}
           </h4>
         </div>
 
@@ -124,7 +124,7 @@ const formatExecutionDate = (dateString: string): string => {
           <!-- Indicador si hay más ejecuciones -->
           <div v-if="testResults.executions.upcomingExecutions.length > 10"
             class="text-center py-3 text-xs text-neutral-500 dark:text-neutral-500">
-            ... {{ t('campaigns.test_rules.more_executions', { count: testResults.executions.upcomingExecutions.length - 10 }) }}
+            ... {{ t('campaign.test_rules.more_executions', { count: testResults.executions.upcomingExecutions.length - 10 }) }}
           </div>
         </div>
       </AppCard>

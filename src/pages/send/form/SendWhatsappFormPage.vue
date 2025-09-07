@@ -111,7 +111,7 @@ export default defineComponent({
       v-if="!form.sendToAll.value"
       v-model="contactsInput"
       :rows="2"
-      :placeholder="$t('general.enter_numbers_separated_by_commas')"
+      :placeholder="$t('send.enter_numbers_separated_by_commas')"
       class="w-full mb-4"
     >
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -121,7 +121,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="text"
       :ai-attach="true"
-      :placeholder="$t('general.editor.whatsapp_placeholder')"
+      :placeholder="$t('send.editor.whatsapp_placeholder')"
       :maxlength="MAX_CHARACTERS"
       :rows="12"
       class="w-full mb-2"

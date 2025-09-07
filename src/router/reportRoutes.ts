@@ -29,7 +29,7 @@ const sendRoutes: RouteRecordRaw = {
       path: '',
       name: 'report.index',
       component: () => import('@/pages/reports/ReportsPage.vue'),
-      meta: { title: 'reports_list' }
+      meta: { title: 'common.titles.reports_list' }
     },
     {
       path: 'audit',

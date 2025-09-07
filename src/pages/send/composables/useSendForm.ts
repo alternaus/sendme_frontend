@@ -31,7 +31,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
 
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('send.required_field'),
     }
   })
 
@@ -41,7 +41,7 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
     sendToAll: yup.boolean().optional(),
     contacts: yup.array().of(yup.string()).when(['sendToAll', 'channel'], {
       is: (sendToAll: boolean, _channel: MessageChannel) => !sendToAll,
-      then: (schema) => schema.min(1, t('general.contacts_required')).test('contacts-valid', function(value) {
+      then: (schema) => schema.min(1, t('send.contacts_required')).test('contacts-valid', function(value) {
         const { channel } = this.parent
         if (!value || value.length === 0) return false
         const contacts = value.filter((c): c is string => typeof c === 'string')
@@ -52,12 +52,12 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
     country: yup.string(),
     subject: yup.string().when('channel', {
       is: MessageChannel.EMAIL,
-      then: (schema) => schema.required(t('general.required_field')),
+      then: (schema) => schema.required(t('send.required_field')),
       otherwise: (schema) => schema.optional(),
     }),
     messageType: yup.string().oneOf(Object.values(SmsMessageType)).when('channel', {
       is: MessageChannel.SMS,
-      then: (schema) => schema.required(t('general.required_field')),
+      then: (schema) => schema.required(t('send.required_field')),
       otherwise: (schema) => schema.optional(),
     }),
   })

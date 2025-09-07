@@ -1,0 +1,31 @@
+{
+  "title": "Enviar Mensaje Instantáneo",
+  "instant_message": "Mensaje Instantáneo",
+  "whatsapp_instant_message": "Mensaje Instantáneo de WhatsApp",
+  "email_instant_message": "Mensaje instantáneo de correo",
+  "send_instant_message": "Enviar mensaje instantáneo",
+  "message_type": "Tipo de mensaje",
+  "select_message_type": "Selecciona el tipo de mensaje",
+  "email_subject": "Asunto del correo",
+  "enter_numbers_separated_by_commas": "Ingresa números separados por comas",
+  "enter_emails_separated_by_commas": "Ingresa correos separados por comas",
+  "required_field": "Este campo es requerido",
+  "contacts_required": "Los contactos son requeridos",
+  "message_send_success": "Mensaje enviado exitosamente",
+  "error_sending_message": "Error al enviar el mensaje",
+  "channels": {
+    "SMS": "SMS",
+    "EMAIL": "Correo Electrónico",
+    "WHATSAPP": "WhatsApp"
+  },
+  "message_types": {
+    "SMS": "Estándar",
+    "OTP": "OTP", 
+    "FLASH": "Flash"
+  },
+  "editor": {
+    "sms_placeholder": "Escribe tu mensaje SMS aquí...",
+    "whatsapp_placeholder": "Escribe tu mensaje de WhatsApp aquí...",
+    "email_placeholder": "Escribe tu mensaje de correo aquí..."
+  }
+}

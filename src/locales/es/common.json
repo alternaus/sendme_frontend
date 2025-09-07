@@ -1,0 +1,115 @@
+{
+  "general": {
+    "send": "Enviar",
+    "buy": "Comprar",
+    "settings": "Configuración",
+    "messages": "Mensajes",
+    "search": "Buscar",
+    "action": "Acción",
+    "module": "Módulo",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de fin",
+    "date": "Fecha",
+    "changes": "Cambios",
+    "campaign": "Campaña",
+    "provider": "Proveedor",
+    "total_sent": "Total enviados",
+    "total_delivered": "Total entregados",
+    "total_failed": "Total fallidos",
+    "shipment_date": "Fecha de envío",
+    "status": "Estado",
+    "message_type": "Tipo de mensaje",
+    "recipient_details": "Detalles del destinatario",
+    "content": "Contenido",
+    "organizations": "Organizaciones",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "error": "Error",
+    "success": "Éxito",
+    "connection_error": "Error de conexión",
+    "visualize_changes": "Visualizar cambios",
+    "changes_detected": "cambios detectados",
+    "fields_total": "campos totales",
+    "before": "Antes",
+    "after": "Después",
+    "no_results": "Sin resultados",
+    "sms": "SMS",
+    "email_channel": "Canal Email",
+    "send_instant_message": "Enviar mensaje instantáneo",
+    "instant_message": "Mensaje instantáneo",
+    "whatsapp_instant_message": "Mensaje instantáneo WhatsApp",
+    "email_instant_message": "Mensaje instantáneo Email",
+    "sms_standard": "SMS Estándar",
+    "sms_otp": "SMS OTP",
+    "sms_flash": "SMS Flash",
+    "message_send_success": "Mensaje enviado exitosamente",
+    "error_sending_message": "Error al enviar el mensaje"
+  },
+  "titles": {
+    "reports_list": "Lista de reportes"
+  },
+  "contact": {
+    "contacts": "Contactos",
+    "custom_fields": "Campos personalizados",
+    "custom_values": "Valores personalizados"
+  },
+  "report": {
+    "reports": "Reportes"
+  },
+  "user": {
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "user": "Usuario",
+    "users": "Usuarios"
+  },
+  "theme": {
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro"
+  },
+  "languages": {
+    "language": "Idioma",
+    "es": "Español",
+    "en": "English"
+  },
+  "auth": {
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión"
+  },
+  "actions": {
+    "update": "Actualizar",
+    "create": "Crear",
+    "delete": "Eliminar"
+  },
+  "campaign": {
+    "campaigns": "Campañas",
+    "campaign_rules": "Reglas de campaña",
+    "campaign_dispatches": "Envíos de campaña"
+  },
+  "provider": {
+    "providers": "Proveedores",
+    "payment_providers": "Proveedores de pago"
+  },
+  "plan": {
+    "plans": "Planes"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "backToHome": "Volver al inicio"
+  },
+  "error": {
+    "title": "Ha ocurrido un error",
+    "description": "Algo salió mal. Por favor, intenta nuevamente.",
+    "retry": "Reintentar",
+    "backToHome": "Volver al inicio"
+  },
+  "loading": {
+    "title": "Cargando...",
+    "description": "Por favor espera mientras cargamos el contenido."
+  },
+  "maintenance": {
+    "title": "Mantenimiento programado",
+    "description": "Estamos realizando mejoras. Volveremos pronto.",
+    "estimatedTime": "Tiempo estimado: {time}"
+  }
+}

@@ -74,25 +74,25 @@ export default defineComponent({
     )
 
     const conditionOptions = [
-      { name: t('campaigns.conditions.is_empty'), value: 'IS_EMPTY' },
-      { name: t('campaigns.conditions.not_empty'), value: 'NOT_EMPTY' },
-      { name: t('campaigns.conditions.equals'), value: 'EQUALS' },
-      { name: t('campaigns.conditions.not_equals'), value: 'NOT_EQUALS' },
-      { name: t('campaigns.conditions.greater_than'), value: 'GREATER_THAN' },
-      { name: t('campaigns.conditions.less_than'), value: 'LESS_THAN' },
-      { name: t('campaigns.conditions.greater_or_equal'), value: 'GREATER_OR_EQUAL' },
-      { name: t('campaigns.conditions.less_or_equal'), value: 'LESS_OR_EQUAL' },
-      { name: t('campaigns.conditions.between'), value: 'BETWEEN' },
-      { name: t('campaigns.conditions.between_dates'), value: 'BETWEEN_DATES' },
-      { name: t('campaigns.conditions.contains'), value: 'CONTAINS' },
-      { name: t('campaigns.conditions.starts_with'), value: 'STARTS_WITH' },
-      { name: t('campaigns.conditions.ends_with'), value: 'ENDS_WITH' },
-      { name: t('campaigns.conditions.birthday_today'), value: 'BIRTHDAY_TODAY' },
-      { name: t('campaigns.conditions.birthday_in_x_days'), value: 'BIRTHDAY_IN_X_DAYS' },
-      { name: t('campaigns.conditions.is_today'), value: 'IS_TODAY' },
-      { name: t('campaigns.conditions.was_yesterday'), value: 'WAS_YESTERDAY' },
-      { name: t('campaigns.conditions.is_tomorrow'), value: 'IS_TOMORROW' },
-      { name: t('campaigns.conditions.in_x_days'), value: 'IN_X_DAYS' },
+      { name: t('campaign.conditions.is_empty'), value: 'IS_EMPTY' },
+      { name: t('campaign.conditions.not_empty'), value: 'NOT_EMPTY' },
+      { name: t('campaign.conditions.equals'), value: 'EQUALS' },
+      { name: t('campaign.conditions.not_equals'), value: 'NOT_EQUALS' },
+      { name: t('campaign.conditions.greater_than'), value: 'GREATER_THAN' },
+      { name: t('campaign.conditions.less_than'), value: 'LESS_THAN' },
+      { name: t('campaign.conditions.greater_or_equal'), value: 'GREATER_OR_EQUAL' },
+      { name: t('campaign.conditions.less_or_equal'), value: 'LESS_OR_EQUAL' },
+      { name: t('campaign.conditions.between'), value: 'BETWEEN' },
+      { name: t('campaign.conditions.between_dates'), value: 'BETWEEN_DATES' },
+      { name: t('campaign.conditions.contains'), value: 'CONTAINS' },
+      { name: t('campaign.conditions.starts_with'), value: 'STARTS_WITH' },
+      { name: t('campaign.conditions.ends_with'), value: 'ENDS_WITH' },
+      { name: t('campaign.conditions.birthday_today'), value: 'BIRTHDAY_TODAY' },
+      { name: t('campaign.conditions.birthday_in_x_days'), value: 'BIRTHDAY_IN_X_DAYS' },
+      { name: t('campaign.conditions.is_today'), value: 'IS_TODAY' },
+      { name: t('campaign.conditions.was_yesterday'), value: 'WAS_YESTERDAY' },
+      { name: t('campaign.conditions.is_tomorrow'), value: 'IS_TOMORROW' },
+      { name: t('campaign.conditions.in_x_days'), value: 'IN_X_DAYS' },
     ]
 
     const channels = ref<SelectOption[]>([])
@@ -115,7 +115,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: t('general.error'),
-          detail: t('campaigns.errors.load_channels'),
+          detail: t('campaign.errors.load_channels'),
           life: 3000,
         })
       }
@@ -153,7 +153,7 @@ export default defineComponent({
         toast.add({
           severity: 'error',
           summary: t('general.error'),
-          detail: t('campaigns.errors.load_campaign'),
+          detail: t('campaign.errors.load_campaign'),
           life: 3000,
         })
       } finally {
@@ -229,7 +229,7 @@ export default defineComponent({
             toast.add({
               severity: 'success',
               summary: t('general.success'),
-              detail: t('campaigns.success.updated'),
+              detail: t('campaign.success.updated'),
               life: 3000,
             })
           } else {
@@ -237,7 +237,7 @@ export default defineComponent({
             toast.add({
               severity: 'success',
               summary: t('general.success'),
-              detail: t('campaigns.success.created'),
+              detail: t('campaign.success.created'),
               life: 3000,
             })
           }
@@ -247,7 +247,7 @@ export default defineComponent({
           toast.add({
             severity: 'error',
             summary: t('general.error'),
-            detail: isEditMode.value ? t('campaigns.errors.update_campaign') : t('campaigns.errors.create_campaign'),
+            detail: isEditMode.value ? t('campaign.errors.update_campaign') : t('campaign.errors.create_campaign'),
             life: 3000,
           })
         } finally {
@@ -258,7 +258,7 @@ export default defineComponent({
         toast.add({
           severity: 'warn',
           summary: t('general.validation_error'),
-          detail: t('campaigns.errors.validation_failed'),
+          detail: t('campaign.errors.validation_failed'),
           life: 3000,
         })
       },
@@ -270,7 +270,7 @@ export default defineComponent({
         toast.add({
           severity: 'warn',
           summary: t('general.validation_error'),
-          detail: t('campaigns.errors.complete_current_step'),
+          detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
       }
@@ -286,7 +286,7 @@ export default defineComponent({
         toast.add({
           severity: 'warn',
           summary: t('general.validation_error'),
-          detail: t('campaigns.errors.complete_current_step'),
+          detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
       }

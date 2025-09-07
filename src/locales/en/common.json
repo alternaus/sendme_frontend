@@ -1,0 +1,115 @@
+{
+  "general": {
+    "send": "Send",
+    "buy": "Buy",
+    "settings": "Settings",
+    "messages": "Messages",
+    "search": "Search",
+    "action": "Action",
+    "module": "Module",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "date": "Date",
+    "changes": "Changes",
+    "campaign": "Campaign",
+    "provider": "Provider",
+    "total_sent": "Total sent",
+    "total_delivered": "Total delivered",
+    "total_failed": "Total failed",
+    "shipment_date": "Shipment date",
+    "status": "Status",
+    "message_type": "Message type",
+    "recipient_details": "Recipient details",
+    "content": "Content",
+    "organizations": "Organizations",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "error": "Error",
+    "success": "Success",
+    "connection_error": "Connection error",
+    "visualize_changes": "Visualize changes",
+    "changes_detected": "changes detected",
+    "fields_total": "total fields",
+    "before": "Before",
+    "after": "After",
+    "no_results": "No results",
+    "sms": "SMS",
+    "email_channel": "Email Channel",
+    "send_instant_message": "Send instant message",
+    "instant_message": "Instant message",
+    "whatsapp_instant_message": "WhatsApp instant message",
+    "email_instant_message": "Email instant message",
+    "sms_standard": "Standard SMS",
+    "sms_otp": "OTP SMS",
+    "sms_flash": "Flash SMS",
+    "message_send_success": "Message sent successfully",
+    "error_sending_message": "Error sending message"
+  },
+  "titles": {
+    "reports_list": "Reports list"
+  },
+  "contact": {
+    "contacts": "Contacts",
+    "custom_fields": "Custom fields",
+    "custom_values": "Custom values"
+  },
+  "report": {
+    "reports": "Reports"
+  },
+  "user": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "user": "User",
+    "users": "Users"
+  },
+  "theme": {
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
+  },
+  "languages": {
+    "language": "Language",
+    "es": "Español",
+    "en": "English"
+  },
+  "auth": {
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "actions": {
+    "update": "Update",
+    "create": "Create",
+    "delete": "Delete"
+  },
+  "campaign": {
+    "campaigns": "Campaigns",
+    "campaign_rules": "Campaign rules",
+    "campaign_dispatches": "Campaign dispatches"
+  },
+  "provider": {
+    "providers": "Providers",
+    "payment_providers": "Payment providers"
+  },
+  "plan": {
+    "plans": "Plans"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, the page you are looking for does not exist or has been moved.",
+    "backToHome": "Back to home"
+  },
+  "error": {
+    "title": "An error occurred",
+    "description": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "backToHome": "Back to home"
+  },
+  "loading": {
+    "title": "Loading...",
+    "description": "Please wait while we load the content."
+  },
+  "maintenance": {
+    "title": "Scheduled maintenance",
+    "description": "We are making improvements. We'll be back soon.",
+    "estimatedTime": "Estimated time: {time}"
+  }
+}
