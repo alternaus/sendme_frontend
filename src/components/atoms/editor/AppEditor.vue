@@ -217,7 +217,7 @@ defineExpose({ insertContent })
         </span>
         <span v-if="aiAttach" class="ql-formats">
           <AppAIGenerate
-            type="EMAIL"
+            type="email"
             :current-text="contentData"
             :append-mode="aiInsertMode"
             :button-title="t('general.editor.ai_generate')"

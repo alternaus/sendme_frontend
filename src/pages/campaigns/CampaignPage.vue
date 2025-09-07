@@ -455,6 +455,11 @@ const headerActions = computed(() => {
     :multipleSelection="true"
     :loading="loading"
     textTotalItems="campaign.general.campaigns"
+    mobileTitleField="name"
+    mobilePhoneField="frequency"
+    mobileEmailField="channelName"
+    mobileSourceField="startDate"
+    mobileStatusField="status"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
   >

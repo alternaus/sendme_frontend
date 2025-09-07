@@ -15,7 +15,7 @@ const props = defineProps({
   appendMode: { type: String as () => 'replace' | 'append', default: 'replace' },
   buttonTitle: { type: String, default: 'Generar con IA' },
   currentText: { type: String, default: '' },
-  type: { type: String as () => 'SMS' | 'EMAIL', required: true },
+  type: { type: String as () => 'sms' | 'email', required: true },
 })
 const emit = defineEmits<{ (e: 'insert', value: string): void }>()
 

@@ -150,7 +150,7 @@ const handleAiInsert = (aiText: string) => {
             <slot v-if="!aiAttach" name="icon" />
             <AppAIGenerate
               v-if="aiAttach"
-              type="SMS"
+              type="sms"
               :current-text="String(internalValue ?? '')"
               @insert="handleAiInsert"
             />
@@ -214,7 +214,7 @@ const handleAiInsert = (aiText: string) => {
           <slot v-if="!aiAttach" name="icon" />
           <AppAIGenerate
             v-if="aiAttach"
-            type="SMS"
+            type="sms"
             :current-text="String(internalValue ?? '')"
             @insert="handleAiInsert"
           />
@@ -279,7 +279,7 @@ const handleAiInsert = (aiText: string) => {
           <slot v-if="!aiAttach" name="icon" />
           <AppAIGenerate
             v-if="aiAttach"
-            type="SMS"
+            type="sms"
             :current-text="String(internalValue ?? '')"
             @insert="handleAiInsert"
           />
