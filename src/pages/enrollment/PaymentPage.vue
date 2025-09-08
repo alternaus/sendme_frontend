@@ -132,7 +132,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
-const planId = computed(() => route.params.planId as string)
+const planId = computed(() => String(route.params.planId ?? '').trim())
 const selectedPlanName = computed(() => selectedPlan.value?.name || '')
 
 const planService = usePlanService()
@@ -143,7 +143,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   loading.value = true
   error.value = null
   try {
-    const plan = await planService.getPlanById(parseInt(id))
+  const plan = await planService.getPlanById(id)
 
     if (!plan) {
       error.value = 'enrollment.plans.plan_not_found'

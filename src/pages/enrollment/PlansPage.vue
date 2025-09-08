@@ -126,12 +126,17 @@ const plans = computed<EnhancedPlan[]>(() =>
 const router = useRouter()
 
 const selectPlan = (plan: EnhancedPlan) => {
-  router.push({
-    name: 'enrollment-payment',
-    params: {
-      planId: plan.id.toString()
-    }
-  })
+  const id = String((plan as unknown as { id?: unknown }).id ?? '').trim()
+  if (!id) {
+    toast.add({
+      severity: 'error',
+      summary: t('enrollment.common.error'),
+      detail: t('enrollment.plans.plan_not_found'),
+      life: 3000
+    })
+    return
+  }
+  router.push({ name: 'enrollment-payment', params: { planId: id } })
 }
 
 const fetchPlansData = async () => {
