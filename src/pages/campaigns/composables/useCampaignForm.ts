@@ -126,7 +126,7 @@ export function useCampaignForm() {
     time: new Date(0, 0, 0, 12, 0),
     days: [],
     frequency: CampaignFrequency.DAILY,
-    channelId: '1',
+    channelId: undefined,
     organizationId: userOrganizationId,
   campaignRules: [],
   messageType: SmsMessageType.SMS

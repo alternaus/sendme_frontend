@@ -245,6 +245,7 @@ watch(
           <div class="w-full flex items-center justify-center">
             <AppTimePicker
               :modelValue="formValues.time"
+              hour-format="12"
               @update:modelValue="updateField('time', $event)"
               class="w-full"
               :errorMessage="errorMessages.time"

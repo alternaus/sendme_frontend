@@ -91,7 +91,6 @@ watch(
         <DatePicker
           v-bind="{
             modelValue: selectedTime,
-            hourFormat,
             disabled,
             readonly,
             size,
@@ -105,6 +104,7 @@ watch(
             ...$attrs
           }"
           timeOnly
+          :hour-format="hourFormat"
           :input-class="inputClass"
           :class="[
             '!w-full',
