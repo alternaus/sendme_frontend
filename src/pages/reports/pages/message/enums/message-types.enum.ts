@@ -1,4 +1,4 @@
 export enum TypeMessageTypes {
   SMS = 'reports.common.sms',
-  WhatsApp = 'whatsapp.whatsapp',
+  EMAIL = 'reports.common.email',
 }

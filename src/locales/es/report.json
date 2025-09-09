@@ -37,7 +37,8 @@
       "urgent": "Urgente"
     },
     "recipient_details": "Detalles del destinatario",
-    "content": "Contenido"
+    "content": "Contenido",
+    "email": "Email"
   },
   "reports": "Reportes",
   "audit": "Auditoría",
