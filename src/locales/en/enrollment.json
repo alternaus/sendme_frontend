@@ -66,5 +66,8 @@
     "payment_success": "Payment completed successfully",
     "payment_failed": "Payment has failed",
     "checking_status": "Checking payment status..."
-  }
+  },
+  "loading_providers": "Loading payment providers...",
+  "processing_payment": "Processing payment...",
+  "no_providers_available": "No payment providers available"
 }

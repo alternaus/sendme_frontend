@@ -9,6 +9,32 @@
   "title": "Settings",
   "general_settings": "General Settings",
   "personalized_information": "Personalized Information",
+  "timezone_label": "Timezone",
+  "date_format_label": "Date Format",
+  "time_format_label": "Time Format",
+  "timezone_description": "Timezone for scheduling sends",
+  "date_format_description": "Format for displaying dates",
+  "time_format_description": "Format for displaying times",
+  "save": "Save",
+  "reset": "Reset",
+  "date_formats": {
+    "european_standard": "European standard format",
+    "iso_international": "ISO international format",
+    "us_format": "US format",
+    "european_dashes": "European format with dashes",
+    "german_dots": "German/Central European format",
+    "asian_format": "Asian format",
+    "month_abbreviated": "Format with abbreviated month",
+    "anglosaxon": "Anglo-Saxon format"
+  },
+  "time_formats": {
+    "24_hour": "24-hour format",
+    "24_hour_seconds": "24-hour format with seconds",
+    "12_hour_ampm": "12-hour format with AM/PM",
+    "12_hour_seconds": "12-hour format with seconds",
+    "european_dots": "European format with dots",
+    "french_format": "French format"
+  },
   "custom_fields": {
     "title": "Custom Fields",
     "add_field": "Add field",

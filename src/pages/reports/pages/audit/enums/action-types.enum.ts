@@ -1,5 +1,6 @@
 export enum ActionAuditTypes {
-  sign_in = 'auth.login',
+  // Corregido: la clave existe en common.json bajo common.auth.login
+  sign_in = 'common.auth.login',
   update = 'common.actions.update',
   create = 'common.actions.create',
   delete = 'common.actions.delete',

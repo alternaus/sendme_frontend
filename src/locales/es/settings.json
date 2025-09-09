@@ -9,6 +9,32 @@
   "title": "Configuración",
   "general_settings": "Configuración General",
   "personalized_information": "Información Personalizada",
+  "timezone_label": "Zona Horaria",
+  "date_format_label": "Formato de Fecha",
+  "time_format_label": "Formato de Hora",
+  "timezone_description": "Zona horaria para programar envíos",
+  "date_format_description": "Formato para mostrar fechas",
+  "time_format_description": "Formato para mostrar horas",
+  "save": "Guardar",
+  "reset": "Restablecer",
+  "date_formats": {
+    "european_standard": "Formato europeo estándar",
+    "iso_international": "Formato ISO internacional",
+    "us_format": "Formato estadounidense",
+    "european_dashes": "Formato europeo con guiones",
+    "german_dots": "Formato alemán/centroeuropeo",
+    "asian_format": "Formato asiático",
+    "month_abbreviated": "Formato con mes abreviado",
+    "anglosaxon": "Formato anglosajón"
+  },
+  "time_formats": {
+    "24_hour": "Formato 24 horas",
+    "24_hour_seconds": "Formato 24 horas con segundos",
+    "12_hour_ampm": "Formato 12 horas con AM/PM",
+    "12_hour_seconds": "Formato 12 horas con segundos",
+    "european_dots": "Formato europeo con puntos",
+    "french_format": "Formato francés"
+  },
   "custom_fields": {
     "title": "Campos Personalizados",
     "add_field": "Agregar campo",

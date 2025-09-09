@@ -66,5 +66,8 @@
     "payment_success": "Pago realizado exitosamente",
     "payment_failed": "El pago ha fallado",
     "checking_status": "Verificando estado del pago..."
-  }
+  },
+  "loading_providers": "Cargando proveedores de pago...",
+  "processing_payment": "Procesando pago...",
+  "no_providers_available": "No hay proveedores de pago disponibles"
 }
