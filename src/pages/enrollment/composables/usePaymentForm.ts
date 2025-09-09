@@ -19,23 +19,23 @@ export function usePaymentForm() {
       .string()
       .required(t('enrollment.validation.name_required'))
       .min(2, t('enrollment.validation.name_min_length'))
-      .label(t('enrollment.full_name')),
+  .label(t('enrollment.form.full_name')),
     email: yup
       .string()
       .required(t('enrollment.validation.email_required'))
       .email(t('enrollment.validation.email_format'))
-      .label(t('enrollment.email')),
+  .label(t('enrollment.form.email')),
     dni: yup
       .string()
       .required(t('enrollment.validation.dni_required'))
       .min(8, t('enrollment.validation.dni_min_length'))
       .max(15, t('enrollment.validation.dni_max_length'))
-      .label(t('enrollment.dni')),
+  .label(t('enrollment.form.dni')),
     company: yup
       .string()
       .required(t('enrollment.validation.company_required'))
       .min(2, t('enrollment.validation.company_min_length'))
-      .label(t('enrollment.company_name'))
+  .label(t('enrollment.form.company_name'))
   })
 
   const initialValues: PaymentFormData = {

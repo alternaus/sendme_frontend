@@ -47,6 +47,17 @@
     "dni": "Identity document",
     "company_name": "Company name"
   },
+  "validation": {
+    "name_required": "Full name is required",
+    "name_min_length": "Full name must be at least 2 characters",
+    "email_required": "Email is required",
+    "email_format": "Invalid email format",
+    "dni_required": "Identity document is required",
+    "dni_min_length": "Identity document must be at least 8 characters",
+    "dni_max_length": "Identity document must be at most 15 characters",
+    "company_required": "Company name is required",
+    "company_min_length": "Company name must be at least 2 characters"
+  },
   "transaction": {
     "transaction_ref": "Transaction reference",
     "transaction_date": "Transaction date",

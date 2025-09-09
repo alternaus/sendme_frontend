@@ -47,6 +47,17 @@
     "dni": "Documento de identidad",
     "company_name": "Nombre de la empresa"
   },
+  "validation": {
+    "name_required": "El nombre completo es requerido",
+    "name_min_length": "El nombre completo debe tener al menos 2 caracteres",
+    "email_required": "El correo electrónico es requerido",
+    "email_format": "Formato de correo electrónico inválido",
+    "dni_required": "El documento de identidad es requerido",
+    "dni_min_length": "El documento de identidad debe tener al menos 8 caracteres",
+    "dni_max_length": "El documento de identidad debe tener como máximo 15 caracteres",
+    "company_required": "El nombre de la empresa es requerido",
+    "company_min_length": "El nombre de la empresa debe tener al menos 2 caracteres"
+  },
   "transaction": {
     "transaction_ref": "Referencia de transacción",
     "transaction_date": "Fecha de transacción",
