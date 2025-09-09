@@ -6,11 +6,10 @@ export interface IBatchMessage {
   sendToAll?: boolean;
   contacts?: string[];
   country?: string;
-  subject?: string; // Para emails
-  messageType?: SmsMessageType; // Para SMS
+  subject?: string;
+  messageType?: SmsMessageType;
 }
 
-//Mantenemos la interfaz anterior para compatibilidad
 export interface IMessage {
   message: string
   contacts?: string[]

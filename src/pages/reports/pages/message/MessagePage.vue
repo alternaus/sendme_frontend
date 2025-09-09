@@ -150,17 +150,19 @@ export default defineComponent({
       const translationKey = StatusMessageTypes[statusString as keyof typeof StatusMessageTypes]
       return translationKey ? t(translationKey) : statusString
     }
-    const getTypeMessageTranslation = (type: unknown) => {
+    const getTypeMessageTranslation = (type?: string, messageType?: string) => {
       const typeString = typeof type === 'string' ? type : String(type)
-      // Manejar los tipos específicos de contenido
-      if (typeString === 'plain_text') {
-        return t('reports.common.sms')
+      const messageTypeString = typeof messageType === 'string' ? messageType : String(messageType)
+      const messageTypeKey = messageTypeString ==='sms' || messageTypeString === 'N/A' ? '' : messageTypeString
+
+
+      if (typeString === 'PLAIN_TEXT') {
+        return `${t('reports.common.sms')}  ${t(messageTypeKey)}`
       }
-      if (typeString === 'html') {
-        return t('reports.common.email_channel')
+      if (typeString === 'HTML') {
+        return `${t('reports.common.email_channel')}`
       }
 
-      // Fallback para otros tipos usando el enum existente
       const translationKey = TypeMessageTypes[typeString as keyof typeof TypeMessageTypes]
       return translationKey ? t(translationKey) : typeString
     }
@@ -339,13 +341,13 @@ export default defineComponent({
     </template>
     <template #custom-contentType="{ data }">
       <div class="flex justify-center">
-        {{ getTypeMessageTranslation(data.contentType) }}
+        {{ getTypeMessageTranslation(data.contentType, data.messageType) }}
       </div>
     </template>
     <template #custom-content="{ data }">
       <div class="flex justify-center">
         <div
-          v-if="data.contentType === 'html'"
+          v-if="data.contentType === 'HTML'"
           class="line-clamp-1 max-w-[200px] cursor-pointer"
           v-html="data.content"
         ></div>

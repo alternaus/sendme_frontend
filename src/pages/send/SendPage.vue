@@ -27,7 +27,6 @@ export default defineComponent({
     const { t } = useI18n()
     const router = useRouter()
     const sendOptions = [
-      { name: t('send.channels.WHATSAPP'), value: 'WHATSAPP' },
       { name: t('send.channels.SMS'), value: 'SMS' },
       { name: t('send.channels.EMAIL'), value: 'EMAIL' },
     ]
