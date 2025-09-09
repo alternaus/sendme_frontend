@@ -138,7 +138,9 @@
   "languages": {
     "language": "Language",
     "es": "Español",
-    "en": "English"
+  "en": "English",
+  "switchToEnglish": "Switch to English",
+  "switchToSpanish": "Switch to Spanish"
   },
   "auth": {
     "logout": "Logout",

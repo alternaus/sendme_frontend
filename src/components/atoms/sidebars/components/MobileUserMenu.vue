@@ -21,11 +21,11 @@ const showModal = ref(false)
 
 const confirmLogout = () => {
   confirm.require({
-    message: t('auth.sure_logout'),
-    header: t('auth.confirm_logout'),
+  message: t('auth.session.logout_confirm_message'),
+  header: t('auth.session.logout_confirm_title'),
     icon: 'pi pi-exclamation-triangle',
     rejectClass: 'p-button-secondary p-button-outlined',
-    rejectLabel: t('general.cancel'),
+  rejectLabel: t('common.general.cancel'),
     acceptLabel: t('auth.session.logout'),
     acceptClass: 'p-button-danger',
     accept: () => {
@@ -87,25 +87,26 @@ const handleNavigation = (route: string) => {
 
 const menuItems = computed(() => [
   {
-    label: t('user.profile'),
+  label: t('common.user.profile'),
     icon: 'pi pi-user',
     route: '/profile',
   },
   {
-    label: t('user.settings'),
+  label: t('common.user.settings'),
     icon: 'pi pi-cog',
     route: '/settings',
   },
   {
-    label: themeStore.isDark ? t('theme.lightMode') : t('theme.darkMode'),
+  label: themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode'),
     icon: themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon',
     action: () => themeStore.toggleDark(),
   },
   {
-    label: locale.value === 'es' ? t('languages.switchToEnglish') : t('languages.switchToSpanish'),
+    label: locale.value === 'es' ? t('common.languages.switchToEnglish') : t('common.languages.switchToSpanish'),
     icon: 'pi pi-globe',
     action: () => {
       locale.value = locale.value === 'es' ? 'en' : 'es'
+      try { localStorage.setItem('lang', locale.value as string) } catch {}
     },
   },
   {
