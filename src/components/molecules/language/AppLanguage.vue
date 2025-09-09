@@ -23,18 +23,18 @@ const languageCountryMap = {
 
 const items = computed<MenuItem[]>(() => [
   {
-    label: t('languages.en'),
+    label: t('common.languages.en'),
     icon: languageCountryMap.en,
     command: () => i18nStore.changeLanguage('en'),
   },
   {
-    label: t('languages.es'),
+    label: t('common.languages.es'),
     icon: languageCountryMap.es,
     command: () => i18nStore.changeLanguage('es'),
   },
 ])
 
-const tooltipText = computed(() => t('languages.language'))
+const tooltipText = computed(() => t('common.languages.language'))
 
 // Bandera del idioma actual
 const currentFlag = computed(() => languageCountryMap[i18nStore.language])

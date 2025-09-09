@@ -56,18 +56,18 @@ export const useAuthStore = defineStore('auth', () => {
 
       toast.add({
         severity: 'success',
-        summary: t('auth.successful_login'),
+        summary: t('auth.sign_in.success'),
         life: 3000,
       })
 
       router.push('/')
     } catch {
-      errorMessage.value = t('auth.incorrect_credentials')
+      errorMessage.value = t('auth.sign_in.invalid_credentials')
 
       toast.add({
         severity: 'error',
-        summary: t('auth.login_error'),
-        detail: t('auth.incorrect_email_password'),
+        summary: t('auth.sign_in.error'),
+        detail: t('auth.sign_in.invalid_email_password'),
         life: 3000,
       })
     } finally {
@@ -89,18 +89,18 @@ export const useAuthStore = defineStore('auth', () => {
 
       toast.add({
         severity: 'success',
-        summary: t('auth.successful_signup'),
+        summary: t('auth.sign_up.success'),
         life: 3000,
       })
 
       router.push('/')
     } catch {
-      errorMessage.value = t('auth.signup_error')
+      errorMessage.value = t('auth.sign_up.error')
 
       toast.add({
         severity: 'error',
-        summary: t('auth.signup_error'),
-        detail: t('auth.signup_error_detail'),
+        summary: t('auth.sign_up.error'),
+        detail: t('auth.sign_up.error_detail'),
         life: 3000,
       })
     } finally {
@@ -119,7 +119,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       toast.add({
         severity: 'info',
-        summary: t('auth.sesion_closed'),
+        summary: t('auth.session.logout_success'),
         life: 3000,
       })
 

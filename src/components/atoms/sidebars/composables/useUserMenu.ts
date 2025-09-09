@@ -17,11 +17,11 @@ export function useUserMenu() {
 
   const confirmLogout = () => {
     confirm.require({
-      message: t('auth.sure_logout'),
-      header: t('auth.confirm_logout'),
+  message: t('auth.session.logout_confirm_message'),
+  header: t('auth.session.logout_confirm_title'),
       icon: 'pi pi-exclamation-triangle',
       rejectClass: 'p-button-secondary p-button-outlined',
-      rejectLabel: t('general.cancel'),
+  rejectLabel: t('common.general.cancel'),
       acceptLabel: t('auth.session.logout'),
       acceptClass: 'p-button-danger',
       accept: () => {
@@ -63,6 +63,7 @@ export function useUserMenu() {
           class: locale.value === 'es' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
             locale.value = 'es'
+            try { localStorage.setItem('lang', locale.value as string) } catch {}
           }
         },
         {
@@ -71,6 +72,7 @@ export function useUserMenu() {
           class: locale.value === 'en' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
             locale.value = 'en'
+            try { localStorage.setItem('lang', locale.value as string) } catch {}
           }
         }
       ]
