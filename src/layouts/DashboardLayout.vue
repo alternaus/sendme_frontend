@@ -40,7 +40,7 @@ export default defineComponent({
 
     <main class="flex-1 transition-all duration-300 h-screen overflow-y-auto"
       :class="{ 'lg:ml-[200px]': isSidebarExpanded, 'lg:ml-16': !isSidebarExpanded }">
-      <div class="py-2 px-3 w-full max-w-screen-2xl mx-auto">
+      <div class="py-3 px-3 w-full max-w-screen-2xl mx-auto">
         <div class="lg:mt-0 mt-[56px]">
           <transition name="page" mode="out-in">
             <div :key="currentPath">
