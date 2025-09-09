@@ -171,7 +171,6 @@ export default defineComponent({
             customValues: mappedCustomValues,
           }
 
-          console.log('Payload being sent:', payload) // Debug log
 
           if (contactId) {
             await updateContact(contactId, payload)
@@ -192,8 +191,7 @@ export default defineComponent({
           }
 
           router.push('/contacts')
-        } catch (error) {
-          console.error('Error submitting form:', error) // Debug log
+        } catch {
           toast.add({
             severity: 'error',
             summary: t('contact.general.error'),
@@ -202,8 +200,7 @@ export default defineComponent({
           })
         }
       },
-      (validationErrors) => {
-        console.log('Validation errors:', validationErrors) // Debug log
+      (_validationErrors) => {
         form.customValues.value.forEach((_, index) => {
           touchedFields.value[`customValues[${index}].value`] = true
         })
@@ -227,7 +224,6 @@ export default defineComponent({
     }
 
     const handlePhoneInput = (phoneResult: { number: string; valid: boolean; country: { dialCode: string } }) => {
-      // Asegurar que el código de país se guarde correctamente
       if (phoneResult.country?.dialCode) {
         form.countryCode.value = phoneResult.country.dialCode
       }
