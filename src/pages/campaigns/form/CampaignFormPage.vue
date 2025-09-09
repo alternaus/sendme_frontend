@@ -188,7 +188,7 @@ export default defineComponent({
           ? values.time.toTimeString().split(' ')[0].substring(0, 5)
           : '12:00'
 
-        const formattedData: Record<string, unknown> = {
+  const formattedData: Record<string, unknown> = {
           ...values,
           startDate: values.startDate instanceof Date
             ? values.startDate.toISOString().split('T')[0]
@@ -198,6 +198,12 @@ export default defineComponent({
             : values.endDate,
           time: timeString,
           days: Array.isArray(values.days) ? convertDaysToApiFormat(values.days) : [],
+          // messageType solo aplica a SMS; si el canal no es SMS, enviarlo como null
+          messageType: (() => {
+            const selected = channels.value.find(c => String(c.value) === String(values.channelId))
+            const isSms = (selected?.name || '').toLowerCase().includes('sms')
+            return isSms ? values.messageType ?? 'sms' : null
+          })(),
           campaignRules: Array.isArray(values.campaignRules)
             ? values.campaignRules.map((rule: Record<string, unknown>) => ({
                 conditionType: rule.conditionType,

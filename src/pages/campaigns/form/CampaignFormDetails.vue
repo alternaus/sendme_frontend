@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -16,8 +16,11 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import { SmsMessageType } from '@/services/send/constants/message.constants'
+import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
 
 import type { CampaignFormFields } from '../composables/useCampaignForm'
+
 
 interface Props {
   form: CampaignFormFields
@@ -79,7 +82,8 @@ const formValues = computed(() => ({
   startDate: props.form.startDate.value as Date,
   endDate: props.form.endDate.value as Date,
   days: props.form.days.value as string[],
-  time: props.form.time.value as Date
+  time: props.form.time.value as Date,
+  messageType: props.form.messageType?.value as SmsMessageType | null
 }))
 
 const errorMessages = computed(() => ({
@@ -92,6 +96,29 @@ const errorMessages = computed(() => ({
   days: props.errors.days || '',
   time: props.errors.time || ''
 }))
+
+// Opciones de tipo de SMS
+const smsTypeOptions = computed(() => createSmsMessageTypeOptions(t))
+
+// Determina si el canal seleccionado es SMS según el nombre del canal
+const isSmsChannel = computed(() => {
+  const selectedId = String(formValues.value.channelId ?? '')
+  const selected = props.channels.find(o => String(o.value) === selectedId)
+  return (selected?.name || '').toLowerCase().includes('sms')
+})
+
+// Cuando no es SMS, setear messageType a null; si es SMS y está vacío, setear por defecto 'sms'
+watch(
+  () => ({ channelId: props.form.channelId.value, isSms: isSmsChannel.value }),
+  (curr) => {
+    if (!curr.isSms) {
+      updateField('messageType', null)
+    } else if (!formValues.value.messageType) {
+      updateField('messageType', SmsMessageType.SMS)
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -153,6 +180,22 @@ const errorMessages = computed(() => ({
           <StatusIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppStatusSelect>
+    </div>
+
+    <!-- Tipo de mensaje SMS (solo cuando el canal es SMS) -->
+  <div v-if="isSmsChannel" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <AppSelect
+    :modelValue="formValues.messageType ?? SmsMessageType.SMS"
+        @update:modelValue="updateField('messageType', $event)"
+        :options="smsTypeOptions"
+        :label="t('send.message_type')"
+        class="w-full"
+        :disabled="disabled"
+      >
+        <template #icon>
+          <ChannelIcon class="dark:fill-white w-4 h-4" />
+        </template>
+      </AppSelect>
     </div>
 
 

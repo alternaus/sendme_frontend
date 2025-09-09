@@ -1,3 +1,5 @@
+import type { SmsMessageType } from "@/services/send/constants/message.constants";
+
 import type { CampaignFrequency } from "../enums/campaign-frequency.enum";
 import type { CampaignStatus } from "../enums/campaign-status.enum";
 import type { ContentType } from "../enums/content-type.enum";
@@ -24,4 +26,6 @@ export interface ICreateCampaign {
   channelId:string;
   organizationId:string;
   campaignRules: ICreateCampaignRule[];
+  // Para campañas de SMS, opcional: 'sms' | 'otp' | 'flash'
+  messageType?: SmsMessageType | null;
 }

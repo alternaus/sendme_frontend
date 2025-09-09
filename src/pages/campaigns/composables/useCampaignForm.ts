@@ -9,6 +9,7 @@ import { CampaignFrequency } from '@/services/campaign/enums/campaign-frequency.
 import { CampaignStatus } from '@/services/campaign/enums/campaign-status.enum'
 import { ContentType } from '@/services/campaign/enums/content-type.enum'
 import type { CampaignDays } from '@/services/campaign/enums/days.enum'
+import { SmsMessageType } from '@/services/send/constants/message.constants'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface CampaignRule {
@@ -32,6 +33,7 @@ export interface CampaignFormData {
   channelId: string
   organizationId: string
   campaignRules: CampaignRule[]
+  messageType?: SmsMessageType | null
 }
 
 export type CampaignFormFields = ReturnType<typeof useCampaignForm>['form']
@@ -126,7 +128,8 @@ export function useCampaignForm() {
     frequency: CampaignFrequency.DAILY,
     channelId: '1',
     organizationId: userOrganizationId,
-    campaignRules: []
+  campaignRules: [],
+  messageType: SmsMessageType.SMS
   }
 
   const stepper = useFormStepper({
@@ -147,6 +150,7 @@ export function useCampaignForm() {
   const [frequency, frequencyError] = stepper.defineField('frequency')
   const [channelId, channelIdError] = stepper.defineField('channelId')
   const [organizationId, organizationIdError] = stepper.defineField('organizationId')
+  const [messageType] = stepper.defineField('messageType')
 
   const {
     fields: campaignRules,
@@ -180,7 +184,8 @@ export function useCampaignForm() {
       frequency,
       channelId,
       organizationId,
-      campaignRules
+  campaignRules,
+  messageType
     },
 
     fieldErrors: {

@@ -1,3 +1,5 @@
+import type { SmsMessageType } from "@/services/send/constants/message.constants";
+
 import type { CampaignFrequency } from "../enums/campaign-frequency.enum";
 import type { CampaignStatus } from "../enums/campaign-status.enum";
 import type { ContentType } from "../enums/content-type.enum";
@@ -25,4 +27,5 @@ export interface IUpdateCampaign {
   channelId?:string;
   organizationId?:string;
   campaignRules?: IUpdateCampaignRule[];
+  messageType?: SmsMessageType | null;
 }
