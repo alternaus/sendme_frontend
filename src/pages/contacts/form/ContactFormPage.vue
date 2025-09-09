@@ -147,18 +147,28 @@ export default defineComponent({
 
     const onSubmitForm = handleSubmit(
       async (values) => {
-        console.log('Form values:', values) // Debug log
         try {
+          const mappedCustomValues = values.customValues
+            ? values.customValues
+                .filter(
+                  (customValue) =>
+                    customValue.customFieldId !== undefined && customValue.customFieldId !== null,
+                )
+                .map((customValue) => {
+                  const base = {
+                    customFieldId: customValue.customFieldId as string,
+                    value: customValue.value || '',
+                  }
+                  return contactId
+                    ? { ...base, id: customValue.id }
+                    : base
+                })
+            : []
+
           const payload = {
             ...values,
             birthDate: values.birthDate ? values.birthDate : new Date(),
-            customValues: values.customValues ? values.customValues
-              .filter((customValue) => customValue.customFieldId !== undefined && customValue.customFieldId !== null)
-              .map((customValue) => ({
-                customFieldId: customValue.customFieldId as string,
-                value: customValue.value || '',
-                id: customValue.id,
-              })) : [],
+            customValues: mappedCustomValues,
           }
 
           console.log('Payload being sent:', payload) // Debug log
