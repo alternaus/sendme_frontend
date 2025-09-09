@@ -37,10 +37,8 @@ onMounted(() => {
       const saved = localStorage.getItem('app.sidebar.pinned')
       if (saved === '1') {
         isPinned.value = true
-        // Notificar al layout que debe iniciar expandido (anclado)
         emit('update:expanded', true)
       } else {
-        // Asegurar estado inicial coherente en layout
         emit('update:expanded', false)
       }
     } catch {}

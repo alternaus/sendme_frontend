@@ -305,7 +305,7 @@ const handleTestRules = async () => {
         time: campaign.time,
         days: convertDaysToApiFormat(campaign.days || []),
         frequency: campaign.frequency,
-        maxExecutions: 10 // Limitar a 10 próximas ejecuciones para el preview
+        maxExecutions: 10
       }
     }
 
