@@ -43,7 +43,7 @@ export default defineComponent({
   <div>
     <AppDialog
       v-model="internalVisible"
-      :header="$t('general.html_content')"
+      :header="$t('common.general.view_html')"
       :closable="true"
       :maximizable="true"
       customClass="html-viewer-dialog"

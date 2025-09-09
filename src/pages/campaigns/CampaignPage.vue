@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -52,6 +53,7 @@ const showMobileModal = ref(false)
 const channels = ref<IChannel[]>([])
 const loadingChannels = ref(false)
 const toast = useToast()
+const confirm = useConfirm()
 
 const page = ref(1)
 const limit = ref(10)
@@ -77,7 +79,6 @@ const fetchCampaigns = async (
     limitSize: 10,
   }
 ) => {
-  // Si hay un rango de fechas parcial o inválido, no hacer la petición
   const validDates = dateRange.value?.filter(date => date !== null && date instanceof Date) || []
   if (dateRange.value && dateRange.value.length > 0 && validDates.length < 2) {
     return
@@ -195,35 +196,48 @@ const handleSelectionChange = (selection: Record<string, unknown> | Record<strin
 const handleDelete = async () => {
   if (!selected.value.length) return
 
-  const campaignsToDelete = [...selected.value]
+  const isMultiple = selected.value.length > 1
+  const campaignName = isMultiple ? '' : (selected.value[0].name || '')
 
-  try {
-    // Eliminar múltiples campañas si están seleccionadas
-    if (campaignsToDelete.length === 1) {
-      await deleteCampaign(campaignsToDelete[0].id)
-    } else {
-      // Eliminar múltiples campañas
-      await Promise.all(campaignsToDelete.map(campaign => deleteCampaign(campaign.id)))
+  confirm.require({
+    message: isMultiple
+      ? t('campaign.delete_confirmation.message_multiple', { count: selected.value.length })
+      : t('campaign.delete_confirmation.message_single', { name: campaignName }),
+    header: t('campaign.delete_confirmation.title'),
+    icon: 'pi pi-exclamation-triangle',
+    rejectClass: 'p-button-secondary p-button-outlined',
+    acceptClass: 'p-button-danger',
+    rejectLabel: t('common.general.cancel'),
+    acceptLabel: t('common.actions.delete'),
+    accept: async () => {
+      const campaignsToDelete = [...selected.value]
+      try {
+        if (campaignsToDelete.length === 1) {
+          await deleteCampaign(campaignsToDelete[0].id)
+        } else {
+          await Promise.all(campaignsToDelete.map(campaign => deleteCampaign(campaign.id)))
+        }
+
+        selected.value = []
+        toast.add({
+          severity: 'success',
+          summary: t('campaign.common.success'),
+          detail: campaignsToDelete.length === 1
+            ? t('campaign.actions.success_removed')
+            : t('campaign.actions.success_removed_multiple', { count: campaignsToDelete.length }),
+          life: 3000,
+        })
+        await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
+      } catch {
+        toast.add({
+          severity: 'error',
+          summary: t('campaign.common.error'),
+          detail: t('campaign.errors.removed'),
+          life: 3000,
+        })
+      }
     }
-
-    selected.value = []
-    toast.add({
-      severity: 'success',
-      summary: t('campaign.common.success'),
-      detail: campaignsToDelete.length === 1
-        ? t('campaign.actions.success_removed')
-        : t('campaign.actions.success_removed_multiple', { count: campaignsToDelete.length }),
-      life: 3000,
-    })
-    await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
-  } catch {
-    toast.add({
-      severity: 'error',
-      summary: t('campaign.common.error'),
-      detail: t('campaign.errors.removed'),
-      life: 3000,
-    })
-  }
+  })
 }
 
 // Helper para convertir días de campaña a formato API
@@ -330,7 +344,7 @@ const headerActions = computed(() => {
       badge: activeFiltersCount.value,
     },
     {
-      label: t('actions.create'),
+      label: t('common.actions.create'),
       onClick: () => push('/campaigns/create'),
       type: ActionTypes.CREATE,
     },
@@ -338,13 +352,13 @@ const headerActions = computed(() => {
 
   if (selected.value.length > 0) {
     baseActions.push({
-      label: t('actions.test_rules'),
+      label: t('common.actions.test_rules'),
       onClick: handleTestRules,
       type: ActionTypes.VIEW,
     })
 
     baseActions.push({
-      label: t('actions.delete'),
+      label: t('common.actions.delete'),
       onClick: handleDelete,
       type: ActionTypes.DELETE,
     })
@@ -352,7 +366,7 @@ const headerActions = computed(() => {
 
   if (selected.value.length === 1) {
     baseActions.push({
-      label: t('actions.edit'),
+      label: t('common.actions.edit'),
       onClick: () => selected.value[0] && push(`/campaigns/edit/${selected.value[0].id}`),
       type: ActionTypes.EDIT,
     })
@@ -361,7 +375,6 @@ const headerActions = computed(() => {
   return baseActions
 })
 
-// Función para formatear la frecuencia concatenando días y hora
 const getFormattedFrequency = (campaign: Record<string, unknown>): string => {
   if (hasTableValue(campaign, 'days') && getTableValueWithDefault<string[]>(campaign, 'days', []).length) {
     const days = getTableValueWithDefault<string[]>(campaign, 'days', [])

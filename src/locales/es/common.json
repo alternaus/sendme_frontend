@@ -34,6 +34,7 @@
     "before": "Antes",
     "after": "Después",
     "no_results": "Sin resultados",
+    "view_html": "Ver HTML",
     "sms": "SMS",
     "email_channel": "Canal Email",
     "send_instant_message": "Enviar mensaje instantáneo",
@@ -151,7 +152,8 @@
     "export": "Exportar",
     "edit": "Editar",
     "view": "Ver",
-    "import": "Importar"
+    "import": "Importar",
+    "test_rules": "Probar reglas"
   },
   "campaign": {
     "campaigns": "Campañas",

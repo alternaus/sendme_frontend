@@ -180,6 +180,11 @@
     "success_exported": "Campañas exportadas exitosamente",
     "error_exported": "Error al exportar las campañas"
   },
+  "delete_confirmation": {
+    "title": "Confirmar eliminación",
+    "message_single": "¿Estás seguro de que deseas eliminar la campaña \"{name}\"?",
+    "message_multiple": "¿Estás seguro de que deseas eliminar {count} campañas seleccionadas?"
+  },
   "errors": {
     "load_channels": "Error al cargar los canales",
     "load_campaign": "Error al cargar la campaña",

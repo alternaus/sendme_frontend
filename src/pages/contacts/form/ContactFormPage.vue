@@ -58,7 +58,7 @@ export default defineComponent({
     const breadcrumbData = computed(() => [
       { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
       {
-        text: contactId ? 'actions.edit' : 'actions.create',
+        text: contactId ? 'common.actions.edit' : 'common.actions.create',
         to: contactId
           ? { name: 'contacts.view', params: { id: contactId } }
           : { name: 'contacts.create' },
@@ -168,7 +168,7 @@ export default defineComponent({
             toast.add({
               severity: 'success',
               summary: t('contact.general.success'),
-              detail: t('contact.contact_updated'),
+              detail: t('contact.general.contact_updated'),
               life: 3000,
             })
           } else {
@@ -176,7 +176,7 @@ export default defineComponent({
             toast.add({
               severity: 'success',
               summary: t('contact.general.success'),
-              detail: t('contact.contact_created'),
+              detail: t('contact.general.contact_created'),
               life: 3000,
             })
           }
@@ -244,7 +244,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS"
+  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.create_contact')" :icon="IconTypes.CONTACTS"
     :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full pt-4">

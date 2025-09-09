@@ -180,6 +180,11 @@
     "success_exported": "Campaigns successfully exported",
     "error_exported": "Error exporting campaigns"
   },
+  "delete_confirmation": {
+    "title": "Confirm deletion",
+    "message_single": "Are you sure you want to delete the campaign \"{name}\"?",
+    "message_multiple": "Are you sure you want to delete {count} selected campaigns?"
+  },
   "errors": {
     "load_channels": "Error loading channels",
     "load_campaign": "Error loading campaign",

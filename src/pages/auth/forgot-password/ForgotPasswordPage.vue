@@ -93,6 +93,7 @@ function goBackToLogin() {
         :error-message="errors.email"
         :label="t('auth.common.email')"
         type="email"
+  :disabled="isLoading"
       />
 
       <AppButton
@@ -108,7 +109,8 @@ function goBackToLogin() {
     <div class="text-center">
       <AppLink
         :label="t('auth.forgot_password.back_to_login')"
-        @click="goBackToLogin"
+  :disabled="isLoading"
+  @click="!isLoading && goBackToLogin()"
       />
     </div>
   </div>

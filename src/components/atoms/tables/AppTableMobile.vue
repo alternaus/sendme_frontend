@@ -26,7 +26,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  emptyMessage: 'general.no_data',
+  emptyMessage: 'common.general.no_results',
   multipleSelection: false,
   dateFields: () => [],
   autoDetectDateFields: true,

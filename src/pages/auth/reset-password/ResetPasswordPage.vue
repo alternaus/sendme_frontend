@@ -162,7 +162,8 @@ function goBackToLogin() {
       <div class="text-center">
         <AppLink
           :label="t('auth.reset_password.back_to_login')"
-          @click="goBackToLogin"
+          :disabled="isLoading"
+          @click="!isLoading && goBackToLogin()"
         />
       </div>
     </div>

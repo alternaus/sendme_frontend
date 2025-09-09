@@ -77,7 +77,7 @@ const props = withDefaults(defineProps<Props>(), {
   multipleSelection: false,
   textTotalItems: 'general.total_records',
   loading: false,
-  emptyMessage: 'general.no_data',
+  emptyMessage: 'common.general.no_results',
   dateFields: () => [],
   autoDetectDateFields: true,
   tableSize: 'small',

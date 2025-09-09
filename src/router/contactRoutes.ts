@@ -48,7 +48,7 @@ const contactRoutes: RouteRecordRaw = {
       component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
       meta: {
         breadcrumb: generateBreadcrumb('common.actions.create', 'contacts.create'),
-        title: 'create_contact'
+        title: 'common.titles.create_contact'
       },
     },
     {

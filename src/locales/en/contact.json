@@ -9,6 +9,8 @@
   "no_custom_fields": "No custom fields configured",
   "unknown_field_type": "Unknown field type",
   "import_contacts": "Import contacts",
+  "edit_contact": "Edit contact",
+  "create_contact": "Create contact",
   "delete_confirmation": {
     "title": "Confirm deletion",
     "message_single": "Are you sure you want to delete the contact \"{name}\"?",
@@ -39,7 +41,8 @@
     "google_sync_success": "{count} contacts imported from Google",
     "google_sync_error": "Sync error: {message}",
     "import_option_google": "Google Contacts",
-    "import_option_excel": "Excel/CSV"
+    "import_option_excel": "Excel/CSV",
+    "select_file": "Select file"
   },
   "general": {
     "search": "Search",
@@ -79,7 +82,9 @@
     "unknown_field_type": "Unknown field type",
     "drag_drop_file": "Drag and drop your file here",
     "save": "Save",
-    "phone_placeholder": "Phone number"
+    "phone_placeholder": "Phone number",
+    "contact_updated": "Contact updated successfully",
+    "contact_created": "Contact created successfully"
   },
   "actions": {
     "create": "Create",
