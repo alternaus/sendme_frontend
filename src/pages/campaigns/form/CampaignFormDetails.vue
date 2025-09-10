@@ -16,6 +16,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { SmsMessageType } from '@/services/send/constants/message.constants'
 import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
 
@@ -73,7 +74,6 @@ const getCurrentDateRange = computed(() => {
   return []
 })
 
-//Computed properties to access ref values safely
 const formValues = computed(() => ({
   name: props.form.name.value as string,
   description: props.form.description.value as string,
@@ -83,7 +83,8 @@ const formValues = computed(() => ({
   endDate: props.form.endDate.value as Date,
   days: props.form.days.value as string[],
   time: props.form.time.value as Date,
-  messageType: props.form.messageType?.value as SmsMessageType | null
+  messageType: props.form.messageType?.value as SmsMessageType | null,
+  tagIds: props.form.tagIds?.value as string[] | undefined
 }))
 
 const errorMessages = computed(() => ({
@@ -94,7 +95,8 @@ const errorMessages = computed(() => ({
   startDate: props.errors.startDate || '',
   endDate: props.errors.endDate || '',
   days: props.errors.days || '',
-  time: props.errors.time || ''
+  time: props.errors.time || '',
+  tagIds: props.errors.tagIds || ''
 }))
 
 // Opciones de tipo de SMS
@@ -151,6 +153,14 @@ watch(
           <DescriptionIcon class="dark:fill-white w-4 h-4" />
         </template>
       </AppInput>
+
+      <TagManager
+        :modelValue="formValues.tagIds"
+        @update:modelValue="updateField('tagIds', $event)"
+        :error-message="errorMessages.tagIds"
+        :disabled="disabled"
+        class="w-full"
+      />
 
       <AppSelect
         :modelValue="formValues.channelId"

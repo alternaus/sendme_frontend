@@ -22,6 +22,7 @@ export interface ContactForm {
   status?: ContactStatus
   birthDate?: Date | null
   customValues?: CustomValue[]
+  tagIds?: string[]
 }
 
 export interface ContactFormRef {
@@ -66,6 +67,7 @@ export const useFormContact = () => {
         id: yup.string().nullable().optional(),
       }),
     ).optional(),
+    tagIds: yup.array().of(yup.string()).optional(),
   })
 
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<ContactForm>({
@@ -79,6 +81,7 @@ export const useFormContact = () => {
       status: ContactStatus.ACTIVE,
       birthDate: null,
       customValues: [],
+      tagIds: [],
     },
     validateOnMount: false,
   })
@@ -90,6 +93,7 @@ export const useFormContact = () => {
   const [countryCode] = defineField('countryCode')
   const [status] = defineField('status')
   const [birthDate] = defineField('birthDate')
+  const [tagIds] = defineField('tagIds')
 
   const {
     fields: customValues,
@@ -119,6 +123,7 @@ export const useFormContact = () => {
       status,
       birthDate,
       customValues,
+      tagIds,
     },
     handleSubmit,
     resetForm,

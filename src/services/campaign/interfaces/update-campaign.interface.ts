@@ -27,5 +27,6 @@ export interface IUpdateCampaign {
   channelId?:string;
   organizationId?:string;
   campaignRules?: IUpdateCampaignRule[];
+  tagIds?: string[];
   messageType?: SmsMessageType | null;
 }

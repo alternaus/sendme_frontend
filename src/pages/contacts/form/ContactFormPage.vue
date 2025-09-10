@@ -19,6 +19,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppPhoneInput from '@/components/molecules/phone-input/AppPhoneInput.vue'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
@@ -39,6 +40,7 @@ export default defineComponent({
     BirthdayIcon,
     StatusIcon,
     CustomFieldsForm,
+    TagManager,
   },
   setup() {
     const route = useRoute()
@@ -86,7 +88,8 @@ export default defineComponent({
             countryCode: contact.countryCode,
             status: contact.status,
             birthDate: contact.birthDate ? new Date(contact.birthDate) : undefined,
-            customValues: []
+            customValues: [],
+            tagIds: contact.tags?.map(tag => tag.id) || [],
           })
 
 
@@ -309,6 +312,21 @@ export default defineComponent({
           <StatusIcon class="w-4 h-4 dark:fill-white" />
         </template>
       </AppStatusSelect>
+    </div>
+
+    <!-- Sección de Etiquetas -->
+    <div class="mt-6">
+      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        {{ $t('contact.general.tags') }}
+      </h3>
+      <TagManager
+        v-model="form.tagIds.value"
+        :placeholder="$t('contact.general.select_tags')"
+        :allow-create="true"
+        :allow-manage="true"
+        :error-message="errors.tagIds"
+        :show-error-message="!!errors.tagIds"
+      />
     </div>
 
     <CustomFieldsForm

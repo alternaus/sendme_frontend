@@ -9,6 +9,7 @@ export interface ICreateContact {
   lastName?: string
   birthDate?: Date | null
   customValues?: ICreateCustomValue[]
+  tagIds?: string[]
 }
 
 export interface ICreateCustomValue {

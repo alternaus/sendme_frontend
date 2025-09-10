@@ -26,6 +26,7 @@ export interface ICreateCampaign {
   channelId:string;
   organizationId:string;
   campaignRules: ICreateCampaignRule[];
+  tagIds?: string[];
   // Para campañas de SMS, opcional: 'sms' | 'otp' | 'flash'
   messageType?: SmsMessageType | null;
 }

@@ -82,7 +82,9 @@
     "save": "Guardar",
     "phone_placeholder": "Número de teléfono",
     "contact_updated": "Contacto actualizado exitosamente",
-    "contact_created": "Contacto creado exitosamente"
+    "contact_created": "Contacto creado exitosamente",
+    "tags": "Etiquetas",
+    "select_tags": "Seleccionar etiquetas"
   },
   "actions": {
     "create": "Crear",

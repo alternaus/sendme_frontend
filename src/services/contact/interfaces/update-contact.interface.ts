@@ -9,6 +9,7 @@ export interface IUpdateContact {
   lastName?: string
   birthDate?: Date | null
   customValues?: IUpdateCustomValue[]
+  tagIds?: string[]
 }
 
 export interface IUpdateCustomValue {

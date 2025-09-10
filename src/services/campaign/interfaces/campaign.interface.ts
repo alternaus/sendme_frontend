@@ -1,3 +1,4 @@
+import type { ITag } from '../../tag/interfaces'
 import type { CampaignConditionType } from '../enums/campaign-condition-type.enum'
 import type { CampaignFrequency } from '../enums/campaign-frequency.enum'
 import type { CampaignStatus } from '../enums/campaign-status.enum'
@@ -34,4 +35,5 @@ export interface ICampaign {
   updatedAt: string
   deletedAt: string | null
   campaignRules: ICampaignRule[]
+  tags?: ITag[]
 }

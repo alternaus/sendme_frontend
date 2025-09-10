@@ -84,7 +84,9 @@
     "save": "Save",
     "phone_placeholder": "Phone number",
     "contact_updated": "Contact updated successfully",
-    "contact_created": "Contact created successfully"
+    "contact_created": "Contact created successfully",
+    "tags": "Tags",
+    "select_tags": "Select tags"
   },
   "actions": {
     "create": "Create",

@@ -1,3 +1,4 @@
+import type { ITag } from '../../tag/interfaces'
 import type { ContactOrigin } from '../enums/contact-origin.enum'
 import type { ContactStatus } from '../enums/contact-status.enum'
 
@@ -12,6 +13,7 @@ export interface IContact {
   lastName?: string
   birthDate?: Date | null
   customValues?: ICustomValue[]
+  tags?: ITag[]
   organizationId:string
   createdAt: Date
   updatedAt: Date

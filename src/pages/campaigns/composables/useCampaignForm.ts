@@ -34,6 +34,7 @@ export interface CampaignFormData {
   organizationId: string
   campaignRules: CampaignRule[]
   messageType?: SmsMessageType | null
+  tagIds?: string[]
 }
 
 export type CampaignFormFields = ReturnType<typeof useCampaignForm>['form']
@@ -58,7 +59,8 @@ export function useCampaignForm() {
     endDate: yup.date().required().label(t('campaign.form.end_date')),
     time: yup.date().required().label(t('campaign.form.execution_time')),
     days: yup.array().of(yup.string()).min(1).required().label(t('campaign.form.execution_days')),
-    organizationId: yup.string().required().label(t('campaign.form.organization_id'))
+    organizationId: yup.string().required().label(t('campaign.form.organization_id')),
+    tagIds: yup.array().of(yup.string()).notRequired().label(t('tag.tags'))
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const triggersSchema = yup.object({
@@ -96,7 +98,7 @@ export function useCampaignForm() {
       id: '1',
       label: t('campaign.navigation.details'),
       icon: 'pi pi-info-circle',
-      fields: ['name', 'description', 'channelId', 'status', 'startDate', 'endDate', 'time', 'days', 'organizationId'],
+      fields: ['name', 'description', 'channelId', 'status', 'startDate', 'endDate', 'time', 'days', 'organizationId', 'tagIds'],
       schema: detailsSchema
     },
     {
@@ -128,8 +130,9 @@ export function useCampaignForm() {
     frequency: CampaignFrequency.DAILY,
     channelId: undefined,
     organizationId: userOrganizationId,
-  campaignRules: [],
-  messageType: SmsMessageType.SMS
+    campaignRules: [],
+    messageType: SmsMessageType.SMS,
+    tagIds: []
   }
 
   const stepper = useFormStepper({
@@ -151,6 +154,7 @@ export function useCampaignForm() {
   const [channelId, channelIdError] = stepper.defineField('channelId')
   const [organizationId, organizationIdError] = stepper.defineField('organizationId')
   const [messageType] = stepper.defineField('messageType')
+  const [tagIds, tagIdsError] = stepper.defineField('tagIds')
 
   const {
     fields: campaignRules,
@@ -184,8 +188,9 @@ export function useCampaignForm() {
       frequency,
       channelId,
       organizationId,
-  campaignRules,
-  messageType
+      campaignRules,
+      messageType,
+      tagIds
     },
 
     fieldErrors: {
@@ -200,7 +205,8 @@ export function useCampaignForm() {
       days: daysError,
       frequency: frequencyError,
       channelId: channelIdError,
-      organizationId: organizationIdError
+      organizationId: organizationIdError,
+      tagIds: tagIdsError
     },
 
     addRule,
