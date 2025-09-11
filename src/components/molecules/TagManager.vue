@@ -1,99 +1,209 @@
 <template>
-  <div class="tag-manager">
-    <!-- Selector de tags con botones discretos -->
-    <AppMultiselect
-      v-model="selectedTags"
-      :options="tagOptions"
-      option-label="name"
-      option-value="value"
-      :placeholder="placeholder"
-      size="small"
-      :filter="true"
-      :show-clear="true"
-      :disabled="disabled"
-      :error-message="errorMessage"
-      :show-error-message="showErrorMessage"
-      @change="onSelectionChange"
-    >
-      <template #option="{ option }">
-        <div class="flex items-center gap-2">
+  <div class="tag-manager-prime w-full">
+    <!-- Con FloatLabel cuando hay label -->
+    <FloatLabel variant="on" v-if="label">
+      <div class="relative">
+        <i class="pi pi-tags absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10"></i>
+        <MultiSelect
+          v-model="selectedTags"
+          :options="tagOptions"
+          option-label="name"
+          option-value="id"
+          :placeholder="computedPlaceholder"
+          :disabled="disabled"
+          filter
+          :show-clear="true"
+          display="chip"
+          :max-selected-labels="10"
+          size="small"
+          class="w-full pl-8"
+          :class="[inputClasses, { 'p-invalid': showErrorMessage && errorMessage }]"
+          @change="onSelectionChange"
+          @filter="onFilter"
+        >
+        <!-- Template para las opciones en el dropdown -->
+        <template #option="slotProps">
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-3 h-3 rounded-full"
+                :style="{ backgroundColor: slotProps.option.color || '#6B7280' }"
+              />
+              <span>{{ slotProps.option.name }}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <Button
+                icon="pi pi-pencil"
+                size="small"
+                text
+                @click.stop="editTag(slotProps.option)"
+                class="p-1"
+                :pt="{ root: { style: 'width: 1.5rem; height: 1.5rem' } }"
+              />
+              <Button
+                icon="pi pi-trash"
+                size="small"
+                text
+                severity="danger"
+                @click.stop="confirmDeleteTag(slotProps.option)"
+                class="p-1"
+                :pt="{ root: { style: 'width: 1.5rem; height: 1.5rem' } }"
+              />
+            </div>
+          </div>
+        </template>
+
+        <!-- Template para los chips seleccionados -->
+        <template #chip="{ value }">
           <div
-            v-if="option.color"
-            class="w-3 h-3 rounded-full"
-            :style="{ backgroundColor: option.color }"
-          />
-          <span>{{ option.name }}</span>
-          <span v-if="showCounts && option.contactCount !== undefined" class="text-xs text-gray-500">
-            ({{ option.contactCount }} contactos)
-          </span>
+            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white"
+            :style="{ backgroundColor: getTagColor(value) || '#6B7280' }"
+          >
+            <span>{{ getTagName(value) }}</span>
+          </div>
+        </template>
+
+        <!-- Template para el header del panel -->
+        <template #header>
+          <div class="font-medium px-3 py-2">{{ t('common.tags.labels.available_tags') }}</div>
+        </template>
+
+        <!-- Template para el icono de filtro -->
+        <template #filtericon>
+          <i class="pi pi-search" />
+        </template>
+
+        <!-- Template para el footer del panel -->
+        <template #footer>
+          <div class="p-3 flex justify-between">
+            <Button
+              v-if="allowCreate && showCreateButton"
+              :label="t('common.tags.buttons.create_from_filter', { name: currentFilterValue })"
+              severity="secondary"
+              variant="text"
+              size="small"
+              icon="pi pi-plus"
+              @click="createTagFromFilter"
+            />
+            <Button
+              v-if="allowCreate && !showCreateButton"
+              :label="t('common.tags.buttons.new_tag')"
+              severity="secondary"
+              variant="text"
+              size="small"
+              icon="pi pi-plus"
+              @click="openCreateModal"
+            />
+          </div>
+        </template>
+      </MultiSelect>
+      </div>
+      <label class="text-sm">{{ label }}</label>
+    </FloatLabel>
+
+    <!-- Sin label -->
+    <div class="relative" v-else>
+      <i class="pi pi-tag absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10"></i>
+      <MultiSelect
+        v-model="selectedTags"
+        :options="tagOptions"
+        option-label="name"
+        option-value="id"
+        :placeholder="computedPlaceholder"
+        :disabled="disabled"
+        filter
+        :show-clear="true"
+        display="chip"
+        :max-selected-labels="10"
+        size="small"
+        class="w-full pl-8"
+      :class="[inputClasses, { 'p-invalid': showErrorMessage && errorMessage }]"
+      @change="onSelectionChange"
+      @filter="onFilter"
+    >
+      <!-- Template para las opciones en el dropdown -->
+      <template #option="slotProps">
+        <div class="flex items-center justify-between w-full">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-3 h-3 rounded-full"
+              :style="{ backgroundColor: slotProps.option.color || '#6B7280' }"
+            />
+            <span>{{ slotProps.option.name }}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <Button
+              icon="pi pi-pencil"
+              size="small"
+              text
+              @click.stop="editTag(slotProps.option)"
+              class="p-1"
+              :pt="{ root: { style: 'width: 1.5rem; height: 1.5rem' } }"
+            />
+            <Button
+              icon="pi pi-trash"
+              size="small"
+              text
+              severity="danger"
+              @click.stop="confirmDeleteTag(slotProps.option)"
+              class="p-1"
+              :pt="{ root: { style: 'width: 1.5rem; height: 1.5rem' } }"
+            />
+          </div>
         </div>
       </template>
 
-      <template #value="{ value }">
-        <div v-if="value && value.length > 0" class="flex flex-wrap gap-1">
-          <AppTag
-            v-for="tagId in value"
-            :key="tagId"
-            :value="getTagName(tagId)"
-            :style="{ backgroundColor: getTagColor(tagId) }"
+      <!-- Header con botón crear cuando no existe la etiqueta -->
+      <template #header>
+        <div v-if="showCreateButton" class="border-b border-gray-200 dark:border-gray-700 p-3">
+          <Button
+            :label="t('common.tags.buttons.create_from_filter', { name: currentFilterValue })"
+            icon="pi pi-plus"
+            @click="createTagFromFilter"
+            class="w-full justify-center"
             size="small"
-            rounded
+            severity="success"
           />
         </div>
       </template>
-    </AppMultiselect>
+    </MultiSelect>
+    </div>
 
-    <!-- Botones discretos debajo del selector -->
-    <div v-if="(allowCreate || allowManage) && !disabled" class="flex gap-2 mt-1">
-      <button
-        v-if="allowCreate"
-        type="button"
-        class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
-        @click="openCreateModal"
-      >
-        <i class="pi pi-plus text-xs"></i>
-        Nueva etiqueta
-      </button>
-      <button
-        v-if="allowManage"
-        type="button"
-        class="text-xs text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 flex items-center gap-1"
-        @click="openManageModal"
-      >
-        <i class="pi pi-cog text-xs"></i>
-        Gestionar
-      </button>
-    </div>    <!-- Modal compacto para crear/editar etiqueta -->
-    <AppDialog
-      v-model="showCreateModal"
-      :header="editingTag ? 'Editar Etiqueta' : 'Nueva Etiqueta'"
+    <!-- Error message -->
+    <div v-if="showErrorMessage && errorMessage" class="text-red-400 dark:text-red-300 p-0 m-0">
+      <small>{{ errorMessage }}</small>
+    </div>
+
+    <!-- Modal para crear/editar etiqueta -->
+    <Dialog
+      v-model:visible="showCreateModal"
+      :header="editingTag ? t('common.tags.modals.edit_title') : t('common.tags.modals.create_title')"
       modal
-      :style="{ width: '350px' }"
+      :style="{ width: '400px' }"
       :draggable="false"
     >
-      <form @submit.prevent="handleSubmit" class="space-y-3">
+      <form @submit.prevent="handleSubmit" class="space-y-4">
         <AppInput
           v-model="tagForm.name"
-          label="Nombre"
-          placeholder="Nombre de la etiqueta"
-          size="small"
-          :maxlength="100"
-          required
+          :label="t('common.tags.labels.name')"
+          :placeholder="t('common.tags.placeholders.name')"
           :error-message="formErrors.name"
           :show-error-message="!!formErrors.name"
+          :maxlength="100"
+          class="mt-6"
+          required
         />
 
         <AppTextarea
           v-model="tagForm.description"
-          label="Descripción (opcional)"
-          placeholder="Descripción"
-          size="small"
-          :maxlength="255"
+          :label="t('common.tags.labels.description')"
+          :placeholder="t('common.tags.placeholders.description')"
           :rows="2"
+          :maxlength="255"
         />
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Color</label>
+        <div class="field">
+          <label class="block text-sm font-medium mb-1">{{ t('common.tags.labels.color') }}</label>
           <ColorPicker
             v-model="tagForm.color"
             format="hex"
@@ -101,160 +211,86 @@
           />
         </div>
 
-        <div class="flex justify-end gap-2 pt-2">
-          <AppButton
-            type="button"
-            label="Cancelar"
+        <div class="flex justify-end gap-2 pt-3">
+          <Button
+            :label="t('common.tags.buttons.cancel')"
             severity="secondary"
             size="small"
-            text
             @click="closeCreateModal"
           />
-          <AppButton
-            type="submit"
-            :label="editingTag ? 'Actualizar' : 'Crear'"
+          <Button
+            :label="editingTag ? t('common.tags.buttons.update') : t('common.tags.buttons.create')"
             size="small"
-            :loading="submitting"
+            type="submit"
           />
         </div>
       </form>
-    </AppDialog>
+    </Dialog>
 
-    <!-- Modal compacto para gestionar etiquetas -->
-    <AppDialog
-      v-model="showManageModal"
-      header="Gestionar Etiquetas"
+    <!-- Modal de confirmación para eliminar -->
+    <Dialog
+      v-model:visible="showDeleteModal"
+      :header="t('common.tags.modals.delete_title')"
       modal
-      :style="{ width: '500px', maxHeight: '70vh' }"
+      :style="{ width: '350px' }"
       :draggable="false"
     >
       <div class="space-y-3">
-        <div v-if="tagsWithCounts.length === 0" class="text-center py-6 text-gray-500 text-sm">
-          No hay etiquetas creadas
-        </div>
-
-        <div v-else class="max-h-80 overflow-y-auto space-y-2">
-          <div
-            v-for="tag in tagsWithCounts"
-            :key="tag.id"
-            class="flex items-center justify-between p-2 border rounded hover:bg-gray-50 dark:hover:bg-gray-800"
-          >
-            <div class="flex items-center gap-2 flex-1 min-w-0">
-              <div
-                v-if="tag.color"
-                class="w-3 h-3 rounded-full flex-shrink-0"
-                :style="{ backgroundColor: tag.color }"
-              />
-              <div class="min-w-0 flex-1">
-                <div class="font-medium text-sm truncate">{{ tag.name }}</div>
-                <div v-if="tag.description" class="text-xs text-gray-600 truncate">
-                  {{ tag.description }}
-                </div>
-                <div class="text-xs text-gray-500">
-                  {{ tag.contactCount }} contactos • {{ tag.campaignCount }} campañas
-                </div>
-              </div>
-            </div>
-            <div class="flex gap-1 flex-shrink-0">
-              <AppButton
-                icon="pi pi-pencil"
-                size="small"
-                severity="secondary"
-                text
-                @click="editTag(tag)"
-              />
-              <AppButton
-                icon="pi pi-trash"
-                size="small"
-                severity="danger"
-                text
-                @click="confirmDeleteTag(tag)"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end pt-2 border-t">
-          <AppButton
-            label="Cerrar"
+        <p>{{ t('common.tags.modals.delete_confirm', { name: tagToDelete?.name }) }}</p>
+        <div class="flex justify-end gap-2 pt-3">
+          <Button
+            :label="t('common.tags.buttons.cancel')"
             severity="secondary"
             size="small"
-            @click="closeManageModal"
-          />
-        </div>
-      </div>
-    </AppDialog>
-
-    <!-- Modal compacto de confirmación para eliminar -->
-    <AppDialog
-      v-model="showDeleteModal"
-      header="Eliminar Etiqueta"
-      modal
-      :style="{ width: '320px' }"
-      :draggable="false"
-    >
-      <div class="space-y-3">
-        <p class="text-sm">¿Eliminar "{{ tagToDelete?.name }}"?</p>
-        <p v-if="tagToDelete && (tagToDelete.contactCount > 0 || tagToDelete.campaignCount > 0)"
-           class="text-amber-600 text-xs">
-          Usada en {{ tagToDelete.contactCount }} contactos y {{ tagToDelete.campaignCount }} campañas.
-        </p>
-
-        <div class="flex justify-end gap-2 pt-2">
-          <AppButton
-            label="Cancelar"
-            severity="secondary"
-            size="small"
-            text
             @click="closeDeleteModal"
           />
-          <AppButton
-            label="Eliminar"
+          <Button
+            :label="t('common.tags.buttons.delete')"
             severity="danger"
             size="small"
-            :loading="deleting"
             @click="handleDelete"
           />
         </div>
       </div>
-    </AppDialog>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 
+import Button from 'primevue/button'
 import ColorPicker from 'primevue/colorpicker'
-import type { MultiSelectChangeEvent } from 'primevue/multiselect'
+import Dialog from 'primevue/dialog'
+import FloatLabel from 'primevue/floatlabel'
+import MultiSelect from 'primevue/multiselect'
 import { useToast } from 'primevue/usetoast'
 
-import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
+import { useI18n } from 'vue-i18n'
+
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import AppMultiselect from '@/components/atoms/selects/AppMultiselect.vue'
-import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
-import type { ICreateTag, ITag, ITagWithCounts, IUpdateTag } from '@/services/tag/interfaces'
+import type { ICreateTag, ITag, IUpdateTag } from '@/services/tag/interfaces'
 import { useTagService } from '@/services/tag/useTagService'
 
 interface Props {
   modelValue?: string[]
   placeholder?: string
+  label?: string
   disabled?: boolean
   allowCreate?: boolean
   allowManage?: boolean
-  showCounts?: boolean
   errorMessage?: string
   showErrorMessage?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
-  placeholder: 'Seleccionar etiquetas',
+  placeholder: '',
+  label: '',
   disabled: false,
   allowCreate: true,
   allowManage: true,
-  showCounts: false,
   errorMessage: '',
   showErrorMessage: false
 })
@@ -264,81 +300,66 @@ const emit = defineEmits<{
   'change': [value: string[]]
 }>()
 
+const { t } = useI18n()
 const toast = useToast()
 const tagService = useTagService()
 
 // Estado de datos
 const tags = ref<ITag[]>([])
-const tagsWithCounts = ref<ITagWithCounts[]>([])
 const selectedTags = ref<string[]>([])
+const currentFilterValue = ref('')
 
-// Computed para opciones del multiselect
-const tagOptions = computed(() => {
-  return tags.value.map(tag => ({
-    name: tag.name,
-    value: tag.id,
-    color: tag.color,
-    contactCount: 0 // Por defecto, se actualiza cuando se necesite
-  }))
+// Computed para el placeholder
+const computedPlaceholder = computed(() => {
+  return props.placeholder || t('common.tags.placeholders.select')
+})
+
+// Computed para asegurar que el modelValue sea siempre un array válido
+const validModelValue = computed(() => {
+  return Array.isArray(props.modelValue) ? props.modelValue : []
 })
 
 // Estado de modales
 const showCreateModal = ref(false)
-const showManageModal = ref(false)
 const showDeleteModal = ref(false)
 
-// Estado de formulario
-const editingTag = ref<ITag | null>(null)
-const tagToDelete = ref<ITagWithCounts | null>(null)
-const submitting = ref(false)
-const deleting = ref(false)
+// Computed para determinar si mostrar el botón crear
+const showCreateButton = computed(() => {
+  const filterValue = currentFilterValue.value.trim().toLowerCase()
+  if (!filterValue) return false
 
+  // Verificar si ya existe una etiqueta con ese nombre
+  const existingTag = tags.value.find(tag =>
+    tag.name.toLowerCase() === filterValue
+  )
+
+  return !existingTag
+})
+
+// Estado de formularios
 const tagForm = ref<ICreateTag>({
   name: '',
   description: '',
-  color: '#2196F3'
+  color: '#3B82F6'
+})
+const formErrors = ref<Partial<Record<keyof ICreateTag, string>>>({})
+const editingTag = ref<ITag | null>(null)
+const tagToDelete = ref<ITag | null>(null)
+
+// Computed properties
+const tagOptions = computed(() => {
+  return tags.value.map(tag => ({
+    id: tag.id,
+    name: tag.name,
+    color: tag.color ? (tag.color.startsWith('#') ? tag.color : `#${tag.color}`) : '#6B7280',
+    description: tag.description
+  }))
 })
 
-const formErrors = ref<Record<string, string>>({})
-
-// Computed
-// const selectedTagsData = computed(() => {
-//   return tags.value.filter(tag => selectedTags.value.includes(tag.id))
-// })
-
-// Watchers
-watch(() => props.modelValue, (newValue) => {
-  selectedTags.value = newValue || []
-}, { immediate: true })
-
-watch(selectedTags, (newValue) => {
-  emit('update:modelValue', newValue)
-}, { deep: true })
-
-// Métodos de datos
-const loadTags = async () => {
-  try {
-    tags.value = await tagService.getTags()
-  } catch {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'No se pudieron cargar las etiquetas'
-    })
-  }
-}
-
-const loadTagsWithCounts = async () => {
-  try {
-    tagsWithCounts.value = await tagService.getTagsWithCounts()
-  } catch {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'No se pudieron cargar las etiquetas con conteos'
-    })
-  }
-}
+// Clases del input siguiendo el patrón de otros componentes
+const inputClasses = computed(() => {
+  return '!rounded-xl'
+})
 
 // Métodos de utilidad
 const getTagName = (tagId: string): string => {
@@ -348,24 +369,109 @@ const getTagName = (tagId: string): string => {
 
 const getTagColor = (tagId: string): string => {
   const tag = tags.value.find(t => t.id === tagId)
-  return tag?.color || '#2196F3'
+  if (!tag?.color) return '#6B7280'
+  return tag.color.startsWith('#') ? tag.color : `#${tag.color}`
 }
 
-// Métodos de eventos
-const onSelectionChange = (event: MultiSelectChangeEvent) => {
-  emit('change', event.value || [])
+// Métodos principales
+const loadTags = async () => {
+  try {
+    const response = await tagService.getTags()
+    tags.value = response
+  } catch (error) {
+    console.error('Error loading tags:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('common.general.error'),
+      detail: t('common.tags.messages.load_error'),
+      life: 3000
+    })
+  }
 }
 
-// Métodos de modal de creación/edición
+const onSelectionChange = (event: { value: string[] }) => {
+  // Asegurarse de que siempre se emita un array, nunca undefined o null
+  const newValue = event.value || []
+  selectedTags.value = newValue
+  emit('update:modelValue', newValue)
+  emit('change', newValue)
+}
+
+const onFilter = (event: { value: string }) => {
+  currentFilterValue.value = event.value
+}
+
+const createTagFromFilter = async () => {
+  const tagName = currentFilterValue.value.trim()
+  if (!tagName) return
+
+  try {
+    const newTagData: ICreateTag = {
+      name: tagName,
+      description: '',
+      color: '3B82F6'
+    }
+
+    const createdTag = await tagService.createTag(newTagData)
+    tags.value.push(createdTag)
+
+    // Seleccionar el nuevo tag automáticamente
+    const updatedSelection = [...selectedTags.value, createdTag.id]
+    selectedTags.value = updatedSelection
+    emit('update:modelValue', updatedSelection)
+    emit('change', updatedSelection)
+
+    toast.add({
+      severity: 'success',
+      summary: t('common.tags.messages.created'),
+      detail: t('common.tags.messages.created'),
+      life: 3000
+    })
+  } catch (error) {
+    console.error('Error creating tag:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('common.general.error'),
+      detail: t('common.tags.messages.create_error'),
+      life: 3000
+    })
+  }
+}
+
 const openCreateModal = () => {
   editingTag.value = null
   tagForm.value = {
     name: '',
     description: '',
-    color: '#2196F3'
+    color: '#3B82F6'
   }
   formErrors.value = {}
   showCreateModal.value = true
+}
+
+const editTag = (option: { id: string; name: string; color?: string; description?: string }) => {
+  // Encontrar el tag completo en la lista original
+  const fullTag = tags.value.find(tag => tag.id === option.id)
+  if (fullTag) {
+    editingTag.value = fullTag
+    const tagColor = fullTag.color || '#3B82F6'
+    tagForm.value = {
+      name: fullTag.name,
+      description: fullTag.description || '',
+      color: tagColor.startsWith('#') ? tagColor : `#${tagColor}`
+    }
+    formErrors.value = {}
+    showCreateModal.value = true
+  }
+}
+
+const confirmDeleteTag = (option: { id: string; name: string; color?: string; description?: string }) => {
+  // Encontrar el tag completo en la lista original
+  const fullTag = tags.value.find(tag => tag.id === option.id)
+  if (fullTag) {
+    tagToDelete.value = fullTag
+    showDeleteModal.value = true
+  }
 }
 
 const closeCreateModal = () => {
@@ -374,168 +480,175 @@ const closeCreateModal = () => {
   formErrors.value = {}
 }
 
-const editTag = (tag: ITag) => {
-  editingTag.value = tag
-  tagForm.value = {
-    name: tag.name,
-    description: tag.description || '',
-    color: tag.color || '#2196F3'
-  }
-  formErrors.value = {}
-  showCreateModal.value = true
-}
-
-const validateForm = (): boolean => {
-  formErrors.value = {}
-
-  if (!tagForm.value.name?.trim()) {
-    formErrors.value.name = 'El nombre es requerido'
-  } else if (tagForm.value.name.length > 100) {
-    formErrors.value.name = 'El nombre no puede exceder 100 caracteres'
-  }
-
-  return Object.keys(formErrors.value).length === 0
-}
-
-const handleSubmit = async () => {
-  if (!validateForm()) return
-
-  submitting.value = true
-  try {
-    if (editingTag.value) {
-      // Actualizar etiqueta existente
-      await tagService.updateTag(editingTag.value.id, tagForm.value as IUpdateTag)
-      toast.add({
-        severity: 'success',
-        summary: 'Etiqueta actualizada',
-        detail: 'La etiqueta se actualizó correctamente'
-      })
-    } else {
-      // Crear nueva etiqueta
-      const newTag = await tagService.createTag(tagForm.value)
-      tags.value.push(newTag)
-      toast.add({
-        severity: 'success',
-        summary: 'Etiqueta creada',
-        detail: 'La etiqueta se creó correctamente'
-      })
-    }
-
-    await loadTags()
-    if (showManageModal.value) {
-      await loadTagsWithCounts()
-    }
-    closeCreateModal()
-  } catch (error: unknown) {
-    let message = 'Error al procesar la etiqueta'
-    if (error && typeof error === 'object' && 'response' in error) {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      message = apiError.response?.data?.message || message
-    }
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: message
-    })
-  } finally {
-    submitting.value = false
-  }
-}
-
-// Métodos de modal de gestión
-const openManageModal = async () => {
-  showManageModal.value = true
-  await loadTagsWithCounts()
-}
-
-const closeManageModal = () => {
-  showManageModal.value = false
-}
-
-// Métodos de eliminación
-const confirmDeleteTag = (tag: ITagWithCounts) => {
-  tagToDelete.value = tag
-  showDeleteModal.value = true
-}
-
 const closeDeleteModal = () => {
   showDeleteModal.value = false
   tagToDelete.value = null
 }
 
+const handleSubmit = async () => {
+  formErrors.value = {}
+
+  if (!tagForm.value.name.trim()) {
+    formErrors.value.name = t('common.tags.validation.name_required')
+    return
+  }
+
+  const nameExists = tags.value.some(
+    tag => tag.name.toLowerCase() === tagForm.value.name.toLowerCase() &&
+           tag.id !== editingTag.value?.id
+  )
+
+  if (nameExists) {
+    formErrors.value.name = t('common.tags.validation.name_exists')
+    return
+  }
+
+  try {
+    if (editingTag.value) {
+      const updateData: IUpdateTag = {
+        name: tagForm.value.name.trim(),
+        description: tagForm.value.description?.trim() || undefined,
+        color: (tagForm.value.color || '#3B82F6').replace('#', '')
+      }
+
+      const updatedTag = await tagService.updateTag(editingTag.value.id, updateData)
+      const index = tags.value.findIndex(t => t.id === editingTag.value!.id)
+      if (index !== -1) {
+        tags.value[index] = updatedTag
+      }
+
+      toast.add({
+        severity: 'success',
+        summary: t('common.tags.messages.updated'),
+        detail: t('common.tags.messages.updated'),
+        life: 3000
+      })
+    } else {
+      const newTagData: ICreateTag = {
+        name: tagForm.value.name.trim(),
+        description: tagForm.value.description?.trim() || '',
+        color: (tagForm.value.color || '#3B82F6').replace('#', '')
+      }
+
+      const createdTag = await tagService.createTag(newTagData)
+      tags.value.push(createdTag)
+
+      toast.add({
+        severity: 'success',
+        summary: t('common.tags.messages.created'),
+        detail: t('common.tags.messages.created'),
+        life: 3000
+      })
+    }
+
+    closeCreateModal()
+  } catch (error) {
+    console.error('Error saving tag:', error)
+    toast.add({
+      severity: 'error',
+      summary: t('common.general.error'),
+      detail: editingTag.value ? t('common.tags.messages.update_error') : t('common.tags.messages.create_error'),
+      life: 3000
+    })
+  }
+}
+
 const handleDelete = async () => {
   if (!tagToDelete.value) return
 
-  deleting.value = true
   try {
     await tagService.deleteTag(tagToDelete.value.id)
 
-    // Remover de las listas locales
+    // Remover de la lista de tags
     tags.value = tags.value.filter(t => t.id !== tagToDelete.value!.id)
-    tagsWithCounts.value = tagsWithCounts.value.filter(t => t.id !== tagToDelete.value!.id)
 
-    // Remover de selección si estaba seleccionada
+    // Remover de tags seleccionados si está presente
     if (selectedTags.value.includes(tagToDelete.value.id)) {
-      selectedTags.value = selectedTags.value.filter(id => id !== tagToDelete.value!.id)
+      const updatedValues = selectedTags.value.filter(id => id !== tagToDelete.value!.id)
+      selectedTags.value = updatedValues
+      emit('update:modelValue', updatedValues)
+      emit('change', updatedValues)
     }
 
     toast.add({
       severity: 'success',
-      summary: 'Etiqueta eliminada',
-      detail: 'La etiqueta se eliminó correctamente'
+      summary: t('common.tags.messages.deleted'),
+      detail: t('common.tags.messages.deleted'),
+      life: 3000
     })
 
     closeDeleteModal()
-  } catch (error: unknown) {
-    let message = 'Error al eliminar la etiqueta'
-    if (error && typeof error === 'object' && 'response' in error) {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      message = apiError.response?.data?.message || message
-    }
+  } catch (error) {
+    console.error('Error deleting tag:', error)
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: message
+      summary: t('common.general.error'),
+      detail: t('common.tags.messages.delete_error'),
+      life: 3000
     })
-  } finally {
-    deleting.value = false
   }
 }
 
 // Lifecycle
 onMounted(() => {
   loadTags()
+
+  // Asegurar que se emita un valor válido al montar el componente
+  if (!Array.isArray(props.modelValue)) {
+    emit('update:modelValue', [])
+    emit('change', [])
+  }
 })
 
-// Exponer métodos públicos
-defineExpose({
-  loadTags,
-  openCreateModal,
-  openManageModal
-})
+// Watchers
+watch(() => validModelValue.value, (newValue) => {
+  selectedTags.value = newValue
+}, { immediate: true })
 </script>
 
 <style scoped>
-.tag-manager {
-  /* El componente ocupa solo el espacio necesario como un input normal */
+.tag-manager-prime {
   width: 100%;
 }
 
-/* Botones discretos - solo visibles al hacer hover en el contenedor */
-.tag-manager:hover .flex.gap-2.mt-1 {
-  opacity: 1;
+/* Customización de MultiSelect para mejor apariencia */
+:deep(.p-multiselect-chip) {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.tag-manager .flex.gap-2.mt-1 {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+:deep(.p-multiselect-token) {
+  padding: 0.125rem 0.25rem !important;
+  margin: 0.125rem 0.25rem 0.125rem 0 !important;
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
 }
 
-/* Estilo de los botones de texto */
-.tag-manager button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
+/* Hacer que el contenedor de chips sea más compacto */
+:deep(.p-multiselect-label-container) {
+  padding: 0.25rem 0.5rem !important;
+  gap: 0.25rem !important;
+}
+
+:deep(.p-multiselect .p-multiselect-label) {
+  padding: 0.25rem 0.5rem !important;
+}
+
+/* Estilos para el icono izquierdo con position absolute */
+.tag-manager-prime .relative i.pi-tag {
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+/* Asegurar que el padding izquierdo del MultiSelect permita ver el icono */
+:deep(.pl-8.p-multiselect .p-multiselect-label) {
+  padding-left: 0.5rem !important;
+}
+
+:deep(.pl-8.p-multiselect .p-multiselect-label-container) {
+  padding-left: 0.5rem !important;
+  padding: 0.1rem 0.5rem !important;
 }
 </style>

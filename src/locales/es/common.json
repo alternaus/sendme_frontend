@@ -218,5 +218,46 @@
       "generate_failed": "No se pudo generar el contenido",
       "translate_failed": "No se pudo traducir el contenido"
     }
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "placeholders": {
+      "select": "Seleccionar etiquetas...",
+      "name": "Nombre de la etiqueta",
+      "description": "Descripción de la etiqueta"
+    },
+    "labels": {
+      "name": "Nombre",
+      "description": "Descripción (opcional)",
+      "color": "Color",
+      "available_tags": "Etiquetas Disponibles"
+    },
+    "buttons": {
+      "new_tag": "Nueva Etiqueta",
+      "create_from_filter": "Crear '{name}'",
+      "create": "Crear",
+      "update": "Actualizar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "modals": {
+      "create_title": "Nueva Etiqueta",
+      "edit_title": "Editar Etiqueta",
+      "delete_title": "Eliminar Etiqueta",
+      "delete_confirm": "¿Estás seguro de que deseas eliminar la etiqueta \"{name}\"?"
+    },
+    "messages": {
+      "created": "Etiqueta creada exitosamente",
+      "updated": "Etiqueta actualizada exitosamente",
+      "deleted": "Etiqueta eliminada exitosamente",
+      "create_error": "No se pudo crear la etiqueta",
+      "update_error": "No se pudo actualizar la etiqueta",
+      "delete_error": "No se pudo eliminar la etiqueta",
+      "load_error": "No se pudieron cargar las etiquetas"
+    },
+    "validation": {
+      "name_required": "El nombre es requerido",
+      "name_exists": "Ya existe una etiqueta con este nombre"
+    }
   }
 }

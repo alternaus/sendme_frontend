@@ -103,6 +103,12 @@ privateApi.interceptors.response.use(
       if (status === 403) {
       }
 
+      // Manejar error de términos no aceptados
+      if (data?.code === '1022') {
+        // El error será manejado por el composable useTermsAcceptance
+        // No necesitamos hacer nada especial aquí, solo pasar el error
+      }
+
       if (status >= 500) {
       }
     }

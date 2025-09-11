@@ -4,21 +4,30 @@
       <Toast position="top-right" />
       <router-view />
     </component>
+
+    <!-- Modal Global de Términos y Condiciones -->
+    <TermsAcceptanceModal
+      :blocking="true"
+      @accepted="handleTermsAccepted"
+      @error="handleTermsError"
+    />
   </main>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch } from 'vue'
+import { computed, defineComponent, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import Toast from 'primevue/toast'
 
-import { useSeoMeta } from '@unhead/vue';
+import { useSeoMeta } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 
+import TermsAcceptanceModal from '@/components/organisms/TermsAcceptanceModal.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import { useGlobalTermsService } from '@/services/terms/global-terms.service'
 import { useI18nStore } from '@/stores/i18nStore'
 
 
@@ -29,11 +38,13 @@ export default defineComponent({
     AuthLayout,
     DashboardLayout,
     Toast,
+    TermsAcceptanceModal,
   },
   setup() {
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
+    const { initialize } = useGlobalTermsService()
 
     const layout = computed(() => {
       const layoutName = (route.meta.layout as string) || 'DefaultLayout'
@@ -55,7 +66,24 @@ export default defineComponent({
       i18n.locale.value = newLang
     }, { immediate: true })
 
-    return { layout }
+    // Inicializar el servicio global de términos
+    onMounted(() => {
+      initialize()
+    })
+
+    const handleTermsAccepted = (data: unknown) => {
+      console.log('Terms accepted globally:', data)
+    }
+
+    const handleTermsError = (error: Error) => {
+      console.error('Global terms error:', error)
+    }
+
+    return {
+      layout,
+      handleTermsAccepted,
+      handleTermsError
+    }
   },
 })
 </script>

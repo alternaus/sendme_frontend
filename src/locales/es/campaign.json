@@ -20,6 +20,8 @@
     "close": "Cerrar",
     "description": "Descripción",
     "channel": "Canal",
+    "tags": "Etiquetas",
+    "select_tags": "Seleccionar etiquetas",
     "write_email_message": "Escribe tu mensaje de email aquí...",
     "editor": {
       "sms_placeholder": "Escribe tu mensaje SMS aquí..."

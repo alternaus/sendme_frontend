@@ -218,7 +218,6 @@ export default defineComponent({
     :data="dispatches"
     :headers="[
       { field: 'campaignName', header: 'Campaign' },
-      { field: 'providerName', header: 'Provider' },
       { field: 'totalSent', header: 'Total Sent' },
       { field: 'totalDelivered', header: 'Total Delivered' },
       { field: 'totalFailed', header: 'Total Failed' },

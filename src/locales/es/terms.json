@@ -1,0 +1,61 @@
+{
+  "modal": {
+    "title": "Términos y Condiciones de Uso"
+  },
+  "content": {
+    "title": "Aceptación de Términos y Condiciones",
+    "description": "Para continuar utilizando SendMe, es necesario que revise y acepte nuestros términos y condiciones de uso actualizados.",
+    "lastUpdated": "Última actualización",
+    "effectiveDate": "Fecha de vigencia"
+  },
+  "sections": {
+    "privacy": {
+      "title": "Política de Privacidad y Protección de Datos",
+      "content": "Su privacidad es fundamental para nosotros. Procesamos sus datos personales de conformidad con el Reglamento General de Protección de Datos (GDPR) y las leyes locales aplicables. La información recopilada se utiliza exclusivamente para brindar nuestros servicios y mejorar su experiencia."
+    },
+    "usage": {
+      "title": "Condiciones de Uso de la Plataforma",
+      "content": "Al acceder a SendMe, usted se compromete a utilizar la plataforma de manera ética y responsable. Queda prohibido el uso indebido, la transmisión de contenido malicioso o cualquier actividad que comprometa la seguridad del sistema o de otros usuarios."
+    },
+    "data": {
+      "title": "Procesamiento y Almacenamiento de Datos",
+      "content": "Sus datos se almacenan de forma segura en servidores certificados. Implementamos medidas de seguridad técnicas y organizativas para proteger su información contra accesos no autorizados, pérdida o divulgación indebida."
+    },
+    "liability": {
+      "title": "Limitación de Responsabilidad",
+      "content": "SendMe se esfuerza por mantener un servicio confiable, sin embargo, no garantiza la disponibilidad ininterrumpida del servicio. Nuestra responsabilidad se limita a los términos establecidos en este acuerdo."
+    }
+  },
+  "actions": {
+    "accept": "Acepto los Términos y Condiciones",
+    "accepting": "Procesando aceptación...",
+    "cancel": "Cancelar",
+    "review": "Revisar Términos Completos"
+  },
+  "blocking": {
+    "notice": "Es obligatorio aceptar los términos y condiciones para acceder a las funcionalidades de la plataforma.",
+    "subtitle": "Su aceptación es requerida para continuar"
+  },
+  "banner": {
+    "title": "Acción Requerida: Términos y Condiciones",
+    "message": "Debe revisar y aceptar nuestros términos y condiciones actualizados para continuar utilizando todas las funcionalidades de SendMe.",
+    "action": "Revisar y Aceptar"
+  },
+  "checking": "Verificando estado de términos y condiciones...",
+  "required": {
+    "title": "Aceptación de Términos Requerida",
+    "description": "Para acceder a SendMe y utilizar sus funcionalidades, debe aceptar nuestros términos y condiciones de uso.",
+    "action": "Revisar y Aceptar Términos",
+    "subtitle": "Proceso obligatorio para el acceso"
+  },
+  "status": {
+    "accepted": "Términos aceptados",
+    "pending": "Pendiente de aceptación",
+    "required": "Aceptación requerida"
+  },
+  "legal": {
+    "binding": "Este es un acuerdo legalmente vinculante",
+    "jurisdiction": "Sujeto a la jurisdicción aplicable",
+    "contact": "Para consultas: legal@sendme.com"
+  }
+}

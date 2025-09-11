@@ -16,7 +16,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
-import TagManager from '@/components/molecules/TagManager.vue'
+import TagManagerPrime from '@/components/molecules/TagManager.vue'
 import { SmsMessageType } from '@/services/send/constants/message.constants'
 import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
 
@@ -154,10 +154,13 @@ watch(
         </template>
       </AppInput>
 
-      <TagManager
+      <TagManagerPrime
         :modelValue="formValues.tagIds"
         @update:modelValue="updateField('tagIds', $event)"
+        :label="t('campaign.common.tags')"
+        :placeholder="t('campaign.common.select_tags')"
         :error-message="errorMessages.tagIds"
+        :show-error-message="!!errorMessages.tagIds"
         :disabled="disabled"
         class="w-full"
       />

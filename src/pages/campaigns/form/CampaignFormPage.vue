@@ -12,6 +12,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppFormStepper from '@/components/molecules/stepper/AppFormStepper.vue'
 import { useStatusColors } from '@/composables/useStatusColors'
+import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ICreateCampaign } from '@/services/campaign/interfaces/create-campaign.interface'
 import type { IUpdateCampaign } from '@/services/campaign/interfaces/update-campaign.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
@@ -67,10 +68,10 @@ export default defineComponent({
     const campaignId = ref<string | null>(null)
 
     const statusOptions = computed(() =>
-      getStatusOptions('campaign').map(option => ({
+      getStatusOptions('campaign').map((option) => ({
         name: option.label,
-        value: option.value
-      }))
+        value: option.value,
+      })),
     )
 
     const conditionOptions = [
@@ -126,7 +127,7 @@ export default defineComponent({
 
       try {
         isLoading.value = true
-        const campaign = await getCampaign(campaignId.value)
+        const campaign: ICampaign = await getCampaign(campaignId.value)
 
         //Convertir las fechas de string a Date y time string a Date
         const timeString = campaign.time || '12:00'
@@ -140,7 +141,8 @@ export default defineComponent({
           time: timeDate,
           days: campaign.days || [],
           content: campaign.content || '',
-          campaignRules: (campaign.campaignRules || []).map(rule => ({
+          tagIds: campaign.tags ? campaign.tags.map(tag => tag.id) : [], // Convertir tags a tagIds
+          campaignRules: (campaign.campaignRules || []).map((rule) => ({
             conditionType: rule.conditionType,
             value: String(rule.value || ''),
             customFieldId: rule.customFieldId,
@@ -164,45 +166,50 @@ export default defineComponent({
     const updateFormContent = (key: string, value: unknown) => {
       try {
         setValues({ [key]: value } as Record<string, unknown>)
-      } catch {
-      }
+      } catch {}
     }
 
     const convertDaysToApiFormat = (days: string[]): string[] => {
       const dayMapping: Record<string, string> = {
-        'MO': 'MO', // Monday
-        'TU': 'TU', // Tuesday
-        'WE': 'WE', // Wednesday
-        'TH': 'TH', // Thursday
-        'FR': 'FR', // Friday
-        'SA': 'SA', // Saturday
-        'SU': 'SU', // Sunday
+        MO: 'MO', // Monday
+        TU: 'TU', // Tuesday
+        WE: 'WE', // Wednesday
+        TH: 'TH', // Thursday
+        FR: 'FR', // Friday
+        SA: 'SA', // Saturday
+        SU: 'SU', // Sunday
       }
 
-      return days.map(day => dayMapping[day] || day)
+      return days.map((day) => dayMapping[day] || day)
     }
 
     const formatCampaignData = (values: GenericObject): Record<string, unknown> => {
       try {
-        const timeString = values.time instanceof Date
-          ? values.time.toTimeString().split(' ')[0].substring(0, 5)
-          : '12:00'
+        const timeString =
+          values.time instanceof Date
+            ? values.time.toTimeString().split(' ')[0].substring(0, 5)
+            : '12:00'
 
-  const formattedData: Record<string, unknown> = {
+
+        const formattedData: Record<string, unknown> = {
           ...values,
-          startDate: values.startDate instanceof Date
-            ? values.startDate.toISOString().split('T')[0]
-            : values.startDate,
-          endDate: values.endDate instanceof Date
-            ? values.endDate.toISOString().split('T')[0]
-            : values.endDate,
+          startDate:
+            values.startDate instanceof Date
+              ? values.startDate.toISOString().split('T')[0]
+              : values.startDate,
+          endDate:
+            values.endDate instanceof Date
+              ? values.endDate.toISOString().split('T')[0]
+              : values.endDate,
           time: timeString,
           days: Array.isArray(values.days) ? convertDaysToApiFormat(values.days) : [],
-          // messageType solo aplica a SMS; si el canal no es SMS, enviarlo como null
+          tagIds: values.tagIds || [], // Asegurar que tagIds siempre esté presente
           messageType: (() => {
-            const selected = channels.value.find(c => String(c.value) === String(values.channelId))
+            const selected = channels.value.find(
+              (c) => String(c.value) === String(values.channelId),
+            )
             const isSms = (selected?.name || '').toLowerCase().includes('sms')
-            return isSms ? values.messageType ?? 'sms' : null
+            return isSms ? (values.messageType ?? 'sms') : null
           })(),
           campaignRules: Array.isArray(values.campaignRules)
             ? values.campaignRules.map((rule: Record<string, unknown>) => ({
@@ -214,7 +221,7 @@ export default defineComponent({
         }
 
         const fieldsToRemove = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'channel', 'rrule']
-        fieldsToRemove.forEach(field => {
+        fieldsToRemove.forEach((field) => {
           delete formattedData[field]
         })
 
@@ -228,7 +235,7 @@ export default defineComponent({
       async (values) => {
         try {
           isLoading.value = true
-          const formattedData = formatCampaignData(values)
+          const {tags:_tags,...formattedData} = formatCampaignData(values)
 
           if (isEditMode.value && campaignId.value) {
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)
@@ -253,7 +260,9 @@ export default defineComponent({
           toast.add({
             severity: 'error',
             summary: t('campaign.common.error'),
-            detail: isEditMode.value ? t('campaign.errors.update_campaign') : t('campaign.errors.create_campaign'),
+            detail: isEditMode.value
+              ? t('campaign.errors.update_campaign')
+              : t('campaign.errors.create_campaign'),
             life: 3000,
           })
         } finally {
@@ -343,7 +352,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]"  />
+  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
     <AppFormStepper

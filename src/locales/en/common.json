@@ -218,5 +218,46 @@
       "generate_failed": "Could not generate content",
       "translate_failed": "Could not translate content"
     }
+  },
+  "tags": {
+    "title": "Tags",
+    "placeholders": {
+      "select": "Select tags...",
+      "name": "Tag name",
+      "description": "Tag description"
+    },
+    "labels": {
+      "name": "Name",
+      "description": "Description (optional)",
+      "color": "Color",
+      "available_tags": "Available Tags"
+    },
+    "buttons": {
+      "new_tag": "New Tag",
+      "create_from_filter": "Create '{name}'",
+      "create": "Create",
+      "update": "Update",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "modals": {
+      "create_title": "New Tag",
+      "edit_title": "Edit Tag",
+      "delete_title": "Delete Tag",
+      "delete_confirm": "Are you sure you want to delete the tag \"{name}\"?"
+    },
+    "messages": {
+      "created": "Tag created successfully",
+      "updated": "Tag updated successfully",
+      "deleted": "Tag deleted successfully",
+      "create_error": "Could not create tag",
+      "update_error": "Could not update tag",
+      "delete_error": "Could not delete tag",
+      "load_error": "Could not load tags"
+    },
+    "validation": {
+      "name_required": "Name is required",
+      "name_exists": "A tag with this name already exists"
+    }
   }
 }
