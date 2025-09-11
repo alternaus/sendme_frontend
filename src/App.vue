@@ -65,18 +65,16 @@ export default defineComponent({
     watch(() => i18nStore.language, (newLang) => {
       i18n.locale.value = newLang
     }, { immediate: true })
-
-    // Inicializar el servicio global de términos
     onMounted(() => {
       initialize()
     })
 
-    const handleTermsAccepted = (data: unknown) => {
-      console.log('Terms accepted globally:', data)
+    const handleTermsAccepted = () => {
+      // Términos aceptados
     }
 
-    const handleTermsError = (error: Error) => {
-      console.error('Global terms error:', error)
+    const handleTermsError = () => {
+      // Error en términos
     }
 
     return {

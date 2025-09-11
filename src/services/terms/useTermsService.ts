@@ -25,7 +25,6 @@ export function useTermsService() {
     version?: string
     acceptedAt?: string
   }> {
-
     try {
       const organization = await getOrganization(organizationId)
 
@@ -40,7 +39,6 @@ export function useTermsService() {
         acceptedAt: organization.termsAcceptedAt
       }
     } catch {
-
       return { hasAccepted: false }
     }
   }

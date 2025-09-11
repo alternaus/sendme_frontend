@@ -1,27 +1,32 @@
 import { watch } from 'vue'
-import { useRoute } from 'vue-router'
 
 import { useTermsStore } from '@/stores/termsStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export function useGlobalTermsService() {
   const termsStore = useTermsStore()
+  const authStore = useAuthStore()
 
   const initialize = () => {
-    const route = useRoute()
+    console.log('🚀 Initializing global terms service')
 
+    // Verificar términos cuando el usuario esté autenticado
     watch(
-      () => route.params.organizationId,
-      async (newOrgId) => {
-        if (newOrgId && typeof newOrgId === 'string') {
-          await checkAndShowTermsIfNeeded(newOrgId)
+      () => authStore.user,
+      async (user) => {
+        console.log('� User changed:', user)
+        if (user?.organizationId) {
+          console.log('🏢 Found organizationId in user:', user.organizationId)
+          await checkAndShowTermsIfNeeded(user.organizationId)
         }
       },
       { immediate: true }
     )
 
-    const currentOrgId = route.params.organizationId as string
-    if (currentOrgId) {
-      checkAndShowTermsIfNeeded(currentOrgId)
+    // También verificar si ya hay un usuario autenticado
+    if (authStore.user?.organizationId) {
+      console.log('🏢 User already authenticated with organizationId:', authStore.user.organizationId)
+      checkAndShowTermsIfNeeded(authStore.user.organizationId)
     }
   }
 
@@ -44,8 +49,7 @@ export function useGlobalTermsService() {
   }
 
   const getCurrentOrganizationId = (): string | null => {
-    const route = useRoute()
-    return route.params.organizationId as string || null
+    return authStore.user?.organizationId || null
   }
 
   return {
