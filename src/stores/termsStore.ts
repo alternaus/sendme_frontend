@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 import type { TermsStatus } from '@/services/interfaces/terms.interface'
-import { termsService } from '@/services/terms/terms.service'
+import { useTermsService } from '@/services/terms/useTermsService'
 
 interface TermsState {
   termsStatusByOrg: Record<string, TermsStatus>
@@ -38,11 +38,8 @@ export const useTermsStore = defineStore('terms', {
     async checkTermsAcceptance(organizationId: string, forceRefresh = false) {
       if (!organizationId) return
 
-      console.log('Checking terms acceptance for org:', organizationId)
-
       const cached = this.termsStatusByOrg[organizationId]
       if (cached && !forceRefresh && !cached.loading) {
-        console.log('Using cached terms status:', cached)
         return cached
       }
 
@@ -52,9 +49,8 @@ export const useTermsStore = defineStore('terms', {
       })
 
       try {
+        const termsService = useTermsService()
         const status = await termsService.checkTermsAcceptance(organizationId)
-
-        console.log('Terms check result:', status)
 
         this.setTermsStatus(organizationId, {
           ...status,
@@ -65,8 +61,6 @@ export const useTermsStore = defineStore('terms', {
         return status
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error verificando términos'
-
-        console.error('Error checking terms:', error)
 
         this.setTermsStatus(organizationId, {
           hasAccepted: false,
@@ -86,6 +80,7 @@ export const useTermsStore = defineStore('terms', {
       try {
         this.isCheckingTerms = true
 
+        const termsService = useTermsService()
         const result = await termsService.acceptTerms(organizationId, {
           termsVersion
         })
@@ -125,10 +120,8 @@ export const useTermsStore = defineStore('terms', {
     },
 
     showTermsModal(organizationId: string) {
-      console.log('Showing terms modal for org:', organizationId)
       this.currentOrganizationId = organizationId
       this.showModal = true
-      console.log('Modal state set to:', this.showModal)
     },
 
     hideModal() {

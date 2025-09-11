@@ -27,7 +27,7 @@ import TermsAcceptanceModal from '@/components/organisms/TermsAcceptanceModal.vu
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import { useGlobalTermsService } from '@/services/terms/global-terms.service'
+import { useGlobalTermsService } from '@/services/terms/useGlobalTermsService'
 import { useI18nStore } from '@/stores/i18nStore'
 
 

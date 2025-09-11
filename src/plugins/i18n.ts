@@ -11,6 +11,7 @@ import enHome from '../locales/en/home.json'
 import enReports from '../locales/en/report.json'
 import enSend from '../locales/en/send.json'
 import enSettings from '../locales/en/settings.json'
+import enTerms from '../locales/en/terms.json'
 import esAccount from '../locales/es/account.json'
 import esAuth from '../locales/es/auth.json'
 import esBuy from '../locales/es/buy.json'
@@ -22,6 +23,7 @@ import esHome from '../locales/es/home.json'
 import esReports from '../locales/es/report.json'
 import esSend from '../locales/es/send.json'
 import esSettings from '../locales/es/settings.json'
+import esTerms from '../locales/es/terms.json'
 
 export type MessageSchema = {
   account: typeof esAccount
@@ -35,6 +37,7 @@ export type MessageSchema = {
   reports: typeof esReports
   send: typeof esSend
   settings: typeof esSettings
+  terms: typeof esTerms
 }
 
 const messages: Record<'es' | 'en', MessageSchema> = {
@@ -50,6 +53,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     reports: esReports,
     send: esSend,
     settings: esSettings,
+    terms: esTerms,
   },
   en: {
     account: enAccount,
@@ -63,6 +67,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     reports: enReports,
     send: enSend,
     settings: enSettings,
+    terms: enTerms,
   },
 }
 
