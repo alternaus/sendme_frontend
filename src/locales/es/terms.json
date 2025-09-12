@@ -32,6 +32,8 @@
     "cancel": "Cancelar",
     "review": "Revisar Términos Completos"
   },
+  "scroll_to_enable": "Desplácese hasta el final del documento para habilitar el botón de aceptación",
+  "ready_to_accept": "Ya puede aceptar los términos y condiciones",
   "blocking": {
     "notice": "Es obligatorio aceptar los términos y condiciones para acceder a las funcionalidades de la plataforma.",
     "subtitle": "Su aceptación es requerida para continuar"

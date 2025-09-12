@@ -32,6 +32,8 @@
     "cancel": "Cancel",
     "review": "Review Full Terms"
   },
+  "scroll_to_enable": "Scroll to the end of the document to enable the accept button",
+  "ready_to_accept": "You can now accept the terms and conditions",
   "blocking": {
     "notice": "Accepting the terms and conditions is mandatory to access the platform's functionalities.",
     "subtitle": "Your acceptance is required to continue"
