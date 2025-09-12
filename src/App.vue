@@ -5,17 +5,17 @@
       <router-view />
     </component>
 
-    <!-- Modal Global de Términos y Condiciones -->
-    <TermsAcceptanceModal
-      :blocking="true"
-      @accepted="handleTermsAccepted"
-      @error="handleTermsError"
+    <!-- Global Terms Handler - shows modal when organization requires terms acceptance -->
+    <TermsHandler
+      v-if="currentOrganizationId"
+      :organization-id="currentOrganizationId"
+      mode="modal-only"
     />
   </main>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, defineComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import Toast from 'primevue/toast'
@@ -23,28 +23,27 @@ import Toast from 'primevue/toast'
 import { useSeoMeta } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 
-import TermsAcceptanceModal from '@/components/organisms/TermsAcceptanceModal.vue'
+import TermsHandler from '@/components/organisms/TermsHandler.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import { useGlobalTermsService } from '@/services/terms/useGlobalTermsService'
 import { useI18nStore } from '@/stores/i18nStore'
-
-
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export default defineComponent({
+  name: 'App',
   components: {
-    DefaultLayout,
+    Toast,
     AuthLayout,
     DashboardLayout,
-    Toast,
-    TermsAcceptanceModal,
+    DefaultLayout,
+    TermsHandler,
   },
   setup() {
     const route = useRoute()
     const i18n = useI18n()
     const i18nStore = useI18nStore()
-    const { initialize } = useGlobalTermsService()
+    const authStore = useAuthStore()
 
     const layout = computed(() => {
       const layoutName = (route.meta.layout as string) || 'DefaultLayout'
@@ -56,6 +55,11 @@ export default defineComponent({
       return titleKey ? i18n.t(`${titleKey}`) : i18n.t('common.titles.home')
     })
 
+    // Get current organization ID from auth store or route
+    const currentOrganizationId = computed(() => {
+      return authStore.user?.organizationId || (route.params.organizationId as string) || null
+    })
+
     useSeoMeta({
       title: pageTitle,
       description: 'meta description',
@@ -65,22 +69,10 @@ export default defineComponent({
     watch(() => i18nStore.language, (newLang) => {
       i18n.locale.value = newLang
     }, { immediate: true })
-    onMounted(() => {
-      initialize()
-    })
-
-    const handleTermsAccepted = () => {
-      // Términos aceptados
-    }
-
-    const handleTermsError = () => {
-      // Error en términos
-    }
 
     return {
       layout,
-      handleTermsAccepted,
-      handleTermsError
+      currentOrganizationId
     }
   },
 })

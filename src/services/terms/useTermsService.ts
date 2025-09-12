@@ -1,52 +1,64 @@
 import { useApiClient } from '@/composables/useApiClient'
-import type {
-  Organization,
-  TermsAcceptance,
-  TermsAcceptanceRequest
-} from '@/services/interfaces/terms.interface'
+
+export interface TermsStatus {
+  hasAccepted: boolean
+  loading: boolean
+  version?: string
+  acceptedAt?: string
+}
+
+interface Organization {
+  id: string
+  name: string
+  email: string
+  termsAcceptedVersion?: string
+  termsAcceptedAt?: string
+}
 
 export function useTermsService() {
   const api = useApiClient(true)
 
-  async function acceptTerms(organizationId: string, request: TermsAcceptanceRequest): Promise<TermsAcceptance> {
-    return api.post<TermsAcceptance>(`/organizations/${organizationId}/accept-terms`, request)
-  }
-
-  async function getTermsAcceptances(organizationId: string): Promise<TermsAcceptance[]> {
-    return api.get<TermsAcceptance[]>(`/organizations/${organizationId}/terms-acceptances`)
-  }
-
-  async function getOrganization(organizationId: string): Promise<Organization> {
-    return api.get<Organization>(`/organizations/${organizationId}`)
-  }
-
-  async function checkTermsAcceptance(organizationId: string): Promise<{
-    hasAccepted: boolean
-    version?: string
-    acceptedAt?: string
-  }> {
+  const checkAcceptance = async (organizationId: string): Promise<TermsStatus> => {
     try {
-      const organization = await getOrganization(organizationId)
+      const response = await api.get<Organization>(`/organizations/${organizationId}`)
 
       const hasAccepted = !!(
-        organization.termsAcceptedVersion &&
-        organization.termsAcceptedAt
+        response.termsAcceptedVersion &&
+        response.termsAcceptedAt
       )
 
       return {
         hasAccepted,
-        version: organization.termsAcceptedVersion,
-        acceptedAt: organization.termsAcceptedAt
+        loading: false,
+        version: response.termsAcceptedVersion,
+        acceptedAt: response.termsAcceptedAt
       }
     } catch {
-      return { hasAccepted: false }
+      return { hasAccepted: false, loading: false }
     }
   }
 
+  const acceptTerms = async (organizationId: string, version: string): Promise<void> => {
+    const response = await api.post(`/organizations/${organizationId}/accept-terms`, {
+      termsVersion: version
+    })
+
+    if (!response) {
+      throw new Error('Failed to accept terms')
+    }
+  }
+
+  const isTermsError = (error: unknown): boolean => {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const responseError = error as { response?: { data?: { code?: string } } }
+      return responseError.response?.data?.code === '1022'
+    }
+    return false
+  }
+
   return {
+    checkAcceptance,
     acceptTerms,
-    getTermsAcceptances,
-    getOrganization,
-    checkTermsAcceptance
+    isTermsError
   }
 }
