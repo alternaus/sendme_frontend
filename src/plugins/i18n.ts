@@ -12,6 +12,7 @@ import enReports from '../locales/en/report.json'
 import enSend from '../locales/en/send.json'
 import enSettings from '../locales/en/settings.json'
 import enTerms from '../locales/en/terms.json'
+import enWhatsapp from '../locales/en/whatsapp.json'
 import esAccount from '../locales/es/account.json'
 import esAuth from '../locales/es/auth.json'
 import esBuy from '../locales/es/buy.json'
@@ -24,6 +25,7 @@ import esReports from '../locales/es/report.json'
 import esSend from '../locales/es/send.json'
 import esSettings from '../locales/es/settings.json'
 import esTerms from '../locales/es/terms.json'
+import esWhatsapp from '../locales/es/whatsapp.json'
 
 export type MessageSchema = {
   account: typeof esAccount
@@ -38,6 +40,7 @@ export type MessageSchema = {
   send: typeof esSend
   settings: typeof esSettings
   terms: typeof esTerms
+  whatsapp: typeof esWhatsapp
 }
 
 const messages: Record<'es' | 'en', MessageSchema> = {
@@ -54,6 +57,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     send: esSend,
     settings: esSettings,
     terms: esTerms,
+    whatsapp: esWhatsapp,
   },
   en: {
     account: enAccount,
@@ -68,6 +72,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     send: enSend,
     settings: enSettings,
     terms: enTerms,
+    whatsapp: enWhatsapp,
   },
 }
 

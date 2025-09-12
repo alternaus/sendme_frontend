@@ -11,6 +11,7 @@ import enrollmentRoutes from './enrollmentRoutes'
 import reportRoutes from './reportRoutes'
 import sendRoutes from './sendRoutes'
 import settingRoutes from './settingRoutes'
+import whatsappRoutes from './whatsappRoutes'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -28,6 +29,7 @@ const routes: RouteRecordRaw[] = [
   buyRoutes,
   authRoutes,
   enrollmentRoutes,
+  whatsappRoutes,
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

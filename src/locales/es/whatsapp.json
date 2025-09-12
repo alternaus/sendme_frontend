@@ -1,0 +1,15 @@
+{
+  "signup": {
+    "title": "Integración de WhatsApp Business",
+    "description": "Conecta tu cuenta de WhatsApp Business para comenzar a enviar mensajes directamente desde nuestra plataforma.",
+    "loading": "Cargando integración de WhatsApp...",
+    "initializing": "Inicializando SDK de WhatsApp...",
+    "connect_account": "Conecta Tu Cuenta de WhatsApp Business",
+    "connect_whatsapp": "Conectar WhatsApp",
+    "page_title": "Integración de WhatsApp",
+    "info": {
+      "title": "Información Importante",
+      "description": "Asegúrate de tener una cuenta de WhatsApp Business y los permisos necesarios para integrar con plataformas de terceros."
+    }
+  }
+}
