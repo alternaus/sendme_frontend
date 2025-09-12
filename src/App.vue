@@ -7,7 +7,7 @@
 
     <!-- Global Terms Handler - shows modal when organization requires terms acceptance -->
     <TermsHandler
-      v-if="currentOrganizationId"
+      v-if="currentOrganizationId && authStore.isAuthenticated"
       :organization-id="currentOrganizationId"
       mode="modal-only"
     />
@@ -72,7 +72,8 @@ export default defineComponent({
 
     return {
       layout,
-      currentOrganizationId
+      currentOrganizationId,
+      authStore
     }
   },
 })

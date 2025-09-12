@@ -57,7 +57,13 @@ export function useTerms(organizationId: string | Ref<string>) {
     return false
   }
 
-  watch(orgId, checkStatus, { immediate: true })
+  const forceCheck = () => {
+    if (orgId.value) {
+      checkStatus()
+    }
+  }
+
+  watch(orgId, checkStatus, { immediate: true, flush: 'post' })
 
   return {
     hasAccepted,
@@ -65,6 +71,7 @@ export function useTerms(organizationId: string | Ref<string>) {
     isModalVisible,
     isAccepting,
     checkStatus,
+    forceCheck,
     acceptTerms,
     showModal,
     hideModal,

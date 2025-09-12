@@ -49,14 +49,14 @@
     <TermsModal
       v-model:visible="isModalVisible"
       :loading="isAccepting"
-      :blocking="blocking"
+      :blocking="true"
       @accept="acceptTerms"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue'
+import { computed, onMounted, toRef, watch } from 'vue'
 
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -77,12 +77,26 @@ const props = withDefaults(defineProps<Props>(), {
   blocking: false
 })
 
-const { hasAccepted, isLoading, isModalVisible, isAccepting, acceptTerms, showModal } = useTerms(
+const { hasAccepted, isLoading, isModalVisible, isAccepting, acceptTerms, showModal, forceCheck } = useTerms(
   toRef(props, 'organizationId')
 )
 
 const showBanner = computed(() => props.mode === 'banner')
 const showBlockingState = computed(() => props.mode === 'blocking' || props.blocking)
+
+// Forzar verificación cuando el componente se monta
+onMounted(() => {
+  if (props.organizationId) {
+    forceCheck()
+  }
+})
+
+// En modo modal-only, mostrar modal automáticamente si no ha aceptado términos
+watch([hasAccepted, isLoading, () => props.organizationId], ([accepted, loading, orgId]) => {
+  if (props.mode === 'modal-only' && !loading && !accepted && orgId) {
+    showModal()
+  }
+}, { immediate: true })
 </script>
 
 <style scoped lang="scss">
