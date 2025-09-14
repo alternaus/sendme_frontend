@@ -1,15 +1,31 @@
 {
   "signup": {
-    "title": "Integración de WhatsApp Business",
-    "description": "Conecta tu cuenta de WhatsApp Business para comenzar a enviar mensajes directamente desde nuestra plataforma.",
-    "loading": "Cargando integración de WhatsApp...",
-    "initializing": "Inicializando SDK de WhatsApp...",
-    "connect_account": "Conecta Tu Cuenta de WhatsApp Business",
+    "title": "WhatsApp Business",
+    "description": "Conecta tu cuenta para enviar mensajes",
+    "loading": "Cargando SDK...",
+    "connecting": "Conectando...",
+    "connect_account": "Conectar Cuenta",
     "connect_whatsapp": "Conectar WhatsApp",
-    "page_title": "Integración de WhatsApp",
     "info": {
-      "title": "Información Importante",
-      "description": "Asegúrate de tener una cuenta de WhatsApp Business y los permisos necesarios para integrar con plataformas de terceros."
+      "message": "Se abrirá ventana de Facebook para autorizar el acceso."
+    },
+    "messages": {
+      "sdk_not_available": {
+        "summary": "Error",
+        "detail": "Facebook SDK no está disponible. Recarga la página."
+      },
+      "no_authorization_code": {
+        "summary": "Cancelado",
+        "detail": "No se recibió el código de autorización."
+      },
+      "connection_success": {
+        "summary": "Conectado",
+        "detail": "WhatsApp Business conectado exitosamente a tu organización."
+      },
+      "connection_error": {
+        "summary": "Error de conexión",
+        "detail": "Error desconocido"
+      }
     }
   }
 }

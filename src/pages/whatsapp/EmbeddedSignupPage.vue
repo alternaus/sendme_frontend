@@ -4,6 +4,10 @@ import { defineComponent, onMounted, ref } from 'vue'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 
+import { useI18n } from 'vue-i18n'
+
+import { useWhatsAppService } from '@/services/whatsapp/useWhatsAppService'
+
 interface FacebookSDK {
   init: (config: {
     appId: string
@@ -11,15 +15,25 @@ interface FacebookSDK {
     xfbml: boolean
     version: string
   }) => void
-  login: (callback: (response: FacebookLoginResponse) => void, options?: {
-    scope?: string
-  }) => void
+  login: (callback: (response: FacebookLoginResponse) => void, options?: FacebookLoginOptions) => void
+}
+
+interface FacebookLoginOptions {
+  scope?: string
+  config_id?: string
+  response_type?: string
+  override_default_response_type?: boolean
+  extras?: {
+    feature?: string
+    featureType?: string
+  }
 }
 
 interface FacebookLoginResponse {
   authResponse?: {
-    accessToken: string
-    userID: string
+    accessToken?: string
+    userID?: string
+    code?: string
   }
 }
 
@@ -38,6 +52,8 @@ export default defineComponent({
     const isLoading = ref(true)
     const isConnecting = ref(false)
     const toast = useToast()
+    const { t } = useI18n()
+    const { connect } = useWhatsAppService()
 
     const loadFacebookSDK = async () => {
       if (document.querySelector('#facebook-jssdk')) {
@@ -70,8 +86,8 @@ export default defineComponent({
       if (!window.FB) {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Facebook SDK no está disponible. Recarga la página.',
+          summary: t('whatsapp.signup.messages.sdk_not_available.summary'),
+          detail: t('whatsapp.signup.messages.sdk_not_available.detail'),
           life: 5000
         })
         return
@@ -79,27 +95,54 @@ export default defineComponent({
 
       isConnecting.value = true
 
-      window.FB.login((response: FacebookLoginResponse) => {
-        isConnecting.value = false
+      window.FB.login(
+        async (res: FacebookLoginResponse) => {
+          isConnecting.value = false
 
-        if (response.authResponse) {
-          toast.add({
-            severity: 'success',
-            summary: '¡WhatsApp Business conectado!',
-            detail: `Access Token: ${response.authResponse.accessToken}\nUser ID: ${response.authResponse.userID}\n\nGuarda este token para configurar tu integración.`,
-            life: 8000
-          })
-        } else {
-          toast.add({
-            severity: 'error',
-            summary: 'Error de conexión',
-            detail: 'No se pudo conectar. Verifica que tu app de Facebook tenga los permisos necesarios.',
-            life: 5000
-          })
+          const code = res?.authResponse?.code
+          if (!code) {
+            toast.add({ 
+              severity: 'error', 
+              summary: t('whatsapp.signup.messages.no_authorization_code.summary'), 
+              detail: t('whatsapp.signup.messages.no_authorization_code.detail'),
+              life: 5000
+            })
+            return
+          }
+
+          try {
+            // enviar el "code" a tu backend (intercambio seguro)
+            await connect(code)
+            
+            toast.add({ 
+              severity: 'success', 
+              summary: t('whatsapp.signup.messages.connection_success.summary'), 
+              detail: t('whatsapp.signup.messages.connection_success.detail'),
+              life: 5000
+            })
+          } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : t('whatsapp.signup.messages.connection_error.detail')
+            toast.add({ 
+              severity: 'error', 
+              summary: t('whatsapp.signup.messages.connection_error.summary'), 
+              detail: errorMessage,
+              life: 5000
+            })
+          }
+        },
+        {
+          // *** CLAVE para Embedded Signup ***
+          config_id: import.meta.env.VITE_WHATSAPP_CONFIGURATION_ID, // tu "Facebook Login for Business > Configuration"
+          scope: 'business_management,whatsapp_business_management,whatsapp_business_messaging',
+          response_type: 'code',
+          override_default_response_type: true,
+          extras: {
+            feature: 'whatsapp_embedded_signup',
+            // Opcional: si quieres sólo compartir WABA y agregar el número luego por API:
+            // featureType: 'only_waba_sharing'
+          }
         }
-      }, {
-        scope: 'whatsapp_business_management,whatsapp_business_messaging'
-      })
+      )
     }
 
     onMounted(async () => {
@@ -117,7 +160,8 @@ export default defineComponent({
     return {
       isLoading,
       isConnecting,
-      connectWhatsApp
+      connectWhatsApp,
+      t
     }
   }
 })
@@ -129,17 +173,17 @@ export default defineComponent({
       <!-- Header -->
       <div class="text-center mb-4">
         <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-          WhatsApp Business
+          {{ t('whatsapp.signup.title') }}
         </h1>
         <p class="text-sm text-gray-600 dark:text-gray-300">
-          Conecta tu cuenta para enviar mensajes
+          {{ t('whatsapp.signup.description') }}
         </p>
       </div>
 
       <!-- Loading -->
       <div v-if="isLoading" class="text-center py-6">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
-        <p class="text-xs text-gray-600 dark:text-gray-300">Cargando SDK...</p>
+        <p class="text-xs text-gray-600 dark:text-gray-300">{{ t('whatsapp.signup.loading') }}</p>
       </div>
 
       <!-- Main Content -->
@@ -152,7 +196,7 @@ export default defineComponent({
             </svg>
           </div>
           <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-            Conectar Cuenta
+            {{ t('whatsapp.signup.connect_account') }}
           </h2>
         </div>
 
@@ -164,7 +208,7 @@ export default defineComponent({
             class="bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white font-medium py-2 px-6 rounded-md transition-colors duration-200 flex items-center justify-center mx-auto text-sm"
           >
             <div v-if="isConnecting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            {{ isConnecting ? 'Conectando...' : 'Conectar WhatsApp' }}
+            {{ isConnecting ? t('whatsapp.signup.connecting') : t('whatsapp.signup.connect_whatsapp') }}
           </button>
         </div>
 
@@ -174,7 +218,7 @@ export default defineComponent({
             <template #icon>
               <i class="pi pi-info-circle"></i>
             </template>
-            Se abrirá ventana de Facebook para autorizar el acceso.
+            {{ t('whatsapp.signup.info.message') }}
           </Message>
         </div>
       </div>
