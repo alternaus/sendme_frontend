@@ -82,6 +82,41 @@ export default defineComponent({
       }
     }
 
+    const handleFacebookResponse = async (res: FacebookLoginResponse) => {
+      isConnecting.value = false
+
+      const code = res?.authResponse?.code
+      if (!code) {
+        toast.add({
+          severity: 'error',
+          summary: t('whatsapp.signup.messages.no_authorization_code.summary'),
+          detail: t('whatsapp.signup.messages.no_authorization_code.detail'),
+          life: 5000
+        })
+        return
+      }
+
+      try {
+        // enviar el "code" a tu backend (intercambio seguro)
+        await connect(code)
+
+        toast.add({
+          severity: 'success',
+          summary: t('whatsapp.signup.messages.connection_success.summary'),
+          detail: t('whatsapp.signup.messages.connection_success.detail'),
+          life: 5000
+        })
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : t('whatsapp.signup.messages.connection_error.detail')
+        toast.add({
+          severity: 'error',
+          summary: t('whatsapp.signup.messages.connection_error.summary'),
+          detail: errorMessage,
+          life: 5000
+        })
+      }
+    }
+
     const connectWhatsApp = () => {
       if (!window.FB) {
         toast.add({
@@ -96,39 +131,12 @@ export default defineComponent({
       isConnecting.value = true
 
       window.FB.login(
-        async (res: FacebookLoginResponse) => {
-          isConnecting.value = false
-
-          const code = res?.authResponse?.code
-          if (!code) {
-            toast.add({ 
-              severity: 'error', 
-              summary: t('whatsapp.signup.messages.no_authorization_code.summary'), 
-              detail: t('whatsapp.signup.messages.no_authorization_code.detail'),
-              life: 5000
-            })
-            return
-          }
-
-          try {
-            // enviar el "code" a tu backend (intercambio seguro)
-            await connect(code)
-            
-            toast.add({ 
-              severity: 'success', 
-              summary: t('whatsapp.signup.messages.connection_success.summary'), 
-              detail: t('whatsapp.signup.messages.connection_success.detail'),
-              life: 5000
-            })
-          } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : t('whatsapp.signup.messages.connection_error.detail')
-            toast.add({ 
-              severity: 'error', 
-              summary: t('whatsapp.signup.messages.connection_error.summary'), 
-              detail: errorMessage,
-              life: 5000
-            })
-          }
+        (res: FacebookLoginResponse) => {
+          // Llama a la función async sin usar await aquí
+          handleFacebookResponse(res).catch(err => {
+            console.error('Error in Facebook response handler:', err)
+            isConnecting.value = false
+          })
         },
         {
           // *** CLAVE para Embedded Signup ***
