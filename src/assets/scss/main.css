@@ -71,7 +71,7 @@
   background:var(--sb-track);
 }
 
-html{ scrollbar-gutter: stable both-edges; }
+html{ scrollbar-gutter: auto; }
 
 /* Fallback si el navegador no soporta color-mix */
 @supports not (color: color-mix(in srgb, #000 50%, transparent)){
