@@ -17,6 +17,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@novu/js": "^3.9.3",
     "@primeuix/themes": "^1.2.3",
     "@tailwindcss/vite": "^4.0.0",
     "@types/socket.io-client": "^1.4.36",
