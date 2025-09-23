@@ -1,42 +1,50 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed,defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useI18n } from 'vue-i18n'
 
 import EmailIcon from '@/assets/svg/email.svg?component'
-import SendIcon from '@/assets/svg/send.svg?component'
-import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { MessageChannel } from '@/services/send/constants'
 
 import SendEmailFormPage from './form/SendEmailFormPage.vue'
 import SendSmsFormPage from './form/SendSmsFormPage.vue'
-import SendWhatsappFormPage from './form/SendWhatsappFormPage.vue'
 export default defineComponent({
+  emits: ['sent'],
   components: {
     AppHeader,
-    AppSelect,
-    SendIcon,
+    AppSelectButton,
     EmailIcon,
     SendSmsFormPage,
-    SendWhatsappFormPage,
     SendEmailFormPage,
   },
   setup() {
     const { t } = useI18n()
     const router = useRouter()
     const sendOptions = [
-      { name: t('send.channels.SMS'), value: 'SMS' },
-      { name: t('send.channels.EMAIL'), value: 'EMAIL' },
+      { name: t('send.channels.SMS'), value: MessageChannel.SMS },
+      { name: t('send.channels.EMAIL'), value: MessageChannel.EMAIL },
     ]
 
-    const selectedOption = ref('SMS')
+    const selectedOption = ref<MessageChannel | string | null>(null)
+
+    // Computed para manejar la conversión entre null y el AppSelectButton
+    const selectButtonValue = computed({
+      get: () => selectedOption.value || '',
+      set: (value: string | number | boolean | string[]) => {
+        selectedOption.value = (value === '' || value === null) ? null : value as MessageChannel
+      }
+    })
     return {
       router,
       IconTypes,
       sendOptions,
       selectedOption,
+      selectButtonValue,
+      MessageChannel,
     }
   },
 })
@@ -45,43 +53,39 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
-  <!-- Diseño de teléfono para SMS y WhatsApp -->
-  <div v-if="selectedOption !== 'EMAIL'" class="container-phone ml-4">
-    <div class="container-phone-inner">
-      <div class="flex justify-center items-center text-center mb-4">
-        <small class="text-base font-semibold">{{
-          selectedOption === 'SMS'
-            ? $t('send.instant_message')
-            : $t('send.whatsapp_instant_message')
-        }}</small>
-      </div>
-      <AppSelect v-model="selectedOption" :options="sendOptions" class="w-full mb-4">
-        <template #icon><SendIcon class="w-4 h-4 dark:fill-white" /></template>
-      </AppSelect>
+  <div class="ml-4">
+    <!-- Selector principal de canal -->
+    <div class="max-w-md mb-6">
+      <AppSelectButton 
+        v-model="selectButtonValue" 
+        :options="sendOptions" 
+        class="w-full"
+        :allowEmpty="true"
+      />
+    </div>
 
-      <div v-if="selectedOption === 'SMS'">
+    <!-- Diseño de teléfono solo para SMS -->
+    <div v-if="selectedOption === MessageChannel.SMS" class="container-phone" :title="$t('send.tooltip_phone_mode')">
+      <div class="container-phone-inner">
+        <div class="flex justify-center items-center text-center mb-4">
+          <small class="text-base font-semibold">{{ $t('send.instant_message') }}</small>
+        </div>
         <SendSmsFormPage />
       </div>
-      <div v-else-if="selectedOption === 'WHATSAPP'">
-        <SendWhatsappFormPage />
+    </div>
+
+    <!-- Diseño de escritorio para Email -->
+    <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email" :title="$t('send.tooltip_email_mode')">
+      <div class="container-email-inner">
+        <div class="flex justify-center items-center text-center mb-4">
+          <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
+          <small class="text-base font-semibold">{{ $t('send.email_instant_message') }}</small>
+        </div>
+        <SendEmailFormPage />
       </div>
     </div>
   </div>
 
-  <!-- Diseño de escritorio para Email -->
-  <div v-else class="container-email ml-4">
-    <div class="container-email-inner">
-      <div class="flex justify-center items-center text-center mb-4">
-        <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
-        <small class="text-base font-semibold">{{ $t('send.email_instant_message') }}</small>
-      </div>
-      <AppSelect v-model="selectedOption" :options="sendOptions" class="w-full mb-4">
-        <template #icon><SendIcon class="w-4 h-4 dark:fill-white" /></template>
-      </AppSelect>
-
-      <SendEmailFormPage />
-    </div>
-  </div>
 </template>
 <style scoped lang="scss">
 .container-phone {

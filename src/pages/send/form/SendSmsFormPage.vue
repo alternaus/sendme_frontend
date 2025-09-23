@@ -10,21 +10,21 @@ import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants/message.constants'
-import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
+import { MESSAGE_LIMITS, MessageChannel } from '@/services/send/constants'
 import { useSendService } from '@/services/send/useSendService'
 
-import { useFormSendMessage } from '../composables/useSendForm'
+import { createSmsMessageTypeOptions } from '../../../services/send/helpers/message-options.helper'
+import { type SendMessageForm, useFormSendMessage } from '../../send/composables/useSendForm'
 
 export default defineComponent({
   name: 'SendSmsFormPage',
   components: {
-    AppTextarea,
-    AppEditor,
-    AppSelect,
-    PhoneIcon,
-    BtnSend,
-    ContactsIcon,
+  AppTextarea,
+  AppEditor,
+  AppSelect,
+  PhoneIcon,
+  BtnSend,
+  ContactsIcon,
   },
   setup() {
     const { t } = useI18n()
@@ -59,7 +59,7 @@ export default defineComponent({
         .filter((num) => num.length > 0)
     })
 
-    const sendMessage = handleSubmit(async (values) => {
+  const sendMessage = handleSubmit(async (values: SendMessageForm) => {
       const batchMessage = {
         channel: MessageChannel.SMS,
         message: values.message,
@@ -92,6 +92,7 @@ export default defineComponent({
 
 <template>
   <div class="space-y-3">
+    <!-- Botones de selección: lista vs todos -->
     <div class="flex justify-center items-center gap-2">
       <div
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
@@ -108,12 +109,15 @@ export default defineComponent({
         <ContactsIcon class="w-5 h-5 fill-current" />
       </div>
     </div>
-    <div v-if="form.sendToAll.value" class="text-center">
+
+    <!-- Info contactos cuando es "todos" -->
+    <div v-show="form.sendToAll.value" class="text-center">
       <small class="text-xs text-gray-500 dark:text-gray-400">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
 
+    <!-- Tipo de mensaje SMS -->
     <AppSelect
       v-model="form.messageType.value"
       :options="messageTypeOptions"
@@ -122,6 +126,7 @@ export default defineComponent({
       class="w-full"
     />
 
+    <!-- Input de contactos (solo si no es "todos") -->
     <AppTextarea
       v-if="!form.sendToAll.value"
       v-model="contactsInput"
@@ -132,6 +137,7 @@ export default defineComponent({
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
     </AppTextarea>
 
+    <!-- Editor de mensaje -->
     <AppEditor
       v-model="form.message.value"
       content-type="text"
@@ -142,6 +148,12 @@ export default defineComponent({
       class="w-full"
     />
 
+    <!-- Preview del mensaje -->
+    <div v-show="form.message.value" class="border rounded p-2 text-xs whitespace-pre-wrap bg-white dark:bg-zinc-800">
+      {{ form.message.value }}
+    </div>
+
+    <!-- Botón de envío -->
     <div class="flex justify-center mt-3">
       <button type="button" @click="sendMessage" class="transition-transform hover:scale-105">
         <BtnSend class="w-12 h-12 cursor-pointer" />

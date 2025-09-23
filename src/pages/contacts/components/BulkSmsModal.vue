@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
@@ -13,10 +13,9 @@ import AppDialog from '@/components/atoms/dialogs/AppDialog.vue'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import { useSendMessage } from '@/composables/useSendMessage'
 import type { IContact } from '@/services/contact/interfaces/contact.interface'
-import { MessageChannel } from '@/services/send/constants/message.constants'
-import { type IBatchMessage } from '@/services/send/interfaces/message.interface'
-import { useSendService } from '@/services/send/useSendService'
+import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants'
 
 interface Props {
   visible: boolean
@@ -33,14 +32,20 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 const toast = useToast()
-const { sendBatchMessage } = useSendService()
 
-const selectedChannel = ref<MessageChannel>(MessageChannel.SMS)
-const message = ref('')
-const subject = ref('')
-const isSending = ref(false)
+const {
+  channel: selectedChannel,
+  message,
+  subject,
+  isSending,
+  maxLength,
+  canSend,
+  country,
+  send,
+  reset,
+} = useSendMessage({ initialChannel: MessageChannel.SMS })
 
-const MAX_CHARACTERS = 459
+const MAX_CHARACTERS = MESSAGE_LIMITS.SMS
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -96,16 +101,10 @@ const countryCode = computed(() => {
 
 const messageLength = computed(() => message.value.length)
 
-const maxLength = computed(() => {
-  return selectedChannel.value === MessageChannel.SMS ? MAX_CHARACTERS : undefined
-})
-
-const canSend = computed(() => {
-  const hasMessage = message.value.trim().length > 0
-  const hasSubject = selectedChannel.value === MessageChannel.EMAIL ? subject.value.trim().length > 0 : true
-  const hasContacts = contactNumbers.value.length > 0
-
-  return hasMessage && hasSubject && hasContacts
+watch(selectedChannel, () => {
+  if (selectedChannel.value !== MessageChannel.SMS) {
+    country.value = undefined
+  }
 })
 
 watch(() => props.visible, (newValue) => {
@@ -115,8 +114,7 @@ watch(() => props.visible, (newValue) => {
 })
 
 const resetForm = () => {
-  message.value = ''
-  subject.value = ''
+  reset()
   selectedChannel.value = MessageChannel.SMS
 }
 
@@ -130,23 +128,13 @@ const sendBulkMessage = async () => {
     })
     return
   }
-
-  isSending.value = true
-  try {
-    const batchMessage: IBatchMessage = {
-      channel: selectedChannel.value,
-      message: message.value.trim(),
-      sendToAll: false,
-      contacts: contactNumbers.value,
-      ...(selectedChannel.value === MessageChannel.SMS && countryCode.value && { country: countryCode.value }),
-      ...(selectedChannel.value === MessageChannel.EMAIL && { subject: subject.value.trim() })
-    }
-
-    await sendBatchMessage(batchMessage)
-
+  if (selectedChannel.value === MessageChannel.SMS && countryCode.value) {
+    country.value = countryCode.value
+  }
+  const response = await send()
+  if (response) {
     emit('message-sent')
     dialogVisible.value = false
-
     const count = contactNumbers.value.length
     toast.add({
       severity: 'success',
@@ -154,15 +142,6 @@ const sendBulkMessage = async () => {
       detail: t('contact.bulk_sms.messages_sent_successfully', { count }),
       life: 4000,
     })
-  } catch {
-    toast.add({
-      severity: 'error',
-      summary: t('contact.general.error'),
-      detail: t('contact.bulk_sms.error_sending_message'),
-      life: 3000,
-    })
-  } finally {
-    isSending.value = false
   }
 }
 

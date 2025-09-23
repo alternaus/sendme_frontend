@@ -7,10 +7,10 @@ import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
-import { useFormSendMessage } from '../composables/useSendForm'
+import { MessageChannel } from '../../../services/send/constants/message.constants'
+import { useFormSendMessage } from '../../send/composables/useSendForm'
 
 export default defineComponent({
   name: 'SendEmailFormPage',
@@ -80,6 +80,7 @@ export default defineComponent({
 
 <template>
   <div class="space-y-3">
+    <!-- Step 1: Contact selection (always visible) -->
     <div class="flex justify-center items-center gap-2">
       <div
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
@@ -96,38 +97,49 @@ export default defineComponent({
         <ContactsIcon class="w-5 h-5 dark:fill-white" />
       </div>
     </div>
+
+    <!-- Contact count display (when sending to all) -->
     <div v-if="form.sendToAll.value" class="text-center">
       <small class="text-xs text-gray-500 dark:text-gray-400">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
 
-    <AppInput
-      v-if="!form.sendToAll.value"
-      v-model="contactsInput"
-      :placeholder="$t('send.enter_emails_separated_by_commas')"
-      class="w-full"
-    >
-      <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
-    </AppInput>
+    <!-- Step 2: Contact input (progressive - only when not sending to all) -->
+    <div v-if="!form.sendToAll.value">
+      <AppInput
+        v-model="contactsInput"
+        :placeholder="$t('send.enter_emails_separated_by_commas')"
+        class="w-full"
+      >
+        <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
+      </AppInput>
+    </div>
 
-    <AppInput
-      v-model="form.subject.value"
-      :placeholder="$t('send.email_subject')"
-      class="w-full"
-    >
-      <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
-    </AppInput>
+    <!-- Step 3: Email subject (progressive - show when contact selection is made) -->
+    <div v-if="form.sendToAll.value || (!form.sendToAll.value && contactsInput.length > 0)">
+      <AppInput
+        v-model="form.subject.value"
+        :placeholder="$t('send.email_subject')"
+        class="w-full"
+      >
+        <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
+      </AppInput>
+    </div>
 
-    <AppEditor
-      v-model="form.message.value"
-      content-type="html"
-      :ai-attach="true"
-      :placeholder="$t('send.editor.email_placeholder')"
-      class="w-full"
-    />
+    <!-- Step 4: Message editor (progressive - show when subject has content or contact selection for all) -->
+    <div v-if="(form.sendToAll.value && (form.subject.value?.length ?? 0) > 0) || (!form.sendToAll.value && contactsInput.length > 0 && (form.subject.value?.length ?? 0) > 0)">
+      <AppEditor
+        v-model="form.message.value"
+        content-type="html"
+        :ai-attach="true"
+        :placeholder="$t('send.editor.email_placeholder')"
+        class="w-full"
+      />
+    </div>
 
-    <div class="flex justify-center mt-3">
+    <!-- Step 5: Send button (progressive - show when message has content) -->
+    <div v-if="form.message.value.length > 0" class="flex justify-center mt-3">
       <button type="button" @click="sendMessage" class="transition-transform hover:scale-105">
         <BtnSend class="w-12 h-12 cursor-pointer" />
       </button>
