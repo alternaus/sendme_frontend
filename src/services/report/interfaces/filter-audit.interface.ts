@@ -9,4 +9,5 @@ export interface IFilterAudit {
   userId?:string
   startDate?: string
   endDate?: string
+  search?: string
 }

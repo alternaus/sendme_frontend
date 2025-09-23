@@ -7,6 +7,7 @@ import EmailIcon from '@/assets/svg/email.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import ContactChips from '@/components/molecules/ContactChips.vue'
 import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { MessageChannel } from '@/services/send/constants'
@@ -24,9 +25,9 @@ export default defineComponent({
     ContactsIcon,
     CredentialIcon,
     TagManager,
+    ContactChips,
   },
   setup() {
-    const contactsInput = ref('')
     const contactsCount = ref<number | null>(null)
     const sendType = ref<SendType>(SendType.CONTACTS)
     const emailService = useEmailService()
@@ -53,16 +54,9 @@ export default defineComponent({
       form.sendToTags.value = sendType.value === SendType.TAGS
     })
 
-    watchEffect(() => {
-      form.contacts.value = contactsInput.value
-        .split(',')
-        .map((email) => email.trim())
-        .filter((email) => email.length > 0)
-    })
-
     const shouldShowSubject = computed(() => {
       if (sendType.value === SendType.ALL) return true
-      if (sendType.value === SendType.CONTACTS) return contactsInput.value.length > 0
+      if (sendType.value === SendType.CONTACTS) return (form.contacts.value?.length ?? 0) > 0
       if (sendType.value === SendType.TAGS) return (form.tagIds.value?.length ?? 0) > 0
       return false
     })
@@ -89,7 +83,6 @@ export default defineComponent({
 
       if (response) {
         resetForm()
-        contactsInput.value = ''
         sendType.value = SendType.CONTACTS
       }
     })
@@ -99,7 +92,6 @@ export default defineComponent({
       sendMessage,
       errors,
       setValues,
-      contactsInput,
       contactsCount,
       sendType,
       SendType,
@@ -115,26 +107,26 @@ export default defineComponent({
     <!-- Step 1: Tipo de envío (contactos, todos, o tags) -->
     <div class="flex justify-center items-center gap-2">
       <div
+        v-tooltip.bottom="$t('send.tooltip_send_to_contacts')"
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
         :class="sendType === SendType.CONTACTS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
         @click="sendType = SendType.CONTACTS"
-        :title="$t('send.tooltip_send_to_contacts')"
       >
         <EmailIcon class="w-5 h-5 dark:fill-white" />
       </div>
       <div
+        v-tooltip.bottom="$t('send.tooltip_send_to_all')"
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
         :class="sendType === SendType.ALL ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
         @click="sendType = SendType.ALL"
-        :title="$t('send.tooltip_send_to_all')"
       >
         <ContactsIcon class="w-5 h-5 dark:fill-white" />
       </div>
       <div
+        v-tooltip.bottom="$t('send.tooltip_send_to_tags')"
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
         :class="sendType === SendType.TAGS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
         @click="sendType = SendType.TAGS"
-        :title="$t('send.tooltip_send_to_tags')"
       >
         <CredentialIcon class="w-5 h-5 dark:fill-white" />
       </div>
@@ -151,13 +143,12 @@ export default defineComponent({
 
     <!-- Contact input (when not sending to all) -->
     <div v-if="sendType === SendType.CONTACTS">
-      <AppInput
-        v-model="contactsInput"
+      <ContactChips
+        v-model="form.contacts.value"
+        type="email"
         :placeholder="$t('send.enter_emails_separated_by_commas')"
         class="w-full"
-      >
-        <template #icon><EmailIcon class="w-4 h-4 dark:fill-white" /></template>
-      </AppInput>
+      />
     </div>
 
     <!-- Selector de tags -->

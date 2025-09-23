@@ -69,7 +69,7 @@ export default defineComponent({
       totalRecords: 0,
     })
 
-    watch([startDate, endDate, action, table], () => {
+    watch([startDate, endDate, action, table, search], () => {
       fetchAudits()
     })
 
@@ -85,7 +85,7 @@ export default defineComponent({
           table: table.value,
           startDate: startDate.value?.toISOString(),
           endDate: endDate.value?.toISOString(),
-          //search: search.value,
+          search: search.value,
         })
         if (response?.data && response?.meta) {
           audits.value = response.data
@@ -122,6 +122,7 @@ export default defineComponent({
             table: table.value,
             startDate: startDate.value?.toISOString(),
             endDate: endDate.value?.toISOString(),
+            search: search.value,
             page: page.value,
             limit: limit.value,
           })
@@ -153,20 +154,6 @@ export default defineComponent({
       return translationKey ? t(translationKey) : moduleString
     }
 
-    const startDateString = computed({
-      get: () => startDate.value?.toISOString() || '',
-      set: (value: string) => {
-        startDate.value = value ? new Date(value) : new Date()
-      }
-    })
-
-    const endDateString = computed({
-      get: () => endDate.value?.toISOString() || '',
-      set: (value: string) => {
-        endDate.value = value ? new Date(value) : new Date()
-      }
-    })
-
     return {
       router,
       IconTypes,
@@ -179,12 +166,12 @@ export default defineComponent({
       headerActions,
       action,
       table,
+      startDate,
+      endDate,
       formatDate,
       dataChanges,
       handleViewChanges,
       isDialogVisible,
-      startDateString,
-      endDateString,
       loading,
       formatTableValue,
       ActionAuditTypes,
@@ -243,12 +230,12 @@ export default defineComponent({
 
     <AppDateRangePicker
       class="w-full col-span-1 sm:col-span-2"
-      :startDate="startDateString"
-      :endDate="endDateString"
+      :startDate="startDate?.toISOString() || ''"
+      :endDate="endDate?.toISOString() || ''"
       :startLabel="$t('reports.common.start_date')"
       :endLabel="$t('reports.common.end_date')"
-      @update:startDate="startDateString = $event"
-      @update:endDate="endDateString = $event"
+      @update:startDate="startDate = $event ? new Date($event) : new Date()"
+      @update:endDate="endDate = $event ? new Date($event) : new Date()"
     >
       <template #icon>
         <DateIcon class="w-4 h-4 dark:fill-white" />
@@ -265,7 +252,7 @@ export default defineComponent({
     :data="audits"
     :headers="[
       { field: 'createdAt', header: 'Date' },
-      { field: 'userId', header: 'User' },
+      { field: 'userName', header: 'User' },
       { field: 'table', header: 'Module' },
       { field: 'changes', header: 'Changes' },
       { field: 'action', header: 'Action' },

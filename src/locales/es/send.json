@@ -37,5 +37,20 @@
   "tags_required": "Las etiquetas son requeridas",
   "tooltip_send_to_contacts": "Enviar a lista específica de contactos",
   "tooltip_send_to_all": "Enviar a todos los contactos",
-  "tooltip_send_to_tags": "Enviar a contactos con tags específicos"
+  "tooltip_send_to_tags": "Enviar a contactos con tags específicos",
+  "tooltip_phone_mode": "Modo teléfono - Para mensajes SMS",
+  "tooltip_email_mode": "Modo escritorio - Para mensajes de correo",
+  "contact_chips": {
+    "search_placeholder": "Buscar contactos...",
+    "add_manually_help": "Busca contactos existentes o presiona Enter/coma para agregar {type} manualmente",
+    "emails": "emails",
+    "numbers": "números",
+    "no_name": "Sin nombre",
+    "search_min_chars": "Escribe al menos 2 caracteres para buscar",
+    "no_contacts_found": "No se encontraron contactos",
+    "more_count": "+{count} más",
+    "view_all": "Ver todos",
+    "selected_contacts": "Contactos seleccionados ({count})",
+    "close": "Cerrar"
+  }
 }

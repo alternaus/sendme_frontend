@@ -37,5 +37,20 @@
   "tags_required": "Tags are required",
   "tooltip_send_to_contacts": "Send to specific contact list",
   "tooltip_send_to_all": "Send to all contacts",
-  "tooltip_send_to_tags": "Send to contacts with specific tags"
+  "tooltip_send_to_tags": "Send to contacts with specific tags",
+  "tooltip_phone_mode": "Phone mode - For SMS messages",
+  "tooltip_email_mode": "Desktop mode - For email messages",
+  "contact_chips": {
+    "search_placeholder": "Search contacts...",
+    "add_manually_help": "Search existing contacts or press Enter/comma to add {type} manually",
+    "emails": "emails",
+    "numbers": "numbers",
+    "no_name": "No name",
+    "search_min_chars": "Type at least 2 characters to search",
+    "no_contacts_found": "No contacts found",
+    "more_count": "+{count} more",
+    "view_all": "View all",
+    "selected_contacts": "Selected contacts ({count})",
+    "close": "Close"
+  }
 }

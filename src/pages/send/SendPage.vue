@@ -54,7 +54,6 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
   <div class="flex flex-col items-center justify-start min-h-0 p-4">
-    <!-- Selector principal de canal -->
     <div class="w-full max-w-md mb-6">
       <AppSelectButton
         v-model="selectButtonValue"
@@ -64,8 +63,7 @@ export default defineComponent({
       />
     </div>
 
-    <!-- Diseño de teléfono solo para SMS -->
-    <div v-if="selectedOption === MessageChannel.SMS" class="container-phone" :title="$t('send.tooltip_phone_mode')">
+    <div v-if="selectedOption === MessageChannel.SMS" class="container-phone" v-tooltip.bottom="$t('send.tooltip_phone_mode')">
       <div class="container-phone-inner">
         <div class="flex justify-center items-center text-center mb-4">
           <small class="text-base font-semibold">{{ $t('send.instant_message') }}</small>
@@ -74,8 +72,7 @@ export default defineComponent({
       </div>
     </div>
 
-    <!-- Diseño de escritorio para Email -->
-    <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email" :title="$t('send.tooltip_email_mode')">
+    <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email" v-tooltip.bottom="$t('send.tooltip_email_mode')">
       <div class="container-email-inner">
         <div class="flex justify-center items-center text-center mb-4">
           <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
@@ -154,7 +151,7 @@ export default defineComponent({
 .container-email {
   width: min(95%, 600px);
   max-width: 800px;
-  height: min(calc(100vh - 100px), 650px);
+  height: min(calc(100vh - 100px), 800px);
   max-height: 650px;
   border-radius: 20px;
   background: #f6f6f6;

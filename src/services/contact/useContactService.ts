@@ -92,6 +92,16 @@ export const useContactService = () => {
     return privateApi.post<ISyncGoogleContact>('/contacts/google/sync')
   }
 
+  const searchContacts = async (query: string, limit: number = 10) => {
+    const response = await privateApi.get<IPaginationResponse<IContact>>('/contacts', {
+      params: {
+        search: query,
+        limit
+      },
+    })
+    return response.data || []
+  }
+
   return {
     getContacts,
     getContact,
@@ -103,6 +113,7 @@ export const useContactService = () => {
     getImportPreview,
     importContacts,
     getImportStatus,
-    syncGoogleContacts
+    syncGoogleContacts,
+    searchContacts
   }
 }

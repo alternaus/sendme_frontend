@@ -8,6 +8,8 @@ export interface IAudit {
   table:          string;
   timestamp:      Date;
   userId:string;
+  userEmail:     string;
+  userName:      string;
   organizationId:string;
   ipAddress:      string;
   createdAt:      Date;
