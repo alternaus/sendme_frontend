@@ -56,9 +56,9 @@ export default defineComponent({
   <div class="ml-4">
     <!-- Selector principal de canal -->
     <div class="max-w-md mb-6">
-      <AppSelectButton 
-        v-model="selectButtonValue" 
-        :options="sendOptions" 
+      <AppSelectButton
+        v-model="selectButtonValue"
+        :options="sendOptions"
         class="w-full"
         :allowEmpty="true"
       />
