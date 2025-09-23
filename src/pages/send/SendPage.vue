@@ -64,7 +64,7 @@ export default defineComponent({
       />
     </div>
 
-    <div v-if="selectedOption === MessageChannel.SMS" class="container-phone" v-tooltip.bottom="$t('send.tooltip_phone_mode')">
+    <div v-if="selectedOption === MessageChannel.SMS" class="container-phone">
       <div class="container-phone-inner">
         <div class="flex justify-center items-center text-center mb-4">
           <small class="text-base font-semibold">{{ $t('send.instant_message') }}</small>
@@ -73,7 +73,7 @@ export default defineComponent({
       </div>
     </div>
 
-    <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email" v-tooltip.bottom="$t('send.tooltip_email_mode')">
+    <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email">
       <div class="container-email-inner">
         <div class="flex justify-center items-center text-center mb-4">
           <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
@@ -141,6 +141,8 @@ export default defineComponent({
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(min(calc(100vh - 100px), 800px) - 60px);
+  scrollbar-width: thin;
+  scrollbar-color: #aaa transparent;
 
   @media (max-height: 700px) {
     max-height: calc(100vh - 180px);
@@ -157,9 +159,6 @@ export default defineComponent({
   @media (max-width: 400px) {
     max-height: calc(100vh - 200px);
   }
-
-  scrollbar-width: thin;
-  scrollbar-color: #aaa transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -249,6 +248,8 @@ export default defineComponent({
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(min(calc(100vh - 180px), 750px) - 80px);
+  scrollbar-width: thin;
+  scrollbar-color: #aaa transparent;
 
   @media (max-height: 700px) {
     max-height: calc(100vh - 220px);
@@ -273,9 +274,6 @@ export default defineComponent({
   @media (max-width: 480px) {
     max-height: calc(100vh - 190px);
   }
-
-  scrollbar-width: thin;
-  scrollbar-color: #aaa transparent;
 
   &::-webkit-scrollbar {
     width: 8px;
