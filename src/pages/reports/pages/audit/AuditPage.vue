@@ -73,6 +73,18 @@ export default defineComponent({
       fetchAudits()
     })
 
+    const dateRange = computed(() => {
+      const dates: Date[] = []
+      if (startDate.value) dates.push(startDate.value)
+      if (endDate.value) dates.push(endDate.value)
+      return dates
+    })
+
+    const handleDateRangeChange = (dates: Date[]) => {
+      startDate.value = dates[0] || null
+      endDate.value = dates[1] || null
+    }
+
     const fetchAudits = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
       limit.value = limitSize
@@ -168,6 +180,8 @@ export default defineComponent({
       table,
       startDate,
       endDate,
+      dateRange,
+      handleDateRangeChange,
       formatDate,
       dataChanges,
       handleViewChanges,
@@ -230,12 +244,9 @@ export default defineComponent({
 
     <AppDateRangePicker
       class="w-full col-span-1 sm:col-span-2"
-      :startDate="startDate?.toISOString() || ''"
-      :endDate="endDate?.toISOString() || ''"
-      :startLabel="$t('reports.common.start_date')"
-      :endLabel="$t('reports.common.end_date')"
-      @update:startDate="startDate = $event ? new Date($event) : new Date()"
-      @update:endDate="endDate = $event ? new Date($event) : new Date()"
+      :modelValue="dateRange"
+      :label="$t('reports.common.date_range')"
+      @update:modelValue="handleDateRangeChange"
     >
       <template #icon>
         <DateIcon class="w-4 h-4 dark:fill-white" />

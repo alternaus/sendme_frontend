@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PinIcon from '@/assets/svg/lucide/pin.svg?component'
+import PinIcon from '@/assets/svg/lucide/menu.svg?component'
 import XIcon from '@/assets/svg/lucide/x.svg?component'
 
 defineProps<{

@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 
+import Dialog from 'primevue/dialog'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
@@ -12,6 +13,7 @@ import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
+import TagIcon from '@/assets/svg/lucide/tag.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
 import SearchIcon from '@/assets/svg/search.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
@@ -25,6 +27,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import allCountriesData from '@/components/molecules/phone-input/all-countries'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useEnumValues } from '@/composables/useEnumValues'
 import { useStatusColors } from '@/composables/useStatusColors'
@@ -47,12 +50,19 @@ const { getContacts, deleteContact, exportContacts } = useContactService()
 const { getTableValueWithDefault, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
 
-const { search, name, countryCode, status, origin } = useContactFilter()
-const { activeFiltersCount } = useActiveFiltersCount({ search, name, countryCode, status, origin })
+const { search, name, countryCode, status, origin, tagIds } = useContactFilter()
+const { activeFiltersCount } = useActiveFiltersCount({ search, name, countryCode, status, origin, tagIds })
 
 const showMobileModal = ref(false)
 const showBulkSmsModal = ref(false)
 const showContactViewModal = ref(false)
+const showTagsModal = ref(false)
+const selectedContactTags = ref<Array<{id: string, name: string, color?: string}>>([])
+
+const handleShowAllTags = (tags: Array<{id: string, name: string, color?: string}>) => {
+  selectedContactTags.value = tags
+  showTagsModal.value = true
+}
 
 const loading = ref(false)
 const contacts = ref<IContact[]>([])
@@ -72,6 +82,14 @@ const countryByDial = new Map(allCountriesData.map(c => [c.dialCode, c]))
 const getCountryInfo = (dialCode: string) => countryByDial.get(dialCode)
 const toLowerCase = (s: string) => s.toLowerCase()
 
+const ensureColorWithHash = (color?: string): string => {
+  const sanitized = (color ?? '').trim().replace(/^#+/, '')
+  if (!sanitized) {
+    return '#6B7280' // Fallback color
+  }
+  return `#${sanitized}`
+}
+
 const { enumOptions: originOptions } = useEnumValues(ContactOrigin)
 
 const buildQuery = (): Record<string, unknown> => {
@@ -82,6 +100,9 @@ const buildQuery = (): Record<string, unknown> => {
   add('countryCode', countryCode.value)
   add('status', status.value)
   add('origin', origin.value)
+  if (tagIds.value && tagIds.value.length > 0) {
+    q['tagIds'] = tagIds.value
+  }
   return q
 }
 
@@ -100,7 +121,7 @@ const fetchContacts = async ({ pageSize = 1, limitSize = 10 } = {}) => {
   }
 }
 
-watchDebounced([search, name, countryCode, status, origin], () => {
+watchDebounced([search, name, countryCode, status, origin, tagIds], () => {
   fetchContacts({ pageSize: 1, limitSize: limit.value })
 }, { debounce: 300, maxWait: 1000, deep: true })
 
@@ -186,7 +207,7 @@ const headerActions = computed(() => {
     { label: t('contact.general.filters'), onClick: () => { showMobileModal.value = !showMobileModal.value }, type: ActionTypes.FILTER, badge: activeFiltersCount.value },
     { label: t('contact.actions.create'), onClick: () => push('/contacts/create'), type: ActionTypes.CREATE },
     { label: t('contact.actions.export'), onClick: () => exportContacts({
-        search: search.value, name: name.value, countryCode: countryCode.value, status: status.value, origin: origin.value,
+        search: search.value, name: name.value, countryCode: countryCode.value, status: status.value, origin: origin.value, tagIds: tagIds.value,
       }), type: ActionTypes.EXPORT },
     { label: t('contact.actions.import'), onClick: () => push('/contacts/import'), type: ActionTypes.IMPORT },
   ]
@@ -298,6 +319,15 @@ const headerActions = computed(() => {
         <DataOriginIcon class="w-6 h-4 dark:fill-white" />
       </template>
     </AppSelect>
+
+    <TagManager
+      v-model="tagIds"
+      :label="$t('contact.general.tags')"
+      :placeholder="$t('contact.general.select_tags')"
+      :allow-create="false"
+      :allow-manage="false"
+      class="w-full"
+    />
   </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
@@ -306,6 +336,7 @@ const headerActions = computed(() => {
       { field: 'name', header: 'Name' },
       { field: 'phone', header: 'Phone' },
       { field: 'email', header: 'Email' },
+      { field: 'tags', header: 'Tags' },
       { field: 'createdAt', header: 'Created At' },
       { field: 'origin', header: 'Origin' },
       { field: 'status', header: 'Status' },
@@ -348,6 +379,12 @@ const headerActions = computed(() => {
       <div class="flex items-center">
         <EmailIcon class="w-5 h-5 mr-2 fill-current" />
         <span> {{ $t('contact.general.email') }} </span>
+      </div>
+    </template>
+    <template #header-tags>
+      <div class="flex items-center">
+        <TagIcon class="w-5 h-5 mr-2" />
+        <span> {{ $t('contact.general.tags') }} </span>
       </div>
     </template>
     <template #header-createdAt>
@@ -402,6 +439,30 @@ const headerActions = computed(() => {
         {{ getTableValueWithDefault<string>(data, 'email', '-') }}
       </div>
     </template>
+    <template #custom-tags="{ data }">
+      <div class="flex justify-center">
+        <template v-if="data.tags && data.tags.length > 0">
+          <!-- Si hay solo un tag, mostrarlo -->
+          <AppTag
+            v-if="data.tags.length === 1"
+            :label="data.tags[0].name"
+            :style="{ backgroundColor: ensureColorWithHash(data.tags[0].color), color: 'white' }"
+            size="small"
+            class="text-xs"
+          />
+          <!-- Si hay múltiples tags, mostrar contador clickeable -->
+          <AppTag
+            v-else
+            :label="`${data.tags.length} tags`"
+            severity="info"
+            size="small"
+            class="text-xs cursor-pointer hover:bg-blue-600"
+            @click="handleShowAllTags(data.tags)"
+          />
+        </template>
+        <span v-else class="text-sm text-gray-400">-</span>
+      </div>
+    </template>
   </AppTable>
 
   <BulkSmsModal
@@ -415,4 +476,25 @@ const headerActions = computed(() => {
     :contact="contactToView"
     @edit-contact="handleEditContact"
   />
+
+  <!-- Tags Modal -->
+  <Dialog
+    v-model:visible="showTagsModal"
+    :header="$t('contact.general.tags')"
+    modal
+    :style="{ width: '400px' }"
+    :draggable="false"
+  >
+    <div class="space-y-3">
+      <div class="flex flex-wrap gap-2">
+        <AppTag
+          v-for="tag in selectedContactTags"
+          :key="tag.id"
+          :label="tag.name"
+          :style="{ backgroundColor: ensureColorWithHash(tag.color), color: 'white' }"
+          size="small"
+        />
+      </div>
+    </div>
+  </Dialog>
 </template>

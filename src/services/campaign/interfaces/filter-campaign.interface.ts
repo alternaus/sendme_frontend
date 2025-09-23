@@ -8,6 +8,7 @@ export interface IFilterCampaign {
   endDate?: string;
   channelId?:string;
   organizationId?:string;
+  tagIds?: string[];
   page?: number;
   limit?: number;
 }

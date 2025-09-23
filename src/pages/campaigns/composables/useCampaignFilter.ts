@@ -10,6 +10,7 @@ export interface CampaignFilterForm {
   status: string
   channelId: string
   dateRange: Date[]
+  tagIds: string[]
 }
 
 export interface CampaignFilterFormRef {
@@ -18,6 +19,7 @@ export interface CampaignFilterFormRef {
   status: Ref<string>
   channelId: Ref<string>
   dateRange: Ref<Date[]>
+  tagIds: Ref<string[]>
 }
 
 export const useCampaignFilter = () => {
@@ -32,6 +34,7 @@ export const useCampaignFilter = () => {
     status: yup.string().oneOf(validStatuses),
     channelId: yup.string(),
     dateRange: yup.array().of(yup.date()),
+    tagIds: yup.array().of(yup.string()),
   })
 
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<CampaignFilterForm>({
@@ -42,6 +45,7 @@ export const useCampaignFilter = () => {
       status: '',
       channelId: '',
       dateRange: [],
+      tagIds: [],
     },
     validateOnMount: false,
   })
@@ -51,6 +55,7 @@ export const useCampaignFilter = () => {
   const [status] = defineField('status')
   const [channelId] = defineField('channelId')
   const [dateRange] = defineField('dateRange')
+  const [tagIds] = defineField('tagIds')
 
   return {
     search,
@@ -58,6 +63,7 @@ export const useCampaignFilter = () => {
     status,
     channelId,
     dateRange,
+    tagIds,
     handleSubmit,
     resetForm,
     errors,

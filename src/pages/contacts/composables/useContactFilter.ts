@@ -12,6 +12,7 @@ export interface ContactFilterForm {
   countryCode: string
   status: ContactStatus
   origin?: ContactOrigin
+  tagIds?: string[]
 }
 
 export interface ContactFilterFormRef {
@@ -20,6 +21,7 @@ export interface ContactFilterFormRef {
   countryCode: Ref<string>
   status: Ref<ContactStatus | null>
   origin: Ref<ContactOrigin | null>
+  tagIds: Ref<string[]>
 }
 
 export const useContactFilter = () => {
@@ -33,6 +35,7 @@ export const useContactFilter = () => {
     countryCode: yup.string(),
     status: yup.string().oneOf(validStatuses),
     origin: yup.string(),
+    tagIds: yup.array().of(yup.string()),
   })
 
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<ContactFilterForm>({
@@ -43,6 +46,7 @@ export const useContactFilter = () => {
       countryCode: '',
       status:undefined,
       origin: undefined,
+      tagIds: [],
     },
     validateOnMount: false,
   })
@@ -52,6 +56,7 @@ export const useContactFilter = () => {
   const [countryCode] = defineField('countryCode')
   const [status] = defineField('status')
   const [origin] = defineField('origin')
+  const [tagIds] = defineField('tagIds')
 
   return {
     search,
@@ -59,6 +64,7 @@ export const useContactFilter = () => {
     countryCode,
     status,
     origin,
+    tagIds,
     handleSubmit,
     resetForm,
     errors,

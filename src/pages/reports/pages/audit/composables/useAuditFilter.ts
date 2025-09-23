@@ -5,16 +5,16 @@ import * as yup from 'yup'
 export interface AuditFilterForm {
   action: string
   table: string
-  startDate: Date
-  endDate: Date
+  startDate: Date | null
+  endDate: Date | null
   search: string
 }
 
 export interface AuditFilterFormRef {
   action: Ref<string>
   table: Ref<string>
-  startDate: Ref<Date>
-  endDate: Ref<Date>
+  startDate: Ref<Date | null>
+  endDate: Ref<Date | null>
   search: Ref<string>
 }
 
@@ -32,8 +32,8 @@ export const useAuditFilter = () => {
     initialValues: {
       action: '',
       table: '',
-      startDate: undefined,
-      endDate: undefined,
+      startDate: null,
+      endDate: null,
       search: '',
     },
     validateOnMount: false,

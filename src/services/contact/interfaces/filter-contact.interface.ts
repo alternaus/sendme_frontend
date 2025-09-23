@@ -6,6 +6,7 @@ export interface IFilterContact {
   countryCode?: string
   status?: string
   origin?: ContactOrigin
+  tagIds?: string[]
   page?: number
   limit?: number
 }

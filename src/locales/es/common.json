@@ -46,7 +46,7 @@
     "sms_flash": "SMS Flash",
     "message_send_success": "Mensaje enviado exitosamente",
     "error_sending_message": "Error al enviar el mensaje",
-    "selected": "seleccionado{count} | seleccionados",
+    "selected": "seleccionado | seleccionados",
     "save": "Guardar",
     "previous": "Anterior",
     "next": "Siguiente",

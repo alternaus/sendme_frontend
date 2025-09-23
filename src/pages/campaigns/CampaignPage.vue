@@ -25,6 +25,7 @@ import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.v
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useDateFormat } from '@/composables/useDateFormat'
 import { useStatusColors } from '@/composables/useStatusColors'
@@ -42,11 +43,11 @@ import { useCampaignFilter } from './composables/useCampaignFilter'
 const { t } = useI18n()
 const { push } = useRouter()
 const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
-const { search, name, status, channelId, dateRange } = useCampaignFilter()
+const { search, name, status, channelId, dateRange, tagIds } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
 const { formatDate } = useDateFormat()
-const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, channelId, dateRange })
+const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, channelId, dateRange, tagIds })
 const { getChannels } = useChannelService()
 
 const showMobileModal = ref(false)
@@ -107,6 +108,9 @@ const fetchCampaigns = async (
     if (channelId.value?.trim()) {
       filters.channelId = Number(channelId.value)
     }
+    if (tagIds.value && tagIds.value.length > 0) {
+      filters.tagIds = tagIds.value
+    }
     if (dateRange.value && dateRange.value.length === 2) {
       filters.startDate = dateRange.value[0].toISOString()
       filters.endDate = dateRange.value[1].toISOString()
@@ -147,7 +151,7 @@ const fetchChannels = async () => {
   }
 }
 
-watch([search, name, status, channelId], () => {
+watch([search, name, status, channelId, tagIds], () => {
   if (debounceTimer) {
     clearTimeout(debounceTimer)
   }
@@ -155,7 +159,7 @@ watch([search, name, status, channelId], () => {
   debounceTimer = setTimeout(() => {
     fetchCampaigns({ pageSize: 1, limitSize: 10 })
   }, 300)
-})
+}, { deep: true })
 
 watch(dateRange, (newValue, oldValue) => {
   const oldValidDates = oldValue?.filter(date => date !== null && date instanceof Date)?.length || 0
@@ -464,6 +468,15 @@ const campaignsWithFormattedFrequency = computed(() => {
         <DateIcon class="w-4 h-4 dark:fill-white" />
       </template>
     </AppDateRangePicker>
+
+    <TagManager
+      v-model="tagIds"
+      :label="$t('campaign.common.tags')"
+      :placeholder="$t('campaign.common.select_tags')"
+      :allow-create="false"
+      :allow-manage="false"
+      class="w-full"
+    />
   </AppFilterPanel>
 
   <!-- Modal de Resultados del Test -->
