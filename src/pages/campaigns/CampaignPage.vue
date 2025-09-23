@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
+import Dialog from 'primevue/dialog'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 
@@ -12,6 +13,7 @@ import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import DateEndIcon from '@/assets/svg/date_end.svg?component'
 import DateStartIcon from '@/assets/svg/date_start.svg?component'
+import TagIcon from '@/assets/svg/lucide/tag.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
 import SearchIcon from '@/assets/svg/search.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
@@ -51,7 +53,30 @@ const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, cha
 const { getChannels } = useChannelService()
 
 const showMobileModal = ref(false)
+const showTagsModal = ref(false)
+const selectedCampaignTags = ref<Array<{id: string, name: string, color?: string}>>([])
+
 const channels = ref<IChannel[]>([])
+
+const handleShowAllTags = (tags: Array<{id: string, name: string, color?: string}>) => {
+  selectedCampaignTags.value = tags
+  showTagsModal.value = true
+}
+
+const handleRowDoubleClick = (campaign: Record<string, unknown>) => {
+  const campaignId = campaign.id as string
+  if (campaignId) {
+    push(`/campaigns/edit/${campaignId}`)
+  }
+}
+
+const ensureColorWithHash = (color?: string): string => {
+  const sanitized = (color ?? '').trim().replace(/^#+/, '')
+  if (!sanitized) {
+    return '#6B7280' // Fallback color
+  }
+  return `#${sanitized}`
+}
 const loadingChannels = ref(false)
 const toast = useToast()
 const confirm = useConfirm()
@@ -486,6 +511,27 @@ const campaignsWithFormattedFrequency = computed(() => {
     :test-results="testResults"
   />
 
+  <!-- Tags Modal -->
+  <Dialog
+    v-model:visible="showTagsModal"
+    :header="$t('campaign.common.tags')"
+    modal
+    :style="{ width: '400px' }"
+    :draggable="false"
+  >
+    <div class="space-y-3">
+      <div class="flex flex-wrap gap-2">
+        <AppTag
+          v-for="tag in selectedCampaignTags"
+          :key="tag.id"
+          :label="tag.name"
+          :style="{ backgroundColor: ensureColorWithHash(tag.color), color: 'white' }"
+          size="small"
+        />
+      </div>
+    </div>
+  </Dialog>
+
   <AppTable
     class="w-full mt-4"
     :data="campaignsWithFormattedFrequency"
@@ -493,6 +539,7 @@ const campaignsWithFormattedFrequency = computed(() => {
       { field: 'name', header: $t('campaign.form.name') },
       { field: 'frequency', header: $t('campaign.form.frequency') },
       { field: 'channelName', header: $t('campaign.form.channel') },
+      { field: 'tags', header: $t('campaign.common.tags') },
       { field: 'startDate', header: $t('campaign.form.start_date') },
       { field: 'endDate', header: $t('campaign.form.end_date') },
       { field: 'status', header: $t('campaign.form.status') },
@@ -515,6 +562,7 @@ const campaignsWithFormattedFrequency = computed(() => {
     }"
     @selection-change="handleSelectionChange"
     @page-change="({ pageSize }) => fetchCampaigns({ pageSize, limitSize: campaignMeta.limit })"
+    @row-double-click="handleRowDoubleClick"
   >
     <template #header-name>
       <div class="flex items-center">
@@ -532,6 +580,12 @@ const campaignsWithFormattedFrequency = computed(() => {
       <div class="flex items-center">
         <ChannelIcon class="w-5 h-5 mr-2 fill-current" />
         <span>{{ $t('campaign.form.channel') }}</span>
+      </div>
+    </template>
+    <template #header-tags>
+      <div class="flex items-center">
+        <TagIcon class="w-5 h-5 mr-2" />
+        <span>{{ $t('campaign.common.tags') }}</span>
       </div>
     </template>
     <template #header-startDate>
@@ -554,6 +608,30 @@ const campaignsWithFormattedFrequency = computed(() => {
     </template>
     <template #custom-channelName="{ data }">
       <div>{{ getNestedTableValue<string>(data, 'channel.name') || '-' }}</div>
+    </template>
+    <template #custom-tags="{ data }">
+      <div class="flex justify-center">
+        <template v-if="data.tags && data.tags.length > 0">
+          <!-- Si hay solo un tag, mostrarlo -->
+          <AppTag
+            v-if="data.tags.length === 1"
+            :label="data.tags[0].name"
+            :style="{ backgroundColor: ensureColorWithHash(data.tags[0].color), color: 'white' }"
+            size="small"
+            class="text-xs"
+          />
+          <!-- Si hay múltiples tags, mostrar contador clickeable -->
+          <AppTag
+            v-else
+            :label="`${data.tags.length} tags`"
+            severity="info"
+            size="small"
+            class="text-xs cursor-pointer hover:bg-blue-600"
+            @click="handleShowAllTags(data.tags)"
+          />
+        </template>
+        <span v-else class="text-sm text-gray-400">-</span>
+      </div>
     </template>
     <template #custom-frequency="{ data }">
       <div>
