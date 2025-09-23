@@ -888,10 +888,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@novu/js@^3.9.3":
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/@novu/js/-/js-3.9.3.tgz#0a9dc7702a4db778cf4085da1d19c73d537d0b5b"
-  integrity sha512-efbR8Tp8HeSyILkHgKeK0wHqz04nrfiw+bNEj77yapvxd7YVn300yzLnE15ASoEXJCEtSCRK0gsSqQLDKVqlYA==
+"@novu/js@^3.10.1":
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/@novu/js/-/js-3.10.1.tgz#0dad06b545d31ef71bcbd56cf374774c3546eb29"
+  integrity sha512-ht8bwg5vPkmoNxHDbTqBMaAuNzO4bqhVpwxzbWLYUdauj2cPd3taI9yuvXYwln9C6utNe6O1UiEJECdJM8fafg==
   dependencies:
     "@floating-ui/dom" "^1.6.13"
     "@kobalte/core" "^0.13.10"

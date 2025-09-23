@@ -27,11 +27,11 @@
             <div class="flex items-center gap-2">
               <div
                 class="w-3 h-3 rounded-full"
-                :style="{ backgroundColor: slotProps.option.color || '#6B7280' }"
+                :style="{ backgroundColor: slotProps.option.color || FALLBACK_TAG_COLOR }"
               />
               <span>{{ slotProps.option.name }}</span>
             </div>
-            <div class="flex items-center gap-1">
+            <div v-if="allowManage" class="flex items-center gap-1">
               <Button
                 icon="pi pi-pencil"
                 size="small"
@@ -57,7 +57,7 @@
         <template #chip="{ value }">
           <div
             class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white"
-            :style="{ backgroundColor: getTagColor(value) || '#6B7280' }"
+            :style="{ backgroundColor: getTagColor(value) || FALLBACK_TAG_COLOR }"
           >
             <span>{{ getTagName(value) }}</span>
           </div>
@@ -127,11 +127,11 @@
           <div class="flex items-center gap-2">
             <div
               class="w-3 h-3 rounded-full"
-              :style="{ backgroundColor: slotProps.option.color || '#6B7280' }"
+              :style="{ backgroundColor: slotProps.option.color || FALLBACK_TAG_COLOR }"
             />
             <span>{{ slotProps.option.name }}</span>
           </div>
-          <div class="flex items-center gap-1">
+          <div v-if="allowManage" class="flex items-center gap-1">
             <Button
               icon="pi pi-pencil"
               size="small"
@@ -304,6 +304,26 @@ const { t } = useI18n()
 const toast = useToast()
 const tagService = useTagService()
 
+const DEFAULT_TAG_COLOR = '#3B82F6'
+const FALLBACK_TAG_COLOR = '#6B7280'
+
+const ensureColorWithHash = (color?: string, fallback = DEFAULT_TAG_COLOR): string => {
+  const sanitized = (color ?? '').trim().replace(/^#+/, '')
+  if (!sanitized) {
+    return fallback
+  }
+  return `#${sanitized}`
+}
+
+const serializeColor = (color?: string, fallback = DEFAULT_TAG_COLOR): string => {
+  return ensureColorWithHash(color, fallback).replace('#', '')
+}
+
+const normalizeTag = (tag: ITag): ITag => ({
+  ...tag,
+  color: ensureColorWithHash(tag.color, FALLBACK_TAG_COLOR)
+})
+
 // Estado de datos
 const tags = ref<ITag[]>([])
 const selectedTags = ref<string[]>([])
@@ -340,7 +360,7 @@ const showCreateButton = computed(() => {
 const tagForm = ref<ICreateTag>({
   name: '',
   description: '',
-  color: '#3B82F6'
+  color: DEFAULT_TAG_COLOR
 })
 const formErrors = ref<Partial<Record<keyof ICreateTag, string>>>({})
 const editingTag = ref<ITag | null>(null)
@@ -351,7 +371,7 @@ const tagOptions = computed(() => {
   return tags.value.map(tag => ({
     id: tag.id,
     name: tag.name,
-    color: tag.color ? (tag.color.startsWith('#') ? tag.color : `#${tag.color}`) : '#6B7280',
+    color: ensureColorWithHash(tag.color, FALLBACK_TAG_COLOR),
     description: tag.description
   }))
 })
@@ -369,15 +389,14 @@ const getTagName = (tagId: string): string => {
 
 const getTagColor = (tagId: string): string => {
   const tag = tags.value.find(t => t.id === tagId)
-  if (!tag?.color) return '#6B7280'
-  return tag.color.startsWith('#') ? tag.color : `#${tag.color}`
+  return ensureColorWithHash(tag?.color, FALLBACK_TAG_COLOR)
 }
 
 // Métodos principales
 const loadTags = async () => {
   try {
     const response = await tagService.getTags()
-    tags.value = response
+    tags.value = response.map(normalizeTag)
   } catch (error) {
     console.error('Error loading tags:', error)
     toast.add({
@@ -409,14 +428,15 @@ const createTagFromFilter = async () => {
     const newTagData: ICreateTag = {
       name: tagName,
       description: '',
-      color: '3B82F6'
+      color: serializeColor(DEFAULT_TAG_COLOR)
     }
 
     const createdTag = await tagService.createTag(newTagData)
-    tags.value.push(createdTag)
+    const normalizedTag = normalizeTag(createdTag)
+    tags.value.push(normalizedTag)
 
     // Seleccionar el nuevo tag automáticamente
-    const updatedSelection = [...selectedTags.value, createdTag.id]
+    const updatedSelection = [...selectedTags.value, normalizedTag.id]
     selectedTags.value = updatedSelection
     emit('update:modelValue', updatedSelection)
     emit('change', updatedSelection)
@@ -443,7 +463,7 @@ const openCreateModal = () => {
   tagForm.value = {
     name: '',
     description: '',
-    color: '#3B82F6'
+    color: DEFAULT_TAG_COLOR
   }
   formErrors.value = {}
   showCreateModal.value = true
@@ -454,11 +474,11 @@ const editTag = (option: { id: string; name: string; color?: string; description
   const fullTag = tags.value.find(tag => tag.id === option.id)
   if (fullTag) {
     editingTag.value = fullTag
-    const tagColor = fullTag.color || '#3B82F6'
+    const tagColor = ensureColorWithHash(fullTag.color)
     tagForm.value = {
       name: fullTag.name,
       description: fullTag.description || '',
-      color: tagColor.startsWith('#') ? tagColor : `#${tagColor}`
+      color: tagColor
     }
     formErrors.value = {}
     showCreateModal.value = true
@@ -508,13 +528,13 @@ const handleSubmit = async () => {
       const updateData: IUpdateTag = {
         name: tagForm.value.name.trim(),
         description: tagForm.value.description?.trim() || undefined,
-        color: (tagForm.value.color || '#3B82F6').replace('#', '')
+        color: serializeColor(tagForm.value.color)
       }
 
       const updatedTag = await tagService.updateTag(editingTag.value.id, updateData)
       const index = tags.value.findIndex(t => t.id === editingTag.value!.id)
       if (index !== -1) {
-        tags.value[index] = updatedTag
+        tags.value[index] = normalizeTag(updatedTag)
       }
 
       toast.add({
@@ -527,11 +547,12 @@ const handleSubmit = async () => {
       const newTagData: ICreateTag = {
         name: tagForm.value.name.trim(),
         description: tagForm.value.description?.trim() || '',
-        color: (tagForm.value.color || '#3B82F6').replace('#', '')
+        color: serializeColor(tagForm.value.color)
       }
 
       const createdTag = await tagService.createTag(newTagData)
-      tags.value.push(createdTag)
+      const normalizedTag = normalizeTag(createdTag)
+      tags.value.push(normalizedTag)
 
       toast.add({
         severity: 'success',

@@ -1,11 +1,11 @@
-import { computed, type Ref,ref } from 'vue'
+import { computed, type Ref, ref } from 'vue'
 
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
 
-import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants/message.constants'
-import type { IBatchMessage } from '@/services/send/interfaces/message.interface'
+import { MESSAGE_LIMITS, MessageChannel } from '@/services/send/constants'
+import type { MessageEnqueueResult } from '@/services/send/interfaces/message.interface'
 import { useSendService } from '@/services/send/useSendService'
 
 interface UseSendMessageOptions {
@@ -24,7 +24,7 @@ export interface UseSendMessageReturn {
   country: Ref<string | undefined>
   setContacts: (contacts: string[]) => void
   setCountry: (country?: string) => void
-  send: () => Promise<IBatchMessage | null>
+  send: () => Promise<MessageEnqueueResult | null>
   reset: () => void
 }
 
@@ -63,7 +63,7 @@ export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMess
     country.value = value
   }
 
-  const buildPayload = (): IBatchMessage => ({
+  const buildPayload = () => ({
     channel: channel.value,
     message: message.value.trim(),
     sendToAll: sendToAll.value,
@@ -81,7 +81,7 @@ export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMess
     country.value = undefined
   }
 
-  const send = async () => {
+  const send = async (): Promise<MessageEnqueueResult | null> => {
     if (!canSend.value) {
       toast.add({
         severity: 'warn',
@@ -104,3 +104,4 @@ export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMess
 
   return { channel, message, subject, isSending, maxLength, canSend, setContacts, setCountry, country, send, reset }
 }
+

@@ -27,5 +27,15 @@
     "sms_placeholder": "Write your SMS message here...",
     "whatsapp_placeholder": "Write your WhatsApp message here...",
     "email_placeholder": "Write your email message here..."
-  }
+  },
+  "send_to": {
+    "contacts": "Contact list",
+    "all": "All",
+    "tags": "Tags"
+  },
+  "select_tags": "Select tags",
+  "tags_required": "Tags are required",
+  "tooltip_send_to_contacts": "Send to specific contact list",
+  "tooltip_send_to_all": "Send to all contacts",
+  "tooltip_send_to_tags": "Send to contacts with specific tags"
 }

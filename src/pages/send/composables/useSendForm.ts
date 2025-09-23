@@ -6,11 +6,19 @@ import * as yup from 'yup'
 import { MessageChannel, SmsMessageType } from '@/services/send/constants/message.constants'
 import { validateContactsRequiredWhenSpecific } from '@/services/send/validators/contacts-required-when-specific.validator'
 
+export enum SendType {
+  CONTACTS = 'contacts',
+  ALL = 'all',
+  TAGS = 'tags'
+}
+
 export interface SendMessageForm {
   channel: MessageChannel;
   message: string;
   sendToAll?: boolean;
+  sendToTags?: boolean; // Nueva opción para tags
   contacts: string[];
+  tagIds?: string[]; // Nueva propiedad para IDs de tags
   country: string;
   subject?: string; // Para emails
   messageType?: SmsMessageType; // Para SMS
@@ -20,7 +28,9 @@ export interface SendMessageFormRef {
   channel: Ref<MessageChannel>;
   message: Ref<string>;
   sendToAll: Ref<boolean>;
+  sendToTags: Ref<boolean>;
   contacts: Ref<string[]>;
+  tagIds: Ref<string[]>;
   country: Ref<string>;
   subject: Ref<string>;
   messageType: Ref<SmsMessageType>;
@@ -39,14 +49,20 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
     channel: yup.string().oneOf(Object.values(MessageChannel)).required(),
     message: yup.string().required(),
     sendToAll: yup.boolean().optional(),
-    contacts: yup.array().of(yup.string()).when(['sendToAll', 'channel'], {
-      is: (sendToAll: boolean, _channel: MessageChannel) => !sendToAll,
+    sendToTags: yup.boolean().optional(),
+    contacts: yup.array().of(yup.string()).when(['sendToAll', 'sendToTags', 'channel'], {
+      is: (sendToAll: boolean, sendToTags: boolean, _channel: MessageChannel) => !sendToAll && !sendToTags,
       then: (schema) => schema.min(1, t('send.contacts_required')).test('contacts-valid', function(value) {
         const { channel } = this.parent
         if (!value || value.length === 0) return false
         const contacts = value.filter((c): c is string => typeof c === 'string')
         return validateContactsRequiredWhenSpecific(contacts, false, channel)
       }),
+      otherwise: (schema) => schema.optional(),
+    }),
+    tagIds: yup.array().of(yup.string()).when(['sendToTags'], {
+      is: (sendToTags: boolean) => sendToTags,
+      then: (schema) => schema.min(1, t('send.tags_required')),
       otherwise: (schema) => schema.optional(),
     }),
     country: yup.string(),
@@ -69,7 +85,9 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       channel: defaultChannel,
       message: '',
       sendToAll: false,
+      sendToTags: false,
       contacts: [],
+      tagIds: [],
       country: 'CO',
       subject: '',
       messageType: SmsMessageType.SMS,
@@ -80,7 +98,9 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
   const [channel] = defineField('channel')
   const [message] = defineField('message')
   const [sendToAll] = defineField('sendToAll')
+  const [sendToTags] = defineField('sendToTags')
   const [contacts] = defineField('contacts')
+  const [tagIds] = defineField('tagIds')
   const [country] = defineField('country')
   const [subject] = defineField('subject')
   const [messageType] = defineField('messageType')
@@ -91,7 +111,9 @@ export const useFormSendMessage = (defaultChannel: MessageChannel = MessageChann
       channel,
       message,
       sendToAll,
+      sendToTags,
       contacts,
+      tagIds,
       country,
       subject,
       messageType,

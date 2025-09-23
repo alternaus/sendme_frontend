@@ -1,16 +1,18 @@
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from 'vue'
+import { computed, defineComponent, ref, watchEffect } from 'vue'
 
 import BtnSend from '@/assets/svg/btn_send.svg?component'
+import CredentialIcon from '@/assets/svg/credential.svg?component'
 import EmailIcon from '@/assets/svg/email.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { useSendService } from '@/services/send/useSendService'
+import { MessageChannel } from '@/services/send/constants'
+import { useEmailService } from '@/services/send/useEmailService'
 
-import { MessageChannel } from '../../../services/send/constants/message.constants'
-import { useFormSendMessage } from '../../send/composables/useSendForm'
+import { SendType, useFormSendMessage } from '../../send/composables/useSendForm'
 
 export default defineComponent({
   name: 'SendEmailFormPage',
@@ -20,11 +22,14 @@ export default defineComponent({
     EmailIcon,
     BtnSend,
     ContactsIcon,
+    CredentialIcon,
+    TagManager,
   },
   setup() {
     const contactsInput = ref('')
     const contactsCount = ref<number | null>(null)
-    const sendService = useSendService()
+    const sendType = ref<SendType>(SendType.CONTACTS)
+    const emailService = useEmailService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.EMAIL)
 
@@ -44,25 +49,48 @@ export default defineComponent({
     })
 
     watchEffect(() => {
+      form.sendToAll.value = sendType.value === SendType.ALL
+      form.sendToTags.value = sendType.value === SendType.TAGS
+    })
+
+    watchEffect(() => {
       form.contacts.value = contactsInput.value
         .split(',')
         .map((email) => email.trim())
         .filter((email) => email.length > 0)
     })
 
+    const shouldShowSubject = computed(() => {
+      if (sendType.value === SendType.ALL) return true
+      if (sendType.value === SendType.CONTACTS) return contactsInput.value.length > 0
+      if (sendType.value === SendType.TAGS) return (form.tagIds.value?.length ?? 0) > 0
+      return false
+    })
+
+    const shouldShowMessageEditor = computed(() => {
+      return shouldShowSubject.value && (form.subject.value?.length ?? 0) > 0
+    })
+
     const sendMessage = handleSubmit(async (values) => {
-      const batchMessage = {
-        channel: MessageChannel.EMAIL,
+      const basePayload = {
+        subject: values.subject?.trim() ?? '',
         message: values.message,
-        sendToAll: values.sendToAll,
-        contacts: values.sendToAll ? [] : values.contacts,
-        subject: values.subject,
       }
 
-      const response = await sendService.sendBatchMessage(batchMessage)
+      let response
+
+      if (values.sendToAll) {
+        response = await emailService.sendEmailToAll(basePayload)
+      } else if (values.sendToTags) {
+        response = await emailService.sendEmailToTags({ ...basePayload, tagIds: values.tagIds || [] })
+      } else {
+        response = await emailService.sendEmailToContacts({ ...basePayload, contacts: values.contacts })
+      }
+
       if (response) {
         resetForm()
         contactsInput.value = ''
+        sendType.value = SendType.CONTACTS
       }
     })
 
@@ -73,6 +101,10 @@ export default defineComponent({
       setValues,
       contactsInput,
       contactsCount,
+      sendType,
+      SendType,
+      shouldShowSubject,
+      shouldShowMessageEditor,
     }
   },
 })
@@ -80,33 +112,45 @@ export default defineComponent({
 
 <template>
   <div class="space-y-3">
-    <!-- Step 1: Contact selection (always visible) -->
+    <!-- Step 1: Tipo de envío (contactos, todos, o tags) -->
     <div class="flex justify-center items-center gap-2">
       <div
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
-        :class="!form.sendToAll.value ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
-        @click="form.sendToAll.value = false"
+        :class="sendType === SendType.CONTACTS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.CONTACTS"
+        :title="$t('send.tooltip_send_to_contacts')"
       >
         <EmailIcon class="w-5 h-5 dark:fill-white" />
       </div>
       <div
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
-        :class="form.sendToAll.value ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
-        @click="form.sendToAll.value = true"
+        :class="sendType === SendType.ALL ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.ALL"
+        :title="$t('send.tooltip_send_to_all')"
       >
         <ContactsIcon class="w-5 h-5 dark:fill-white" />
+      </div>
+      <div
+        class="p-1.5 cursor-pointer rounded-lg transition-colors"
+        :class="sendType === SendType.TAGS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.TAGS"
+        :title="$t('send.tooltip_send_to_tags')"
+      >
+        <CredentialIcon class="w-5 h-5 dark:fill-white" />
       </div>
     </div>
 
     <!-- Contact count display (when sending to all) -->
-    <div v-if="form.sendToAll.value" class="text-center">
+    <div v-if="sendType === SendType.ALL" class="text-center">
       <small class="text-xs text-gray-500 dark:text-gray-400">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
 
-    <!-- Step 2: Contact input (progressive - only when not sending to all) -->
-    <div v-if="!form.sendToAll.value">
+    <!-- Step 2: Input específico según tipo de envío (progresivo) -->
+
+    <!-- Contact input (when not sending to all) -->
+    <div v-if="sendType === SendType.CONTACTS">
       <AppInput
         v-model="contactsInput"
         :placeholder="$t('send.enter_emails_separated_by_commas')"
@@ -116,8 +160,21 @@ export default defineComponent({
       </AppInput>
     </div>
 
+    <!-- Selector de tags -->
+    <div v-if="sendType === SendType.TAGS">
+      <TagManager
+        v-model="form.tagIds.value"
+        :placeholder="$t('send.select_tags')"
+        :allow-create="false"
+        :allow-manage="false"
+        :error-message="errors.tagIds"
+        :show-error-message="!!errors.tagIds"
+        class="w-full"
+      />
+    </div>
+
     <!-- Step 3: Email subject (progressive - show when contact selection is made) -->
-    <div v-if="form.sendToAll.value || (!form.sendToAll.value && contactsInput.length > 0)">
+    <div v-if="shouldShowSubject">
       <AppInput
         v-model="form.subject.value"
         :placeholder="$t('send.email_subject')"
@@ -127,8 +184,8 @@ export default defineComponent({
       </AppInput>
     </div>
 
-    <!-- Step 4: Message editor (progressive - show when subject has content or contact selection for all) -->
-    <div v-if="(form.sendToAll.value && (form.subject.value?.length ?? 0) > 0) || (!form.sendToAll.value && contactsInput.length > 0 && (form.subject.value?.length ?? 0) > 0)">
+    <!-- Step 4: Message editor (progressive - show when subject has content) -->
+    <div v-if="shouldShowMessageEditor">
       <AppEditor
         v-model="form.message.value"
         content-type="html"
@@ -146,3 +203,6 @@ export default defineComponent({
     </div>
   </div>
 </template>
+
+
+

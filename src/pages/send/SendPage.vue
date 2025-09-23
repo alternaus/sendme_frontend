@@ -53,9 +53,9 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
-  <div class="ml-4">
+  <div class="flex flex-col items-center justify-start min-h-0 p-4">
     <!-- Selector principal de canal -->
-    <div class="max-w-md mb-6">
+    <div class="w-full max-w-md mb-6">
       <AppSelectButton
         v-model="selectButtonValue"
         :options="sendOptions"
@@ -89,9 +89,10 @@ export default defineComponent({
 </template>
 <style scoped lang="scss">
 .container-phone {
-  width: 80vw;
+  width: min(90%, 340px);
   max-width: 340px;
-  height: 75vh;
+  height: min(calc(100vh - 200px), 600px);
+  max-height: 600px;
   border-radius: 50px;
   background: #f6f6f6;
   border: 6px solid #333;
@@ -100,6 +101,21 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   padding: 15px;
+  margin: 0 auto;
+
+  @media (max-height: 600px) {
+    height: calc(100vh - 120px);
+    max-height: none;
+  }
+
+  @media (max-width: 400px) {
+    width: 95%;
+    max-width: 300px;
+    border-radius: 30px;
+    border-width: 4px;
+    padding: 12px;
+  }
+
   .dark & {
     background: #1e1e1e;
     border-color: #555;
@@ -111,7 +127,11 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(75vh - 50px);
+  max-height: calc(min(calc(100vh - 100px), 600px) - 50px);
+
+  @media (max-height: 600px) {
+    max-height: calc(100vh - 170px);
+  }
 
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
@@ -132,9 +152,10 @@ export default defineComponent({
 }
 
 .container-email {
-  width: 90vw;
-  max-width: 600px;
-  height: 75vh;
+  width: min(95%, 600px);
+  max-width: 800px;
+  height: min(calc(100vh - 100px), 650px);
+  max-height: 650px;
   border-radius: 20px;
   background: #f6f6f6;
   border: 3px solid #333;
@@ -143,6 +164,29 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   padding: 20px;
+  margin: 0 auto;
+
+  @media (max-height: 650px) {
+    height: calc(100vh - 120px);
+    max-height: none;
+  }
+
+  @media (max-width: 640px) {
+    width: 98%;
+    max-width: 500px;
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin: 0;
+  }
+
   .dark & {
     background: #1e1e1e;
     border-color: #555;
@@ -154,7 +198,11 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(75vh - 60px);
+  max-height: calc(min(calc(100vh - 200px), 650px) - 60px);
+
+  @media (max-height: 650px) {
+    max-height: calc(100vh - 180px);
+  }
 
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;

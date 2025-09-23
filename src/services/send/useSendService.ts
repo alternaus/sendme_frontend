@@ -4,81 +4,100 @@ import { useI18n } from 'vue-i18n'
 
 import { useApiClient } from '@/composables/useApiClient'
 
-import type { IBatchMessage, IMessage } from './interfaces/message.interface'
+import { MessageChannel, SmsMessageType } from './constants/message.constants'
+import type {
+  MessageEnqueueResult,
+  SmsMessageBasePayload,
+} from './interfaces/message.interface'
+import { useEmailService } from './useEmailService'
+import { useSmsService } from './useSmsService'
+
+interface SendBatchMessageInput {
+  channel: MessageChannel
+  message: string
+  subject?: string
+  contacts?: string[]
+  tagIds?: string[]
+  sendToAll?: boolean
+  country?: string
+  messageType?: SmsMessageType
+}
 
 export const useSendService = () => {
   const privateApi = useApiClient(true)
   const toast = useToast()
   const { t } = useI18n()
 
-  const sendBatchMessage = async (message: IBatchMessage) => {
+  const { sendEmailToContacts, sendEmailToAll, sendEmailToTags } = useEmailService()
+  const { sendSmsToContacts, sendSmsToAll, sendSmsToTags } = useSmsService()
+
+  const notifySuccess = () => {
+    toast.add({
+      severity: 'success',
+      summary: t('common.general.success'),
+      detail: t('send.message_send_success'),
+      life: 3000,
+    })
+  }
+
+  const notifyError = () => {
+    toast.add({
+      severity: 'error',
+      summary: t('common.general.error'),
+      detail: t('send.error_sending_message'),
+      life: 3000,
+    })
+  }
+
+  const sendBatchMessage = async (payload: SendBatchMessageInput): Promise<MessageEnqueueResult | null> => {
+    if (payload.channel === MessageChannel.EMAIL) {
+      const base = {
+        subject: payload.subject ?? '',
+        message: payload.message,
+      }
+
+      if (payload.sendToAll) {
+        return sendEmailToAll(base)
+      }
+
+      if (payload.tagIds && payload.tagIds.length > 0) {
+        return sendEmailToTags({ ...base, tagIds: payload.tagIds })
+      }
+
+      return sendEmailToContacts({ ...base, contacts: payload.contacts ?? [] })
+    }
+
+    if (payload.channel === MessageChannel.SMS) {
+      const base: SmsMessageBasePayload = {
+        message: payload.message,
+        ...(payload.country ? { country: payload.country } : {}),
+        ...(payload.messageType ? { type: payload.messageType } : {}),
+      }
+
+      if (payload.sendToAll) {
+        return sendSmsToAll(base)
+      }
+
+      if (payload.tagIds && payload.tagIds.length > 0) {
+        return sendSmsToTags({ ...base, tagIds: payload.tagIds })
+      }
+
+      return sendSmsToContacts({ ...base, contacts: payload.contacts ?? [] })
+    }
+
+    // Legacy fallback for unsupported channels (e.g., WhatsApp)
     try {
-      const response = await privateApi.post<IBatchMessage, IBatchMessage>(`/messages/send`, message)
-      toast.add({
-        severity: 'success',
-        summary: t('common.general.success'),
-        detail: t('send.message_send_success'),
-        life: 3000,
-      })
+      const response = await privateApi.post<MessageEnqueueResult, SendBatchMessageInput>(
+        '/messages/send',
+        payload,
+      )
+      notifySuccess()
       return response
     } catch {
-      toast.add({
-        severity: 'error',
-        summary: t('common.general.error'),
-        detail: t('send.error_sending_message'),
-        life: 3000,
-      })
-
+      notifyError()
       return null
     }
   }
 
-  const sendMessageSms = async (message: IMessage) => {
-    try {
-
-      const response = await privateApi.post<IMessage, IMessage>(`/messages/send`, message)
-
-      toast.add({
-        severity: 'success',
-        summary: t('common.general.success'),
-        detail: t('send.message_send_success'),
-        life: 3000,
-      })
-      return response
-    } catch {
-      toast.add({
-        severity: 'error',
-        summary: t('common.general.error'),
-        detail: t('send.error_sending_message'),
-        life: 3000,
-      })
-
-      return null
-    }
-  }
-
-  const sendSmsToAllContacts = async (message: IMessage) => {
-    try {
-
-      const response = await privateApi.post<IMessage, IMessage>(`/messages/send`, message)
-      toast.add({
-        severity: 'success',
-        summary: t('common.general.success'),
-        detail: t('send.message_send_success'),
-        life: 3000,
-      })
-      return response
-    } catch {
-      toast.add({
-        severity: 'error',
-        summary: t('common.general.error'),
-        detail: t('send.error_sending_message'),
-        life: 3000,
-      })
-
-      return null
-    }
-  }
-
-  return { sendBatchMessage, sendMessageSms, sendSmsToAllContacts }
+  return { sendBatchMessage }
 }
