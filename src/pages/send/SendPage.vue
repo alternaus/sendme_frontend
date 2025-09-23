@@ -38,6 +38,7 @@ export default defineComponent({
         selectedOption.value = (value === '' || value === null) ? null : value as MessageChannel
       }
     })
+
     return {
       router,
       IconTypes,
@@ -53,7 +54,7 @@ export default defineComponent({
 <template>
   <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
-  <div class="flex flex-col items-center justify-start min-h-0 p-4">
+  <div class="flex flex-col items-center justify-start min-h-0 px-4">
     <div class="w-full max-w-md mb-6">
       <AppSelectButton
         v-model="selectButtonValue"
@@ -86,31 +87,46 @@ export default defineComponent({
 </template>
 <style scoped lang="scss">
 .container-phone {
-  width: min(90%, 340px);
-  max-width: 340px;
-  height: min(calc(100vh - 200px), 600px);
-  max-height: 600px;
-  border-radius: 50px;
+  width: min(95%, 500px);
+  max-width: 500px;
+  height: min(calc(100vh - 150px), 800px);
+  max-height: 800px;
+  border-radius: 35px;
   background: #f6f6f6;
   border: 6px solid #333;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: 20px;
   margin: 0 auto;
+  transition: all 0.3s ease;
 
-  @media (max-height: 600px) {
-    height: calc(100vh - 120px);
+  @media (max-height: 700px) {
+    height: calc(90vh - 120px);
     max-height: none;
   }
 
-  @media (max-width: 400px) {
+  @media (max-height: 600px) {
+    height: calc(90vh - 100px);
+    max-height: none;
+  }
+
+  @media (max-width: 600px) {
     width: 95%;
-    max-width: 300px;
-    border-radius: 30px;
+    max-width: 450px;
+    border-radius: 25px;
     border-width: 4px;
+    padding: 15px;
+    height: min(calc(90vh - 160px), 700px);
+  }
+
+  @media (max-width: 400px) {
+    width: 98%;
+    max-width: 350px;
+    border-radius: 20px;
     padding: 12px;
+    height: calc(90vh - 140px);
   }
 
   .dark & {
@@ -124,10 +140,22 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(min(calc(100vh - 100px), 600px) - 50px);
+  max-height: calc(min(calc(100vh - 100px), 800px) - 60px);
+
+  @media (max-height: 700px) {
+    max-height: calc(100vh - 180px);
+  }
 
   @media (max-height: 600px) {
-    max-height: calc(100vh - 170px);
+    max-height: calc(100vh - 160px);
+  }
+
+  @media (max-width: 600px) {
+    max-height: calc(min(calc(100vh - 220px), 700px) - 50px);
+  }
+
+  @media (max-width: 400px) {
+    max-height: calc(100vh - 200px);
   }
 
   scrollbar-width: thin;
@@ -149,39 +177,64 @@ export default defineComponent({
 }
 
 .container-email {
-  width: min(95%, 600px);
-  max-width: 800px;
-  height: min(calc(100vh - 100px), 800px);
-  max-height: 650px;
-  border-radius: 20px;
+  width: min(98%, 1200px);
+  max-width: 1200px;
+  height: min(calc(100vh - 120px), 750px);
+  max-height: 750px;
+  border-radius: 15px;
   background: #f6f6f6;
   border: 3px solid #333;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 25px;
   margin: 0 auto;
+  transition: all 0.3s ease;
 
-  @media (max-height: 650px) {
-    height: calc(100vh - 120px);
+  @media (max-height: 700px) {
+    height: calc(90vh - 140px);
     max-height: none;
   }
 
-  @media (max-width: 640px) {
+  @media (max-height: 600px) {
+    height: calc(90vh - 120px);
+    max-height: none;
+  }
+
+  @media (max-width: 1024px) {
+    width: min(96%, 900px);
+    max-width: 900px;
+    padding: 20px;
+    height: min(calc(90vh - 130px), 700px);
+    max-height: 700px;
+  }
+
+  @media (max-width: 768px) {
     width: 98%;
-    max-width: 500px;
-    padding: 15px;
-    border-radius: 15px;
+    max-width: 700px;
+    padding: 18px;
+    border-radius: 12px;
+    height: min(calc(90vh - 140px), 650px);
+    max-height: 650px;
+  }
+
+  @media (max-width: 640px) {
+    width: min(98%, calc(100vw - 16px));
+    max-width: none;
+    border-radius: 8px;
+    margin: 8px;
+    padding: 16px;
+    height: calc(90vh - 150px);
+    max-height: none;
   }
 
   @media (max-width: 480px) {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin: 0;
+    width: min(96%, calc(100vw - 24px));
+    margin: 12px;
+    padding: 12px;
+    height: calc(90vh - 130px);
+    border-radius: 6px;
   }
 
   .dark & {
@@ -195,10 +248,30 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(min(calc(100vh - 200px), 650px) - 60px);
+  max-height: calc(min(calc(100vh - 180px), 750px) - 80px);
 
-  @media (max-height: 650px) {
-    max-height: calc(100vh - 180px);
+  @media (max-height: 700px) {
+    max-height: calc(100vh - 220px);
+  }
+
+  @media (max-height: 600px) {
+    max-height: calc(100vh - 200px);
+  }
+
+  @media (max-width: 1024px) {
+    max-height: calc(min(calc(100vh - 190px), 700px) - 70px);
+  }
+
+  @media (max-width: 768px) {
+    max-height: calc(min(calc(100vh - 200px), 650px) - 65px);
+  }
+
+  @media (max-width: 640px) {
+    max-height: calc(100vh - 215px);
+  }
+
+  @media (max-width: 480px) {
+    max-height: calc(100vh - 190px);
   }
 
   scrollbar-width: thin;
