@@ -43,6 +43,7 @@
     "import_option_google": "Google Contacts",
     "import_option_excel": "Excel/CSV",
     "select_file": "Select file",
+    "cancel": "Cancel",
     "tags_section_title": "Tags (optional)",
     "select_tags_placeholder": "Select tags for imported contacts",
     "tags_description": "Imported contacts will be automatically associated with the selected tags"
