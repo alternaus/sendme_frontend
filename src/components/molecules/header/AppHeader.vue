@@ -8,6 +8,7 @@ import CampaignsIcon from '@/assets/svg/header/campaigns.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import ReportsIcon from '@/assets/svg/header/reports.svg?component'
 import SettingsIcon from '@/assets/svg/header/settings.svg?component'
+import CopyIcon from '@/assets/svg/lucide/copy.svg?component'
 import EyeIcon from '@/assets/svg/lucide/eye.svg?component'
 import PencilIcon from '@/assets/svg/lucide/pencil.svg?component'
 import PlusIcon from '@/assets/svg/lucide/plus.svg?component'
@@ -69,6 +70,7 @@ const ActionIconComponents: Record<ActionTypes, FunctionalComponent> = {
   [ActionTypes.SEND]: SendIcon,
   [ActionTypes.BULK_SMS]: SendIcon,
   [ActionTypes.FILTER]: FilterIcon,
+  [ActionTypes.DUPLICATE]: CopyIcon,
 }
 
 const IconComponents: Record<IconTypes, FunctionalComponent> = {

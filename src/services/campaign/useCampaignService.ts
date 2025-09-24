@@ -3,6 +3,7 @@ import { useApiClient } from '@/composables/useApiClient'
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
 import type { ICampaign } from './interfaces/campaign.interface'
 import type { ICreateCampaign } from './interfaces/create-campaign.interface'
+import type { IDuplicateCampaign } from './interfaces/duplicate-campaign.interface'
 import type { IFilterCampaign } from './interfaces/filter-campaign.interface'
 import type { ITestCampaignRequest, ITestCampaignResponse, ITestRulesRequest, ITestRulesResponse } from './interfaces/test-rules.interface'
 import type { IUpdateCampaign } from './interfaces/update-campaign.interface'
@@ -41,6 +42,10 @@ export const useCampaignService = () => {
     return privateApi.post<ITestCampaignResponse, ITestCampaignRequest>('/campaigns/test', testRequest)
   }
 
+  const duplicateCampaign = async (id: string, data: IDuplicateCampaign) => {
+    return privateApi.post<ICampaign, IDuplicateCampaign>(`/campaigns/${id}/duplicate`, data)
+  }
+
   return {
     getCampaigns,
     getCampaign,
@@ -48,6 +53,7 @@ export const useCampaignService = () => {
     updateCampaign,
     deleteCampaign,
     testCampaignRules,
-    testCampaign
+    testCampaign,
+    duplicateCampaign
   }
 }

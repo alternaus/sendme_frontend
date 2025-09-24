@@ -50,7 +50,9 @@
   },
   "form": {
     "campaign_name": "Campaign Name",
+    "name_placeholder": "Enter campaign name",
     "description": "Description",
+    "description_placeholder": "Enter optional description",
     "message_content": "Message Content",
     "content_type": "Content Type",
     "status": "Status",
@@ -180,7 +182,14 @@
     "success_removed_multiple": "{count} campaigns successfully deleted",
     "error_removed": "Error deleting campaign",
     "success_exported": "Campaigns successfully exported",
-    "error_exported": "Error exporting campaigns"
+    "error_exported": "Error exporting campaigns",
+    "duplicate_campaign": "Duplicate Campaign",
+    "copy": "Copy"
+  },
+  "duplicate": {
+    "single_selection_warning": "Select a campaign to duplicate",
+    "success": "Campaign duplicated successfully",
+    "error": "Error duplicating campaign"
   },
   "delete_confirmation": {
     "title": "Confirm deletion",

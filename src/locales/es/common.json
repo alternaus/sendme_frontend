@@ -156,7 +156,11 @@
     "edit": "Editar",
     "view": "Ver",
     "import": "Importar",
-    "test_rules": "Probar reglas"
+    "test_rules": "Probar reglas",
+    "duplicate": "Duplicar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "copy": "Copia"
   },
   "campaign": {
     "campaigns": "Campañas",

@@ -6,12 +6,15 @@ import ConfirmDialog from 'primevue/confirmdialog'
 
 import AppSidebar from '@/components/atoms/sidebars/AppSidebar.vue'
 import AppSidebarMobile from '@/components/atoms/sidebars/AppSidebarMobile.vue'
+import TermsHandler from '@/components/organisms/TermsHandler.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export default defineComponent({
   components: {
     AppSidebar,
     AppSidebarMobile,
     ConfirmDialog,
+    TermsHandler,
   },
   setup() {
     const isSidebarExpanded = ref(false)
@@ -19,10 +22,18 @@ export default defineComponent({
 
     const route = useRoute()
     const currentPath = computed(() => route.fullPath)
+    const authStore = useAuthStore()
+
+    // Get current organization ID from auth store or route
+    const currentOrganizationId = computed(() => {
+      return authStore.user?.organizationId || (route.params.organizationId as string) || null
+    })
 
     return {
       isSidebarExpanded,
-      currentPath
+      currentPath,
+      currentOrganizationId,
+      authStore
     }
   },
 })
@@ -52,6 +63,13 @@ export default defineComponent({
     </main>
 
     <ConfirmDialog />
+
+    <!-- Terms Handler - shows modal when organization requires terms acceptance -->
+    <TermsHandler
+      v-if="currentOrganizationId && authStore.isAuthenticated"
+      :organization-id="currentOrganizationId"
+      mode="modal-only"
+    />
   </div>
 </template>
 

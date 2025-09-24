@@ -39,12 +39,13 @@ import type { IChannel } from '@/services/channel/interfaces/channel.interface'
 import { useChannelService } from '@/services/channel/useChannelService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 
+import CampaignDuplicateModal from './components/CampaignDuplicateModal.vue'
 import CampaignTestModal from './components/CampaignTestModal.vue'
 import { useCampaignFilter } from './composables/useCampaignFilter'
 
 const { t } = useI18n()
 const { push } = useRouter()
-const { getCampaigns, deleteCampaign, testCampaign } = useCampaignService()
+const { getCampaigns, deleteCampaign, testCampaign, duplicateCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange, tagIds } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
@@ -89,6 +90,8 @@ const loading = ref(false)
 const testingRules = ref(false)
 const testResults = ref<ITestCampaignResponse | null>(null)
 const showTestResultsModal = ref(false)
+const showDuplicateModal = ref(false)
+const duplicateModalRef = ref<InstanceType<typeof CampaignDuplicateModal> | null>(null)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 const campaignMeta = ref<IPaginationMeta>({
   currentPage: 1,
@@ -364,6 +367,55 @@ const handleTestRules = async () => {
   }
 }
 
+const handleDuplicate = async () => {
+  if (!selected.value.length || selected.value.length > 1) {
+    toast.add({
+      severity: 'warn',
+      summary: t('campaign.common.warning'),
+      detail: t('campaign.duplicate.single_selection_warning'),
+      life: 3000,
+    })
+    return
+  }
+
+  showDuplicateModal.value = true
+}
+
+const handleDuplicateSubmit = async (duplicateData: { name: string; description: string }) => {
+  if (!selected.value.length || !duplicateModalRef.value) return
+
+  const campaign = selected.value[0]
+
+  try {
+    duplicateModalRef.value.setLoading(true)
+
+    await duplicateCampaign(campaign.id, duplicateData)
+
+    showDuplicateModal.value = false
+    selected.value = []
+
+    toast.add({
+      severity: 'success',
+      summary: t('campaign.common.success'),
+      detail: t('campaign.duplicate.success'),
+      life: 3000,
+    })
+
+    await fetchCampaigns({ pageSize: page.value, limitSize: limit.value })
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: t('campaign.common.error'),
+      detail: t('campaign.duplicate.error'),
+      life: 3000,
+    })
+  } finally {
+    if (duplicateModalRef.value) {
+      duplicateModalRef.value.setLoading(false)
+    }
+  }
+}
+
 const headerActions = computed(() => {
   const baseActions = [
     {
@@ -394,6 +446,12 @@ const headerActions = computed(() => {
   }
 
   if (selected.value.length === 1) {
+    baseActions.push({
+      label: t('common.actions.duplicate'),
+      onClick: handleDuplicate,
+      type: ActionTypes.DUPLICATE,
+    })
+
     baseActions.push({
       label: t('common.actions.edit'),
       onClick: () => selected.value[0] && push(`/campaigns/edit/${selected.value[0].id}`),
@@ -509,6 +567,14 @@ const campaignsWithFormattedFrequency = computed(() => {
     v-model:visible="showTestResultsModal"
     :campaign="selected"
     :test-results="testResults"
+  />
+
+  <!-- Modal de Duplicación -->
+  <CampaignDuplicateModal
+    ref="duplicateModalRef"
+    v-model:visible="showDuplicateModal"
+    :campaign="selected.length === 1 ? selected[0] : null"
+    @duplicate="handleDuplicateSubmit"
   />
 
   <!-- Tags Modal -->
