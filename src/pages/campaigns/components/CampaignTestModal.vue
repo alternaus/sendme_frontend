@@ -49,6 +49,20 @@ const formatExecutionDate = (dateString: string): string => {
   <AppDialog v-model:modelValue="dialogVisible" modal :header="t('campaign.test_rules.test_results')" :style="{ width: '900px' }"
     class="campaign-test-modal">
     <div v-if="testResults && currentCampaign" class="space-y-4">
+      <!-- Información de qué se está probando -->
+      <AppCard>
+        <div class="flex items-center gap-4 flex-wrap">
+          <div v-if="currentCampaign.campaignRules?.length" class="flex items-center gap-2">
+            <i class="pi pi-filter text-blue-600 dark:text-blue-400 text-sm"></i>
+            <span class="text-sm font-medium">{{ t('campaign.test_rules.rules_applied') }}: {{ currentCampaign.campaignRules.length }}</span>
+          </div>
+          <div v-if="currentCampaign.tags?.length" class="flex items-center gap-2">
+            <i class="pi pi-tags text-green-600 dark:text-green-400 text-sm"></i>
+            <span class="text-sm font-medium">{{ t('campaign.common.tags') }}: {{ currentCampaign.tags.length }}</span>
+          </div>
+        </div>
+      </AppCard>
+
       <!-- Grid de métricas en 3 columnas compacto -->
       <AppCard v-if="testResults.rules">
         <div class="grid grid-cols-3 gap-4">

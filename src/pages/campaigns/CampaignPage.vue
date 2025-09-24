@@ -33,6 +33,7 @@ import { useDateFormat } from '@/composables/useDateFormat'
 import { useStatusColors } from '@/composables/useStatusColors'
 import { useTableTypes } from '@/composables/useTableTypes'
 import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
+import type { IDuplicateCampaign } from '@/services/campaign/interfaces/duplicate-campaign.interface'
 import type { ITestCampaignRequest, ITestCampaignResponse } from '@/services/campaign/interfaces/test-rules.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
 import type { IChannel } from '@/services/channel/interfaces/channel.interface'
@@ -310,11 +311,11 @@ const handleTestRules = async () => {
   }
 
   const campaign = selected.value[0]
-  if (!campaign?.campaignRules?.length) {
+  if (!campaign?.campaignRules?.length && !campaign?.tags?.length) {
     toast.add({
       severity: 'warn',
       summary: t('campaign.common.warning'),
-      detail: t('campaign.test_rules.no_rules_warning'),
+      detail: t('campaign.test_rules.no_rules_or_tags_warning'),
       life: 3000,
     })
     return
@@ -326,11 +327,6 @@ const handleTestRules = async () => {
 
   try {
     const testRequest: ITestCampaignRequest = {
-      rules: campaign.campaignRules.map(rule => ({
-        conditionType: rule.conditionType,
-        value: rule.value,
-        customFieldId: rule.customFieldId
-      })),
       executions: {
         startDate: campaign.startDate,
         endDate: campaign.endDate,
@@ -339,6 +335,20 @@ const handleTestRules = async () => {
         frequency: campaign.frequency,
         maxExecutions: 10
       }
+    }
+
+    // Incluir reglas si existen
+    if (campaign.campaignRules?.length) {
+      testRequest.rules = campaign.campaignRules.map(rule => ({
+        conditionType: rule.conditionType,
+        value: rule.value,
+        customFieldId: rule.customFieldId
+      }))
+    }
+
+    // Incluir tags si existen
+    if (campaign.tags?.length) {
+      testRequest.tagIds = campaign.tags.map((tag: { id: string }) => tag.id)
     }
 
     const response = await testCampaign(testRequest)
@@ -381,7 +391,7 @@ const handleDuplicate = async () => {
   showDuplicateModal.value = true
 }
 
-const handleDuplicateSubmit = async (duplicateData: { name: string; description: string }) => {
+const handleDuplicateSubmit = async (duplicateData: IDuplicateCampaign) => {
   if (!selected.value.length || !duplicateModalRef.value) return
 
   const campaign = selected.value[0]

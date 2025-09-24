@@ -1,4 +1,4 @@
 export interface IDuplicateCampaign {
   name: string
-  description: string
+  description?: string
 }

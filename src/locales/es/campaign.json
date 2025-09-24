@@ -110,6 +110,7 @@
     "match_percentage": "Porcentaje de Coincidencia",
     "rules_applied": "Reglas Aplicadas",
     "no_rules_warning": "La campaña seleccionada no tiene reglas para probar",
+    "no_rules_or_tags_warning": "La campaña seleccionada no tiene reglas ni etiquetas para probar",
     "test_completed": "Test completado: {selected} de {total} contactos ({percent}%)",
     "test_completed_executions": "Plan de ejecución generado exitosamente",
     "test_error": "Error al probar las reglas de la campaña",

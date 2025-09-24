@@ -18,6 +18,7 @@ export interface ITestExecutions {
 
 export interface ITestCampaignRequest {
   rules?: ITestRule[]
+  tagIds?: string[]
   executions?: ITestExecutions
 }
 

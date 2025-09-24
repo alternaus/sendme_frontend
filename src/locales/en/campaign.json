@@ -110,6 +110,7 @@
     "match_percentage": "Match Percentage",
     "rules_applied": "Rules Applied",
     "no_rules_warning": "The selected campaign has no rules to test",
+    "no_rules_or_tags_warning": "The selected campaign has no rules or tags to test",
     "test_completed": "Test completed: {selected} of {total} contacts ({percent}%)",
     "test_completed_executions": "Execution plan generated successfully",
     "test_error": "Error testing campaign rules",

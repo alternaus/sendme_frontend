@@ -52,8 +52,12 @@ const handleDuplicate = () => {
   if (!isFormValid.value || loading.value) return
 
   const duplicateData: IDuplicateCampaign = {
-    name: name.value.trim(),
-    description: description.value.trim()
+    name: name.value.trim()
+  }
+
+  // Solo incluir description si no está vacía
+  if (description.value.trim()) {
+    duplicateData.description = description.value.trim()
   }
 
   emit('duplicate', duplicateData)
