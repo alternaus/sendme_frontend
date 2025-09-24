@@ -37,7 +37,7 @@ export const useErrorHandler = () => {
       return error.message
     }
 
-    return t('errors.default')
+    return t('common.errors.default')
   }
 
   const showErrorToast = (error: ErrorResponse, customMessage?: string): void => {
