@@ -6,13 +6,10 @@ import { useForm } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
 import * as yup from 'yup'
 
-import GoogleIcon from '@/assets/svg/google.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
-import AppDivider from '@/components/atoms/divider/AppDivider.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputPassword from '@/components/atoms/inputs/AppInputPassword.vue'
 import AppLink from '@/components/atoms/links/AppLink.vue'
-import { BASE_URL } from '@/helpers/api-url.helper'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -21,9 +18,7 @@ export default defineComponent({
     AppInput,
     AppInputPassword,
     AppButton,
-    AppLink,
-    AppDivider,
-    GoogleIcon
+    AppLink
   },
   setup() {
     const { t } = useI18n()
@@ -32,9 +27,6 @@ export default defineComponent({
     const authService = useAuthService()
 
     const isSubmitting = ref(false)
-    const isOAuthLoading = ref(false)
-
-    const callbackUrl = `${BASE_URL}/auth/google/callback`
 
     yup.setLocale({
       mixed: {
@@ -99,17 +91,6 @@ export default defineComponent({
       }
     })
 
-    const handleGoogleLogin = async () => {
-      try {
-        isOAuthLoading.value = true
-        localStorage.setItem('googleAuthReturnPath', router.currentRoute.value.fullPath)
-        const { url } = await authService.getOAuthUrl('google')
-        window.location.href = url
-      } catch {
-        isOAuthLoading.value = false
-      }
-    }
-
     function goToSignIn() {
       router.push('/auth/sign-in')
     }
@@ -121,76 +102,58 @@ export default defineComponent({
       confirmPassword,
       errors,
       onSubmit,
-      handleGoogleLogin,
       goToSignIn,
-      callbackUrl,
-      isSubmitting,
-      isOAuthLoading
+      isSubmitting
     }
   },
 })
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-6 flex-col w-full" :aria-busy="isSubmitting || isOAuthLoading">
+  <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-6 flex-col w-full" :aria-busy="isSubmitting">
     <AppInput
       v-model="name"
       :error-message="errors.name"
       :placeholder="$t('auth.sign_up.name_placeholder')"
-      :disabled="isSubmitting || isOAuthLoading"
+      :disabled="isSubmitting"
     />
 
     <AppInput
       v-model="email"
       :error-message="errors.email"
       :placeholder="$t('auth.sign_up.email_placeholder')"
-      :disabled="isSubmitting || isOAuthLoading"
+      :disabled="isSubmitting"
     />
 
     <AppInputPassword
       v-model="password"
       :error-message="errors.password"
       :placeholder="$t('auth.sign_up.password_placeholder')"
-      :disabled="isSubmitting || isOAuthLoading"
+      :disabled="isSubmitting"
     />
 
     <AppInputPassword
       v-model="confirmPassword"
       :error-message="errors.confirmPassword"
       :placeholder="$t('auth.sign_up.confirm_password_placeholder')"
-      :disabled="isSubmitting || isOAuthLoading"
+      :disabled="isSubmitting"
     />
 
     <AppButton
       type="submit"
       :label="isSubmitting ? $t('auth.sign_up.processing') : $t('auth.sign_up.create_account')"
       :loading="isSubmitting"
-      :disabled="isSubmitting || isOAuthLoading"
+      :disabled="isSubmitting"
       class="w-full"
     />
 
     <AppLink
       severity="secondary"
+      class="!ml-auto !w-auto"
       :label="$t('auth.sign_up.already_have_account')"
-      :disabled="isSubmitting || isOAuthLoading"
-      @click="!(isSubmitting || isOAuthLoading) && goToSignIn()"
+      :disabled="isSubmitting"
+      theme="auth"
+      @click="!isSubmitting && goToSignIn()"
     />
-
-    <AppDivider />
-
-    <div class="w-full grid grid-cols-1 gap-4">
-      <AppButton
-        :label="isOAuthLoading ? $t('auth.common.loading') : $t('auth.oauth.google_button')"
-        severity="contrast"
-        variant="outlined"
-        :loading="isOAuthLoading"
-        :disabled="isSubmitting || isOAuthLoading"
-        @click="handleGoogleLogin"
-      >
-        <template #icon-start>
-          <GoogleIcon class="w-5 h-5" />
-        </template>
-      </AppButton>
-    </div>
   </form>
 </template>

@@ -31,7 +31,8 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   iconPos: 'left',
   containerClass: 'w-full',
-  buttonClass: '!rounded-xl'
+  buttonClass: '!rounded-xl',
+  theme: 'default'
 })
 
 defineOptions({
@@ -60,6 +61,10 @@ const buttonClasses = computed(() => {
   return props.buttonClass
 })
 
+const ptConfig = computed(() => {
+  return props.pt
+})
+
 const handleClick = (event: Event) => {
   if (!props.disabled && !props.loading) {
     emit('click', event)
@@ -70,6 +75,7 @@ const handleClick = (event: Event) => {
 <template>
   <div :class="containerClasses">
     <PrimeButton
+      as="a"
       v-bind="forwardedAttrs"
       :label="label"
       :size="size"
@@ -82,9 +88,9 @@ const handleClick = (event: Event) => {
       :badge-class="badgeClass"
       :badge-severity="badgeSeverity"
       :class="buttonClasses"
-      :pt="pt"
+      :pt="ptConfig"
       :pt-options="ptOptions"
-      variant="link"
+      variant="text"
       @click="handleClick"
     >
       <slot />
