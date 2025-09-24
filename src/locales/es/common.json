@@ -260,5 +260,12 @@
       "name_required": "El nombre es requerido",
       "name_exists": "Ya existe una etiqueta con este nombre"
     }
+  },
+  "errors": {
+    "1008": "Token de acceso expirado o inválido",
+    "1009": "Token de actualización expirado o inválido", 
+    "1014": "Error en la autenticación con Google",
+    "1022": "Términos y condiciones no aceptados",
+    "default": "Ha ocurrido un error inesperado"
   }
 }

@@ -260,5 +260,12 @@
       "name_required": "Name is required",
       "name_exists": "A tag with this name already exists"
     }
+  },
+  "errors": {
+    "1008": "Access token expired or invalid",
+    "1009": "Refresh token expired or invalid",
+    "1014": "Google authentication failed", 
+    "1022": "Terms and conditions not accepted",
+    "default": "An unexpected error occurred"
   }
 }

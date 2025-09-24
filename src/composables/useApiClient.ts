@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { API_URL } from '@/helpers/api-url.helper'
 import router from '@/router'
 
@@ -119,39 +120,69 @@ privateApi.interceptors.response.use(
 
 const useApiClient = (isAuthenticated = false) => {
   const api = isAuthenticated ? privateApi : publicApi
+  const { handleError } = useErrorHandler()
 
   return {
-    get: async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-      const response: AxiosResponse<T> = await api.get(url, config)
-      return response.data
+    get: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+      try {
+        const response: AxiosResponse<T> = await api.get(url, config)
+        return response.data
+      } catch (error) {
+        const errorMessage = handleError(error, customErrorMessage, showToast)
+        throw new Error(errorMessage)
+      }
     },
 
     post: async <T, R = unknown>(
       url: string,
       data?: R,
       config?: AxiosRequestConfig,
+      customErrorMessage?: string,
+      showToast = true,
     ): Promise<T> => {
-      const response: AxiosResponse<T> = await api.post(url, data, config)
-      return response.data
+      try {
+        const response: AxiosResponse<T> = await api.post(url, data, config)
+        return response.data
+      } catch (error) {
+        const errorMessage = handleError(error, customErrorMessage, showToast)
+        throw new Error(errorMessage)
+      }
     },
 
-    put: async <T, R = unknown>(url: string, data?: R, config?: AxiosRequestConfig): Promise<T> => {
-      const response: AxiosResponse<T> = await api.put(url, data, config)
-      return response.data
+    put: async <T, R = unknown>(url: string, data?: R, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+      try {
+        const response: AxiosResponse<T> = await api.put(url, data, config)
+        return response.data
+      } catch (error) {
+        const errorMessage = handleError(error, customErrorMessage, showToast)
+        throw new Error(errorMessage)
+      }
     },
 
     patch: async <T, R = unknown>(
       url: string,
       data?: R,
       config?: AxiosRequestConfig,
+      customErrorMessage?: string,
+      showToast = true,
     ): Promise<T> => {
-      const response: AxiosResponse<T> = await api.patch(url, data, config)
-      return response.data
+      try {
+        const response: AxiosResponse<T> = await api.patch(url, data, config)
+        return response.data
+      } catch (error) {
+        const errorMessage = handleError(error, customErrorMessage, showToast)
+        throw new Error(errorMessage)
+      }
     },
 
-    delete: async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
-      const response: AxiosResponse<T> = await api.delete(url, config)
-      return response.data
+    delete: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+      try {
+        const response: AxiosResponse<T> = await api.delete(url, config)
+        return response.data
+      } catch (error) {
+        const errorMessage = handleError(error, customErrorMessage, showToast)
+        throw new Error(errorMessage)
+      }
     },
   }
 }
