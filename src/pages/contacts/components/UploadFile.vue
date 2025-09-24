@@ -10,6 +10,7 @@ import { useI18n } from 'vue-i18n'
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 
 interface ImportPreviewResponse {
@@ -41,6 +42,7 @@ const totalRows = ref(0)
 const loading = ref(false)
 const currentFile = ref<File | null>(null)
 const importProgress = ref<{ progress: number; total: number; percentage: number } | null>(null)
+const selectedTags = ref<string[]>([])
 
 const requiredFields = ['phone']
 
@@ -124,7 +126,7 @@ const handleFinalUpload = async () => {
       }
     })
 
-    await importContacts(currentFile.value, fieldMapping)
+    await importContacts(currentFile.value, fieldMapping, selectedTags.value)
 
     //Mostrar mensaje de éxito
     toast.add({
@@ -169,6 +171,7 @@ const handleCancel = () => {
   fileSize.value = 0
   totalRows.value = 0
   importProgress.value = null
+  selectedTags.value = []
 }
 </script>
 
@@ -258,6 +261,23 @@ const handleCancel = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <!-- Selector de etiquetas -->
+          <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm p-4">
+            <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-3">
+              {{ $t('contact.import.tags_section_title') }}
+            </h3>
+            <TagManager
+              v-model="selectedTags"
+              :placeholder="$t('contact.import.select_tags_placeholder')"
+              :allow-create="true"
+              :allow-manage="false"
+              size="small"
+            />
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
+              {{ $t('contact.import.tags_description') }}
+            </p>
           </div>
 
           <div class="flex justify-center space-x-2">

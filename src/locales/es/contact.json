@@ -40,7 +40,10 @@
     "google_sync_error": "Error en la sincronización: {message}",
     "import_option_google": "Google Contacts",
     "import_option_excel": "Excel/CSV",
-    "select_file": "Seleccionar archivo"
+    "select_file": "Seleccionar archivo",
+    "tags_section_title": "Etiquetas (opcional)",
+    "select_tags_placeholder": "Selecciona etiquetas para los contactos importados",
+    "tags_description": "Los contactos importados se asociarán automáticamente con las etiquetas seleccionadas"
   },
   "general": {
     "search": "Buscar",

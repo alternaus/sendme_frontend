@@ -15,15 +15,38 @@
         </AppSelectButton>
       </div>
 
-      <div class="flex justify-content-center" v-if="importType === 'google'">
+      <div v-if="importType === 'google'" class="space-y-4">
+        <!-- Selector de etiquetas para Google Import -->
+        <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm p-4">
+          <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-3">
+            {{ $t('contact.import.tags_section_title') }}
+          </h3>
+          <TagManager
+            v-model="selectedGoogleTags"
+            :placeholder="$t('contact.import.select_tags_placeholder')"
+            :allow-create="true"
+            :allow-manage="false"
+            size="small"
+          />
+          <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
+            {{ $t('contact.import.tags_description') }}
+          </p>
+        </div>
+
+        <!-- Botones de acción para Google -->
+        <div class="flex justify-content-center">
           <AppButton v-if="oauth.hasValidTokens.value('google')" :label="t('contact.import.google_import_button')"
             icon="pi pi-cloud-upload" size="small" :loading="loading" @click="handleGoogleImport"
             class="mb-2 mx-auto! w-auto!" />
           <AppButton v-else :label="t('contact.import.google_connect_button')" icon="pi pi-google" size="small"
             @click="handleGoogleConnect" class="mb-2 mx-auto! w-auto!" />
-          <p v-if="oauth.getStatusMessage.value('google')" class="text-sm text-gray-600 mt-2">
+        </div>
+
+        <div v-if="oauth.getStatusMessage.value('google')" class="text-center">
+          <p class="text-sm text-gray-600 mt-2">
             {{ oauth.getStatusMessage.value('google') }}
           </p>
+        </div>
       </div>
       <div v-else>
         <UploadFile />
@@ -45,6 +68,7 @@ import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useOAuth } from '@/composables/useOAuth'
 import { useContactService } from '@/services/contact/useContactService'
 
@@ -57,6 +81,7 @@ export default defineComponent({
     UploadFile,
     AppSelectButton,
     AppButton,
+    TagManager,
   },
   setup() {
     const toast = useToast()
@@ -70,6 +95,7 @@ export default defineComponent({
     ]
     const loading = ref(false)
     const result = ref<{ imported: number; created: number; updated: number } | null>(null)
+    const selectedGoogleTags = ref<string[]>([])
 
     const checkGoogleAuth = async () => {
       try {
@@ -110,7 +136,7 @@ export default defineComponent({
           life: 3000
         })
 
-        const res = await syncGoogleContacts()
+        const res = await syncGoogleContacts(selectedGoogleTags.value)
 
         result.value = {
           imported: Number(res.imported ?? 0),
@@ -164,6 +190,7 @@ export default defineComponent({
       loading,
       result,
       oauth,
+      selectedGoogleTags,
       handleGoogleImport,
       handleGoogleConnect,
       t,

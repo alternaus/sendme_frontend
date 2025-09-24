@@ -42,7 +42,10 @@
     "google_sync_error": "Sync error: {message}",
     "import_option_google": "Google Contacts",
     "import_option_excel": "Excel/CSV",
-    "select_file": "Select file"
+    "select_file": "Select file",
+    "tags_section_title": "Tags (optional)",
+    "select_tags_placeholder": "Select tags for imported contacts",
+    "tags_description": "Imported contacts will be automatically associated with the selected tags"
   },
   "general": {
     "search": "Search",
