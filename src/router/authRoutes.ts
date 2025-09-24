@@ -14,6 +14,12 @@ const authRoutes: RouteRecordRaw = {
       meta: { title: 'common.titles.sign_in' },
     },
     {
+      path: 'sign-up',
+      name: 'sign-up',
+      component: () => import('@/pages/auth/sign-up/SignUpPage.vue'),
+      meta: { title: 'common.titles.sign_up' },
+    },
+    {
       path: 'oauth/:provider/callback',
       name: 'oauth-callback',
       component: () => import('@/pages/auth/sign-in/SignInOAuthPage.vue'),

@@ -97,6 +97,10 @@ export default defineComponent({
       router.push('/auth/forgot-password')
     }
 
+    function goToSignUp() {
+      router.push('/auth/sign-up')
+    }
+
     const oneTapCallback = async (response: { credential: string }) => {
       try {
         isOAuthLoading.value = true
@@ -117,6 +121,7 @@ export default defineComponent({
       onSubmit,
       handleGoogleLogin,
       goToForgotPassword,
+      goToSignUp,
       callbackUrl,
       oneTapCallback,
       isSubmitting,
@@ -135,6 +140,8 @@ export default defineComponent({
     <AppButton type="submit" :label="isSubmitting ? $t('auth.sign_in.processing') : $t('auth.sign_in.enter')" :loading="isSubmitting" :disabled="isSubmitting || isOAuthLoading" class="w-full" />
 
   <AppLink severity="secondary" :label="$t('auth.forgot_password.title')" :disabled="isSubmitting || isOAuthLoading" @click="!(isSubmitting || isOAuthLoading) && goToForgotPassword()" />
+
+  <AppLink severity="secondary" :label="$t('auth.layout.register_here')" :disabled="isSubmitting || isOAuthLoading" @click="!(isSubmitting || isOAuthLoading) && goToSignUp()" />
 
     <AppDivider />
 
