@@ -55,7 +55,7 @@ export default defineComponent({
   <AppHeader :icon="IconTypes.SEND" :text="$t('send.send_instant_message')" :actions="[]" />
 
   <div class="flex flex-col items-center justify-start min-h-0 px-4">
-    <div class="w-full max-w-md mb-6">
+    <div class="w-full max-w-md mb-2">
       <AppSelectButton
         v-model="selectButtonValue"
         :options="sendOptions"
@@ -66,7 +66,7 @@ export default defineComponent({
 
     <div v-if="selectedOption === MessageChannel.SMS" class="container-phone">
       <div class="container-phone-inner">
-        <div class="flex justify-center items-center text-center mb-4">
+        <div class="flex justify-center items-center text-center mb-2">
           <small class="text-base font-semibold">{{ $t('send.instant_message') }}</small>
         </div>
         <SendSmsFormPage />
@@ -75,7 +75,7 @@ export default defineComponent({
 
     <div v-else-if="selectedOption === MessageChannel.EMAIL" class="container-email">
       <div class="container-email-inner">
-        <div class="flex justify-center items-center text-center mb-4">
+        <div class="flex justify-center items-center text-center mb-2">
           <EmailIcon class="w-6 h-6 mr-2 dark:fill-white" />
           <small class="text-base font-semibold">{{ $t('send.email_instant_message') }}</small>
         </div>
@@ -89,7 +89,7 @@ export default defineComponent({
 .container-phone {
   width: min(95%, 500px);
   max-width: 500px;
-  height: min(calc(100vh - 150px), 800px);
+  height: min(calc(90vh - 150px), 800px);
   max-height: 800px;
   border-radius: 35px;
   background: #f6f6f6;
@@ -140,24 +140,24 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(min(calc(100vh - 100px), 800px) - 60px);
+  max-height: calc(min(calc(90vh - 100px), 800px) - 60px);
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
 
   @media (max-height: 700px) {
-    max-height: calc(100vh - 180px);
+    max-height: calc(90vh - 180px);
   }
 
   @media (max-height: 600px) {
-    max-height: calc(100vh - 160px);
+    max-height: calc(90vh - 160px);
   }
 
   @media (max-width: 600px) {
-    max-height: calc(min(calc(100vh - 220px), 700px) - 50px);
+    max-height: calc(min(calc(90vh - 220px), 700px) - 50px);
   }
 
   @media (max-width: 400px) {
-    max-height: calc(100vh - 200px);
+    max-height: calc(90vh - 200px);
   }
 
   &::-webkit-scrollbar {
@@ -178,7 +178,7 @@ export default defineComponent({
 .container-email {
   width: min(98%, 1200px);
   max-width: 1200px;
-  height: min(calc(100vh - 120px), 750px);
+  height: min(calc(90vh - 120px), 750px);
   max-height: 750px;
   border-radius: 15px;
   background: #f6f6f6;
@@ -247,32 +247,32 @@ export default defineComponent({
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(min(calc(100vh - 180px), 750px) - 80px);
+  max-height: calc(min(calc(90vh - 180px), 750px) - 80px);
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
 
   @media (max-height: 700px) {
-    max-height: calc(100vh - 220px);
+    max-height: calc(90vh - 220px);
   }
 
   @media (max-height: 600px) {
-    max-height: calc(100vh - 200px);
+    max-height: calc(90vh - 200px);
   }
 
   @media (max-width: 1024px) {
-    max-height: calc(min(calc(100vh - 190px), 700px) - 70px);
+    max-height: calc(min(calc(90vh - 190px), 700px) - 70px);
   }
 
   @media (max-width: 768px) {
-    max-height: calc(min(calc(100vh - 200px), 650px) - 65px);
+    max-height: calc(min(calc(90vh - 200px), 650px) - 65px);
   }
 
   @media (max-width: 640px) {
-    max-height: calc(100vh - 215px);
+    max-height: calc(90vh - 215px);
   }
 
   @media (max-width: 480px) {
-    max-height: calc(100vh - 190px);
+    max-height: calc(90vh - 190px);
   }
 
   &::-webkit-scrollbar {

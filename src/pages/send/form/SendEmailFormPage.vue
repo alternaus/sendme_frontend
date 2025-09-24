@@ -103,9 +103,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="space-y-3">
+  <div class="space-y-2">
     <!-- Step 1: Tipo de envío (contactos, todos, o tags) -->
-    <div class="flex justify-center items-center gap-2">
+    <div class="flex justify-center items-center gap-3">
       <div
         v-tooltip.bottom="$t('send.tooltip_send_to_contacts')"
         class="p-1.5 cursor-pointer rounded-lg transition-colors"
