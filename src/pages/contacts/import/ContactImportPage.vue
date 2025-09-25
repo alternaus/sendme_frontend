@@ -58,6 +58,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
@@ -85,6 +86,7 @@ export default defineComponent({
   },
   setup() {
     const toast = useToast()
+    const router = useRouter()
     const { t } = useI18n()
     const { syncGoogleContacts } = useContactService()
     const oauth = useOAuth()
@@ -150,6 +152,10 @@ export default defineComponent({
           detail: t('contact.import.google_sync_success', { count: result.value.imported }),
           life: 4000
         })
+
+        setTimeout(() => {
+          router.push('/contacts')
+        }, 1500)
 
       } catch (error: unknown) {
         console.error('Error en sincronización:', error)

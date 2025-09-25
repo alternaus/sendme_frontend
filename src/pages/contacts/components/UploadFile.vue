@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import ProgressBar from 'primevue/progressbar'
@@ -34,6 +35,7 @@ const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 const { getImportPreview, importContacts } = useContactService()
 
 const fileName = ref('')
@@ -138,6 +140,11 @@ const handleFinalUpload = async () => {
 
     //Limpiar datos
     handleCancel()
+
+    //Navegar a la página de contactos después del éxito
+    setTimeout(() => {
+      router.push('/contacts')
+    }, 1500)
   } catch (error: unknown) {
     const apiError = error as ApiError
     if (apiError.response?.data?.message) {
