@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useDark } from '@vueuse/core'
 
+import ProgressBar from 'primevue/progressbar'
+
 import { useHead } from '@unhead/vue'
 import type { ComposeOption } from 'echarts'
 import type { BarSeriesOption, LineSeriesOption, PieSeriesOption, RadarSeriesOption } from 'echarts/charts'
@@ -13,6 +15,7 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppEChart from '@/components/atoms/charts/AppEChart.vue'
 import AppDataView from '@/components/atoms/data-view/AppDataView.vue'
 import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
+import AppTag from '@/components/atoms/tag/AppTag.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import type { DashboardResponse } from '@/services/dashboard/interfaces/dashboard.interface'
 import { useDashboardService } from '@/services/dashboard/useDashboardService'
@@ -42,14 +45,25 @@ onMounted(() => {
 })
 
 /** Datos comunes */
-const labels = computed(() => [t('home.message_status.sent'), t('home.message_status.pending'), t('home.message_status.failed'), t('home.message_status.available')])
+const labels = computed(() => [t('home.message_status.sent'), t('home.message_status.pending'), t('home.message_status.failed')])
 const values = computed(() => [
-  dashboardData.value?.stats.sentMessages ?? 0,
-  dashboardData.value?.stats.pendingMessages ?? 0,
-  dashboardData.value?.stats.failedMessages ?? 0,
-  dashboardData.value?.stats.availableMessages ?? 0
+  dashboardData.value?.stats.messages.sent ?? 0,
+  dashboardData.value?.stats.messages.pending ?? 0,
+  dashboardData.value?.stats.messages.failed ?? 0
 ])
-const colors = computed(() => [primary.value, surface300.value, surface700.value, surface500.value])
+const colors = computed(() => [primary.value, surface300.value, surface700.value])
+
+const campaignUsagePercentage = computed(() => {
+  const total = dashboardData.value?.stats.totalCampaigns ?? 0
+  const limit = dashboardData.value?.stats.planLimits.campaignLimit ?? 1
+  return Math.round((total / limit) * 100)
+})
+
+const contactUsagePercentage = computed(() => {
+  const total = dashboardData.value?.stats.totalContacts ?? 0
+  const limit = dashboardData.value?.stats.planLimits.contactLimit ?? 1
+  return Math.round((total / limit) * 100)
+})
 
 function buildOption(
   type: 'pie' | 'line' | 'bar' | 'radar',
@@ -148,6 +162,13 @@ const loadDashboardData = async () => {
 onMounted(loadDashboardData)
 
 
+const formattedRecentMessages = computed(() => {
+  return dashboardData.value?.recentMessages.map(msg => ({
+    ...msg,
+    createdAt: typeof msg.createdAt === 'string' ? msg.createdAt : msg.createdAt.toISOString()
+  })) || []
+})
+
 const showContentModal = ref(false)
 const selectedMessageContent = ref('')
 const openContentModal = (content: string) => { selectedMessageContent.value = content; showContentModal.value = true }
@@ -163,6 +184,14 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
           <p class="text-sm md:text-base">
             {{ t('home.welcome.message', { name: authStore.user?.name }) }}
           </p>
+          <div class="flex gap-2">
+            <AppTag v-if="dashboardData?.stats.planLimits" severity="info">
+              {{ t('home.plan.name') }}
+            </AppTag>
+            <AppTag v-if="dashboardData?.stats.planLimits" severity="success">
+              ${{ dashboardData.stats.planLimits.pricePerMessage }} {{ t('home.plan.perMessage') }}
+            </AppTag>
+          </div>
         </div>
       </template>
     </AppCard>
@@ -226,7 +255,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.availableMessages || 0 }}
+              {{ dashboardData?.stats.messages.available || 0 }}
             </span>
           </div>
         </template>
@@ -244,7 +273,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.sentMessages || 0 }}
+              {{ dashboardData?.stats.messages.sent || 0 }}
             </span>
           </div>
         </template>
@@ -260,7 +289,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.pendingMessages || 0 }}
+              {{ dashboardData?.stats.messages.pending || 0 }}
             </span>
           </div>
         </template>
@@ -276,7 +305,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.failedMessages || 0 }}
+              {{ dashboardData?.stats.messages.failed || 0 }}
             </span>
           </div>
         </template>
@@ -292,8 +321,48 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               </span>
             </div>
             <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.availableMessages || 0 }}
+              {{ dashboardData?.stats.messages.available || 0 }}
             </span>
+          </div>
+        </template>
+      </AppCard>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-4">
+      <AppCard>
+        <template #content>
+          <div class="px-2 py-3">
+            <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-megaphone text-xs md:text-sm"></i>
+                <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                  {{ t('home.usage.campaigns') }}
+                </span>
+              </div>
+              <span class="text-xs text-neutral-500">
+                {{ dashboardData?.stats.totalCampaigns || 0 }}/{{ dashboardData?.stats.planLimits.campaignLimit || 0 }}
+              </span>
+            </div>
+            <ProgressBar :value="campaignUsagePercentage" :show-value="false" class="h-2" />
+          </div>
+        </template>
+      </AppCard>
+
+      <AppCard>
+        <template #content>
+          <div class="px-2 py-3">
+            <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-user text-xs md:text-sm"></i>
+                <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
+                  {{ t('home.usage.contacts') }}
+                </span>
+              </div>
+              <span class="text-xs text-neutral-500">
+                {{ dashboardData?.stats.totalContacts || 0 }}/{{ dashboardData?.stats.planLimits.contactLimit || 0 }}
+              </span>
+            </div>
+            <ProgressBar :value="contactUsagePercentage" :show-value="false" class="h-2" />
           </div>
         </template>
       </AppCard>
@@ -325,7 +394,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
               {{ t('home.sections.recentMessages') }}
             </h3>
             <div class="flex-1 min-h-0 overflow-y-auto">
-              <AppDataView :data="dashboardData?.recentMessages || []"
+              <AppDataView :data="formattedRecentMessages"
                 @view-content="(content: string) => openContentModal(content)" />
             </div>
           </div>

@@ -27,8 +27,21 @@
     "failed": "Fallidos",
     "available": "Disponibles"
   },
+  "usage": {
+    "campaigns": "Uso de campañas",
+    "contacts": "Uso de contactos"
+  },
+  "plan": {
+    "name": "Plan Actual",
+    "perMessage": "por mensaje",
+    "messagesPlan": "Mensajes del plan",
+    "messagesRecharge": "Mensajes de recarga",
+    "messagesUsed": "Mensajes usados",
+    "pricePerMessage": "Precio por mensaje"
+  },
   "sections": {
-    "recentMessages": "Mensajes recientes"
+    "recentMessages": "Mensajes recientes",
+    "planDetails": "Detalles del plan"
   },
   "status": {
     "message": {
