@@ -10,6 +10,17 @@ import type { BarSeriesOption, LineSeriesOption, PieSeriesOption, RadarSeriesOpt
 import type { GridComponentOption, LegendComponentOption, TitleComponentOption, ToolboxComponentOption } from 'echarts/components'
 import { useI18n } from 'vue-i18n'
 
+import AlertTriangleIcon from '@/assets/svg/lucide/alert-triangle.svg?component'
+import BarChart3Icon from '@/assets/svg/lucide/bar-chart-3.svg?component'
+import CheckCircleIcon from '@/assets/svg/lucide/check-circle.svg?component'
+import ClockIcon from '@/assets/svg/lucide/clock.svg?component'
+import CrownIcon from '@/assets/svg/lucide/crown.svg?component'
+import DollarSignIcon from '@/assets/svg/lucide/dollar-sign.svg?component'
+import MegaphoneIcon from '@/assets/svg/lucide/megaphone.svg?component'
+import MessageCircleIcon from '@/assets/svg/lucide/message-circle.svg?component'
+import PlayIcon from '@/assets/svg/lucide/play.svg?component'
+import UserCheckIcon from '@/assets/svg/lucide/user-check.svg?component'
+import UsersIcon from '@/assets/svg/lucide/users.svg?component'
 import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppEChart from '@/components/atoms/charts/AppEChart.vue'
@@ -185,10 +196,12 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
             {{ t('home.welcome.message', { name: authStore.user?.name }) }}
           </p>
           <div class="flex gap-2">
-            <AppTag v-if="dashboardData?.stats.planLimits" severity="info">
-              {{ t('home.plan.name') }}
+            <AppTag v-if="dashboardData?.stats.planLimits" severity="info" class="flex items-center gap-1">
+              <CrownIcon class="w-3 h-3" />
+              {{ dashboardData.stats.planLimits.planName }}
             </AppTag>
-            <AppTag v-if="dashboardData?.stats.planLimits" severity="success">
+            <AppTag v-if="dashboardData?.stats.planLimits" severity="success" class="flex items-center gap-1">
+              <DollarSignIcon class="w-3 h-3" />
               ${{ dashboardData.stats.planLimits.pricePerMessage }} {{ t('home.plan.perMessage') }}
             </AppTag>
           </div>
@@ -201,7 +214,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-megaphone text-xs md:text-sm"></i>
+              <MegaphoneIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.totalCampaigns') }}
               </span>
@@ -217,7 +230,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-play-circle text-xs md:text-sm"></i>
+              <PlayIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.activeCampaigns') }}
               </span>
@@ -233,7 +246,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-user text-xs md:text-sm"></i>
+              <UsersIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.totalContacts') }}
               </span>
@@ -249,7 +262,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-comments text-xs md:text-sm"></i>
+              <MessageCircleIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.available') }}
               </span>
@@ -267,7 +280,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-check-circle text-xs md:text-sm"></i>
+              <CheckCircleIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.sentMessages') }}
               </span>
@@ -283,7 +296,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-clock text-xs md:text-sm"></i>
+              <ClockIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.pendingMessages') }}
               </span>
@@ -299,7 +312,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-exclamation-triangle text-xs md:text-sm"></i>
+              <AlertTriangleIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.failedMessages') }}
               </span>
@@ -315,7 +328,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
         <template #content>
           <div class="flex items-center justify-between px-2 py-1">
             <div class="flex items-center gap-2">
-              <i class="pi pi-pause-circle text-xs md:text-sm"></i>
+              <MessageCircleIcon class="w-3 h-3 md:w-4 md:h-4" />
               <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                 {{ t('home.stats.available') }}
               </span>
@@ -334,7 +347,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
           <div class="px-2 py-3">
             <div class="flex items-center justify-between mb-1">
               <div class="flex items-center gap-2">
-                <i class="pi pi-megaphone text-xs md:text-sm"></i>
+                <BarChart3Icon class="w-3 h-3 md:w-4 md:h-4" />
                 <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                   {{ t('home.usage.campaigns') }}
                 </span>
@@ -353,7 +366,7 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
           <div class="px-2 py-3">
             <div class="flex items-center justify-between mb-1">
               <div class="flex items-center gap-2">
-                <i class="pi pi-user text-xs md:text-sm"></i>
+                <UserCheckIcon class="w-3 h-3 md:w-4 md:h-4" />
                 <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
                   {{ t('home.usage.contacts') }}
                 </span>

@@ -1,4 +1,5 @@
 export interface PlanLimits {
+  planName: string
   contactLimit: number
   campaignLimit: number
   tagLimit: number
