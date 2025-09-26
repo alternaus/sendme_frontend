@@ -323,22 +323,6 @@ const openContentModal = (content: string) => { selectedMessageContent.value = c
           </div>
         </template>
       </AppCard>
-
-      <AppCard>
-        <template #content>
-          <div class="flex items-center justify-between px-2 py-1">
-            <div class="flex items-center gap-2">
-              <MessageCircleIcon class="w-3 h-3 md:w-4 md:h-4" />
-              <span class="text-xs md:text-sm text-neutral-700 dark:text-white">
-                {{ t('home.stats.available') }}
-              </span>
-            </div>
-            <span class="text-sm md:text-base font-bold">
-              {{ dashboardData?.stats.messages.available || 0 }}
-            </span>
-          </div>
-        </template>
-      </AppCard>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-4">
