@@ -17,7 +17,7 @@ import { useContactService } from '@/services/contact/useContactService'
 interface ImportPreviewResponse {
   headers: string[]
   sampleData: string[]
-  availableFields: string[]
+  availableFields: Record<string, string>
   totalRows?: number
 }
 
@@ -33,6 +33,7 @@ const uploader = ref()
 const fileData = ref<string[][]>([])
 const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
+const availableFields = ref<Record<string, string>>({})
 const { t } = useI18n()
 const toast = useToast()
 const router = useRouter()
@@ -48,14 +49,32 @@ const selectedTags = ref<string[]>([])
 
 const requiredFields = ['phone']
 
-const fieldsOptions = [
-  { label: t('contact.general.name'), value: 'name' },
-  { label: t('contact.general.last_name'), value: 'lastName' },
-  { label: t('contact.general.email'), value: 'email' },
-  { label: t('contact.general.phone'), value: 'phone' },
-  { label: t('contact.general.country_code'), value: 'countryCode' },
-  { label: t('contact.general.birth_date'), value: 'birthDate' }
-]
+const fieldsOptions = computed(() => {
+  const standardFieldKeys = ['name', 'lastName', 'email', 'phone', 'countryCode', 'birthDate']
+
+  // Filtrar solo campos personalizados (que no sean los estándar)
+  const customFields = Object.entries(availableFields.value)
+    .filter(([key]) => !standardFieldKeys.includes(key))
+    .map(([id, name]) => ({
+      label: name,
+      value: id
+    }))
+
+  const standardFields = [
+    { label: t('contact.general.name'), value: 'name' },
+    { label: t('contact.general.last_name'), value: 'lastName' },
+    { label: t('contact.general.email'), value: 'email' },
+    { label: t('contact.general.phone'), value: 'phone' },
+    { label: t('contact.general.country_code'), value: 'countryCode' },
+    { label: t('contact.general.birth_date'), value: 'birthDate' }
+  ]
+
+  console.log('Available fields reactive value:', availableFields.value)
+  console.log('Custom fields mapped:', customFields)
+  console.log('Final fields options:', [...standardFields, ...customFields])
+
+  return [...standardFields, ...customFields]
+})
 
 const openFileDialog = () => {
   uploader.value?.choose?.()
@@ -75,12 +94,18 @@ const onUpload = async (event: FileUploadSelectEvent) => {
   try {
     const response = await getImportPreview(file) as ImportPreviewResponse
 
+    console.log('Response from getImportPreview:', response)
+
     if (response?.headers) {
       originalHeaders.value = response.headers
 
-      //Convertir sampleData en filas
+      if (response.availableFields && typeof response.availableFields === 'object') {
+        availableFields.value = response.availableFields
+      } else {
+      }
+
+
       if (response.sampleData) {
-        //Convertir el array plano en una matriz
         const rowData = []
         for (let i = 0; i < response.sampleData.length; i += response.headers.length) {
           rowData.push(response.sampleData.slice(i, i + response.headers.length))
@@ -88,7 +113,6 @@ const onUpload = async (event: FileUploadSelectEvent) => {
         fileData.value = [response.headers, ...rowData]
       }
 
-      //Calcular el número total de filas basado en los datos de muestra
       totalRows.value = Math.floor(response.sampleData.length / response.headers.length) || 1
     }
   } catch {
@@ -130,7 +154,6 @@ const handleFinalUpload = async () => {
 
     await importContacts(currentFile.value, fieldMapping, selectedTags.value)
 
-    //Mostrar mensaje de éxito
     toast.add({
       severity: 'success',
       summary: t('contact.general.success'),
@@ -138,10 +161,8 @@ const handleFinalUpload = async () => {
       life: 3000,
     })
 
-    //Limpiar datos
     handleCancel()
 
-    //Navegar a la página de contactos después del éxito
     setTimeout(() => {
       router.push('/contacts')
     }, 1500)
@@ -174,6 +195,7 @@ const handleCancel = () => {
   fileData.value = []
   originalHeaders.value = []
   selectedFields.value = {}
+  availableFields.value = {}
   fileName.value = ''
   fileSize.value = 0
   totalRows.value = 0
