@@ -7,8 +7,8 @@ import { useI18n } from 'vue-i18n'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import DescriptionIcon from '@/assets/svg/description.svg?component'
+import InformationIcon from '@/assets/svg/lucide/user-cog.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
-import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
@@ -90,7 +90,7 @@ const containerClasses = computed(() => ({
   <AppCard class="w-full shadow-lg p-6 mt-4">
     <template #content>
       <div class="flex items-center justify-center gap-2 mb-4">
-        <InformationIcon class="w-8 h-8 dark:fill-white" />
+        <InformationIcon class="w-8 h-8 dark:text-white" />
         <h2 class="text-center text-xl font-semibold">
           {{ t('contact.general.personalized_information') }}
         </h2>

@@ -5,11 +5,11 @@ import { useRouter } from 'vue-router'
 // Iconos de settings
 import AdministratorsIcon from '@/assets/svg/administrators.svg?component'
 import IntegrationsIcon from '@/assets/svg/integrations.svg?component'
+import InformationIcon from '@/assets/svg/lucide/user-cog.svg?component'
 // Iconos de reportes
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
 import MessagesIcon from '@/assets/svg/report/messages.svg?component'
 import SendingIcon from '@/assets/svg/report/sending.svg?component'
-import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import { IconTypesReports } from '@/pages/reports/components/enums/icon-types-reports.enum'
 import { IconTypesSettings } from '@/pages/settings/components/enums/icon-types-settings.enum'
 
@@ -94,9 +94,15 @@ const handleClick = () => {
     <!-- Icono SVG -->
     <component
       :is="getIconComponent"
+      v-if="icon != IconTypesSettings.CUSTOM_FIELDS"
       class="w-10 h-10 md:w-12 md:h-12 fill-neutral-800 dark:fill-neutral-300 group-hover:fill-[var(--p-primary-color)] group-hover:scale-110 transition-all"
     />
 
+    <component
+      :is="getIconComponent"
+      v-if="icon === IconTypesSettings.CUSTOM_FIELDS"
+      class="w-10 h-10 md:w-12 md:h-12 text-neutral-800 dark:text-neutral-300 group-hover:text-[var(--p-primary-color)] group-hover:scale-110 transition-all"
+    />
     <!-- Texto -->
     <small class="mt-2 text-center text-sm md:text-base text-neutral-800 font-semibold dark:text-neutral-300 group-hover:text-[var(--p-primary-color)] transition-colors">
       {{ text }}

@@ -15,11 +15,11 @@ import PlusIcon from '@/assets/svg/lucide/plus.svg?component'
 import FilterIcon from '@/assets/svg/lucide/search.svg?component'
 import SendIcon from '@/assets/svg/lucide/send.svg?component'
 import TrashIcon from '@/assets/svg/lucide/trash.svg?component'
+import InformationIcon from '@/assets/svg/lucide/user-cog.svg?component'
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
 import MessagesIcon from '@/assets/svg/report/messages.svg?component'
 import ExportIcon from '@/assets/svg/table-actions/export.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
-import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 
 import { ActionTypes } from './enums/action-types.enum'
@@ -107,8 +107,13 @@ const getActionSize = (): 'small' | 'large' | undefined => {
     <div class="flex items-center gap-2 flex-shrink-0">
       <component
         :is="IconComponents[icon]"
-        v-if="icon && IconComponents[icon]"
+        v-if="icon && IconComponents[icon] && icon != IconTypes.CUSTOM_FIELDS"
         class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:fill-[var(--p-primary-color)]"
+      />
+      <component
+        :is="IconComponents[icon]"
+        v-if="icon && IconComponents[icon] && icon === IconTypes.CUSTOM_FIELDS"
+        class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:text-[var(--p-primary-color)]"
       />
       <div class="hidden md:flex md:flex-row md:items-center md:gap-2">
         <span class="text-xl font-semibold dark:text-[var(--p-primary-color)]">

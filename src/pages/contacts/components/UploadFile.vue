@@ -69,10 +69,6 @@ const fieldsOptions = computed(() => {
     { label: t('contact.general.birth_date'), value: 'birthDate' }
   ]
 
-  console.log('Available fields reactive value:', availableFields.value)
-  console.log('Custom fields mapped:', customFields)
-  console.log('Final fields options:', [...standardFields, ...customFields])
-
   return [...standardFields, ...customFields]
 })
 
@@ -94,7 +90,6 @@ const onUpload = async (event: FileUploadSelectEvent) => {
   try {
     const response = await getImportPreview(file) as ImportPreviewResponse
 
-    console.log('Response from getImportPreview:', response)
 
     if (response?.headers) {
       originalHeaders.value = response.headers
