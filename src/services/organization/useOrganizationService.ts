@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useApiClient } from '@/composables/useApiClient'
 
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
+import type { ICreateManualRecharge } from './interfaces/create-manual-recharge.interface'
 import type { IFilterRecharge } from './interfaces/filter-recharge.interface'
 import type { IOrganization } from './interfaces/organization.interface'
 import type { IRecharge } from './interfaces/recharge.interface'
@@ -36,17 +37,39 @@ export const useOrganizationService = () => {
     }
   }
 
+  const getOrganizations = async () => {
+    try {
+      return await privateApi.get<IOrganization[]>('/organizations')
+    } catch (error) {
+      handleError(error, 'common.general.error')
+      return null
+    }
+  }
+
   const getRecharges = async (query?: IFilterRecharge) => {
     try {
       return await privateApi.get<IPaginationResponse<IRecharge>>('/recharges', { params: { ...query } })
     } catch (error) {
-      handleError(error, 'general.error_getting_recharges')
+      handleError(error, 'common.general.error')
+      return null
+    }
+  }
+
+  const createManualRecharge = async (data: ICreateManualRecharge) => {
+    try {
+      const response = await privateApi.post<IRecharge>('/recharges/manual', data)
+      showToast('success', 'settings.recharges.created')
+      return response
+    } catch (error) {
+      handleError(error, 'settings.recharges.error_create')
       return null
     }
   }
 
   return {
     getOrganization,
+    getOrganizations,
     getRecharges,
+    createManualRecharge,
   }
 }

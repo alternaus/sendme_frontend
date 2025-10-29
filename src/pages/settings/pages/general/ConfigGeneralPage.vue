@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import Tab from 'primevue/tab'
 import TabList from 'primevue/tablist'
 import TabPanel from 'primevue/tabpanel'
@@ -7,11 +9,16 @@ import Tabs from 'primevue/tabs'
 
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 import ApiKeyTab from './components/api-keys/ApiKeyTab.vue'
 import MailProviderTab from './components/email-configuration/MailProviderTab.vue'
 import SettingTab from './components/organization-configuration/SettingTab.vue'
+import RechargeTab from './components/recharges/RechargeTab.vue'
 import WebhookTab from './components/webhooks/WebhookTab.vue'
+
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role?.name === 'admin')
 </script>
 
 <template>
@@ -31,6 +38,9 @@ import WebhookTab from './components/webhooks/WebhookTab.vue'
       <Tab value="3" class="px-3 py-2">
         <span class="font-bold whitespace-nowrap">{{ $t('settings.webhooks.tab_header') }}</span>
       </Tab>
+      <Tab v-if="isAdmin" value="4" class="px-3 py-2">
+        <span class="font-bold whitespace-nowrap">{{ $t('settings.recharges.tab_header') }}</span>
+      </Tab>
     </TabList>
 
     <TabPanels class="rounded-b-lg">
@@ -45,6 +55,9 @@ import WebhookTab from './components/webhooks/WebhookTab.vue'
       </TabPanel>
       <TabPanel value="3" as="p" class="m-0">
         <WebhookTab />
+      </TabPanel>
+      <TabPanel v-if="isAdmin" value="4" as="p" class="m-0">
+        <RechargeTab />
       </TabPanel>
     </TabPanels>
   </Tabs>
