@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router'
 
 import ConfirmDialog from 'primevue/confirmdialog'
 
-import AppSidebar from '@/components/atoms/sidebars/AppSidebar.vue'
-import AppSidebarMobile from '@/components/atoms/sidebars/AppSidebarMobile.vue'
+import AppSidebar from '@/components/atoms/new-sidebars/AppSidebar.vue'
+import AppSidebarMobile from '@/components/atoms/new-sidebars/AppSidebarMobile.vue'
 import TermsHandler from '@/components/organisms/TermsHandler.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 

@@ -3,14 +3,19 @@ import { computed, ref } from 'vue'
 
 import TieredMenu from 'primevue/tieredmenu'
 
+import { storeToRefs } from 'pinia'
+
 import AppAvatar from '@/components/atoms/avatar/AppAvatar.vue'
-import { useUserMenu } from '@/components/atoms/sidebars/composables/useUserMenu'
+import { useUserMenu } from '@/components/atoms/new-sidebars/composables/useUserMenu'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 defineProps<{
   isExpanded: boolean
 }>()
 
-const { authStore, menuItems } = useUserMenu()
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
+const { menuItems } = useUserMenu()
 
 const menu = ref()
 const profileMenuVisible = ref(false)
@@ -18,15 +23,14 @@ const profileMenuVisible = ref(false)
 const toggleMenu = (event: Event) => {
   menu.value.toggle(event)
 }
+
 const userInitials = computed(() => {
-  if (authStore.user?.name) {
-    return authStore.user.name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-  }
-  return ''
+  if (!user.value?.name) return ''
+  return user.value.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
 })
 
 const avatarColors = [
@@ -39,15 +43,15 @@ const avatarColors = [
   '!bg-emerald-800 !text-white',
   '!bg-violet-800 !text-white',
   '!bg-cyan-800 !text-white',
-  '!bg-amber-800 !text-white'
+  '!bg-amber-800 !text-white',
 ]
 
 const randomAvatarColor = computed(() => {
-  if (!authStore.user?.email) return avatarColors[0]
+  if (!user.value?.email) return avatarColors[0]
 
   let hash = 0
-  for (let i = 0; i < authStore.user.email.length; i++) {
-    const char = authStore.user.email.charCodeAt(i)
+  for (let i = 0; i < user.value.email.length; i++) {
+    const char = user.value.email.charCodeAt(i)
     hash = ((hash << 5) - hash) + char
     hash = hash & hash
   }
@@ -68,7 +72,13 @@ const randomAvatarColor = computed(() => {
       @click="toggleMenu"
     >
       <div class="relative">
-        <AppAvatar class="flex-shrink-0 !w-10 !h-10 !text-sm ring-2 ring-neutral-500/30 dark:ring-neutral-300/40" :class="randomAvatarColor" :label="userInitials" :image="authStore.user?.avatarUrl" size="large" />
+        <AppAvatar
+          class="flex-shrink-0 !w-10 !h-10 !text-sm ring-2 ring-neutral-500/30 dark:ring-neutral-300/40"
+          :class="randomAvatarColor"
+          :label="userInitials"
+          :image="user?.avatarUrl"
+          size="large"
+        />
       </div>
 
       <div
@@ -77,15 +87,15 @@ const randomAvatarColor = computed(() => {
       >
         <span
           class="text-sm font-semibold truncate text-neutral-800 dark:text-white"
-          :title="authStore.user?.name"
+          :title="user?.name"
         >
-          {{ authStore.user?.name }}
+          {{ user?.name }}
         </span>
         <span
           class="text-xs text-neutral-500 dark:text-neutral-400 truncate"
-          :title="authStore.user?.email"
+          :title="user?.email"
         >
-          {{ authStore.user?.email }}
+          {{ user?.email }}
         </span>
       </div>
 

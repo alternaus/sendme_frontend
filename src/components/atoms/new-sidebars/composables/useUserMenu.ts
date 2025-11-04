@@ -5,28 +5,28 @@ import { useConfirm } from 'primevue/useconfirm'
 
 import { useI18n } from 'vue-i18n'
 
-import { useThemeStore } from '@/stores/themeStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { useThemeStore } from '@/stores/useThemeStore'
 
 export function useUserMenu() {
   const { t, locale } = useI18n()
-  const authStore = useAuthStore()
   const themeStore = useThemeStore()
+  const authStore = useAuthStore()
   const confirm = useConfirm()
   const router = useRouter()
 
   const confirmLogout = () => {
     confirm.require({
-  message: t('auth.session.logout_confirm_message'),
-  header: t('auth.session.logout_confirm_title'),
+      message: t('auth.session.logout_confirm_message'),
+      header: t('auth.session.logout_confirm_title'),
       icon: 'pi pi-exclamation-triangle',
       rejectClass: 'p-button-secondary p-button-outlined',
-  rejectLabel: t('common.general.cancel'),
+      rejectLabel: t('common.general.cancel'),
       acceptLabel: t('auth.session.logout'),
       acceptClass: 'p-button-danger',
       accept: () => {
         authStore.logout()
-      }
+      },
     })
   }
 
@@ -38,20 +38,20 @@ export function useUserMenu() {
     {
       label: t('common.user.profile'),
       icon: 'pi pi-user',
-      command: () => handleNavigation('/account')
+      command: () => handleNavigation('/account'),
     },
     {
       label: t('common.user.settings'),
       icon: 'pi pi-cog',
-      command: () => handleNavigation('/settings')
+      command: () => handleNavigation('/settings'),
     },
     {
-      separator: true
+      separator: true,
     },
     {
       label: themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode'),
       icon: themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon',
-      command: () => themeStore.toggleDark()
+      command: () => themeStore.toggleDark(),
     },
     {
       label: t('common.languages.language'),
@@ -63,8 +63,10 @@ export function useUserMenu() {
           class: locale.value === 'es' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
             locale.value = 'es'
-            try { localStorage.setItem('lang', locale.value as string) } catch {}
-          }
+            try {
+              localStorage.setItem('lang', locale.value as string)
+            } catch {}
+          },
         },
         {
           label: t('common.languages.en'),
@@ -72,28 +74,29 @@ export function useUserMenu() {
           class: locale.value === 'en' ? 'text-blue-600 dark:text-blue-400' : '',
           command: () => {
             locale.value = 'en'
-            try { localStorage.setItem('lang', locale.value as string) } catch {}
-          }
-        }
-      ]
+            try {
+              localStorage.setItem('lang', locale.value as string)
+            } catch {}
+          },
+        },
+      ],
     },
     {
-      separator: true
+      separator: true,
     },
     {
       label: t('common.auth.logout'),
       icon: 'pi pi-sign-out',
       command: () => confirmLogout(),
-      class: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-    }
+      class: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20',
+    },
   ])
 
   return {
-    authStore,
     themeStore,
     menuItems,
     confirmLogout,
     handleNavigation,
-    locale
+    locale,
   }
 }

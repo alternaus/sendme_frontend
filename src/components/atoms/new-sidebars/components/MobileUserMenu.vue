@@ -21,11 +21,11 @@ const showModal = ref(false)
 
 const confirmLogout = () => {
   confirm.require({
-  message: t('auth.session.logout_confirm_message'),
-  header: t('auth.session.logout_confirm_title'),
+    message: t('auth.session.logout_confirm_message'),
+    header: t('auth.session.logout_confirm_title'),
     icon: 'pi pi-exclamation-triangle',
     rejectClass: 'p-button-secondary p-button-outlined',
-  rejectLabel: t('common.general.cancel'),
+    rejectLabel: t('common.general.cancel'),
     acceptLabel: t('auth.session.logout'),
     acceptClass: 'p-button-danger',
     accept: () => {
@@ -39,6 +39,11 @@ const handleAction = (action: (() => void) | undefined) => {
   if (action) {
     action()
   }
+}
+
+const handleNavigation = (route: string) => {
+  router.push(route)
+  showModal.value = false
 }
 
 const userInitials = computed(() => {
@@ -68,52 +73,66 @@ const avatarColors = [
 const randomAvatarColor = computed(() => {
   if (!authStore.user?.email) return avatarColors[0]
 
-  // Usar el email como semilla para que sea consistente por usuario
   let hash = 0
   for (let i = 0; i < authStore.user.email.length; i++) {
     const char = authStore.user.email.charCodeAt(i)
     hash = (hash << 5) - hash + char
-    hash = hash & hash // Convertir a entero de 32 bits
+    hash = hash & hash
   }
 
   const index = Math.abs(hash) % avatarColors.length
   return avatarColors[index]
 })
 
-const handleNavigation = (route: string) => {
-  router.push(route)
-  showModal.value = false
-}
-
 const menuItems = computed(() => [
   {
-  label: t('common.user.profile'),
+    label: t('common.user.profile'),
     icon: 'pi pi-user',
-    route: '/profile',
+    route: '/account',
   },
   {
-  label: t('common.user.settings'),
+    label: t('common.user.settings'),
     icon: 'pi pi-cog',
     route: '/settings',
   },
   {
-  label: themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode'),
+    label: themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode'),
     icon: themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon',
     action: () => themeStore.toggleDark(),
   },
   {
-    label: locale.value === 'es' ? t('common.languages.switchToEnglish') : t('common.languages.switchToSpanish'),
+    label: t('common.languages.language'),
     icon: 'pi pi-globe',
-    action: () => {
-      locale.value = locale.value === 'es' ? 'en' : 'es'
-      try { localStorage.setItem('lang', locale.value as string) } catch {}
-    },
+    items: [
+      {
+        label: t('common.languages.es'),
+        icon: locale.value === 'es' ? 'pi pi-check' : '',
+        action: () => {
+          locale.value = 'es'
+          try {
+            localStorage.setItem('lang', locale.value as string)
+          } catch {}
+        },
+      },
+      {
+        label: t('common.languages.en'),
+        icon: locale.value === 'en' ? 'pi pi-check' : '',
+        action: () => {
+          locale.value = 'en'
+          try {
+            localStorage.setItem('lang', locale.value as string)
+          } catch {}
+        },
+      },
+    ],
   },
   {
-    label: t('auth.session.logout'),
+    separator: true,
+  },
+  {
+    label: t('common.auth.logout'),
     icon: 'pi pi-sign-out',
     action: () => confirmLogout(),
-    class: 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20',
   },
 ])
 </script>
@@ -128,9 +147,9 @@ const menuItems = computed(() => [
         :label="userInitials"
         :image="authStore.user?.avatarUrl"
         size="large"
-        class="ring-2 ring-gray-400/30 dark:ring-gray-500/40"
-        style=" width: 32px; height: 32px; font-size: 0.875rem;"
-        :class="randomAvatarColor"
+        class="ring-2"
+        :class="[randomAvatarColor, themeStore.isDark ? 'ring-[var(--p-primary-color)]/20' : 'ring-white/30']"
+        style="width: 32px; height: 32px; font-size: 0.875rem"
       />
     </div>
 
@@ -145,14 +164,13 @@ const menuItems = computed(() => [
       }"
     >
       <template #header>
-        <div class="flex items-center gap-2 w-full">
+        <div class="flex items-center gap-3 w-full">
           <AppAvatar
             :label="userInitials"
             :image="authStore.user?.avatarUrl"
             size="normal"
-            class="ring-2 ring-gray-400/30 dark:ring-gray-500/40"
-            :class="randomAvatarColor"
-
+            class="ring-2"
+            :class="[randomAvatarColor, themeStore.isDark ? 'ring-[var(--p-primary-color)]/20' : 'ring-white/30']"
           />
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -167,24 +185,36 @@ const menuItems = computed(() => [
 
       <!-- Menu items -->
       <div class="space-y-1 pt-2">
-        <template v-for="item in menuItems" :key="item.label">
+        <template v-for="(item, index) in menuItems" :key="index">
+          <div v-if="item.separator" class="my-2 border-t border-gray-200 dark:border-gray-700" />
           <button
-            v-if="item.route"
+            v-else-if="item.route"
             @click="handleNavigation(item.route)"
-            class="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors duration-200 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+            class="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors duration-200 w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <i :class="item.icon" class="text-sm w-4" />
             <span>{{ item.label }}</span>
           </button>
-
+          <div v-else-if="item.items" class="space-y-1">
+            <div class="flex items-center gap-3 px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+              <i :class="item.icon" class="text-sm w-4" />
+              <span>{{ item.label }}</span>
+            </div>
+            <button
+              v-for="(subItem, subIndex) in item.items"
+              :key="subIndex"
+              @click="handleAction(subItem.action)"
+              class="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors duration-200 w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ml-6"
+              :class="{ 'text-blue-600 dark:text-blue-400': subItem.icon === 'pi pi-check' }"
+            >
+              <i :class="subItem.icon" class="text-sm w-4" />
+              <span>{{ subItem.label }}</span>
+            </button>
+          </div>
           <button
             v-else
             @click="handleAction(item.action)"
-            class="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors duration-200 w-full text-left"
-            :class="
-              item.class ||
-              'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-            "
+            class="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors duration-200 w-full text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <i :class="item.icon" class="text-sm w-4" />
             <span>{{ item.label }}</span>
@@ -203,6 +233,4 @@ const menuItems = computed(() => [
 :deep(.user-menu-modal .p-dialog-content) {
   padding: 0 1rem 1rem 1rem;
 }
-
-
 </style>

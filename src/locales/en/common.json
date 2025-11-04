@@ -133,6 +133,7 @@
     "users": "Users"
   },
   "theme": {
+    "dark": "Theme",
     "darkMode": "Dark mode",
     "lightMode": "Light mode"
   },
