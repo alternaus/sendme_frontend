@@ -14,11 +14,11 @@ export const useCustomFieldService = () => {
     return privateApi.post<ICustomField, ICreateCustomField>('/custom-fields', customField)
   }
 
-  const updateCustomField = async (id: number, customField: Partial<ICreateCustomField>) => {
+  const updateCustomField = async (id:string, customField: Partial<ICreateCustomField>) => {
     return privateApi.patch<ICustomField, Partial<ICreateCustomField>>(`/custom-fields/${id}`, customField)
   }
 
-  const deleteCustomField = async (id: number) => {
+  const deleteCustomField = async (id:string) => {
     return privateApi.delete<ICustomField>(`/custom-fields/${id}`)
   }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import FileUpload, { type FileUploadSelectEvent } from 'primevue/fileupload'
 import ProgressBar from 'primevue/progressbar'
@@ -10,12 +11,13 @@ import { useI18n } from 'vue-i18n'
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 
 interface ImportPreviewResponse {
   headers: string[]
   sampleData: string[]
-  availableFields: string[]
+  availableFields: Record<string, string>
   totalRows?: number
 }
 
@@ -31,8 +33,10 @@ const uploader = ref()
 const fileData = ref<string[][]>([])
 const selectedFields = ref<Record<number, string>>({})
 const originalHeaders = ref<string[]>([])
+const availableFields = ref<Record<string, string>>({})
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 const { getImportPreview, importContacts } = useContactService()
 
 const fileName = ref('')
@@ -41,17 +45,32 @@ const totalRows = ref(0)
 const loading = ref(false)
 const currentFile = ref<File | null>(null)
 const importProgress = ref<{ progress: number; total: number; percentage: number } | null>(null)
+const selectedTags = ref<string[]>([])
 
 const requiredFields = ['phone']
 
-const fieldsOptions = [
-  { label: t('general.name'), value: 'name' },
-  { label: t('general.last_name'), value: 'lastName' },
-  { label: t('general.email'), value: 'email' },
-  { label: t('general.phone'), value: 'phone' },
-  { label: t('general.country_code'), value: 'countryCode' },
-  { label: t('general.birth_date'), value: 'birthDate' }
-]
+const fieldsOptions = computed(() => {
+  const standardFieldKeys = ['name', 'lastName', 'email', 'phone', 'countryCode', 'birthDate']
+
+  // Filtrar solo campos personalizados (que no sean los estándar)
+  const customFields = Object.entries(availableFields.value)
+    .filter(([key]) => !standardFieldKeys.includes(key))
+    .map(([id, name]) => ({
+      label: name,
+      value: id
+    }))
+
+  const standardFields = [
+    { label: t('contact.general.name'), value: 'name' },
+    { label: t('contact.general.last_name'), value: 'lastName' },
+    { label: t('contact.general.email'), value: 'email' },
+    { label: t('contact.general.phone'), value: 'phone' },
+    { label: t('contact.general.country_code'), value: 'countryCode' },
+    { label: t('contact.general.birth_date'), value: 'birthDate' }
+  ]
+
+  return [...standardFields, ...customFields]
+})
 
 const openFileDialog = () => {
   uploader.value?.choose?.()
@@ -71,12 +90,17 @@ const onUpload = async (event: FileUploadSelectEvent) => {
   try {
     const response = await getImportPreview(file) as ImportPreviewResponse
 
+
     if (response?.headers) {
       originalHeaders.value = response.headers
 
-      //Convertir sampleData en filas
+      if (response.availableFields && typeof response.availableFields === 'object') {
+        availableFields.value = response.availableFields
+      } else {
+      }
+
+
       if (response.sampleData) {
-        //Convertir el array plano en una matriz
         const rowData = []
         for (let i = 0; i < response.sampleData.length; i += response.headers.length) {
           rowData.push(response.sampleData.slice(i, i + response.headers.length))
@@ -84,14 +108,13 @@ const onUpload = async (event: FileUploadSelectEvent) => {
         fileData.value = [response.headers, ...rowData]
       }
 
-      //Calcular el número total de filas basado en los datos de muestra
       totalRows.value = Math.floor(response.sampleData.length / response.headers.length) || 1
     }
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('general.error_loading_file'),
+      summary: t('contact.general.error'),
+      detail: t('contact.import.error_loading_file'),
       life: 3000,
     })
   } finally {
@@ -124,24 +147,26 @@ const handleFinalUpload = async () => {
       }
     })
 
-    await importContacts(currentFile.value, fieldMapping)
+    await importContacts(currentFile.value, fieldMapping, selectedTags.value)
 
-    //Mostrar mensaje de éxito
     toast.add({
       severity: 'success',
-      summary: t('general.success'),
+      summary: t('contact.general.success'),
       detail: t('contact.import.upload_success'),
       life: 3000,
     })
 
-    //Limpiar datos
     handleCancel()
+
+    setTimeout(() => {
+      router.push('/contacts')
+    }, 1500)
   } catch (error: unknown) {
     const apiError = error as ApiError
     if (apiError.response?.data?.message) {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('contact.general.error'),
         detail: Array.isArray(apiError.response.data.message)
           ? apiError.response.data.message.join(', ')
           : apiError.response.data.message,
@@ -150,7 +175,7 @@ const handleFinalUpload = async () => {
     } else {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('contact.general.error'),
         detail: t('contact.import.error'),
         life: 3000,
       })
@@ -165,10 +190,12 @@ const handleCancel = () => {
   fileData.value = []
   originalHeaders.value = []
   selectedFields.value = {}
+  availableFields.value = {}
   fileName.value = ''
   fileSize.value = 0
   totalRows.value = 0
   importProgress.value = null
+  selectedTags.value = []
 }
 </script>
 
@@ -260,6 +287,23 @@ const handleCancel = () => {
             </div>
           </div>
 
+          <!-- Selector de etiquetas -->
+          <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm p-4">
+            <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-3">
+              {{ $t('contact.import.tags_section_title') }}
+            </h3>
+            <TagManager
+              v-model="selectedTags"
+              :placeholder="$t('contact.import.select_tags_placeholder')"
+              :allow-create="true"
+              :allow-manage="false"
+              size="small"
+            />
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
+              {{ $t('contact.import.tags_description') }}
+            </p>
+          </div>
+
           <div class="flex justify-center space-x-2">
             <AppButton class="!w-auto !text-xs" :label="$t('contact.import.load_file')" :disabled="!isValid"
               @click="handleFinalUpload" />
@@ -274,7 +318,7 @@ const handleCancel = () => {
           <div class="border-2 border-gray-300 p-4 rounded-full">
             <CloudUploadIcon class="w-12 h-12 text-gray-300" />
           </div>
-          <p class="mt-4 text-sm text-gray-500">{{ $t('general.drag_drop_file') }}</p>
+          <p class="mt-4 text-sm text-gray-500">{{ $t('contact.general.drag_drop_file') }}</p>
           <AppButton class="mt-6 !w-auto !mx-auto" :label="$t('contact.import.select_file')" @click="openFileDialog">
             <template #icon>
               <ImportIcon class="w-5 h-5 fill-current" />

@@ -6,21 +6,29 @@ import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
 
+import DateIcon from '@/assets/svg/date.svg?component'
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
 import MessageTypeIcon from '@/assets/svg/message_type.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import SmsIcon from '@/assets/svg/sms.svg?component'
 import StatusIcon from '@/assets/svg/status.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
 import AppTag from '@/components/atoms/tag/AppTag.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import { useStatusColors } from '@/composables/useStatusColors'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 // Interfaz para mensajes de reporte con contenido
 interface IReportMessage {
-  id: number
+  id:string
   content: string
   type: string
   status: string
@@ -29,10 +37,8 @@ interface IReportMessage {
   updatedAt: Date
   // Otras propiedades que pueda tener el mensaje
 }
-import AppHtmlViewerDialog from '@/components/atoms/dialogs/AppHtmlViewerDialog.vue'
 import { useReportService } from '@/services/report/useReportServices'
 
-import CardFilterMessages from './components/CardFilterMessages.vue'
 import { useMessageFilter } from './composables/useMessageFilter'
 import { TypeMessageTypes } from './enums/message-types.enum.ts'
 import { StatusMessageTypes } from './enums/status-types.enum'
@@ -43,12 +49,17 @@ export default defineComponent({
     AppTable,
     AppTag,
     AppHtmlViewerDialog,
+    AppFilterPanel,
+    AppInput,
+    AppSelect,
+    AppDateRangePicker,
     NumberIcon,
     MessageTypeIcon,
     DateSendIcon,
     StatusIcon,
     SmsIcon,
-    CardFilterMessages,
+    SearchIcon,
+    DateIcon,
   },
   setup() {
     const { t } = useI18n()
@@ -56,7 +67,10 @@ export default defineComponent({
     const router = useRouter()
     const { getMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ content, status, messageType, startDate, endDate })
     const { getStatusSeverity } = useStatusColors()
+
+    const showMobileModal = ref(false)
 
     const page = ref(1)
     const limit = ref(10)
@@ -98,7 +112,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('reports.common.error'),
           detail: t('report.error_getting_messages'),
         })
       } finally {
@@ -108,7 +122,13 @@ export default defineComponent({
 
     const headerActions = computed(() => [
       {
-        label: t('actions.export'),
+        label: t('common.actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => { showMobileModal.value = !showMobileModal.value },
+      },
+      {
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
 
@@ -130,17 +150,19 @@ export default defineComponent({
       const translationKey = StatusMessageTypes[statusString as keyof typeof StatusMessageTypes]
       return translationKey ? t(translationKey) : statusString
     }
-    const getTypeMessageTranslation = (type: unknown) => {
+    const getTypeMessageTranslation = (type?: string, messageType?: string) => {
       const typeString = typeof type === 'string' ? type : String(type)
-      // Manejar los tipos específicos de contenido
-      if (typeString === 'plain_text') {
-        return t('general.sms')
+      const messageTypeString = typeof messageType === 'string' ? messageType : String(messageType)
+      const messageTypeKey = messageTypeString ==='sms' || messageTypeString === 'N/A' ? '' : messageTypeString
+
+
+      if (typeString === 'PLAIN_TEXT') {
+        return `${t('reports.common.sms')}  ${t(messageTypeKey)}`
       }
-      if (typeString === 'html') {
-        return t('general.email_channel')
+      if (typeString === 'HTML') {
+        return `${t('reports.common.email_channel')}`
       }
 
-      // Fallback para otros tipos usando el enum existente
       const translationKey = TypeMessageTypes[typeString as keyof typeof TypeMessageTypes]
       return translationKey ? t(translationKey) : typeString
     }
@@ -184,19 +206,80 @@ export default defineComponent({
       isHtmlViewerVisible,
       htmlContent,
       handleViewHtmlContent,
+      StatusMessageTypes,
+      TypeMessageTypes,
+      showMobileModal,
     }
   },
 })
 </script>
 <template>
-  <AppHeader :icon="IconTypes.MESSAGES" :text="$t('general.messages')" :actions="headerActions" />
-  <CardFilterMessages
-    v-model:content="content"
-    v-model:status="status"
-    v-model:messageType="messageType"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-  />
+  <AppHeader :icon="IconTypes.MESSAGES" :text="$t('reports.common.messages')" :actions="headerActions" />
+
+  <AppFilterPanel
+    :header-actions="headerActions"
+    v-model:showMobileModal="showMobileModal"
+  >
+    <AppInput
+      :modelValue="content"
+      type="text"
+      class="w-full"
+      :label="$t('reports.common.search')"
+      @input="content = $event.target.value"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppSelect
+      class="w-full"
+      :modelValue="status"
+      :options="
+        Object.entries(StatusMessageTypes).map(([key, value]) => ({
+          value: key,
+          name: $t(value),
+        }))
+      "
+      :label="$t('reports.common.status')"
+      @update:modelValue="status = $event as string"
+    >
+      <template #icon>
+        <StatusIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppSelect
+      class="w-full"
+      :modelValue="messageType"
+      :options="
+        Object.entries(TypeMessageTypes).map(([key, value]) => ({
+          value: key,
+          name: $t(value),
+        }))
+      "
+      :label="$t('reports.common.message_type')"
+      @update:modelValue="messageType = $event as string"
+    >
+      <template #icon>
+        <MessageTypeIcon class="w-6 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppDateRangePicker
+      class="w-full col-span-1 sm:col-span-2"
+      :startDate="startDateString"
+      :endDate="endDateString"
+      :startLabel="$t('reports.common.start_date')"
+      :endLabel="$t('reports.common.end_date')"
+      @update:startDate="startDateString = $event"
+      @update:endDate="endDateString = $event"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
+  </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
     :data="messages"
@@ -213,48 +296,58 @@ export default defineComponent({
     :totalItems="messageMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    textTotalItems="general.messages"
+    textTotalItems="reports.common.messages"
+    :mobile-config="{
+      title: { field: 'recipientDetails' },
+      subtitle: { field: 'contentType' },
+      metadata: [
+        { field: 'content', position: 'left' },
+        { field: 'sentAt', position: 'right' }
+      ],
+      status: { field: 'status' },
+      showAvatar: false
+    }"
     @page-change="fetchMessages"
   >
     <template #header-recipientDetails>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.recipient_details') }} </span>
+        <span> {{ $t('reports.common.recipient_details') }} </span>
       </div>
     </template>
     <template #header-sentAt>
       <div class="flex items-center">
         <DateSendIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.shipment_date') }} </span>
+        <span> {{ $t('reports.common.shipment_date') }} </span>
       </div>
     </template>
     <template #header-messageType>
       <div class="flex items-center">
         <MessageTypeIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.message_type') }} </span>
+        <span> {{ $t('reports.common.message_type') }} </span>
       </div>
     </template>
     <template #header-content>
       <div class="flex items-center">
         <SmsIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.content') }} </span>
+        <span> {{ $t('reports.common.content') }} </span>
       </div>
     </template>
     <template #header-status>
       <div class="flex items-center">
         <StatusIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.status') }} </span>
+        <span> {{ $t('reports.common.status') }} </span>
       </div>
     </template>
     <template #custom-contentType="{ data }">
       <div class="flex justify-center">
-        {{ getTypeMessageTranslation(data.contentType) }}
+        {{ getTypeMessageTranslation(data.contentType, data.messageType) }}
       </div>
     </template>
     <template #custom-content="{ data }">
       <div class="flex justify-center">
         <div
-          v-if="data.contentType === 'html'"
+          v-if="data.contentType === 'HTML'"
           class="line-clamp-1 max-w-[200px] cursor-pointer"
           v-html="data.content"
         ></div>
@@ -271,8 +364,8 @@ export default defineComponent({
     <template #custom-status="{ data }">
       <div class="flex justify-center">
         <AppTag
-          :label="$t(`status.message.${String(data.status || 'failed')}`)"
-          :severity="getStatusSeverity(String(data.status || 'failed'), 'message')"
+          :label="$t(`reports.message_status.${String(data.status || 'failed').toLowerCase()}`)"
+          :severity="getStatusSeverity(String(data.status || 'FAILED'), 'message')"
         />
       </div>
     </template>

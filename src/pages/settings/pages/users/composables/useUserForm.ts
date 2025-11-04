@@ -17,18 +17,18 @@ export const useUserForm = () => {
 
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('settings.common.required_field'),
     },
     string: {
-      email: () => t('general.invalid_email')
+      email: () => t('settings.common.invalid_email')
     }
   })
 
   const schema = yup.object({
     users: yup.array().of(
       yup.object({
-        name: yup.string().required().label(t('user.name')),
-        email: yup.string().email().required().label(t('user.email')),
+        name: yup.string().required().label(t('settings.users.name')),
+        email: yup.string().email().required().label(t('settings.users.email')),
       }),
     ).max(3),
   })

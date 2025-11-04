@@ -109,7 +109,7 @@ const hasError = computed(() => (props.errorMessage?.length ?? 0) > 0)
 
 <template>
   <div :class="containerClasses">
-    <FloatLabel v-if="$slots.icon">
+    <FloatLabel  variant="on" v-if="$slots.icon">
       <IconField>
         <InputIcon>
           <slot name="icon" />
@@ -145,7 +145,7 @@ const hasError = computed(() => (props.errorMessage?.length ?? 0) > 0)
       <label class="text-sm text-gray-600 dark:text-gray-300">{{ label }}</label>
     </FloatLabel>
 
-    <FloatLabel v-else>
+    <FloatLabel variant="on" v-else>
       <DatePicker
         v-bind="forwardedAttrs"
         :model-value="internalDates"

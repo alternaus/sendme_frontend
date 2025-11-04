@@ -14,7 +14,7 @@ import type {
   UpdateEmailConfigurationDto
 } from '@/services/email-configuration/emailConfigurationTypes'
 import { useMailProviderService } from '@/services/email-configuration/useMailProviderService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useMailProviderForm } from './composables/useMailProviderForm'
@@ -28,7 +28,7 @@ const { sendBatchMessage } = useSendService()
 const loading = ref(false)
 const saving = ref(false)
 const testing = ref(false)
-const currentId = ref<number | null>(null)
+const currentId = ref<string | null>(null)
 
 // Opciones de puerto SMTP con mapeo de seguridad
 const portSecurityMap = {
@@ -37,11 +37,11 @@ const portSecurityMap = {
   25: false   // Sin cifrado
 }
 
-const portOptions = computed(() => [
-  { name: t('email_configuration.port_587_tls'), value: 587 },
-  { name: t('email_configuration.port_465_ssl'), value: 465 },
-  { name: t('email_configuration.port_25_plain'), value: 25 }
-])
+const portOptions = [
+  { name: t('settings.email_configuration.port_587_tls'), value: 587 },
+  { name: t('settings.email_configuration.port_465_ssl'), value: 465 },
+  { name: t('settings.email_configuration.port_25_plain'), value: 25 }
+]
 
 onMounted(async () => {
   loading.value = true
@@ -50,7 +50,7 @@ onMounted(async () => {
     const list: EmailConfigurationResponseDto[] = Array.isArray(res) ? res : []
     const item = list?.[0]
     if (item) {
-      currentId.value = (item).id as number
+      currentId.value = (item).id
       setValues({
         name: (item).name,
         host: (item).host,
@@ -122,7 +122,7 @@ const onSubmit = handleSubmit(async (values) => {
 
       const created = await createEmailConfiguration(createPayload)
       const createdData: EmailConfigurationResponseDto = (created)
-      currentId.value = (createdData).id as number
+      currentId.value = (createdData).id
       toast.add({ severity: 'success', summary: 'Guardado', detail: 'Configuración creada', life: 2500 })
     }
   } catch {
@@ -138,10 +138,10 @@ const testConfiguration = handleSubmit(async (values) => {
     // Crear el mensaje de prueba usando el servicio de envío
     const testMessage = {
       channel: MessageChannel.EMAIL,
-      message: t('email_configuration.test_email_body', {
+      message: t('settings.email_configuration.test_email_body', {
         date: new Date().toLocaleString()
       }),
-      subject: t('email_configuration.test_email_subject'),
+      subject: t('settings.email_configuration.test_email_subject'),
       contacts: [values.fromEmail],
       sendToAll: false
     }
@@ -151,7 +151,7 @@ const testConfiguration = handleSubmit(async (values) => {
     if (result) {
       toast.add({
         severity: 'success',
-        summary: t('email_configuration.test_success'),
+        summary: t('settings.email_configuration.test_success'),
         detail: 'Email enviado correctamente',
         life: 3000
       })
@@ -161,7 +161,7 @@ const testConfiguration = handleSubmit(async (values) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('email_configuration.test_error'),
+      summary: t('settings.email_configuration.test_error'),
       detail: 'Verifica los datos de configuración',
       life: 4000
     })
@@ -177,7 +177,7 @@ const testConfiguration = handleSubmit(async (values) => {
           <!-- Sección: Información General -->
       <div class="space-y-2">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ $t('email_configuration.general_information') }}
+          {{ $t('settings.email_configuration.general_information') }}
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -186,10 +186,10 @@ const testConfiguration = handleSubmit(async (values) => {
             <AppInput
               v-model="form.name.value"
               :error-message="errors.name"
-              :placeholder="$t('email_configuration.name')"
+              :placeholder="$t('settings.email_configuration.name')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.name_description') }}
+              {{ $t('settings.email_configuration.name_description') }}
             </p>
           </div>
 
@@ -201,7 +201,7 @@ const testConfiguration = handleSubmit(async (values) => {
           <!-- Sección: Configuración del Remitente -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ $t('email_configuration.sender_configuration') }}
+          {{ $t('settings.email_configuration.sender_configuration') }}
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -210,10 +210,10 @@ const testConfiguration = handleSubmit(async (values) => {
             <AppInput
               v-model="form.fromName.value"
               :error-message="errors.fromName"
-              :placeholder="$t('email_configuration.from_name')"
+              :placeholder="$t('settings.email_configuration.from_name')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.from_name_description') }}
+              {{ $t('settings.email_configuration.from_name_description') }}
             </p>
           </div>
 
@@ -223,10 +223,10 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.fromEmail.value"
               :error-message="errors.fromEmail"
               type="email"
-              :placeholder="$t('email_configuration.from_email')"
+              :placeholder="$t('settings.email_configuration.from_email')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.from_email_description') }}
+              {{ $t('settings.email_configuration.from_email_description') }}
             </p>
           </div>
         </div>
@@ -235,7 +235,7 @@ const testConfiguration = handleSubmit(async (values) => {
           <!-- Sección: Autenticación SMTP -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ $t('email_configuration.smtp_authentication') }}
+          {{ $t('settings.email_configuration.smtp_authentication') }}
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -244,10 +244,10 @@ const testConfiguration = handleSubmit(async (values) => {
             <AppInput
               v-model="form.username.value"
               :error-message="errors.username"
-              :placeholder="$t('email_configuration.username')"
+              :placeholder="$t('settings.email_configuration.username')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.username_description') }}
+              {{ $t('settings.email_configuration.username_description') }}
             </p>
           </div>
 
@@ -257,10 +257,10 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.password.value"
               :error-message="errors.password"
               type="password"
-              :placeholder="$t('email_configuration.password')"
+              :placeholder="$t('settings.email_configuration.password')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.password_description') }}
+              {{ $t('settings.email_configuration.password_description') }}
             </p>
           </div>
         </div>
@@ -269,7 +269,7 @@ const testConfiguration = handleSubmit(async (values) => {
       <!-- Sección: Configuración del Servidor -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {{ $t('email_configuration.server_configuration') }}
+          {{ $t('settings.email_configuration.server_configuration') }}
         </h3>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -278,10 +278,10 @@ const testConfiguration = handleSubmit(async (values) => {
             <AppInput
               v-model="form.host.value"
               :error-message="errors.host"
-              :placeholder="$t('email_configuration.smtp_host')"
+              :placeholder="$t('settings.email_configuration.smtp_host')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.smtp_host_description') }}
+              {{ $t('settings.email_configuration.smtp_host_description') }}
             </p>
           </div>
 
@@ -290,10 +290,10 @@ const testConfiguration = handleSubmit(async (values) => {
               v-model="form.port.value"
               :error-message="errors.port"
               :options="portOptions"
-              :label="$t('email_configuration.port')"
+              :label="$t('settings.email_configuration.port')"
             />
             <p class="text-xs text-gray-600 dark:text-gray-400">
-              {{ $t('email_configuration.port_description') }}
+              {{ $t('settings.email_configuration.port_description') }}
             </p>
           </div>
         </div>
@@ -307,7 +307,7 @@ const testConfiguration = handleSubmit(async (values) => {
           class="!w-auto"
           :disabled="saving || loading || testing || !isFormValid"
           severity="primary"
-          :label="currentId ? $t('email_configuration.save_changes') : $t('email_configuration.create')"
+          :label="currentId ? $t('settings.email_configuration.save_changes') : $t('settings.email_configuration.create')"
         />
 
         <!-- Botón de probar configuración -->
@@ -317,7 +317,7 @@ const testConfiguration = handleSubmit(async (values) => {
           class="!w-auto ml-auto"
           outlined
           severity="secondary"
-          :label="testing ? $t('email_configuration.testing') : $t('email_configuration.test_configuration')"
+          :label="testing ? $t('settings.email_configuration.testing') : $t('settings.email_configuration.test_configuration')"
           @click="testConfiguration"
         />
 
@@ -327,7 +327,7 @@ const testConfiguration = handleSubmit(async (values) => {
           class="!w-auto"
           severity="secondary"
           :disabled="saving || testing"
-          :label="$t('email_configuration.reset')"
+          :label="$t('settings.email_configuration.reset')"
           @click="resetForm()"
         />
       </div>

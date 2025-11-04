@@ -42,7 +42,7 @@ const createdKey = ref<string | null>(null)
 const copyNow = async (k?: string | null) => {
   if (!k) return
   await navigator.clipboard.writeText(k)
-  toast.add({ severity: 'info', summary: t('api_keys.copied'), detail: t('api_keys.copied'), life: 1500 })
+  toast.add({ severity: 'info', summary: t('settings.api_keys.copied'), detail: t('settings.api_keys.copied'), life: 1500 })
 }
 
 
@@ -56,9 +56,9 @@ const onCreate = handleSubmit(async (values) => {
     showKeyDialog.value = true
     rows.value.unshift(created)
     resetForm()
-    toast.add({ severity: 'success', summary: t('api_keys.created'), detail: t('api_keys.created'), life: 1800 })
+    toast.add({ severity: 'success', summary: t('settings.api_keys.created'), detail: t('settings.api_keys.created'), life: 1800 })
   } catch {
-    toast.add({ severity: 'error', summary: t('api_keys.error_create'), detail: t('api_keys.error_create'), life: 2500 })
+    toast.add({ severity: 'error', summary: t('settings.api_keys.error_create'), detail: t('settings.api_keys.error_create'), life: 2500 })
   } finally {
     creating.value = false
   }
@@ -69,20 +69,20 @@ const onCreate = handleSubmit(async (values) => {
 
 const confirmDelete = (row: IApiKey) => {
   confirm.require({
-    message: t('api_keys.delete_confirm', { name: row.name }),
-    header: t('api_keys.delete_header'),
+    message: t('settings.api_keys.delete_confirm', { name: row.name }),
+    header: t('settings.api_keys.delete_header'),
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
       try {
         await remove(row.id)
         rows.value = rows.value.filter(r => r.id !== row.id)
-        toast.add({ severity: 'success', summary: t('api_keys.delete_success'), detail: t('api_keys.delete_success'), life: 1600 })
+        toast.add({ severity: 'success', summary: t('settings.api_keys.delete_success'), detail: t('settings.api_keys.delete_success'), life: 1600 })
       } catch {
-        toast.add({ severity: 'error', summary: t('api_keys.error_delete'), detail: t('api_keys.error_delete'), life: 2500 })
+        toast.add({ severity: 'error', summary: t('settings.api_keys.error_delete'), detail: t('settings.api_keys.error_delete'), life: 2500 })
       }
     },
-    rejectProps: { label: t('api_keys.no'), severity: 'secondary', outlined: true, size: 'small' },
-    acceptProps: { label: t('api_keys.delete'), size: 'small', severity: 'danger' },
+    rejectProps: { label: t('settings.api_keys.no'), severity: 'secondary', outlined: true, size: 'small' },
+    acceptProps: { label: t('settings.api_keys.delete'), size: 'small', severity: 'danger' },
   })
 }
 </script>
@@ -92,25 +92,25 @@ const confirmDelete = (row: IApiKey) => {
     <!-- Header Section -->
     <div class="flex items-center gap-3 mb-2">
       <h2 class="text-xl font-semibold text-neutral-900 dark:text-white">
-        {{ $t('api_keys.title') }}
+        {{ $t('settings.api_keys.title') }}
       </h2>
     </div>
 
     <p class="text-neutral-600 dark:text-neutral-400 mb-8">
-      {{ $t('api_keys.description') }}
+      {{ $t('settings.api_keys.description') }}
     </p>
 
     <div class="space-y-2">
       <div>
         <AppInput v-model="form.name.value" class="w-full" :errorMessage="errors.name"
-          :placeholder="t('api_keys.placeholder')" />
+          :placeholder="t('settings.api_keys.placeholder')" />
         <p class="text-xs text-neutral-500">
-          {{ $t('api_keys.input_description') }}
+          {{ $t('settings.api_keys.input_description') }}
         </p>
       </div>
 
       <div class="flex justify-end">
-        <AppButton class="!w-auto" :loading="creating" :label="t('api_keys.create')" @click="onCreate" />
+        <AppButton class="!w-auto" :loading="creating" :label="t('settings.api_keys.create')" @click="onCreate" />
       </div>
     </div>
 
@@ -119,19 +119,19 @@ const confirmDelete = (row: IApiKey) => {
     <div class="space-y-2">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">
-          {{ $t('api_keys.existing_keys') }}
+          {{ $t('settings.api_keys.existing_keys') }}
         </h3>
         <span class="text-sm text-neutral-500">
-          {{ rows.length }} {{ rows.length === 1 ? $t('api_keys.keys_count') : $t('api_keys.keys_count_plural') }}
+          {{ rows.length }} {{ rows.length === 1 ? $t('settings.api_keys.keys_count') : $t('settings.api_keys.keys_count_plural') }}
         </span>
       </div>
 
       <div v-if="loading" class="text-center py-8">
-        <div class="text-neutral-500">{{ $t('api_keys.loading') }}</div>
+        <div class="text-neutral-500">{{ $t('settings.api_keys.loading') }}</div>
       </div>
 
       <div v-else-if="rows.length === 0" class="text-center py-8">
-        <div class="text-neutral-500">{{ $t('api_keys.no_keys') }}</div>
+        <div class="text-neutral-500">{{ $t('settings.api_keys.no_keys') }}</div>
       </div>
 
       <div v-else class="space-y-3">
@@ -143,14 +143,14 @@ const confirmDelete = (row: IApiKey) => {
                 <span class="font-medium text-neutral-900 dark:text-white text-base truncate">
                   {{ r.name }}
                 </span>
-                <AppTag :value="r.isActive ? t('api_keys.active') : t('api_keys.inactive')"
+                <AppTag :value="r.isActive ? t('settings.api_keys.active') : t('settings.api_keys.inactive')"
                   :severity="r.isActive ? 'success' : 'danger'" class="!py-1 !px-2 !text-xs" />
               </div>
               <div class="text-sm text-neutral-600 dark:text-neutral-400 font-mono">
                 {{ mask(r.key) }}
               </div>
               <div class="text-xs text-neutral-500 mt-1">
-                {{ $t('api_keys.created_on') }} {{ formatDate(r.createdAt) }}
+                {{ $t('settings.api_keys.created_on') }} {{ formatDate(r.createdAt) }}
               </div>
             </div>
 
@@ -170,20 +170,20 @@ const confirmDelete = (row: IApiKey) => {
       </div>
     </div>
 
-    <AppDialog v-model:modelValue="showKeyDialog" modal :header="t('api_keys.created')" :style="{ width: '34rem' }"
+    <AppDialog v-model:modelValue="showKeyDialog" modal :header="t('settings.api_keys.created')" :style="{ width: '34rem' }"
       :draggable="false">
       <div class="space-y-3 text-sm">
         <p class="font-medium">
-          {{ t('api_keys.copy_now') }}
+          {{ t('settings.api_keys.copy_now') }}
         </p>
         <div class="rounded-md border p-3 bg-surface-50 dark:bg-surface-900">
           <code class="font-mono break-all">{{ createdKey }}</code>
         </div>
         <div class="flex justify-end gap-2">
-          <AppButton icon="pi pi-copy" size="small" :label="t('api_keys.copy')" @click="copyNow(createdKey)" />
+          <AppButton icon="pi pi-copy" size="small" :label="t('settings.api_keys.copy')" @click="copyNow(createdKey)" />
         </div>
         <p class="text-xs text-muted-color">
-          {{ t('api_keys.copy_warning') }}
+          {{ t('settings.api_keys.copy_warning') }}
         </p>
       </div>
     </AppDialog>

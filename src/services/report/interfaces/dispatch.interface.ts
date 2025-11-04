@@ -1,22 +1,22 @@
 // Respuesta individual del dispatch
 export interface ICampaignDispatch {
-  id: number;
-  campaignId: number;
+  id:string;
+  campaignId:string;
   sentAt: string;
   totalSent: number;
   totalDelivered: number;
   totalFailed: number;
   notes: string;
-  providerId: number;
+  providerId:string;
   createdAt: string;
   updatedAt: string;
   campaign: {
-    id: number;
+    id:string;
     name: string;
     description: string;
   };
   provider: {
-    id: number;
+    id:string;
     name: string;
   };
   status: string;

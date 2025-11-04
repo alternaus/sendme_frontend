@@ -7,7 +7,7 @@ import type { ISettingsPayload, ISettingsResponse } from './interface/settings.i
 export const useSettingsService = () => {
   const api = useApiClient(true)
 
-  const getSettings = async (orgId: number | string): Promise<ISettingsResponse | null> => {
+  const getSettings = async (orgId:string | string): Promise<ISettingsResponse | null> => {
     try {
       const res = await api.get<ISettingsResponse>(`/settings/${orgId}`)
       return res
@@ -16,12 +16,12 @@ export const useSettingsService = () => {
     }
   }
 
-  const createSettings = async (orgId: number | string, payload: ISettingsPayload) => {
+  const createSettings = async (orgId:string | string, payload: ISettingsPayload) => {
     const res = await api.post<ISettingsResponse>(`/settings/${orgId}`, payload)
     return res
   }
 
-  const updateSettings = async (orgId: number | string, payload: ISettingsPayload) => {
+  const updateSettings = async (orgId:string | string, payload: ISettingsPayload) => {
     const res = await api.patch<ISettingsResponse>(`/settings/${orgId}`, payload)
     return res
   }

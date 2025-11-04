@@ -120,7 +120,7 @@ watch(internalValue, (newValue) => {
 
 <template>
   <div :class="containerClasses">
-    <FloatLabel v-if="label && $slots.icon">
+    <FloatLabel variant="on" v-if="label && $slots.icon">
       <IconField>
         <InputIcon>
           <slot name="icon" />

@@ -14,7 +14,12 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  cardClass: '!shadow-md !w-auto'
+  cardClass: '!shadow-md !w-auto',
+  pt: () => ({
+    body: {
+      style: 'padding: 0.5rem;'
+    }
+  })
 })
 
 defineOptions({
@@ -25,13 +30,17 @@ defineOptions({
 <template>
   <Card
     v-bind="{
-      pt,
       ptOptions,
       ...$attrs
     }"
     :class="cardClass"
+    :pt="{
+      body: {
+        style: 'padding: 0.8rem !important;'
+      },
+      ...pt
+    }"
   >
-    <!-- Header image slot -->
     <template v-if="$slots.header || headerImage" #header>
       <slot name="header">
         <img
@@ -42,21 +51,18 @@ defineOptions({
       </slot>
     </template>
 
-    <!-- Title slot -->
     <template v-if="$slots.title || title" #title>
       <slot name="title">
         {{ title }}
       </slot>
     </template>
 
-    <!-- Subtitle slot -->
     <template v-if="$slots.subtitle || subtitle" #subtitle>
       <slot name="subtitle">
         {{ subtitle }}
       </slot>
     </template>
 
-    <!-- Content slot -->
     <template v-if="$slots.content || $slots.default || content" #content>
       <slot name="content">
         <slot>
@@ -65,7 +71,6 @@ defineOptions({
       </slot>
     </template>
 
-    <!-- Footer slot -->
     <template v-if="$slots.footer || footer" #footer>
       <slot name="footer">
         {{ footer }}
@@ -74,4 +79,5 @@ defineOptions({
   </Card>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+</style>

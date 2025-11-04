@@ -6,7 +6,7 @@ import {
 } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'campaign.campaigns',
+  text: 'common.campaign.campaigns',
   to: { name: 'campaigns.index' },
   active: false,
 }
@@ -32,30 +32,30 @@ const campaignRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'campaigns'
+    title: 'common.titles.campaigns'
   },
   children: [
     {
       path: '',
       name: 'campaigns.index',
       component: () => import('@/pages/campaigns/CampaignPage.vue'),
-      meta: { title: 'campaigns_list' }
+      meta: { title: 'common.titles.campaigns_list' }
     },
     {
       path: 'create',
       name: 'campaigns.create',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.create', 'campaigns.create'),
-        title: 'create_campaign'
+        breadcrumb: generateBreadcrumb('common.actions.create', 'campaigns.create'),
+        title: 'common.titles.create_campaign'
       },
     },
     {
       path: 'edit/:id',
       name: 'campaigns.edit',
       component: () => import('@/pages/campaigns/form/CampaignFormPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'campaigns.edit'),
-      meta: { title: 'edit_campaign' }
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.edit', 'campaigns.edit'),
+      meta: { title: 'common.titles.edit_campaign' }
     },
   ],
 }

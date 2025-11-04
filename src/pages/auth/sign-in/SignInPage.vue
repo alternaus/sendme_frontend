@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useForm } from 'vee-validate'
 import { useI18n } from 'vue-i18n'
-import { googleOneTap } from "vue3-google-login"
+import { googleOneTap } from 'vue3-google-login'
 import * as yup from 'yup'
 
 import GoogleIcon from '@/assets/svg/google.svg?component'
@@ -17,7 +17,6 @@ import { BASE_URL } from '@/helpers/api-url.helper'
 import { useAuthService } from '@/services/auth/useAuthService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
-
 export default defineComponent({
   components: {
     AppInput,
@@ -25,14 +24,12 @@ export default defineComponent({
     AppButton,
     AppLink,
     AppDivider,
-    GoogleIcon
+    GoogleIcon,
   },
   setup() {
-
     onMounted(async () => {
       const res = await googleOneTap()
       oneTapCallback(res)
-
     })
 
     const { t } = useI18n()
@@ -40,21 +37,23 @@ export default defineComponent({
     const authStore = useAuthStore()
     const authService = useAuthService()
 
+    const isSubmitting = ref(false)
+    const isOAuthLoading = ref(false)
 
     const callbackUrl = `${BASE_URL}/auth/google/callback`
 
     yup.setLocale({
       mixed: {
-        required: () => t('general.required_field'),
+        required: () => t('auth.validation.email_required'),
       },
       string: {
-        email: () => t('general.invalid_email'),
+        email: () => t('auth.validation.email_invalid'),
       },
     })
 
     const schema = yup.object({
-      email: yup.string().email().required().label(t('general.email')),
-      password: yup.string().required().label(t('general.password')),
+      email: yup.string().email().required().label(t('auth.common.email')),
+      password: yup.string().required().label(t('auth.common.password')),
     })
 
     const { defineField, handleSubmit, errors } = useForm({
@@ -69,17 +68,24 @@ export default defineComponent({
     const [password] = defineField('password')
 
     const onSubmit = handleSubmit(async (values) => {
+      isSubmitting.value = true
       try {
         await authStore.login(values.email, values.password)
       } catch {
+      } finally {
+        isSubmitting.value = false
       }
     })
 
     const handleGoogleLogin = async () => {
       try {
+        isOAuthLoading.value = true
+        // Guardar ruta actual para retorno post-auth
+        localStorage.setItem('googleAuthReturnPath', router.currentRoute.value.fullPath)
         const { url } = await authService.getOAuthUrl('google')
         window.location.href = url
       } catch {
+        isOAuthLoading.value = false
       }
     }
 
@@ -87,18 +93,22 @@ export default defineComponent({
       router.push('/auth/forgot-password')
     }
 
+    function goToSignUp() {
+      router.push('/auth/sign-up')
+    }
+
     const oneTapCallback = async (response: { credential: string }) => {
-
-      const data = await authService.handleGoogleOneTap(response.credential)
-
-      authStore.setAuthData(data.accessToken, data.refreshToken || '')
-
-      const userData = await authService.me()
-      authStore.user = userData
-      localStorage.setItem('user', JSON.stringify(userData))
-
-      router.push('/')
-
+      try {
+        isOAuthLoading.value = true
+        const data = await authService.handleGoogleOneTap(response.credential)
+        authStore.setAuthData(data.accessToken, data.refreshToken || '')
+        const userData = await authService.me()
+        authStore.user = userData
+        localStorage.setItem('user', JSON.stringify(userData))
+        router.push('/')
+      } catch {
+        isOAuthLoading.value = false
+      }
     }
     return {
       email,
@@ -107,32 +117,76 @@ export default defineComponent({
       onSubmit,
       handleGoogleLogin,
       goToForgotPassword,
+      goToSignUp,
       callbackUrl,
-      oneTapCallback
+      oneTapCallback,
+      isSubmitting,
+      isOAuthLoading,
     }
   },
 })
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="flex justify-center items-center gap-6 flex-col w-full">
-    <AppInput v-model="email" :error-message="errors.email" :placeholder="$t('general.email')" />
+  <form
+    @submit.prevent="onSubmit"
+    class="flex justify-center items-center gap-6 flex-col w-full"
+    :aria-busy="isSubmitting || isOAuthLoading"
+  >
+    <AppInput
+      v-model="email"
+      :error-message="errors.email"
+      :placeholder="$t('auth.sign_in.email_placeholder')"
+      :disabled="isSubmitting || isOAuthLoading"
+    />
 
-    <AppInputPassword v-model="password" :error-message="errors.password" :placeholder="$t('general.password')" />
+    <AppInputPassword
+      v-model="password"
+      :error-message="errors.password"
+      :placeholder="$t('auth.sign_in.password_placeholder')"
+      :disabled="isSubmitting || isOAuthLoading"
+    />
 
-    <AppButton type="submit" :label="$t('auth.enter')" class="w-full" />
+    <AppButton
+      type="submit"
+      :label="isSubmitting ? $t('auth.sign_in.processing') : $t('auth.sign_in.enter')"
+      :loading="isSubmitting"
+      :disabled="isSubmitting || isOAuthLoading"
+      class="w-full"
+    />
+    <AppButton
+      type="button"
+      variant="outlined"
+      severity="contrast"
+      :label="$t('auth.layout.register_here')"
+      :disabled="isSubmitting || isOAuthLoading"
+      @click="!(isSubmitting || isOAuthLoading) && goToSignUp()"
+    />
 
-    <AppLink severity="secondary" :label="$t('auth.forgot_password')" @click="goToForgotPassword" />
+    <AppLink
+      variant="outlined"
+      severity="secondary"
+      class="!ml-auto !w-auto"
+      :label="$t('auth.forgot_password.title')"
+      :loading="isSubmitting"
+      @click="!(isSubmitting || isOAuthLoading) && goToForgotPassword()"
+    />
 
     <AppDivider />
 
     <div class="w-full grid grid-cols-1 gap-4">
-      <AppButton label="Google" severity="contrast" variant="outlined" @click="handleGoogleLogin">
+      <AppButton
+        :label="isOAuthLoading ? $t('auth.common.loading') : $t('auth.oauth.google_button')"
+        severity="contrast"
+        variant="outlined"
+        :loading="isOAuthLoading"
+        :disabled="isSubmitting || isOAuthLoading"
+        @click="handleGoogleLogin"
+      >
         <template #icon-start>
           <GoogleIcon class="w-5 h-5" />
         </template>
       </AppButton>
-
     </div>
   </form>
 </template>

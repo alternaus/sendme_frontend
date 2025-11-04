@@ -1,10 +1,10 @@
 export interface ICustomField {
-  id: number
+  id:string
   fieldName: string
   elementType: string
   dataType: string
   options: Record<string, unknown>[] | null
-  organizationId: number
+  organizationId:string
   isVisible: boolean
   createdAt: Date
   updatedAt: Date

@@ -2,23 +2,27 @@ import { computed } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
+import { CampaignStatus } from '@/services/campaign/enums/campaign-status.enum'
+import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
+
 export type StatusType = 'campaign' | 'contact' | 'message' | 'recharge' | 'audit' | 'dispatch'
 
 export type TagSeverity = 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast'
 
 const STATUS_CONFIG = {
   campaign: {
-    active: 'success' as TagSeverity,
-    inactive: 'secondary' as TagSeverity,
-    paused: 'warning' as TagSeverity,
-    finished: 'info' as TagSeverity
+    [CampaignStatus.ACTIVE]: 'success' as TagSeverity,
+    [CampaignStatus.INACTIVE]: 'secondary' as TagSeverity,
+    [CampaignStatus.PAUSED]: 'warning' as TagSeverity,
+    [CampaignStatus.FINISHED]: 'info' as TagSeverity
   },
   contact: {
-    active: 'success' as TagSeverity,
-    inactive: 'secondary' as TagSeverity,
-    blocked: 'danger' as TagSeverity
+    [ContactStatus.ACTIVE]: 'success' as TagSeverity,
+    [ContactStatus.INACTIVE]: 'secondary' as TagSeverity,
+    [ContactStatus.BLOCKED]: 'danger' as TagSeverity
   },
   message: {
+    // Estados en minúsculas
     queued: 'info' as TagSeverity,
     sending: 'warning' as TagSeverity,
     sent: 'success' as TagSeverity,
@@ -28,9 +32,33 @@ const STATUS_CONFIG = {
     received: 'info' as TagSeverity,
     scheduled: 'secondary' as TagSeverity,
     canceled: 'secondary' as TagSeverity,
-    read: 'contrast' as TagSeverity
+    read: 'contrast' as TagSeverity,
+    pending: 'warning' as TagSeverity,
+    // Estados en mayúsculas
+    QUEUED: 'info' as TagSeverity,
+    SENDING: 'warning' as TagSeverity,
+    SENT: 'success' as TagSeverity,
+    DELIVERED: 'success' as TagSeverity,
+    UNDELIVERED: 'danger' as TagSeverity,
+    FAILED: 'danger' as TagSeverity,
+    RECEIVED: 'info' as TagSeverity,
+    SCHEDULED: 'secondary' as TagSeverity,
+    CANCELED: 'secondary' as TagSeverity,
+    READ: 'contrast' as TagSeverity,
+    PENDING: 'warning' as TagSeverity
   },
   recharge: {
+    ACCEPTED: 'success' as TagSeverity,
+    REJECTED: 'danger' as TagSeverity,
+    PENDING: 'warning' as TagSeverity,
+    FAILED: 'danger' as TagSeverity,
+    REVERSED: 'secondary' as TagSeverity,
+    HELD: 'warning' as TagSeverity,
+    INITIATED: 'info' as TagSeverity,
+    EXPIRED: 'secondary' as TagSeverity,
+    ABANDONED: 'secondary' as TagSeverity,
+    CANCELLED: 'secondary' as TagSeverity,
+    // Mantener también las versiones en minúsculas para compatibilidad
     accepted: 'success' as TagSeverity,
     rejected: 'danger' as TagSeverity,
     pending: 'warning' as TagSeverity,
@@ -70,11 +98,27 @@ export const useStatusColors = () => {
     const typeConfig = STATUS_CONFIG[type]
     if (!typeConfig) return []
 
-    return Object.keys(typeConfig).map(status => ({
-      value: status,
-      label: t(`status.${type}.${status}`, status), // Fallback al status si no hay traducción
-      severity: getStatusSeverity(status, type)
-    }))
+    return Object.keys(typeConfig).map(status => {
+      // Para contactos y campañas, usar las traducciones de sus archivos modulares
+      let translationKey: string
+      if (type === 'contact') {
+        translationKey = `contact.status.${status}`
+      } else if (type === 'campaign') {
+        translationKey = `campaign.status.${status}`
+      } else if (type === 'message') {
+        translationKey = `reports.message_status.${status.toLowerCase()}`
+      } else if (type === 'recharge') {
+        translationKey = `account.recharge_status.${status.toUpperCase()}`
+      } else {
+        translationKey = `reports.${type}_status.${status.toLowerCase()}`
+      }
+
+      return {
+        value: status,
+        label: t(translationKey, status),
+        severity: getStatusSeverity(status, type)
+      }
+    })
   }
 
   const isValidStatus = (status: string, type: StatusType): boolean => {

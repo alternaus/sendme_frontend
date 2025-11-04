@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -22,7 +21,7 @@ const authStore = useAuthStore()
 const MAX_USERS = 3
 
 const users = ref<Array<{
-  id?: number;
+  id?:string;
   name: string;
   email: string;
   isEditing: boolean;
@@ -50,8 +49,8 @@ const loadUsers = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('user.error_loading'),
+      summary: t('settings.common.error'),
+      detail: t('settings.users.error_loading'),
       life: 3000
     })
 
@@ -80,13 +79,13 @@ const validateUser = (user: { name: string, email: string }) => {
   const errors = []
 
   if (!user.name.trim()) {
-    errors.push(t('user.name') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.name') + ': ' + t('settings.common.required_field'))
   }
 
   if (!user.email.trim()) {
-    errors.push(t('user.email') + ': ' + t('general.required_field'))
+    errors.push(t('settings.users.email') + ': ' + t('settings.common.required_field'))
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-    errors.push(t('user.email') + ': ' + t('general.invalid_email'))
+    errors.push(t('settings.users.email') + ': ' + t('settings.common.invalid_email'))
   }
 
   return errors
@@ -104,8 +103,8 @@ const saveUsers = async () => {
   if (usersWithData.length === 0) {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('user.no_users_added'),
+      summary: t('settings.common.error'),
+      detail: t('settings.users.no_users_added'),
       life: 3000
     })
     return
@@ -118,7 +117,7 @@ const saveUsers = async () => {
       hasErrors = true
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('settings.common.error'),
         detail: errors.join(', '),
         life: 5000
       })
@@ -127,22 +126,23 @@ const saveUsers = async () => {
 
   if (hasErrors) return
 
-  //Obtener el ID de la organización del usuario actual
-  const organizationId = authStore.user?.organizationId || 1
+  const organizationId = authStore.user?.organizationId
 
   try {
     for (const user of usersWithData) {
       if (user.id) {
-        //Actualizar usuario existente
         await updateUser(user.id, {
           name: user.name,
           email: user.email
         })
       } else {
+        if (!organizationId) {
+          throw new Error('No organization ID found for the current user.')
+        }
         await createUser({
           name: user.name,
           email: user.email,
-          roleId: 1,
+          roleId: 'user',
           organizationId,
           password: generateRandomPassword(),
         })
@@ -151,8 +151,8 @@ const saveUsers = async () => {
 
     toast.add({
       severity: 'success',
-      summary: t('general.success'),
-      detail: t('user.users_updated'),
+      summary: t('settings.common.success'),
+      detail: t('settings.users.users_updated'),
       life: 3000
     })
 
@@ -160,7 +160,7 @@ const saveUsers = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
+      summary: t('settings.common.error'),
       detail: t('user.error_saving'),
       life: 3000
     })
@@ -176,14 +176,14 @@ const handleRemoveUser = async (index: number) => {
       await deleteUser(user.id)
       toast.add({
         severity: 'success',
-        summary: t('general.success'),
+        summary: t('settings.common.success'),
         detail: t('user.user_deleted'),
         life: 3000
       })
     } catch  {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('settings.common.error'),
         detail: t('user.error_deleting'),
         life: 3000
       })
@@ -206,14 +206,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('user.manage_users')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SETTINGS" :text="$t('settings.users.title')" :actions="[]" />
   <div class="">
     <AppCard class="h-full max-h-[calc(100vh-140px-4rem)]">
       <template #content>
         <div class="h-full flex flex-col">
           <div class="flex-none">
             <p class="text-center text-neutral-600 dark:text-neutral-300">
-              {{ $t('user.add_users_limit', { max: MAX_USERS }) }}
+              {{ $t('settings.users.add_users_limit', { max: MAX_USERS }) }}
             </p>
           </div>
 
@@ -248,23 +248,23 @@ onMounted(() => {
                     <template v-if="user.isEditing">
                       <AppInput
                         v-model="user.name"
-                        :label="$t('user.name')"
+                        :label="$t('settings.users.name')"
                         class="w-full" />
 
                       <AppInput
                         v-model="user.email"
-                        :label="$t('user.email')"
+                        :label="$t('settings.users.email')"
                         type="email"
                         class="w-full" />
                     </template>
                     <template v-else>
                       <div class="flex flex-col gap-2">
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('user.name') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.users.name') }}</small>
                           <p class="font-medium">{{ user.name }}</p>
                         </div>
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('user.email') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.users.email') }}</small>
                           <p class="font-medium">{{ user.email }}</p>
                         </div>
                       </div>
@@ -280,7 +280,7 @@ onMounted(() => {
               v-if="hasEditingUsers()"
               type="button"
               class="!w-fit"
-              :label="$t('general.save')"
+              :label="$t('settings.common.save')"
               @click="saveUsers"
               icon="pi pi-save" />
           </div>

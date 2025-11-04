@@ -4,7 +4,7 @@
     <div class="flex items-baseline">
       <span class="text-surface-500 dark:text-surface-400 text-base">$</span>
       <span class="text-surface-900 dark:text-surface-0 text-3xl font-bold">{{ plan.cost }}</span>
-      <span class="text-surface-500 dark:text-surface-400 text-base">/{{ $t('enrollment.month') }}</span>
+  <span class="text-surface-500 dark:text-surface-400 text-base">/{{ $t('enrollment.plans.month') }}</span>
     </div>
     <AppDivider />
     <ul class="list-none flex flex-col gap-3">

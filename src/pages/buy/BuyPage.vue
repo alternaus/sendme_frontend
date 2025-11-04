@@ -33,7 +33,7 @@ const showProviders = ref(false)
 const customerInfo = ref({ name: '', email: '', dni: '', company: '', phone: '' })
 
 const amount = computed<number>(() => selectedValue.value ?? customValue.value ?? 0)
-const isValidAmount = computed(() => amount.value >= 10000 && amount.value <= 500000)
+const isValidAmount = computed(() => amount.value >= 50000 && amount.value <= 500000)
 
 const selectOption = (v: number) => {
   selectedValue.value = selectedValue.value === v ? null : v
@@ -56,8 +56,8 @@ const handlePayClick = () => {
   if (!amount.value || amount.value <= 0) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
-      detail: t('general.select_valid_recharge_value'),
+      summary: t('buy.common.warning'),
+      detail: t('buy.messages.amount_warning'),
       life: 3000
     })
     return
@@ -66,8 +66,8 @@ const handlePayClick = () => {
   if (!isValidAmount.value) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
-      detail: t('general.minimum_amount'),
+      summary: t('buy.common.warning'),
+      detail: t('buy.messages.minimum_warning'),
       life: 3000
     })
     return
@@ -76,8 +76,8 @@ const handlePayClick = () => {
   if (!organizationId.value) {
     toast.add({
       severity: 'warn',
-      summary: t('general.warning'),
-      detail: 'organizationId requerido',
+      summary: t('buy.common.warning'),
+      detail: t('buy.payment.organization_required'),
       life: 3000
     })
     return
@@ -89,8 +89,8 @@ const handlePayClick = () => {
 const onPaymentSuccess = () => {
   toast.add({
     severity: 'success',
-    summary: t('payment.title'),
-    detail: t('payment.success'),
+    summary: t('buy.common.success'),
+    detail: t('buy.payment.success'),
     life: 3000
   })
   showProviders.value = false
@@ -99,7 +99,7 @@ const onPaymentSuccess = () => {
 const onPaymentError = (e: { message: string }) => {
   toast.add({
     severity: 'error',
-    summary: t('payment.title'),
+    summary: t('buy.common.error'),
     detail: e.message,
     life: 4000
   })
@@ -107,17 +107,17 @@ const onPaymentError = (e: { message: string }) => {
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.BUY" :text="$t('general.buy_messages')" :actions="[]" />
+  <AppHeader :icon="IconTypes.BUY" :text="$t('buy.page.title')" :actions="[]" />
 
   <div class="flex justify-center items-start gap-8 m-4">
     <div class="flex flex-col items-center w-full max-w-4xl">
       <!-- Header Section -->
       <div class="text-center mb-8">
         <h1 class="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-          {{ $t('general.choose_value_recharge') }}
+          {{ $t('buy.page.header_title') }}
         </h1>
         <p class="text-base text-neutral-600 dark:text-neutral-400">
-          {{ $t('general.choose_value_recharge_description') }}
+          {{ $t('buy.page.header_description') }}
         </p>
       </div>
 
@@ -146,7 +146,7 @@ const onPaymentError = (e: { message: string }) => {
         >
           <div class="text-center w-full">
             <div class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-              {{ $t('general.custom_value') }}
+              {{ $t('buy.recharge.custom_value') }}
             </div>
 
             <AppInputNumber
@@ -162,7 +162,7 @@ const onPaymentError = (e: { message: string }) => {
             />
 
             <div class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
-              {{ $t('general.range_info') }}
+              {{ $t('buy.recharge.range_info') }}
             </div>
           </div>
         </SelectableCard>
@@ -173,14 +173,14 @@ const onPaymentError = (e: { message: string }) => {
         <div class="flex items-center gap-2 p-3 border border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-700 rounded-lg">
           <i class="pi pi-exclamation-triangle text-red-500"></i>
           <span class="text-sm text-red-500 dark:text-red-300">
-            {{ $t('general.minimum_amount') }}
+            {{ $t('buy.recharge.minimum_amount') }}
           </span>
         </div>
       </div>
 
       <!-- Payment Button -->
       <AppButton
-        :label="amount > 0 ? t('general.pay_amount', { amount: formatCurrency(amount, 'COP') }) : t('general.pay')"
+        :label="amount > 0 ? t('buy.payment.pay_amount', { amount: formatCurrency(amount, 'COP') }) : t('buy.payment.pay')"
         :disabled="!amount || !isValidAmount || !organizationId"
         class="!w-auto mb-8"
         size="small"
@@ -203,8 +203,8 @@ const onPaymentError = (e: { message: string }) => {
       <!-- Important Note -->
       <div class="text-left w-full max-w-2xl">
         <div class="text-sm text-neutral-700 dark:text-neutral-300">
-          <span class="font-semibold">{{ $t('general.important') }}:</span>
-          {{ $t('general.info_remember_recharge') }}
+          <span class="font-semibold">{{ $t('buy.messages.important_note') }}:</span>
+          {{ $t('buy.messages.recharge_info') }}
         </div>
       </div>
     </div>

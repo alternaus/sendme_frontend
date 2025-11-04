@@ -1,0 +1,46 @@
+{
+  "organization": {
+    "title": "Información de la organización",
+    "name": "Nombre",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "country": "País",
+    "email": "Correo electrónico",
+    "phone": "Teléfono"
+  },
+  "plan": {
+    "title": "Información del plan",
+    "name": "Nombre",
+    "description": "Descripción",
+    "contact_limit": "Límite de contactos",
+    "campaign_limit": "Límite de campañas",
+    "price_per_message": "Precio por mensaje",
+    "cost": "Costo"
+  },
+  "recharges": {
+    "title": "Recargas",
+    "movements": "Movimientos",
+    "history": "Historial",
+    "date": "Fecha",
+    "amount": "Monto",
+    "messages_count": "Cantidad de mensajes",
+    "remaining_messages": "Mensajes restantes",
+    "status": "Estado",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de fin",
+    "error_getting_recharges": "Error al obtener las recargas",
+    "no_recharges_found": "No se encontraron recargas"
+  },
+  "recharge_status": {
+    "PENDING": "Pendiente",
+    "ACCEPTED": "Aceptado", 
+    "REJECTED": "Rechazado",
+    "FAILED": "Fallido",
+    "REVERSED": "Revertido",
+    "HELD": "Retenido",
+    "INITIATED": "Iniciado",
+    "EXPIRED": "Expirado",
+    "ABANDONED": "Abandonado",
+    "CANCELLED": "Cancelado"
+  }
+}

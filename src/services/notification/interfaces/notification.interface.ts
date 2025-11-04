@@ -35,8 +35,8 @@ export enum ProcessEvent {
 }
 
 export interface INotification {
-  id: number
-  organizationId: number
+  id:string
+  organizationId:string
   type: NotificationType
   title: string
   message: string

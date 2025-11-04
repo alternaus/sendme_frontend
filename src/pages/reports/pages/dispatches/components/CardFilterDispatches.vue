@@ -54,7 +54,7 @@ export default defineComponent({
           :modelValue="search"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.search')"
+          :label="$t('reports.common.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -67,7 +67,7 @@ export default defineComponent({
           class="w-full mt-3"
           :modelValue="startDateValue"
           :showTime="true"
-          :label="$t('general.start_date')"
+          :label="$t('reports.common.start_date')"
           @update:modelValue="updateField('startDate', $event)"
         >
           <template #icon>
@@ -80,7 +80,7 @@ export default defineComponent({
           class="w-full mt-3"
           :modelValue="endDateValue"
           :showTime="true"
-          :label="$t('general.end_date')"
+          :label="$t('reports.common.end_date')"
           @update:modelValue="updateField('endDate', $event)"
         >
           <template #icon>

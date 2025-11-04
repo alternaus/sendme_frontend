@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -16,8 +16,12 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
+import TagManagerPrime from '@/components/molecules/TagManager.vue'
+import { SmsMessageType } from '@/services/send/constants/message.constants'
+import { createSmsMessageTypeOptions } from '@/services/send/helpers/message-options.helper'
 
 import type { CampaignFormFields } from '../composables/useCampaignForm'
+
 
 interface Props {
   form: CampaignFormFields
@@ -70,7 +74,6 @@ const getCurrentDateRange = computed(() => {
   return []
 })
 
-//Computed properties to access ref values safely
 const formValues = computed(() => ({
   name: props.form.name.value as string,
   description: props.form.description.value as string,
@@ -79,7 +82,9 @@ const formValues = computed(() => ({
   startDate: props.form.startDate.value as Date,
   endDate: props.form.endDate.value as Date,
   days: props.form.days.value as string[],
-  time: props.form.time.value as Date
+  time: props.form.time.value as Date,
+  messageType: props.form.messageType?.value as SmsMessageType | null,
+  tagIds: props.form.tagIds?.value as string[] | undefined
 }))
 
 const errorMessages = computed(() => ({
@@ -90,8 +95,32 @@ const errorMessages = computed(() => ({
   startDate: props.errors.startDate || '',
   endDate: props.errors.endDate || '',
   days: props.errors.days || '',
-  time: props.errors.time || ''
+  time: props.errors.time || '',
+  tagIds: props.errors.tagIds || ''
 }))
+
+// Opciones de tipo de SMS
+const smsTypeOptions = computed(() => createSmsMessageTypeOptions(t))
+
+// Determina si el canal seleccionado es SMS según el nombre del canal
+const isSmsChannel = computed(() => {
+  const selectedId = String(formValues.value.channelId ?? '')
+  const selected = props.channels.find(o => String(o.value) === selectedId)
+  return (selected?.name || '').toLowerCase().includes('sms')
+})
+
+// Cuando no es SMS, setear messageType a null; si es SMS y está vacío, setear por defecto 'sms'
+watch(
+  () => ({ channelId: props.form.channelId.value, isSms: isSmsChannel.value }),
+  (curr) => {
+    if (!curr.isSms) {
+      updateField('messageType', null)
+    } else if (!formValues.value.messageType) {
+      updateField('messageType', SmsMessageType.SMS)
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -103,7 +132,7 @@ const errorMessages = computed(() => ({
         type="text"
         class="w-full"
         :error-message="errorMessages.name"
-        :label="t('general.name')"
+        :label="t('campaign.common.name')"
         :disabled="disabled"
       >
         <template #icon>
@@ -117,7 +146,7 @@ const errorMessages = computed(() => ({
         :error-message="errorMessages.description"
         type="text"
         class="w-full"
-        :label="t('general.description')"
+        :label="t('campaign.common.description')"
         :disabled="disabled"
       >
         <template #icon>
@@ -125,12 +154,23 @@ const errorMessages = computed(() => ({
         </template>
       </AppInput>
 
+      <TagManagerPrime
+        :modelValue="formValues.tagIds"
+        @update:modelValue="updateField('tagIds', $event)"
+        :label="t('campaign.common.tags')"
+        :placeholder="t('campaign.common.select_tags')"
+        :error-message="errorMessages.tagIds"
+        :show-error-message="!!errorMessages.tagIds"
+        :disabled="disabled"
+        class="w-full"
+      />
+
       <AppSelect
         :modelValue="formValues.channelId"
         @update:modelValue="updateField('channelId', $event)"
         :options="channels"
         :error-message="errorMessages.channelId"
-        :label="t('campaign.channel')"
+        :label="t('campaign.form.channel')"
         class="w-full"
         :disabled="disabled"
       >
@@ -144,7 +184,7 @@ const errorMessages = computed(() => ({
         @update:modelValue="updateField('status', $event)"
         status-type="campaign"
         :error-message="errorMessages.status"
-        :label="t('general.status')"
+        :label="t('campaign.common.status')"
         class="w-full"
         :disabled="disabled"
         :show-colors="true"
@@ -155,6 +195,22 @@ const errorMessages = computed(() => ({
       </AppStatusSelect>
     </div>
 
+    <!-- Tipo de mensaje SMS (solo cuando el canal es SMS) -->
+  <div v-if="isSmsChannel" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <AppSelect
+    :modelValue="formValues.messageType ?? SmsMessageType.SMS"
+        @update:modelValue="updateField('messageType', $event)"
+        :options="smsTypeOptions"
+        :label="t('send.message_type')"
+        class="w-full"
+        :disabled="disabled"
+      >
+        <template #icon>
+          <ChannelIcon class="dark:fill-white w-4 h-4" />
+        </template>
+      </AppSelect>
+    </div>
+
 
     <!-- Campos de programación (scheduling) -->
     <div class="grid grid-cols-1 lg:grid-cols-10 gap-4">
@@ -162,7 +218,7 @@ const errorMessages = computed(() => ({
 
         <div class="grid grid-cols-1 justify-center items-center lg:col-span-3">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.duration') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.duration') }}</p>
           </div>
           <div class="grid grid-cols-1 gap-2">
             <AppDateRangePicker
@@ -180,7 +236,7 @@ const errorMessages = computed(() => ({
         <!-- Días de ejecución -->
         <div class="grid grid-rows-2 items-center justify-center lg:col-span-4">
           <div class="flex flex-col items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.execution_days') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.execution_days') }}</p>
           </div>
           <div class="w-full">
             <AppSelectButton
@@ -197,11 +253,12 @@ const errorMessages = computed(() => ({
         <!-- Hora de ejecución -->
         <div class="grid grid-rows-2 lg:col-span-3 w-full">
           <div class="flex flex-col justify-center items-center">
-            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.execution_time') }}</p>
+            <p class="text-gray-700 dark:text-neutral-300">{{ t('campaign.form.execution_time') }}</p>
           </div>
           <div class="w-full flex items-center justify-center">
             <AppTimePicker
               :modelValue="formValues.time"
+              hour-format="12"
               @update:modelValue="updateField('time', $event)"
               class="w-full"
               :errorMessage="errorMessages.time"

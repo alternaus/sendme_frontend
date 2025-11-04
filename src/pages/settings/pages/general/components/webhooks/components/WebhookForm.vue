@@ -38,20 +38,16 @@ const loadingEvents = ref(false)
 const isSchemaDialogVisible = ref(false)
 const selectedEvent = ref<WebhookEvent | null>(null)
 
-// Opciones para los selects
 const methodOptions = [
   { name: 'GET', value: 'GET' },
   { name: 'POST', value: 'POST' },
-  { name: 'PUT', value: 'PUT' },
-  { name: 'PATCH', value: 'PATCH' },
-  { name: 'DELETE', value: 'DELETE' }
 ]
 
 const authTypeOptions = [
-  { name: t('webhooks.auth_none'), value: 'none' },
-  { name: t('webhooks.auth_bearer'), value: 'bearer' },
-  { name: t('webhooks.auth_basic'), value: 'basic' },
-  { name: t('webhooks.auth_api_key'), value: 'api_key' }
+  { name: t('settings.webhooks.auth_none'), value: 'none' },
+  { name: t('settings.webhooks.auth_bearer'), value: 'bearer' },
+  { name: t('settings.webhooks.auth_basic'), value: 'basic' },
+  { name: t('settings.webhooks.auth_api_key'), value: 'api_key' }
 ]
 
 const signingAlgorithmOptions = [
@@ -60,39 +56,28 @@ const signingAlgorithmOptions = [
 ]
 
 const maxRetriesOptions = [
-  { name: t('webhooks.no_retries'), value: 0 },
-  { name: '1 ' + t('webhooks.attempt'), value: 1 },
-  { name: '2 ' + t('webhooks.attempts'), value: 2 },
-  { name: '3 ' + t('webhooks.attempts'), value: 3 },
-  { name: '5 ' + t('webhooks.attempts'), value: 5 },
-  { name: '10 ' + t('webhooks.attempts'), value: 10 }
+  { name: t('settings.webhooks.no_retries'), value: 0 },
+  { name: '1 ' + t('settings.webhooks.attempt'), value: 1 },
+  { name: '2 ' + t('settings.webhooks.attempts'), value: 2 },
+  { name: '3 ' + t('settings.webhooks.attempts'), value: 3 },
+  { name: '5 ' + t('settings.webhooks.attempts'), value: 5 },
+  { name: '10 ' + t('settings.webhooks.attempts'), value: 10 }
 ]
 
 const timeoutOptions = [
-  { name: '5 ' + t('webhooks.seconds'), value: 5000 },
-  { name: '10 ' + t('webhooks.seconds'), value: 10000 },
-  { name: '30 ' + t('webhooks.seconds'), value: 30000 },
-  { name: '60 ' + t('webhooks.seconds'), value: 60000 },
-  { name: '120 ' + t('webhooks.seconds'), value: 120000 }
+  { name: '5 ' + t('settings.webhooks.seconds'), value: 5000 },
+  { name: '10 ' + t('settings.webhooks.seconds'), value: 10000 },
+  { name: '30 ' + t('settings.webhooks.seconds'), value: 30000 },
+  { name: '60 ' + t('settings.webhooks.seconds'), value: 60000 },
+  { name: '120 ' + t('settings.webhooks.seconds'), value: 120000 }
 ]
 
-// Cargar eventos disponibles
 const loadEvents = async () => {
   loadingEvents.value = true
   try {
     availableEvents.value = await getEvents()
   } catch {
-    // Fallback a eventos por defecto si falla la carga
     availableEvents.value = [
-      { id: 1, key: 'message.sent', category: 'message', description: t('webhooks.event_message_sent'), status: 'ACTIVE' },
-      { id: 2, key: 'message.delivered', category: 'message', description: t('webhooks.event_message_delivered'), status: 'ACTIVE' },
-      { id: 3, key: 'message.failed', category: 'message', description: t('webhooks.event_message_failed'), status: 'ACTIVE' },
-      { id: 4, key: 'message.opened', category: 'message', description: t('webhooks.event_message_opened'), status: 'ACTIVE' },
-      { id: 5, key: 'message.clicked', category: 'message', description: t('webhooks.event_message_clicked'), status: 'ACTIVE' },
-      { id: 6, key: 'message.bounced', category: 'message', description: t('webhooks.event_message_bounced'), status: 'ACTIVE' },
-      { id: 7, key: 'campaign.started', category: 'campaign', description: t('webhooks.event_campaign_started'), status: 'ACTIVE' },
-      { id: 8, key: 'campaign.completed', category: 'campaign', description: t('webhooks.event_campaign_completed'), status: 'ACTIVE' },
-      { id: 9, key: 'campaign.failed', category: 'campaign', description: t('webhooks.event_campaign_failed'), status: 'ACTIVE' }
     ]
   } finally {
     loadingEvents.value = false
@@ -220,7 +205,7 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-link text-primary"></i>
-        {{ $t('webhooks.basic_information') }}
+        {{ $t('settings.webhooks.basic_information') }}
       </h3>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -229,10 +214,10 @@ const onCancel = () => {
           <AppInput
             v-model="form.name.value"
             :error-message="errors.name"
-            :placeholder="$t('webhooks.name_placeholder')"
+            :placeholder="$t('settings.webhooks.name_placeholder')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.name_description') }}
+            {{ $t('settings.webhooks.name_description') }}
           </p>
         </div>
 
@@ -242,10 +227,10 @@ const onCancel = () => {
             v-model="form.method.value"
             :options="methodOptions"
             :error-message="errors.method"
-            :placeholder="$t('webhooks.http_method')"
+            :placeholder="$t('settings.webhooks.http_method')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.http_method_description') }}
+            {{ $t('settings.webhooks.http_method_description') }}
           </p>
         </div>
 
@@ -254,10 +239,10 @@ const onCancel = () => {
           <AppInput
             v-model="form.url.value"
             :error-message="errors.url"
-            :placeholder="$t('webhooks.url_placeholder')"
+            :placeholder="$t('settings.webhooks.url_placeholder')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.url_description') }}
+            {{ $t('settings.webhooks.url_description') }}
           </p>
         </div>
       </div>
@@ -267,7 +252,7 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-shield text-primary"></i>
-        {{ $t('webhooks.authentication') }}
+        {{ $t('settings.webhooks.authentication') }}
       </h3>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -276,10 +261,10 @@ const onCancel = () => {
           <AppSelect
             v-model="form.authType.value"
             :options="authTypeOptions"
-            :placeholder="$t('webhooks.auth_type')"
+            :placeholder="$t('settings.webhooks.auth_type')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.auth_type_description') }}
+            {{ $t('settings.webhooks.auth_type_description') }}
           </p>
         </div>
 
@@ -289,11 +274,11 @@ const onCancel = () => {
             <AppInput
               v-model="form.authToken.value"
               :error-message="errors.authToken"
-              :placeholder="$t('webhooks.bearer_token_placeholder')"
+              :placeholder="$t('settings.webhooks.bearer_token_placeholder')"
               type="password"
             />
             <p class="text-xs text-neutral-600 dark:text-neutral-400">
-              {{ $t('webhooks.bearer_token_description') }}
+              {{ $t('settings.webhooks.bearer_token_description') }}
             </p>
           </div>
 
@@ -303,20 +288,20 @@ const onCancel = () => {
                 <AppInput
                   v-model="form.authUsername.value"
                   :error-message="errors.authUsername"
-                  :placeholder="$t('webhooks.username_placeholder')"
+                  :placeholder="$t('settings.webhooks.username_placeholder')"
                 />
               </div>
               <div class="flex-1">
                 <AppInput
                   v-model="form.authPassword.value"
                   :error-message="errors.authPassword"
-                  :placeholder="$t('webhooks.password_placeholder')"
+                  :placeholder="$t('settings.webhooks.password_placeholder')"
                   type="password"
                 />
               </div>
             </div>
             <p class="text-xs text-neutral-600 dark:text-neutral-400">
-              {{ $t('webhooks.basic_auth_description') }}
+              {{ $t('settings.webhooks.basic_auth_description') }}
             </p>
           </div>
 
@@ -326,20 +311,20 @@ const onCancel = () => {
                 <AppInput
                   v-model="form.authHeaderName.value"
                   :error-message="errors.authHeaderName"
-                  :placeholder="$t('webhooks.header_name_placeholder')"
+                  :placeholder="$t('settings.webhooks.header_name_placeholder')"
                 />
               </div>
               <div class="flex-1">
                 <AppInput
                   v-model="form.authApiKey.value"
                   :error-message="errors.authApiKey"
-                  :placeholder="$t('webhooks.api_key_placeholder')"
+                  :placeholder="$t('settings.webhooks.api_key_placeholder')"
                   type="password"
                 />
               </div>
             </div>
             <p class="text-xs text-neutral-600 dark:text-neutral-400">
-              {{ $t('webhooks.api_key_description') }}
+              {{ $t('settings.webhooks.api_key_description') }}
             </p>
           </div>
         </div>
@@ -350,7 +335,7 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-cog text-primary"></i>
-        {{ $t('webhooks.custom_headers') }}
+        {{ $t('settings.webhooks.custom_headers') }}
       </h3>
 
       <div class="space-y-3">
@@ -377,19 +362,19 @@ const onCancel = () => {
             <AppInput
             class="w-full"
               v-model="newHeader.name"
-              :placeholder="$t('webhooks.header_name_placeholder')"
+              :placeholder="$t('settings.webhooks.header_name_placeholder')"
             />
           </div>
           <div class="flex-1">
             <AppInput
               class="w-full"
               v-model="newHeader.value"
-              :placeholder="$t('webhooks.header_value_placeholder')"
+              :placeholder="$t('settings.webhooks.header_value_placeholder')"
             />
           </div>
           <AppButton
             type="button"
-            :label="$t('webhooks.add_header')"
+            :label="$t('settings.webhooks.add_header')"
             icon="pi pi-plus"
             size="small"
             @click="addHeader"
@@ -404,11 +389,11 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-bell text-primary"></i>
-        {{ $t('webhooks.events_that_trigger') }}
+        {{ $t('settings.webhooks.events_that_trigger') }}
       </h3>
 
       <div v-if="loadingEvents" class="text-center py-8">
-        <div class="text-neutral-500">{{ $t('webhooks.loading_events') }}</div>
+        <div class="text-neutral-500">{{ $t('settings.webhooks.loading_events') }}</div>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -438,7 +423,7 @@ const onCancel = () => {
                 class="flex items-center gap-1 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
               >
                 <i class="pi pi-eye mr-1"></i>
-                {{ $t('webhooks.view_schema') }}
+                {{ $t('settings.webhooks.view_schema') }}
               </button>
             </div>
           </button>
@@ -448,7 +433,7 @@ const onCancel = () => {
       </div>
 
       <p class="text-xs text-neutral-600 dark:text-neutral-400">
-        {{ $t('webhooks.events_description') }}
+        {{ $t('settings.webhooks.events_description') }}
       </p>
     </div>
 
@@ -456,7 +441,7 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-clock text-primary"></i>
-        {{ $t('webhooks.retry_timeout') }}
+        {{ $t('settings.webhooks.retry_timeout') }}
       </h3>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -465,10 +450,10 @@ const onCancel = () => {
           <AppSelect
             v-model="form.maxRetries.value"
             :options="maxRetriesOptions"
-            :placeholder="$t('webhooks.retry_attempts')"
+            :placeholder="$t('settings.webhooks.retry_attempts')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.retry_attempts_description') }}
+            {{ $t('settings.webhooks.retry_attempts_description') }}
           </p>
         </div>
 
@@ -477,10 +462,10 @@ const onCancel = () => {
           <AppSelect
             v-model="form.retryBackoff.value"
             :options="timeoutOptions"
-            :placeholder="$t('webhooks.timeout_seconds')"
+            :placeholder="$t('settings.webhooks.timeout_seconds')"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.timeout_description') }}
+            {{ $t('settings.webhooks.timeout_description') }}
           </p>
         </div>
       </div>
@@ -490,7 +475,7 @@ const onCancel = () => {
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
         <i class="pi pi-lock text-primary"></i>
-        {{ $t('webhooks.signing') }}
+        {{ $t('settings.webhooks.signing') }}
         <AppTag value="Opcional" severity="info" class="!py-0.5 !px-2 !text-xs" />
       </h3>
 
@@ -499,11 +484,11 @@ const onCancel = () => {
         <div class="space-y-1 lg:col-span-2">
           <AppInput
             v-model="form.signingSecret.value"
-            :placeholder="$t('webhooks.signing_secret_placeholder')"
+            :placeholder="$t('settings.webhooks.signing_secret_placeholder')"
             type="password"
           />
           <p class="text-xs text-neutral-600 dark:text-neutral-400">
-            {{ $t('webhooks.signing_secret_description') }}
+            {{ $t('settings.webhooks.signing_secret_description') }}
           </p>
         </div>
 
@@ -512,7 +497,7 @@ const onCancel = () => {
           <AppSelect
             v-model="form.signingAlgorithm.value"
             :options="signingAlgorithmOptions"
-            :placeholder="$t('webhooks.signing_algorithm')"
+            :placeholder="$t('settings.webhooks.signing_algorithm')"
           />
         </div>
       </div>
@@ -520,10 +505,10 @@ const onCancel = () => {
       <div class="space-y-1">
         <AppInput
           v-model="form.signingHeader.value"
-          :placeholder="$t('webhooks.signing_header_placeholder')"
+          :placeholder="$t('settings.webhooks.signing_header_placeholder')"
         />
         <p class="text-xs text-neutral-600 dark:text-neutral-400">
-          {{ $t('webhooks.signing_header_description') }}
+          {{ $t('settings.webhooks.signing_header_description') }}
         </p>
       </div>
     </div>
@@ -535,7 +520,7 @@ const onCancel = () => {
         class="!w-auto"
         :disabled="props.loading || !isFormValid"
         severity="primary"
-        :label="props.loading ? $t('webhooks.creating') : $t('webhooks.create_webhook')"
+        :label="props.loading ? $t('settings.webhooks.creating') : $t('settings.webhooks.create_webhook')"
       />
 
       <AppButton
@@ -544,7 +529,7 @@ const onCancel = () => {
         class="!w-auto"
         severity="secondary"
         :disabled="props.loading"
-        :label="$t('webhooks.cancel')"
+        :label="$t('settings.webhooks.cancel')"
         @click="onCancel"
       />
     </div>
@@ -554,7 +539,7 @@ const onCancel = () => {
   <AppDialog
     v-model:modelValue="isSchemaDialogVisible"
     modal
-    :header="selectedEvent ? `${$t('webhooks.event_schema')}: ${selectedEvent.key}` : $t('webhooks.event_schema')"
+    :header="selectedEvent ? `${$t('settings.webhooks.event_schema')}: ${selectedEvent.key}` : $t('settings.webhooks.event_schema')"
     :style="{ width: '90vw', maxWidth: '800px' }"
     :draggable="false"
   >
@@ -562,7 +547,7 @@ const onCancel = () => {
       <!-- Propiedades del Schema -->
       <div>
         <h4 class="font-medium text-neutral-900 dark:text-neutral-100 mb-3">
-          {{ $t('webhooks.schema_properties') }}
+          {{ $t('settings.webhooks.schema_properties') }}
         </h4>
         <div class="space-y-2">
           <div
@@ -577,11 +562,11 @@ const onCancel = () => {
                 </span>
                 <span v-if="selectedEvent.schema.required?.includes(propName)"
                       class="text-xs px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded">
-                  {{ $t('webhooks.required') }}
+                  {{ $t('settings.webhooks.required') }}
                 </span>
               </div>
               <div class="text-sm text-neutral-600 dark:text-neutral-400">
-                <span class="font-medium">{{ $t('webhooks.type') }}:</span> {{ prop.type }}
+                <span class="font-medium">{{ $t('settings.webhooks.type') }}:</span> {{ prop.type }}
               </div>
               <div v-if="prop.description" class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                 {{ prop.description }}
@@ -594,7 +579,7 @@ const onCancel = () => {
       <!-- Ejemplo del Schema -->
       <div v-if="selectedEvent.example">
         <h4 class="font-medium text-neutral-900 dark:text-neutral-100 mb-3">
-          {{ $t('webhooks.example') }}
+          {{ $t('settings.webhooks.example') }}
         </h4>
         <div class="bg-neutral-900 dark:bg-neutral-100 p-4 rounded-lg">
           <pre class="text-neutral-100 dark:text-neutral-900 text-sm overflow-x-auto">{{ JSON.stringify(selectedEvent.example, null, 2) }}</pre>
@@ -604,7 +589,7 @@ const onCancel = () => {
 
     <div class="flex justify-end pt-4">
       <AppButton
-        :label="$t('webhooks.close')"
+        :label="$t('settings.webhooks.close')"
         @click="closeSchemaDialog"
         outlined
         severity="secondary"

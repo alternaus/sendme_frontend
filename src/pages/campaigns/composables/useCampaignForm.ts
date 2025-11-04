@@ -4,29 +4,37 @@ import * as yup from 'yup'
 
 import { type StepConfig, useFormStepper } from '@/composables/useFormStepper'
 import { useStatusColors } from '@/composables/useStatusColors'
+import type { CampaignConditionType } from '@/services/campaign/enums/campaign-condition-type.enum'
+import { CampaignFrequency } from '@/services/campaign/enums/campaign-frequency.enum'
+import { CampaignStatus } from '@/services/campaign/enums/campaign-status.enum'
+import { ContentType } from '@/services/campaign/enums/content-type.enum'
+import type { CampaignDays } from '@/services/campaign/enums/days.enum'
+import { SmsMessageType } from '@/services/send/constants/message.constants'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export interface CampaignRule {
-  conditionType: string
+  conditionType: CampaignConditionType  | null
   value: string
-  customFieldId: number
-  campaignId?: number
+  customFieldId: string
+  campaignId?: string
 }
 
 export interface CampaignFormData {
   name: string
   description: string
   content: string
-  contentType: 'plain_text' | 'html'
-  status: 'active' | 'inactive' | 'paused' | 'finished'
+  contentType: ContentType
+  status: CampaignStatus
   startDate: Date
   endDate: Date
   time: Date
-  days: string[]
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
-  channelId: number
-  organizationId: number
+  days: CampaignDays[]
+  frequency: CampaignFrequency
+  channelId: string
+  organizationId: string
   campaignRules: CampaignRule[]
+  messageType?: SmsMessageType | null
+  tagIds?: string[]
 }
 
 export type CampaignFormFields = ReturnType<typeof useCampaignForm>['form']
@@ -38,20 +46,21 @@ export function useCampaignForm() {
   const authStore = useAuthStore()
   const { getStatusesForType } = useStatusColors()
 
-  const userOrganizationId = authStore.user?.organizationId || 1
+  const userOrganizationId = authStore.user?.organizationId || '1'
 
   const validStatuses = getStatusesForType('campaign')
 
   const detailsSchema = yup.object({
     name: yup.string().required().label(t('campaign.form.campaign_name')),
     description: yup.string().required().label(t('campaign.form.description')),
-    channelId: yup.number().integer().min(1).required().label(t('campaign.form.channel_id')),
+    channelId: yup.string().required().label(t('campaign.form.channel_id')),
     status: yup.string().oneOf(validStatuses).required().label(t('campaign.form.status')),
     startDate: yup.date().required().label(t('campaign.form.start_date')),
     endDate: yup.date().required().label(t('campaign.form.end_date')),
     time: yup.date().required().label(t('campaign.form.execution_time')),
     days: yup.array().of(yup.string()).min(1).required().label(t('campaign.form.execution_days')),
-    organizationId: yup.number().integer().min(1).required().label(t('campaign.form.organization_id'))
+    organizationId: yup.string().required().label(t('campaign.form.organization_id')),
+    tagIds: yup.array().of(yup.string()).notRequired().label(t('tag.tags'))
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const triggersSchema = yup.object({
@@ -62,46 +71,46 @@ export function useCampaignForm() {
         value: yup.string().when('conditionType', {
           is: (conditionType: string) => {
             const conditionsWithoutValue = [
-              'is_empty',
-              'not_empty',
-              'birthday_today',
-              'is_today',
-              'was_yesterday',
-              'is_tomorrow'
+              'IS_EMPTY',
+              'NOT_EMPTY',
+              'BIRTHDAY_TODAY',
+              'IS_TODAY',
+              'WAS_YESTERDAY',
+              'IS_TOMORROW'
             ]
             return !conditionsWithoutValue.includes(conditionType)
           },
           then: (schema) => schema.required().label(t('campaign.form.condition_value')),
           otherwise: (schema) => schema.notRequired()
         }),
-        customFieldId: yup.number().integer().required().label(t('campaign.form.custom_field_id'))
+        customFieldId: yup.string().required().label(t('campaign.form.custom_field_id'))
       })
     ).required()
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const messageSchema = yup.object({
     content: yup.string().required().label(t('campaign.form.message_content')),
-    contentType: yup.string().oneOf(['plain_text', 'html']).required().label(t('campaign.form.content_type'))
+    contentType: yup.string().oneOf(['PLAIN_TEXT', 'HTML']).required().label(t('campaign.form.content_type'))
   }).shape({}) as yup.ObjectSchema<Partial<CampaignFormData>>
 
   const steps: StepConfig<CampaignFormData>[] = [
     {
       id: '1',
-      label: t('campaign.details'),
+      label: t('campaign.navigation.details'),
       icon: 'pi pi-info-circle',
-      fields: ['name', 'description', 'channelId', 'status', 'startDate', 'endDate', 'time', 'days', 'organizationId'],
+      fields: ['name', 'description', 'channelId', 'status', 'startDate', 'endDate', 'time', 'days', 'organizationId', 'tagIds'],
       schema: detailsSchema
     },
     {
       id: '2',
-      label: t('campaign.triggers'),
+      label: t('campaign.navigation.triggers'),
       icon: 'pi pi-bolt',
       fields: ['frequency', 'campaignRules'],
       schema: triggersSchema
     },
     {
       id: '3',
-      label: t('campaign.message'),
+      label: t('campaign.navigation.message'),
       icon: 'pi pi-comment',
       fields: ['content', 'contentType'],
       schema: messageSchema
@@ -112,16 +121,18 @@ export function useCampaignForm() {
     name: '',
     description: '',
     content: '',
-    contentType: 'plain_text',
-    status: 'active',
+    contentType: ContentType.PLAIN_TEXT,
+    status: CampaignStatus.ACTIVE,
     startDate: new Date(),
     endDate: new Date(),
     time: new Date(0, 0, 0, 12, 0),
     days: [],
-    frequency: 'DAILY',
-    channelId: 1,
+    frequency: CampaignFrequency.DAILY,
+    channelId: undefined,
     organizationId: userOrganizationId,
-    campaignRules: []
+    campaignRules: [],
+    messageType: SmsMessageType.SMS,
+    tagIds: []
   }
 
   const stepper = useFormStepper({
@@ -142,6 +153,8 @@ export function useCampaignForm() {
   const [frequency, frequencyError] = stepper.defineField('frequency')
   const [channelId, channelIdError] = stepper.defineField('channelId')
   const [organizationId, organizationIdError] = stepper.defineField('organizationId')
+  const [messageType] = stepper.defineField('messageType')
+  const [tagIds, tagIdsError] = stepper.defineField('tagIds')
 
   const {
     fields: campaignRules,
@@ -151,9 +164,9 @@ export function useCampaignForm() {
 
   const addRule = () => {
     addCampaignRule({
-      conditionType: '',
+      conditionType: null,
       value: '',
-      customFieldId: 0
+      customFieldId: ''
     })
   }
 
@@ -175,7 +188,9 @@ export function useCampaignForm() {
       frequency,
       channelId,
       organizationId,
-      campaignRules
+      campaignRules,
+      messageType,
+      tagIds
     },
 
     fieldErrors: {
@@ -190,7 +205,8 @@ export function useCampaignForm() {
       days: daysError,
       frequency: frequencyError,
       channelId: channelIdError,
-      organizationId: organizationIdError
+      organizationId: organizationIdError,
+      tagIds: tagIdsError
     },
 
     addRule,

@@ -3,6 +3,7 @@ import { useApiClient } from '@/composables/useApiClient'
 import type {
   IOAuthAuthResponse,
   IOAuthAuthUrl,
+  IOAuthBackendStatus,
   IOAuthStatus,
   OAuthProviderType
 } from './interfaces/oauth.interface'
@@ -11,7 +12,7 @@ export const useOAuthService = () => {
   const publicApi = useApiClient(false)
   const privateApi = useApiClient(true)
 
-  const getAuthUrl = async (provider: OAuthProviderType, userId?: number) => {
+  const getAuthUrl = async (provider: OAuthProviderType, userId?:string) => {
     const params = userId ? `?userId=${userId}` : ''
     return publicApi.get<IOAuthAuthUrl>(`/auth/oauth/${provider}${params}`)
   }
@@ -23,7 +24,14 @@ export const useOAuthService = () => {
   }
 
   const checkStatus = async (provider: OAuthProviderType) => {
-    return privateApi.get<IOAuthStatus>(`/auth/oauth/${provider}/status`)
+    const response = await privateApi.get<IOAuthBackendStatus>(`/auth/oauth/${provider}/status`)
+
+    // Mapear la respuesta del backend al formato esperado por el frontend
+    return {
+      hasValidTokens: response.hasOAuthTokens || false,
+      provider,
+      message: response.connected ? undefined : 'OAuth tokens not available'
+    } as IOAuthStatus
   }
 
   const revokeTokens = async (provider: OAuthProviderType) => {

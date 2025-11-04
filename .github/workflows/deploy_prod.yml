@@ -2,7 +2,7 @@ name: Deploy sendme frontend
 
 on:
   push:
-    branches: [main]
+    branches: [design/adjusting-space]
   workflow_dispatch:
 
 jobs:
@@ -10,10 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOMAIN: new.sendme123.com
-      EMAIL: admin@sendme123.com
-      FRONTEND_PATH: /var/www/vhosts/new.sendme123.com
-      SITE_BASENAME: sendme123
+      FRONTEND_PATH: /var/www/vhosts/sendme123.com/new.sendme123.com
       SERVER_HOST: ${{ secrets.IP }}
       SERVER_USER: ${{ secrets.USER }}
 
@@ -25,15 +22,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: npm
+          cache: yarn
+          cache-dependency-path: yarn.lock
 
       - name: Install deps
         run: |
-          if [ -f package-lock.json ]; then
+          if [ -f yarn.lock ]; then
+            corepack enable
+            yarn install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
             npm ci
           else
             npm install
           fi
+
+      - name: Build
+        run: |
+          if [ -f yarn.lock ]; then
+            yarn build
+          else
+            npm run build
+          fi
+        env:
+          NODE_ENV: production
 
       - name: Build
         run: npm run build
@@ -42,34 +53,23 @@ jobs:
 
       - name: Stamp build version
         run: |
+          mkdir -p dist
           echo "${GITHUB_SHA::7} $(date -u +%FT%TZ)" > dist/version.txt
 
       - name: Package dist
         run: tar -C dist -czf dist.tgz .
 
-      - name: Upload Nginx confs to server (/tmp/nginx)
+      - name: Upload dist.tgz to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.SERVER_HOST }}
           username: ${{ env.SERVER_USER }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          source: 'infra/nginx/*'
-          strip_components: 2
-          target: '/tmp/nginx/'
+          source: dist.tgz
+          target: /tmp/
 
-
-      - name: Upload dist.tgz to server (/tmp)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.SERVER_HOST }}
-          username: ${{ env.SERVER_USER }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          source: 'dist.tgz'
-          target: '/tmp/'
-
-      - name: Configure Nginx, SSL and release
+      - name: Deploy (copy to target)
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ env.SERVER_HOST }}
@@ -78,70 +78,9 @@ jobs:
           port: 22
           script: |
             set -euo pipefail
-            DOMAIN="${{ env.DOMAIN }}"
-            EMAIL="${{ env.EMAIL }}"
             BASE="${{ env.FRONTEND_PATH }}"
-            SITE="${{ env.SITE_BASENAME }}"
-            TS=$(date +%Y%m%d%H%M%S)
-        
-            apt-get update -y
-            DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx curl
-        
-            mkdir -p "$BASE/releases" "$BASE/shared" /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled
-            chown -R www-data:www-data "$BASE"; chmod 755 /var /var/www /var/www/vhosts "$BASE" "$BASE/releases" "$BASE/current" || true
-        
-            # Configurar Nginx para ambos dominios
-            cp -f /tmp/nginx/new.sendme123.com /etc/nginx/sites-available/
-            cp -f /tmp/nginx/cms.sendme123.com /etc/nginx/sites-available/
-            cp -f /tmp/nginx/sendme123.com /etc/nginx/sites-available/
-        
-            # Habilita (un solo symlink con nombre estable)
-            rm -f /etc/nginx/sites-enabled/${SITE}.conf /etc/nginx/sites-enabled/default
-            ln -sfn /etc/nginx/sites-available/sendme123.com /etc/nginx/sites-enabled/
-            nginx -t && systemctl reload nginx
-        
-            # Obtener certificados SSL para ambos dominios si no existen
-            if [ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
-              certbot certonly --webroot -w /var/www/html -d "${DOMAIN}" -m "${EMAIL}" --agree-tos --non-interactive
-            fi
-            
-            if [ ! -f "/etc/letsencrypt/live/cms.sendme123.com/fullchain.pem" ]; then
-              certbot certonly --webroot -w /var/www/html -d "cms.sendme123.com" -m "${EMAIL}" --agree-tos --non-interactive
-            fi
-        
-            # Cambiar a configuración HTTPS para ambos dominios
-            ln -sfn /etc/nginx/sites-available/new.sendme123.com /etc/nginx/sites-enabled/
-            ln -sfn /etc/nginx/sites-available/cms.sendme123.com /etc/nginx/sites-enabled/
-            nginx -t && systemctl reload nginx
-        
-            # Deploy atómico
-            PREV=""
-            [ -L "$BASE/current" ] && PREV="$(readlink -f "$BASE/current" || true)"
-            [ -e "$BASE/current" ] && [ ! -L "$BASE/current" ] && rm -rf "$BASE/current"
-        
-            mkdir -p "$BASE/releases/${TS}"
-            tar -C "$BASE/releases/${TS}" -xzf /tmp/dist.tgz
-            ln -sfn "$BASE/releases/${TS}" "$BASE/current"
-            chown -R www-data:www-data "$BASE"
+            mkdir -p "$BASE"
+            rm -rf "$BASE"/*   # limpia destino
+            tar -C "$BASE" -xzf /tmp/dist.tgz
             rm -f /tmp/dist.tgz
-        
-            test -f "$BASE/current/index.html" || { echo "Falta index.html"; exit 1; }
-        
-            # Limpieza
-            if [ -n "$PREV" ] && [ -d "$PREV" ] && [ "$PREV" != "$BASE/releases/${TS}" ]; then rm -rf "$PREV"; fi
-            rm -rf /var/cache/nginx/* || true
-            find "$BASE/releases" -maxdepth 1 -mindepth 1 -type d -printf "%T@ %p\n" | sort -rn | awk 'NR>5{print $2}' | xargs -r rm -rf
-        
-            # Renew
-            if ! crontab -l 2>/dev/null | grep -q 'certbot renew'; then
-              (crontab -l 2>/dev/null; echo '0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"') | crontab -
-            fi
-              
-            # Verificación de ambos dominios
-            echo "Verificando frontend..."
-            curl -skI "https://${DOMAIN}/" | head -n1 || true
-            
-            echo "Verificando Strapi..."
-            curl -skI "https://cms.sendme123.com/" | head -n1 || true
-            
-            echo "Deployment completado exitosamente"
+            test -f "$BASE/index.html" || { echo "Falta index.html"; exit 1; }

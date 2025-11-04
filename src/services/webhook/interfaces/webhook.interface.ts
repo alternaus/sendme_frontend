@@ -27,7 +27,7 @@ export interface WebhookConfig {
 }
 
 export interface WebhookEvent {
-  id: number
+  id:string
   key: string
   category: string
   description: string
@@ -45,19 +45,19 @@ export interface WebhookEvent {
 }
 
 export interface WebhookEndpointEvent {
-  endpointId: number
-  eventId: number
+  endpointId:string
+  eventId:string
   createdAt: string
   event: WebhookEvent
 }
 
 export interface WebhookEndpoint {
-  id: number
+  id:string
   name: string
   url: string
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
   isActive: boolean
-  organizationId: number
+  organizationId:string
   config: WebhookConfig
   createdAt: string
   updatedAt: string

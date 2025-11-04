@@ -7,16 +7,17 @@ import { useI18n } from 'vue-i18n'
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import DescriptionIcon from '@/assets/svg/description.svg?component'
+import InformationIcon from '@/assets/svg/lucide/user-cog.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
-import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppDatePicker from '@/components/atoms/datepickers/AppDatePicker.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import { CustomFieldDataType } from '@/services/campaign/enums/custom-field-data-type.enum'
 
 import { type CustomValue } from '../composables/useContactForm'
 
 interface CustomField {
-  id: number
+  id:string
   fieldName: string
   dataType: string
 }
@@ -54,17 +55,17 @@ const handleDateChange = (value: Date | null, custom: FieldEntry<CustomValue>, i
   }
 }
 
-const getFieldDataType = (customFieldId?: number): string => {
+const getFieldDataType = (customFieldId?:string): string => {
   if (!customFieldId) return 'string'
   return props.customFields.find((field) => field.id === customFieldId)?.dataType || 'string'
 }
 
-const getFieldName = (customFieldId?: number): string => {
+const getFieldName = (customFieldId?:string): string => {
   if (!customFieldId) return ''
   return props.customFields.find((field) => field.id === customFieldId)?.fieldName || `Campo #${customFieldId}`
 }
 
-const getFieldIcon = (customFieldId?: number) => {
+const getFieldIcon = (customFieldId?:string) => {
   if (!customFieldId) return CredentialIcon
   const dataType = getFieldDataType(customFieldId)
   switch (dataType) {
@@ -89,9 +90,9 @@ const containerClasses = computed(() => ({
   <AppCard class="w-full shadow-lg p-6 mt-4">
     <template #content>
       <div class="flex items-center justify-center gap-2 mb-4">
-        <InformationIcon class="w-8 h-8 dark:fill-white" />
+        <InformationIcon class="w-8 h-8 dark:text-white" />
         <h2 class="text-center text-xl font-semibold">
-          {{ t('general.personalized_information') }}
+          {{ t('contact.general.personalized_information') }}
         </h2>
       </div>
 
@@ -100,7 +101,7 @@ const containerClasses = computed(() => ({
         :class="containerClasses"
       >
         <div v-if="customValues.length === 0" class="col-span-full text-center py-8">
-          {{ t('contact.no_custom_fields') }}
+          {{ t('contact.general.no_custom_fields') }}
         </div>
 
         <div
@@ -112,7 +113,7 @@ const containerClasses = computed(() => ({
             {{ getFieldName(custom.value.customFieldId) }}
           </label>
 
-          <template v-if="getFieldDataType(custom.value.customFieldId) === 'string'">
+          <template v-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.STRING">
             <AppInput
               v-model="custom.value.value"
               type="text"
@@ -126,7 +127,7 @@ const containerClasses = computed(() => ({
             </AppInput>
           </template>
 
-          <template v-else-if="getFieldDataType(custom.value.customFieldId) === 'number'">
+          <template v-else-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.NUMBER">
             <AppInput
               v-model="custom.value.value"
               type="number"
@@ -140,7 +141,7 @@ const containerClasses = computed(() => ({
             </AppInput>
           </template>
 
-          <template v-else-if="getFieldDataType(custom.value.customFieldId) === 'date'">
+          <template v-else-if="getFieldDataType(custom.value.customFieldId) === CustomFieldDataType.DATE">
             <AppDatePicker
               :model-value="custom.value.value ? new Date(custom.value.value) : null"
               @update:model-value="(val) => handleDateChange(val, custom, index)"
@@ -155,7 +156,7 @@ const containerClasses = computed(() => ({
           </template>
 
           <template v-else>
-            <div class="text-xs text-gray-500">{{ t('contact.unknown_field_type') }}</div>
+            <div class="text-xs text-gray-500">{{ t('contact.general.unknown_field_type') }}</div>
             <AppInput
               v-model="custom.value.value"
               type="text"

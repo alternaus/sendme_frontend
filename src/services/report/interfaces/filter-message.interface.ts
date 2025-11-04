@@ -8,9 +8,9 @@ export interface IFilterMessage {
   messageType?: "SMS" | "WhatsApp" | string;
   page?: number;
   limit?: number;
-  providerId?: number;
-  campaignId?: number;
-  contactId?: number;
+  providerId?:string;
+  campaignId?:string;
+  contactId?:string;
   startDate?: string;
   endDate?: string;
 }

@@ -1,7 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'general.instant_message',
+  text: 'send.instant_message',
   to: { name: 'send.index' },
   active: false
 }
@@ -22,14 +22,14 @@ const sendRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'instant_message'
+    title: 'common.titles.instant_message'
   },
   children: [
     {
       path: '',
       name: 'send.index',
       component: () => import('@/pages/send/SendPage.vue'),
-      meta: { title: 'send_instant_message' }
+      meta: { title: 'common.titles.send_instant_message' }
     },
   ],
 }

@@ -45,15 +45,15 @@ const onCreate = async (webhookData: CreateWebhookEndpointDto) => {
     showForm.value = false
     toast.add({
       severity: 'success',
-      summary: t('webhooks.created'),
-      detail: t('webhooks.created'),
+      summary: t('settings.webhooks.created'),
+      detail: t('settings.webhooks.created'),
       life: 1800
     })
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('webhooks.error_create'),
-      detail: t('webhooks.error_create'),
+      summary: t('settings.webhooks.error_create'),
+      detail: t('settings.webhooks.error_create'),
       life: 2500
     })
   } finally {
@@ -70,15 +70,15 @@ const onToggleStatus = async (webhook: WebhookEndpoint) => {
     }
     toast.add({
       severity: 'success',
-      summary: t('webhooks.status_updated'),
-      detail: t('webhooks.status_updated'),
+      summary: t('settings.webhooks.status_updated'),
+      detail: t('settings.webhooks.status_updated'),
       life: 1600
     })
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('webhooks.error_update'),
-      detail: t('webhooks.error_update'),
+      summary: t('settings.webhooks.error_update'),
+      detail: t('settings.webhooks.error_update'),
       life: 2500
     })
   }
@@ -86,8 +86,8 @@ const onToggleStatus = async (webhook: WebhookEndpoint) => {
 
 const confirmDelete = (webhook: WebhookEndpoint) => {
   confirm.require({
-    message: t('webhooks.delete_confirm', { name: webhook.name }),
-    header: t('webhooks.delete_header'),
+    message: t('settings.webhooks.delete_confirm', { name: webhook.name }),
+    header: t('settings.webhooks.delete_header'),
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
       try {
@@ -95,27 +95,27 @@ const confirmDelete = (webhook: WebhookEndpoint) => {
         rows.value = rows.value.filter(r => r.id !== webhook.id)
         toast.add({
           severity: 'success',
-          summary: t('webhooks.delete_success'),
-          detail: t('webhooks.delete_success'),
+          summary: t('settings.webhooks.delete_success'),
+          detail: t('settings.webhooks.delete_success'),
           life: 1600
         })
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('webhooks.error_delete'),
-          detail: t('webhooks.error_delete'),
+          summary: t('settings.webhooks.error_delete'),
+          detail: t('settings.webhooks.error_delete'),
           life: 2500
         })
       }
     },
     rejectProps: {
-      label: t('webhooks.no'),
+      label: t('settings.webhooks.no'),
       severity: 'secondary',
       outlined: true,
       size: 'small'
     },
     acceptProps: {
-      label: t('webhooks.delete'),
+      label: t('settings.webhooks.delete'),
       size: 'small',
       severity: 'danger'
     },
@@ -142,15 +142,15 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
     <div class="flex items-center justify-between mb-4">
       <div>
         <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">
-          {{ $t('webhooks.title') }}
+          {{ $t('settings.webhooks.title') }}
         </h2>
         <p class="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">
-          {{ $t('webhooks.description') }}
+          {{ $t('settings.webhooks.description') }}
         </p>
       </div>
 
       <AppButton
-        :label="t('webhooks.add_new')"
+        :label="t('settings.webhooks.add_new')"
         icon="pi pi-plus"
         @click="showForm = true"
         class="!w-auto"
@@ -161,19 +161,19 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
     <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h3 class="text-base font-semibold text-neutral-900 dark:text-white">
-          {{ $t('webhooks.configured_webhooks') }}
+          {{ $t('settings.webhooks.configured_webhooks') }}
         </h3>
         <span class="text-xs text-neutral-500">
-          {{ rows.length }} {{ rows.length === 1 ? $t('webhooks.webhook_count') : $t('webhooks.webhook_count_plural') }}
+          {{ rows.length }} {{ rows.length === 1 ? $t('settings.webhooks.webhook_count') : $t('settings.webhooks.webhook_count_plural') }}
         </span>
       </div>
 
       <div v-if="loading" class="text-center py-6">
-        <div class="text-neutral-500 text-sm">{{ $t('webhooks.loading') }}</div>
+        <div class="text-neutral-500 text-sm">{{ $t('settings.webhooks.loading') }}</div>
       </div>
 
       <div v-else-if="rows.length === 0" class="text-center py-6">
-        <div class="text-neutral-500 text-sm">{{ $t('webhooks.no_webhooks') }}</div>
+        <div class="text-neutral-500 text-sm">{{ $t('settings.webhooks.no_webhooks') }}</div>
       </div>
 
       <div v-else class="space-y-3">
@@ -186,7 +186,7 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
                   {{ webhook.name }}
                 </span>
                 <AppTag
-                  :value="webhook.isActive ? t('webhooks.active') : t('webhooks.inactive')"
+                  :value="webhook.isActive ? t('settings.webhooks.active') : t('settings.webhooks.inactive')"
                   :severity="webhook.isActive ? 'success' : 'danger'"
                   class="!py-0.5 !px-1.5 !text-xs"
                 />
@@ -202,11 +202,11 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
               </div>
 
               <div class="text-xs text-neutral-500 mb-2">
-                {{ $t('webhooks.auth') }}: {{ getAuthType(webhook.config) }} •
-                {{ $t('webhooks.events') }}: {{ getEventCount(webhook) }} •
-                {{ $t('webhooks.retries') }}: {{ webhook.config?.retries?.maxAttempts || 3 }} •
-                {{ $t('webhooks.timeout') }}: {{ (webhook.config?.retries?.backoffMs || 30000) / 1000 }}s •
-                {{ $t('webhooks.created') }}: {{ formatDate(webhook.createdAt) }}
+                {{ $t('settings.webhooks.auth') }}: {{ getAuthType(webhook.config) }} •
+                {{ $t('settings.webhooks.events') }}: {{ getEventCount(webhook) }} •
+                {{ $t('settings.webhooks.retries') }}: {{ webhook.config?.retries?.maxAttempts || 3 }} •
+                {{ $t('settings.webhooks.timeout') }}: {{ (webhook.config?.retries?.backoffMs || 30000) / 1000 }}s •
+                {{ $t('settings.webhooks.created') }}: {{ formatDate(webhook.createdAt) }}
               </div>
 
               <div class="flex flex-wrap gap-1.5">
@@ -229,7 +229,7 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
                     ? 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
                     : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'
                 ]"
-                :title="webhook.isActive ? t('webhooks.disable') : t('webhooks.enable')"
+                :title="webhook.isActive ? t('settings.webhooks.disable') : t('settings.webhooks.enable')"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -240,7 +240,7 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
               <button
                 @click="confirmDelete(webhook)"
                 class="p-1.5 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                :title="t('webhooks.delete')"
+                :title="t('settings.webhooks.delete')"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -257,7 +257,7 @@ const getEventKeys = (webhook: WebhookEndpoint) => {
     <AppDialog
       v-model:modelValue="showForm"
       modal
-      :header="t('webhooks.configure_new_webhook')"
+      :header="t('settings.webhooks.configure_new_webhook')"
       :style="{ width: '95vw', maxWidth: '1200px', height: '90vh' }"
       :draggable="false"
     >

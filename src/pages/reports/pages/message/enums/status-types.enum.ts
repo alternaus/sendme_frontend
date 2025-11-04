@@ -1,13 +1,13 @@
 export enum StatusMessageTypes {
-  queued='report.message_status.queued',
-  sending='report.message_status.sending',
-  sent='report.message_status.sent',
-  delivered = 'report.message_status.delivered',
-  undelivered = 'report.message_status.undelivered',
-  failed = 'report.message_status.failed',
-  received = 'report.message_status.received',
-  scheduled = 'report.message_status.scheduled',
-  canceled = 'report.message_status.canceled',
-  read = 'report.message_status.read',
+  queued='reports.message_status.queued',
+  sending='reports.message_status.sending',
+  sent='reports.message_status.sent',
+  delivered = 'reports.message_status.delivered',
+  undelivered = 'reports.message_status.undelivered',
+  failed = 'reports.message_status.failed',
+  received = 'reports.message_status.received',
+  scheduled = 'reports.message_status.scheduled',
+  canceled = 'reports.message_status.canceled',
+  read = 'reports.message_status.read',
 
 }

@@ -1,6 +1,6 @@
 import type { IPlan } from './plan.interface';
 export interface IOrganization {
-  id:           number;
+  id:string;
   name:         string;
   domain:       null;
   document:     null;

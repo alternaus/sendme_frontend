@@ -1,17 +1,34 @@
+export interface PlanLimits {
+  planName: string
+  contactLimit: number
+  campaignLimit: number
+  tagLimit: number
+  customFieldLimit: number
+  pricePerMessage: number
+}
+
+export interface MessageStats {
+  sent: number
+  failed: number
+  pending: number
+  available: number
+  used: number
+  planTotal: number
+  rechargeTotal: number
+}
+
 export interface DashboardStats {
   totalCampaigns: number
   activeCampaigns: number
-  availableMessages: number
-  sentMessages: number
-  failedMessages: number
-  pendingMessages: number
   totalContacts: number
+  messages: MessageStats
+  planLimits: PlanLimits
 }
 
 export interface RecentMessage {
-  id: number
+  id: string
   status: string
-  createdAt: string
+  createdAt: Date | string
   campaignName: string
   phone: string
   content: string

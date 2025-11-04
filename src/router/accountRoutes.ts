@@ -1,19 +1,10 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'general.account',
+  text: 'common.general.account',
   to: { name: 'account.index' },
   active: false
 }
-
-//const generateBreadcrumb = (text: string, name: string) => [
-//baseBreadcrumb,
-//{
-//text,
-//to: { name },
-//active: true
-//}
-//]
 
 const accountRoutes: RouteRecordRaw = {
   path: '/account',
@@ -22,14 +13,14 @@ const accountRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'account'
+    title: 'common.titles.account'
   },
   children: [
     {
       path: '',
       name: 'account.index',
       component: () => import('@/pages/account/AccountPage.vue'),
-      meta: { title: 'account_settings' }
+      meta: { title: 'common.titles.account_settings' }
     },
   ],
 }

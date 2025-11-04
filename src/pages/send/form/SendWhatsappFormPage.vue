@@ -7,7 +7,7 @@ import PhoneIcon from '@/assets/svg/phone.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
 import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
+import { MESSAGE_LIMITS,MessageChannel } from '@/services/send/constants/message.constants'
 import { useSendService } from '@/services/send/useSendService'
 
 import { useFormSendMessage } from '../composables/useSendForm'
@@ -27,7 +27,7 @@ export default defineComponent({
     const sendService = useSendService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.WHATSAPP)
-    const MAX_CHARACTERS = 4096
+    const MAX_CHARACTERS = MESSAGE_LIMITS.WHATSAPP
 
     const fetchContactsCount = async () => {
       try {
@@ -111,7 +111,7 @@ export default defineComponent({
       v-if="!form.sendToAll.value"
       v-model="contactsInput"
       :rows="2"
-      :placeholder="$t('general.enter_numbers_separated_by_commas')"
+      :placeholder="$t('send.enter_numbers_separated_by_commas')"
       class="w-full mb-4"
     >
       <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
@@ -121,7 +121,7 @@ export default defineComponent({
       v-model="form.message.value"
       content-type="text"
       :ai-attach="true"
-      :placeholder="$t('general.editor.whatsapp_placeholder')"
+      :placeholder="$t('send.editor.whatsapp_placeholder')"
       :maxlength="MAX_CHARACTERS"
       :rows="12"
       class="w-full mb-2"

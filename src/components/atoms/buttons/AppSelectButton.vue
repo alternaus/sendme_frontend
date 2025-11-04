@@ -13,6 +13,7 @@ interface Props {
   errorMessage?: string
   multiple?: boolean
   disabled?: boolean
+  allowEmpty?: boolean
   size?: 'small' | 'large'
   containerClass?: string
   selectButtonClass?: string
@@ -28,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   errorMessage: '',
   multiple: false,
   disabled: false,
+  allowEmpty: false,
   size: 'small',
   containerClass: 'w-full',
   selectButtonClass: 'w-full flex justify-center items-center flex-wrap',
@@ -74,6 +76,7 @@ const ptConfig = computed(() => ({
         optionValue,
         multiple,
         disabled,
+        allowEmpty,
         size:'small',
         ptOptions,
         ...$attrs

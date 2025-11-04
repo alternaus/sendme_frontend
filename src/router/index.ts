@@ -11,13 +11,14 @@ import enrollmentRoutes from './enrollmentRoutes'
 import reportRoutes from './reportRoutes'
 import sendRoutes from './sendRoutes'
 import settingRoutes from './settingRoutes'
+import whatsappRoutes from './whatsappRoutes'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
     component: () => import('@/pages/home/HomePage.vue'),
-    meta: { layout: 'DashboardLayout', requiresAuth: true, title: 'home' },
+    meta: { layout: 'DashboardLayout', requiresAuth: true, title: 'common.titles.home' },
   },
   contactRoutes,
   campaignRoutes,
@@ -28,11 +29,12 @@ const routes: RouteRecordRaw[] = [
   buyRoutes,
   authRoutes,
   enrollmentRoutes,
+  whatsappRoutes,
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/not-found/NotFoundPage.vue'),
-    meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'not_found' },
+    meta: { layout: 'DefaultLayout', requiresAuth: false, title: 'common.titles.not_found' },
   },
 ]
 
@@ -61,9 +63,9 @@ router.beforeEach((to, from, next) => {
     return next('/auth/sign-in')
   }
 
-  // Permitir acceso a rutas de enrollment y callback de Google incluso si el usuario está autenticado
-  // El callback de Google necesita ser accesible para completar el flujo de OAuth
-  if (!to.meta.requiresAuth && token && !to.path.startsWith('/enrollment') && !to.path.startsWith('/auth/google/callback')) {
+  // Permitir acceso a rutas de enrollment y callback de OAuth incluso si el usuario está autenticado
+  // El callback de OAuth necesita ser accesible para completar el flujo de OAuth
+  if (!to.meta.requiresAuth && token && !to.path.startsWith('/enrollment') && !to.path.startsWith('/auth/oauth/') && !to.path.startsWith('/auth/google/callback')) {
     return next('/')
   }
 

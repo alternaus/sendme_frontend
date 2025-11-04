@@ -1,5 +1,5 @@
 export interface IAudit {
-  id:             number;
+  id:string;
   action:         string;
   changes:        null;
   correlationId:  string;
@@ -7,8 +7,10 @@ export interface IAudit {
   recordId:       null;
   table:          string;
   timestamp:      Date;
-  userId:         number;
-  organizationId: number;
+  userId:string;
+  userEmail:     string;
+  userName:      string;
+  organizationId:string;
   ipAddress:      string;
   createdAt:      Date;
   updatedAt:      Date;

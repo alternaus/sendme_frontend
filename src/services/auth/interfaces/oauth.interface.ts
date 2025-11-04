@@ -36,3 +36,13 @@ export interface IOAuthStatus {
   message?: string
   provider: OAuthProviderType
 }
+
+export interface IOAuthBackendStatus {
+  connected: boolean
+  hasOAuthTokens: boolean
+  capabilities?: {
+    contacts: boolean
+    sheets: boolean
+  }
+  authMethod?: string
+}

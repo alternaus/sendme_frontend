@@ -1,5 +1,5 @@
 export interface IRole {
-  id: number
+  id:string
   name: string
   description: string
   createdAt: string
@@ -7,10 +7,10 @@ export interface IRole {
 }
 
 export interface IUser {
-  id: number
-  roleId: number
+  id:string
+  roleId:string
   avatarUrl: string
-  organizationId: number
+  organizationId:string
   name: string
   email: string
   role: IRole

@@ -5,11 +5,12 @@ import * as yup from 'yup'
 
 import { useStatusColors } from '@/composables/useStatusColors'
 import { ContactStatus } from '@/services/contact/enums/contact-status.enum'
+import { generateUUID } from '@/utils/uuid.helper'
 
 export interface CustomValue {
-  customFieldId?: number
-  value?: string | null // Permitir null para campos de fecha
-  id?: number
+  customFieldId?:string
+  value?: string | null
+  id?:string
 }
 
 export interface ContactForm {
@@ -21,6 +22,7 @@ export interface ContactForm {
   status?: ContactStatus
   birthDate?: Date | null
   customValues?: CustomValue[]
+  tagIds?: string[]
 }
 
 export interface ContactFormRef {
@@ -39,41 +41,33 @@ export const useFormContact = () => {
   const { t } = useI18n()
   const { getStatusesForType } = useStatusColors()
 
-  // Obtener estados válidos dinámicamente
   const validStatuses = getStatusesForType('contact')
 
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('contact.general.required_field'),
     },
     string: {
-      email: () => t('general.invalid_email'),
+      email: () => t('contact.general.invalid_email'),
     },
   })
 
-  //✅ Definir esquema de validación con traducciones - Solo phone y countryCode requeridos
   const schema = yup.object<ContactForm>({
-    name: yup.string().optional().label(t('general.name')),
-    lastName: yup.string().optional().label(t('general.last_name')),
-    email: yup.string().email().optional().label(t('general.email')),
-    phone: yup.string().required().label(t('general.phone')),
-    countryCode: yup.string().required().label(t('general.country_code')),
-    status: yup.string().oneOf(validStatuses).optional().label(t('general.status')),
-    birthDate: yup.date().nullable().optional().label(t('general.birth_date')),
+    name: yup.string().optional().label(t('contact.general.name')),
+    lastName: yup.string().optional().label(t('contact.general.last_name')),
+    email: yup.string().email().optional().label(t('contact.general.email')),
+    phone: yup.string().required().label(t('contact.general.phone')),
+    countryCode: yup.string().required().label(t('contact.general.country_code')),
+    status: yup.string().oneOf(validStatuses).optional().label(t('contact.general.status')),
+    birthDate: yup.date().nullable().optional().label(t('contact.general.birth_date')),
     customValues: yup.array().of(
       yup.object().shape({
-        customFieldId: yup.number().integer().required().label('form.customFieldId'),
-        value: yup.string().when('customFieldId', {
-          is: (_customFieldId: number) => {
-            // Para campos de fecha en customValues, permitir valores vacíos/null
-            return false // Por ahora permitimos valores opcionales
-          },
-          then: (schema) => schema.optional(),
-          otherwise: (schema) => schema.optional()
-        }).label('form.customValue'),
-        id: yup.number().integer().nullable().label('form.customId'),
+        customFieldId: yup.string().required().label('form.customFieldId'),
+        value: yup.string().nullable().optional().label('form.customValue'),
+        id: yup.string().nullable().optional(),
       }),
     ).optional(),
+    tagIds: yup.array().of(yup.string()).optional(),
   })
 
   const { defineField, handleSubmit, resetForm, errors, setValues } = useForm<ContactForm>({
@@ -85,8 +79,9 @@ export const useFormContact = () => {
       phone: '',
       countryCode: '',
       status: ContactStatus.ACTIVE,
-      birthDate: null, // Permitir null por defecto
+      birthDate: null,
       customValues: [],
+      tagIds: [],
     },
     validateOnMount: false,
   })
@@ -98,6 +93,7 @@ export const useFormContact = () => {
   const [countryCode] = defineField('countryCode')
   const [status] = defineField('status')
   const [birthDate] = defineField('birthDate')
+  const [tagIds] = defineField('tagIds')
 
   const {
     fields: customValues,
@@ -105,8 +101,12 @@ export const useFormContact = () => {
     remove: removeCustomValue,
   } = useFieldArray<CustomValue>('customValues')
 
-  const addCustomField = (field: { customFieldId: number; value?: string; id?: number }) => {
-    addCustomValue(field)
+  const addCustomField = (field: { customFieldId:string; value?: string; id?:string }) => {
+    const fieldWithId = {
+      ...field,
+      id: field.id || generateUUID(),
+    }
+    addCustomValue(fieldWithId)
   }
 
   const removeCustomField = (index: number) => {
@@ -123,6 +123,7 @@ export const useFormContact = () => {
       status,
       birthDate,
       customValues,
+      tagIds,
     },
     handleSubmit,
     resetForm,

@@ -5,11 +5,11 @@ import { useRouter } from 'vue-router'
 // Iconos de settings
 import AdministratorsIcon from '@/assets/svg/administrators.svg?component'
 import IntegrationsIcon from '@/assets/svg/integrations.svg?component'
+import InformationIcon from '@/assets/svg/lucide/user-cog.svg?component'
 // Iconos de reportes
 import AuditIcon from '@/assets/svg/report/audit.svg?component'
 import MessagesIcon from '@/assets/svg/report/messages.svg?component'
 import SendingIcon from '@/assets/svg/report/sending.svg?component'
-import InformationIcon from '@/assets/svg/table-actions/information.svg?component'
 import { IconTypesReports } from '@/pages/reports/components/enums/icon-types-reports.enum'
 import { IconTypesSettings } from '@/pages/settings/components/enums/icon-types-settings.enum'
 
@@ -63,10 +63,10 @@ const cardClasses = computed(() => {
   const baseClasses = 'flex flex-col items-center justify-center w-64 sm:w-56 md:w-60 h-36 p-3 border rounded-2xl cursor-pointer transition-all duration-200 relative group'
 
   if (props.disabled) {
-    return `${baseClasses} border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-50`
+    return `${baseClasses} border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed opacity-50`
   }
 
-  return `${baseClasses} border-gray-200 dark:border-gray-700 bg-white dark:bg-neutral-800 hover:border-[var(--p-primary-color)] hover:shadow-lg hover:scale-105 active:scale-95`
+  return `${baseClasses} border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-[var(--p-primary-color)] hover:shadow-lg hover:scale-105 active:scale-95`
 })
 
 const handleClick = () => {
@@ -94,11 +94,17 @@ const handleClick = () => {
     <!-- Icono SVG -->
     <component
       :is="getIconComponent"
-      class="w-10 h-10 md:w-12 md:h-12 fill-gray-800 dark:fill-neutral-300 group-hover:fill-[var(--p-primary-color)] group-hover:scale-110 transition-all"
+      v-if="icon != IconTypesSettings.CUSTOM_FIELDS"
+      class="w-10 h-10 md:w-12 md:h-12 fill-neutral-800 dark:fill-neutral-300 group-hover:fill-[var(--p-primary-color)] group-hover:scale-110 transition-all"
     />
 
+    <component
+      :is="getIconComponent"
+      v-if="icon === IconTypesSettings.CUSTOM_FIELDS"
+      class="w-10 h-10 md:w-12 md:h-12 text-neutral-800 dark:text-neutral-300 group-hover:text-[var(--p-primary-color)] group-hover:scale-110 transition-all"
+    />
     <!-- Texto -->
-    <small class="mt-2 text-center text-sm md:text-base text-gray-800 font-semibold dark:text-neutral-300 group-hover:text-[var(--p-primary-color)] transition-colors">
+    <small class="mt-2 text-center text-sm md:text-base text-neutral-800 font-semibold dark:text-neutral-300 group-hover:text-[var(--p-primary-color)] transition-colors">
       {{ text }}
     </small>
 

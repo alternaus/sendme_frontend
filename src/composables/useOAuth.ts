@@ -19,7 +19,7 @@ export const useOAuth = () => {
     microsoft: null
   })
 
-  const initiateOAuth = async (provider: OAuthProviderType, returnPath?: string, userId?: number) => {
+  const initiateOAuth = async (provider: OAuthProviderType, returnPath?: string, userId?:string) => {
     try {
       loading.value = true
 
@@ -32,7 +32,7 @@ export const useOAuth = () => {
     } catch (error) {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('common.general.error'),
         detail: t('auth.oauth_init_error', { provider }),
         life: 5000
       })
@@ -67,14 +67,14 @@ export const useOAuth = () => {
 
       toast.add({
         severity: 'success',
-        summary: t('general.success'),
+        summary: t('common.general.success'),
         detail: t('auth.oauth_tokens_revoked', { provider }),
         life: 3000
       })
     } catch (error) {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
+        summary: t('common.general.error'),
         detail: t('auth.oauth_revoke_error', { provider }),
         life: 5000
       })

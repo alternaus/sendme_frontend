@@ -12,6 +12,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppFormStepper from '@/components/molecules/stepper/AppFormStepper.vue'
 import { useStatusColors } from '@/composables/useStatusColors'
+import type { ICampaign } from '@/services/campaign/interfaces/campaign.interface'
 import type { ICreateCampaign } from '@/services/campaign/interfaces/create-campaign.interface'
 import type { IUpdateCampaign } from '@/services/campaign/interfaces/update-campaign.interface'
 import { useCampaignService } from '@/services/campaign/useCampaignService'
@@ -67,32 +68,32 @@ export default defineComponent({
     const campaignId = ref<string | null>(null)
 
     const statusOptions = computed(() =>
-      getStatusOptions('campaign').map(option => ({
+      getStatusOptions('campaign').map((option) => ({
         name: option.label,
-        value: option.value
-      }))
+        value: option.value,
+      })),
     )
 
     const conditionOptions = [
-      { name: t('campaign.conditions.is_empty'), value: 'is_empty' },
-      { name: t('campaign.conditions.not_empty'), value: 'not_empty' },
-      { name: t('campaign.conditions.equals'), value: 'equals' },
-      { name: t('campaign.conditions.not_equals'), value: 'not_equals' },
-      { name: t('campaign.conditions.greater_than'), value: 'greater_than' },
-      { name: t('campaign.conditions.less_than'), value: 'less_than' },
-      { name: t('campaign.conditions.greater_or_equal'), value: 'greater_or_equal' },
-      { name: t('campaign.conditions.less_or_equal'), value: 'less_or_equal' },
-      { name: t('campaign.conditions.between'), value: 'between' },
-      { name: t('campaign.conditions.between_dates'), value: 'between_dates' },
-      { name: t('campaign.conditions.contains'), value: 'contains' },
-      { name: t('campaign.conditions.starts_with'), value: 'starts_with' },
-      { name: t('campaign.conditions.ends_with'), value: 'ends_with' },
-      { name: t('campaign.conditions.birthday_today'), value: 'birthday_today' },
-      { name: t('campaign.conditions.birthday_in_x_days'), value: 'birthday_in_x_days' },
-      { name: t('campaign.conditions.is_today'), value: 'is_today' },
-      { name: t('campaign.conditions.was_yesterday'), value: 'was_yesterday' },
-      { name: t('campaign.conditions.is_tomorrow'), value: 'is_tomorrow' },
-      { name: t('campaign.conditions.in_x_days'), value: 'in_x_days' },
+      { name: t('campaign.conditions.is_empty'), value: 'IS_EMPTY' },
+      { name: t('campaign.conditions.not_empty'), value: 'NOT_EMPTY' },
+      { name: t('campaign.conditions.equals'), value: 'EQUALS' },
+      { name: t('campaign.conditions.not_equals'), value: 'NOT_EQUALS' },
+      { name: t('campaign.conditions.greater_than'), value: 'GREATER_THAN' },
+      { name: t('campaign.conditions.less_than'), value: 'LESS_THAN' },
+      { name: t('campaign.conditions.greater_or_equal'), value: 'GREATER_OR_EQUAL' },
+      { name: t('campaign.conditions.less_or_equal'), value: 'LESS_OR_EQUAL' },
+      { name: t('campaign.conditions.between'), value: 'BETWEEN' },
+      { name: t('campaign.conditions.between_dates'), value: 'BETWEEN_DATES' },
+      { name: t('campaign.conditions.contains'), value: 'CONTAINS' },
+      { name: t('campaign.conditions.starts_with'), value: 'STARTS_WITH' },
+      { name: t('campaign.conditions.ends_with'), value: 'ENDS_WITH' },
+      { name: t('campaign.conditions.birthday_today'), value: 'BIRTHDAY_TODAY' },
+      { name: t('campaign.conditions.birthday_in_x_days'), value: 'BIRTHDAY_IN_X_DAYS' },
+      { name: t('campaign.conditions.is_today'), value: 'IS_TODAY' },
+      { name: t('campaign.conditions.was_yesterday'), value: 'WAS_YESTERDAY' },
+      { name: t('campaign.conditions.is_tomorrow'), value: 'IS_TOMORROW' },
+      { name: t('campaign.conditions.in_x_days'), value: 'IN_X_DAYS' },
     ]
 
     const channels = ref<SelectOption[]>([])
@@ -114,7 +115,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('campaign.common.error'),
           detail: t('campaign.errors.load_channels'),
           life: 3000,
         })
@@ -126,7 +127,7 @@ export default defineComponent({
 
       try {
         isLoading.value = true
-        const campaign = await getCampaign(campaignId.value)
+        const campaign: ICampaign = await getCampaign(campaignId.value)
 
         //Convertir las fechas de string a Date y time string a Date
         const timeString = campaign.time || '12:00'
@@ -140,7 +141,8 @@ export default defineComponent({
           time: timeDate,
           days: campaign.days || [],
           content: campaign.content || '',
-          campaignRules: (campaign.campaignRules || []).map(rule => ({
+          tagIds: campaign.tags ? campaign.tags.map(tag => tag.id) : [], // Convertir tags a tagIds
+          campaignRules: (campaign.campaignRules || []).map((rule) => ({
             conditionType: rule.conditionType,
             value: String(rule.value || ''),
             customFieldId: rule.customFieldId,
@@ -152,7 +154,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('campaign.common.error'),
           detail: t('campaign.errors.load_campaign'),
           life: 3000,
         })
@@ -164,40 +166,51 @@ export default defineComponent({
     const updateFormContent = (key: string, value: unknown) => {
       try {
         setValues({ [key]: value } as Record<string, unknown>)
-      } catch {
-      }
+      } catch {}
     }
 
     const convertDaysToApiFormat = (days: string[]): string[] => {
       const dayMapping: Record<string, string> = {
-        'MO': 'MO', // Monday
-        'TU': 'TU', // Tuesday
-        'WE': 'WE', // Wednesday
-        'TH': 'TH', // Thursday
-        'FR': 'FR', // Friday
-        'SA': 'SA', // Saturday
-        'SU': 'SU', // Sunday
+        MO: 'MO', // Monday
+        TU: 'TU', // Tuesday
+        WE: 'WE', // Wednesday
+        TH: 'TH', // Thursday
+        FR: 'FR', // Friday
+        SA: 'SA', // Saturday
+        SU: 'SU', // Sunday
       }
 
-      return days.map(day => dayMapping[day] || day)
+      return days.map((day) => dayMapping[day] || day)
     }
 
     const formatCampaignData = (values: GenericObject): Record<string, unknown> => {
       try {
-        const timeString = values.time instanceof Date
-          ? values.time.toTimeString().split(' ')[0].substring(0, 5)
-          : '12:00'
+        const timeString =
+          values.time instanceof Date
+            ? values.time.toTimeString().split(' ')[0].substring(0, 5)
+            : '12:00'
+
 
         const formattedData: Record<string, unknown> = {
           ...values,
-          startDate: values.startDate instanceof Date
-            ? values.startDate.toISOString().split('T')[0]
-            : values.startDate,
-          endDate: values.endDate instanceof Date
-            ? values.endDate.toISOString().split('T')[0]
-            : values.endDate,
+          startDate:
+            values.startDate instanceof Date
+              ? values.startDate.toISOString().split('T')[0]
+              : values.startDate,
+          endDate:
+            values.endDate instanceof Date
+              ? values.endDate.toISOString().split('T')[0]
+              : values.endDate,
           time: timeString,
           days: Array.isArray(values.days) ? convertDaysToApiFormat(values.days) : [],
+          tagIds: values.tagIds || [], // Asegurar que tagIds siempre esté presente
+          messageType: (() => {
+            const selected = channels.value.find(
+              (c) => String(c.value) === String(values.channelId),
+            )
+            const isSms = (selected?.name || '').toLowerCase().includes('sms')
+            return isSms ? (values.messageType ?? 'sms') : null
+          })(),
           campaignRules: Array.isArray(values.campaignRules)
             ? values.campaignRules.map((rule: Record<string, unknown>) => ({
                 conditionType: rule.conditionType,
@@ -208,7 +221,7 @@ export default defineComponent({
         }
 
         const fieldsToRemove = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'channel', 'rrule']
-        fieldsToRemove.forEach(field => {
+        fieldsToRemove.forEach((field) => {
           delete formattedData[field]
         })
 
@@ -222,13 +235,13 @@ export default defineComponent({
       async (values) => {
         try {
           isLoading.value = true
-          const formattedData = formatCampaignData(values)
+          const {tags:_tags,...formattedData} = formatCampaignData(values)
 
           if (isEditMode.value && campaignId.value) {
             await updateCampaign(campaignId.value, formattedData as IUpdateCampaign)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
+              summary: t('campaign.common.success'),
               detail: t('campaign.success.updated'),
               life: 3000,
             })
@@ -236,7 +249,7 @@ export default defineComponent({
             await createCampaign(formattedData as unknown as ICreateCampaign)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
+              summary: t('campaign.common.success'),
               detail: t('campaign.success.created'),
               life: 3000,
             })
@@ -246,8 +259,10 @@ export default defineComponent({
         } catch {
           toast.add({
             severity: 'error',
-            summary: t('general.error'),
-            detail: isEditMode.value ? t('campaign.errors.update_campaign') : t('campaign.errors.create_campaign'),
+            summary: t('campaign.common.error'),
+            detail: isEditMode.value
+              ? t('campaign.errors.update_campaign')
+              : t('campaign.errors.create_campaign'),
             life: 3000,
           })
         } finally {
@@ -257,7 +272,7 @@ export default defineComponent({
       (_error) => {
         toast.add({
           severity: 'warn',
-          summary: t('general.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.validation_failed'),
           life: 3000,
         })
@@ -269,7 +284,7 @@ export default defineComponent({
       if (!success) {
         toast.add({
           severity: 'warn',
-          summary: t('general.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
@@ -285,7 +300,7 @@ export default defineComponent({
       if (!success) {
         toast.add({
           severity: 'warn',
-          summary: t('general.validation_error'),
+          summary: t('campaign.common.validation_error'),
           detail: t('campaign.errors.complete_current_step'),
           life: 3000,
         })
@@ -337,7 +352,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]"  />
+  <AppHeader :icon="IconTypes.CAMPAIGNS" :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4">
     <AppFormStepper
@@ -348,7 +363,7 @@ export default defineComponent({
       :can-navigate-to-step="canNavigateToStep"
       :has-step-errors="hasStepErrors"
       :is-loading="isLoading"
-      :submit-label="isEditMode ? t('general.update') : t('general.save')"
+      :submit-label="isEditMode ? t('campaign.common.update') : t('campaign.common.save')"
       @next="handleNext"
       @prev="handlePrev"
       @go-to="handleGoToStep"

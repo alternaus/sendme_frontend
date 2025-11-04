@@ -1,0 +1,323 @@
+{
+  "general": {
+    "account": "Cuenta",
+    "send": "Enviar",
+    "buy": "Comprar",
+    "settings": "Configuración",
+    "messages": "Mensajes",
+    "search": "Buscar",
+    "action": "Acción",
+    "module": "Módulo",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de fin",
+    "date": "Fecha",
+    "changes": "Cambios",
+    "campaign": "Campaña",
+    "provider": "Proveedor",
+    "total_sent": "Total enviados",
+    "total_delivered": "Total entregados",
+    "total_failed": "Total fallidos",
+    "shipment_date": "Fecha de envío",
+    "status": "Estado",
+    "message_type": "Tipo de mensaje",
+    "recipient_details": "Detalles del destinatario",
+    "content": "Contenido",
+    "organizations": "Organizaciones",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "error": "Error",
+    "success": "Éxito",
+    "connection_error": "Error de conexión",
+    "visualize_changes": "Visualizar cambios",
+    "changes_detected": "cambios detectados",
+    "fields_total": "campos totales",
+    "before": "Antes",
+    "after": "Después",
+    "no_results": "Sin resultados",
+    "view_html": "Ver HTML",
+    "sms": "SMS",
+    "email_channel": "Canal Email",
+    "send_instant_message": "Enviar mensaje instantáneo",
+    "instant_message": "Mensaje instantáneo",
+    "whatsapp_instant_message": "Mensaje instantáneo WhatsApp",
+    "email_instant_message": "Mensaje instantáneo Email",
+    "sms_standard": "SMS Estándar",
+    "sms_otp": "SMS OTP",
+    "sms_flash": "SMS Flash",
+    "message_send_success": "Mensaje enviado exitosamente",
+    "error_sending_message": "Error al enviar el mensaje",
+    "selected": "seleccionado | seleccionados",
+    "save": "Guardar",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "cancel": "Cancelar",
+    "filters": "Filtros",
+    "no_records_found": "No se encontraron registros",
+    "editor": {
+      "sms_placeholder": "Escribe tu mensaje SMS aquí...",
+      "email_placeholder": "Escribe tu mensaje de email aquí...",
+      "sms_limit_exceeded": "Se ha excedido el límite de caracteres para SMS",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "underline": "Subrayado",
+      "strike": "Tachado",
+      "font_size": "Tamaño de fuente",
+      "ordered_list": "Lista numerada",
+      "bullet_list": "Lista con viñetas",
+      "align_left": "Alinear a la izquierda",
+      "align_center": "Centrar",
+      "align_right": "Alinear a la derecha"
+    }
+  },
+  "titles": {
+    "app_name": "SendMe",
+    "reports_list": "Lista de reportes",
+    "account": "Cuenta",
+    "account_settings": "Configuración de cuenta",
+    "audit_report": "Reporte de auditoría",
+    "auth": "Autenticación",
+    "buy_credits": "Comprar créditos",
+    "campaigns": "Campañas",
+    "campaigns_list": "Lista de campañas",
+    "contacts": "Contactos",
+    "contacts_list": "Lista de contactos",
+    "create_campaign": "Crear campaña",
+    "create_contact": "Crear contacto",
+    "custom_fields": "Campos personalizados",
+    "dispatches_report": "Reporte de envíos",
+    "edit_campaign": "Editar campaña",
+    "edit_contact": "Editar contacto",
+    "enrollment": "Registro",
+    "enrollment_confirmation": "Confirmación de registro",
+    "enrollment_payment": "Pago de registro",
+    "enrollment_plans": "Planes de registro",
+    "forgot_password": "Olvidé mi contraseña",
+    "general": "General",
+    "general_settings": "Configuración general",
+    "home": "Inicio",
+    "import_contacts": "Importar contactos",
+    "integrations": "Integraciones",
+    "messages_report": "Reporte de mensajes",
+    "not_found": "Página no encontrada",
+    "oauth_callback": "Autenticación OAuth",
+    "plans_and_pricing": "Planes y precios",
+    "reports": "Reportes",
+    "reset_password": "Restablecer contraseña",
+    "instant_message": "Mensaje instantáneo",
+    "send_instant_message": "Enviar mensaje instantáneo",
+    "settings": "Configuración",
+    "send": "Enviar",
+    "send_list": "Lista de envíos",
+    "send_add": "Agregar envío",
+    "send_edit": "Editar envío",
+    "add_organization": "Agregar organización",
+    "edit_organization": "Editar organización",
+    "organizations": "Organizaciones",
+    "sign_in": "Iniciar sesión",
+    "sign_up": "Crear cuenta",
+    "users": "Usuarios",
+    "view_contact": "Ver contacto"
+  },
+  "contact": {
+    "contacts": "Contactos",
+    "custom_fields": "Campos personalizados",
+    "custom_values": "Valores personalizados"
+  },
+  "report": {
+    "reports": "Reportes"
+  },
+  "user": {
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "user": "Usuario",
+    "users": "Usuarios"
+  },
+  "theme": {
+    "dark": "Tema",
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro"
+  },
+  "languages": {
+    "language": "Idioma",
+    "es": "Español",
+  "en": "English",
+  "switchToEnglish": "Cambiar a Inglés",
+  "switchToSpanish": "Cambiar a Español"
+  },
+  "auth": {
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión"
+  },
+  "actions": {
+    "update": "Actualizar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "edit": "Editar",
+    "view": "Ver",
+    "import": "Importar",
+    "test_rules": "Probar reglas",
+    "duplicate": "Duplicar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "copy": "Copia"
+  },
+  "campaign": {
+    "campaigns": "Campañas",
+    "campaign_rules": "Reglas de campaña",
+    "campaign_dispatches": "Envíos de campaña"
+  },
+  "provider": {
+    "providers": "Proveedores",
+    "payment_providers": "Proveedores de pago"
+  },
+  "plan": {
+    "plans": "Planes"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    "backToHome": "Volver al inicio"
+  },
+  "error": {
+    "title": "Ha ocurrido un error",
+    "description": "Algo salió mal. Por favor, intenta nuevamente.",
+    "retry": "Reintentar",
+    "backToHome": "Volver al inicio"
+  },
+  "loading": {
+    "title": "Cargando...",
+    "description": "Por favor espera mientras cargamos el contenido."
+  },
+  "maintenance": {
+    "title": "Mantenimiento programado",
+    "description": "Estamos realizando mejoras. Volveremos pronto.",
+    "estimatedTime": "Tiempo estimado: {time}"
+  },
+  "ai": {
+    "title": "Asistente IA",
+    "tabs": {
+      "generate": "Generar",
+      "translate": "Traducir"
+    },
+    "labels": {
+      "prompt": "Instrucciones",
+      "result": "Resultado",
+      "target_language": "Idioma destino",
+      "text_to_translate": "Texto a traducir",
+      "translation": "Traducción"
+    },
+    "placeholders": {
+      "prompt": "Describe el mensaje que quieres generar...",
+      "result": "El contenido generado aparecerá aquí",
+      "text_to_translate": "Ingresa el texto que quieres traducir"
+    },
+    "buttons": {
+      "generate": "Generar",
+      "generating": "Generando...",
+      "translate": "Traducir",
+      "translating": "Traduciendo...",
+      "insert": "Insertar"
+    },
+    "errors": {
+      "generate_failed": "No se pudo generar el contenido",
+      "translate_failed": "No se pudo traducir el contenido"
+    }
+  },
+  "tags": {
+    "title": "Etiquetas",
+    "placeholders": {
+      "select": "Seleccionar etiquetas...",
+      "name": "Nombre de la etiqueta",
+      "description": "Descripción de la etiqueta"
+    },
+    "labels": {
+      "name": "Nombre",
+      "description": "Descripción (opcional)",
+      "color": "Color",
+      "available_tags": "Etiquetas Disponibles"
+    },
+    "buttons": {
+      "new_tag": "Nueva Etiqueta",
+      "create_from_filter": "Crear '{name}'",
+      "create": "Crear",
+      "update": "Actualizar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "modals": {
+      "create_title": "Nueva Etiqueta",
+      "edit_title": "Editar Etiqueta",
+      "delete_title": "Eliminar Etiqueta",
+      "delete_confirm": "¿Estás seguro de que deseas eliminar la etiqueta \"{name}\"?"
+    },
+    "messages": {
+      "created": "Etiqueta creada exitosamente",
+      "updated": "Etiqueta actualizada exitosamente",
+      "deleted": "Etiqueta eliminada exitosamente",
+      "create_error": "No se pudo crear la etiqueta",
+      "update_error": "No se pudo actualizar la etiqueta",
+      "delete_error": "No se pudo eliminar la etiqueta",
+      "load_error": "No se pudieron cargar las etiquetas"
+    },
+    "validation": {
+      "name_required": "El nombre es requerido",
+      "name_exists": "Ya existe una etiqueta con este nombre"
+    }
+  },
+  "errors": {
+    "0000": "Error del sistema no inicializado",
+    "1000": "El usuario ya existe",
+    "1001": "Credenciales inválidas",
+    "1002": "No autorizado",
+    "1003": "Acceso prohibido",
+    "1004": "ID de organización no encontrado",
+    "1005": "Recurso no encontrado",
+    "1006": "Operación no válida para el pago",
+    "1007": "No hay datos para exportar",
+    "1008": "Token inválido",
+    "1009": "Token expirado",
+    "1010": "Error al enviar email",
+    "1011": "Plantilla no encontrada",
+    "1012": "Token de restablecimiento de contraseña expirado",
+    "1013": "Token de restablecimiento de contraseña inválido",
+    "1014": "Error en la autenticación con Google",
+    "1015": "Token de actualización de Google expirado",
+    "1016": "Credenciales de Google faltantes",
+    "1017": "Sesión no encontrada",
+    "1018": "Error al cambiar la contraseña",
+    "1019": "Error en el registro de usuario",
+    "1020": "Error en el aprovisionamiento SSO",
+    "1021": "Versión de términos ya aceptada",
+    "1022": "Términos no aceptados",
+    "2000": "Contacto no encontrado",
+    "2001": "El contacto ya existe",
+    "2002": "Email del contacto duplicado",
+    "2003": "Teléfono del contacto duplicado",
+    "2004": "Formato de teléfono inválido",
+    "2005": "Formato de email inválido",
+    "2006": "Error al eliminar contacto",
+    "2007": "Error al actualizar contacto",
+    "2008": "Error al crear contacto",
+    "2009": "Error al importar contactos",
+    "2010": "Error al exportar contactos",
+    "2011": "Formato de archivo inválido",
+    "2012": "Archivo demasiado grande",
+    "2013": "Mapeo de campos inválido",
+    "2014": "Error al sincronizar contactos de Google",
+    "2015": "Error al eliminar duplicados",
+    "2016": "Error al asignar etiquetas",
+    "2017": "Campo personalizado inválido",
+    "2018": "Error en operación masiva",
+    "2019": "Acceso no autorizado al contacto",
+    "3000": "No hay suscripción activa",
+    "3001": "No hay créditos de mensajes",
+    "3002": "Se requiere acceso de administrador",
+    "3003": "Límite de campañas alcanzado",
+    "3004": "Límite de contactos alcanzado",
+    "3005": "Límite de campos personalizados alcanzado",
+    "3006": "Límite de etiquetas alcanzado",
+    "default": "Ha ocurrido un error inesperado"
+  }
+}

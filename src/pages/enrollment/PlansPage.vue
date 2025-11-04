@@ -1,8 +1,8 @@
 <template>
   <div class="bg-surface-50 dark:bg-surface-950 min-h-screen">
     <EnrollmentHeader
-      :title="$t('enrollment.select_plan')"
-      :description="$t('enrollment.select_plan_description')"
+      :title="$t('enrollment.page.select_plan')"
+      :description="$t('enrollment.page.select_plan_description')"
     />
 
     <div class="px-6 py-4 md:px-12 lg:px-20">
@@ -13,7 +13,7 @@
       <div v-else-if="error" class="flex flex-col gap-4 items-center justify-center py-16">
         <i class="pi pi-exclamation-triangle text-4xl text-red-500"></i>
         <div class="text-red-500 font-bold text-xl text-center">{{ $t(error) }}</div>
-        <AppButton @click="fetchPlansData" :label="$t('general.retry')" class="mt-4" />
+        <AppButton @click="fetchPlansData" :label="$t('enrollment.common.retry')" class="mt-4" />
       </div>
 
       <Carousel v-else :value="plans" :responsiveOptions="carouselResponsiveOptions" :numVisible="3" :numScroll="1"
@@ -37,7 +37,7 @@
                 ${{ slotProps.data.cost }}
               </span>
               <span class="font-medium text-xs text-surface-500 dark:text-surface-400 leading-tight">
-                /{{ $t('enrollment.month') }}
+                /{{ $t('enrollment.plans.month') }}
               </span>
             </div>
             <div class="w-full h-px bg-surface-200 dark:bg-surface-600" />
@@ -47,8 +47,8 @@
                 <span class="text-surface-800 text-sm dark:text-surface-100 leading-tight">{{ feature }}</span>
               </li>
             </ul>
-            <AppButton @click="selectPlan(slotProps.data)" :label="$t('enrollment.select_plan_button')"
-              :aria-label="`${$t('enrollment.select_plan_button')} ${slotProps.data.name}`" rounded class="w-full" />
+            <AppButton @click="selectPlan(slotProps.data)" :label="$t('enrollment.plans.select_plan_button')"
+              :aria-label="`${$t('enrollment.plans.select_plan_button')} ${slotProps.data.name}`" rounded class="w-full" />
           </div>
         </div>
       </template>
@@ -126,12 +126,17 @@ const plans = computed<EnhancedPlan[]>(() =>
 const router = useRouter()
 
 const selectPlan = (plan: EnhancedPlan) => {
-  router.push({
-    name: 'enrollment-payment',
-    params: {
-      planId: plan.id.toString()
-    }
-  })
+  const id = String((plan as unknown as { id?: unknown }).id ?? '').trim()
+  if (!id) {
+    toast.add({
+      severity: 'error',
+      summary: t('enrollment.common.error'),
+      detail: t('enrollment.plans.plan_not_found'),
+      life: 3000
+    })
+    return
+  }
+  router.push({ name: 'enrollment-payment', params: { planId: id } })
 }
 
 const fetchPlansData = async () => {
@@ -140,11 +145,11 @@ const fetchPlansData = async () => {
     error.value = null
     apiPlans.value = await planService.fetchPlans()
   } catch {
-    error.value = 'enrollment.error_loading_plans'
+    error.value = 'enrollment.plans.error_loading_plans'
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('enrollment.error_loading_plans'),
+      summary: t('enrollment.common.error'),
+      detail: t('enrollment.plans.error_loading_plans'),
       life: 5000
     })
   } finally {

@@ -5,7 +5,7 @@ import * as yup from 'yup'
 
 export interface CustomFieldForm {
   fieldName: string
-  dataType: 'string' | 'number' | 'date'
+  dataType: 'STRING' | 'NUMBER' | 'DATE'
 }
 
 export interface CustomFieldFormRef {
@@ -18,19 +18,19 @@ export const useCustomFieldForm = () => {
   //Configurar Yup con los mensajes traducidos
   yup.setLocale({
     mixed: {
-      required: () => t('general.required_field'),
+      required: () => t('settings.common.required_field'),
     }
   })
 
   const schema = yup.object({
     customFields: yup.array().of(
       yup.object({
-        fieldName: yup.string().required().label(t('customFields.field_label')),
+        fieldName: yup.string().required().label(t('settings.custom_fields.field_label')),
         dataType: yup
           .string()
-          .oneOf(['string', 'number', 'date'])
+          .oneOf(['STRING', 'NUMBER', 'DATE'])
           .required()
-          .label(t('customFields.field_type')),
+          .label(t('settings.custom_fields.field_type')),
       }),
     ),
   })
@@ -54,7 +54,7 @@ export const useCustomFieldForm = () => {
     if (customFields.value.length < 10) {
       addCustomField({
         fieldName: '',
-        dataType: 'string',
+        dataType: 'STRING',
       })
     }
   }

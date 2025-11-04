@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, nextTick,onMounted, ref, watchEffect } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
@@ -19,12 +19,13 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppPhoneInput from '@/components/molecules/phone-input/AppPhoneInput.vue'
+import TagManagerPrime from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 import { useBreadcrumbStore } from '@/stores/breadcrumbStore'
 
 import CustomFieldsForm from '../components/CustomFieldsForm.vue'
-import { type CustomValue,useFormContact } from '../composables/useContactForm'
+import { type CustomValue, useFormContact } from '../composables/useContactForm'
 
 export default defineComponent({
   components: {
@@ -39,6 +40,7 @@ export default defineComponent({
     BirthdayIcon,
     StatusIcon,
     CustomFieldsForm,
+    TagManagerPrime,
   },
   setup() {
     const route = useRoute()
@@ -52,13 +54,13 @@ export default defineComponent({
     const { getCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
-    const customFields = ref<{ id: number; fieldName: string; dataType: string }[]>([])
+    const customFields = ref<{ id: string; fieldName: string; dataType: string }[]>([])
     const touchedFields = ref<Record<string, boolean>>({})
 
     const breadcrumbData = computed(() => [
       { text: 'contact.contacts', to: { name: 'contacts.index' }, active: false },
       {
-        text: contactId ? 'actions.edit' : 'actions.create',
+        text: contactId ? 'common.actions.edit' : 'common.actions.create',
         to: contactId
           ? { name: 'contacts.view', params: { id: contactId } }
           : { name: 'contacts.create' },
@@ -86,7 +88,8 @@ export default defineComponent({
             countryCode: contact.countryCode,
             status: contact.status,
             birthDate: contact.birthDate ? new Date(contact.birthDate) : undefined,
-            customValues: []
+            customValues: [],
+            tagIds: contact.tags?.map(tag => tag.id) || [],
           })
 
 
@@ -99,12 +102,12 @@ export default defineComponent({
               value: custom.value || '',
               id: custom.id,
             })
-            addedFields.add(custom.customFieldId)
+            addedFields.add(custom.customFieldId.toString())
           })
 
 
           response.forEach((field) => {
-            if (!addedFields.has(field.id)) {
+            if (!addedFields.has(field.id.toString())) {
               addCustomField({
                 customFieldId: field.id,
                 value: '',
@@ -136,7 +139,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('contact.general.error'),
           detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
@@ -148,16 +151,28 @@ export default defineComponent({
     const onSubmitForm = handleSubmit(
       async (values) => {
         try {
+          const mappedCustomValues = values.customValues
+            ? values.customValues
+                .filter(
+                  (customValue) =>
+                    customValue.customFieldId !== undefined && customValue.customFieldId !== null,
+                )
+                .map((customValue) => {
+                  const base = {
+                    customFieldId: customValue.customFieldId as string,
+                    value: customValue.value || '',
+                  }
+                  return contactId
+                    ? { ...base, id: customValue.id }
+                    : base
+                })
+            : []
+
           const payload = {
             ...values,
             birthDate: values.birthDate ? values.birthDate : new Date(),
-            customValues: values.customValues ? values.customValues
-              .filter((customValue) => customValue.customFieldId !== undefined)
-              .map((customValue) => ({
-                customFieldId: customValue.customFieldId as number,
-                value: customValue.value || '',
-                id: customValue.id,
-              })) : [],
+            customValues: mappedCustomValues,
+            tagIds: values.tagIds || [], // Asegurar que tagIds siempre esté presente
           }
 
 
@@ -165,16 +180,16 @@ export default defineComponent({
             await updateContact(contactId, payload)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
-              detail: t('contact.contact_updated'),
+              summary: t('contact.general.success'),
+              detail: t('contact.general.contact_updated'),
               life: 3000,
             })
           } else {
             await createContact(payload)
             toast.add({
               severity: 'success',
-              summary: t('general.success'),
-              detail: t('contact.contact_created'),
+              summary: t('contact.general.success'),
+              detail: t('contact.general.contact_created'),
               life: 3000,
             })
           }
@@ -183,13 +198,13 @@ export default defineComponent({
         } catch {
           toast.add({
             severity: 'error',
-            summary: t('general.error'),
+            summary: t('contact.general.error'),
             detail: t('contact.error_saving_contact'),
             life: 3000,
           })
         }
       },
-      (_errors) => {
+      (_validationErrors) => {
         form.customValues.value.forEach((_, index) => {
           touchedFields.value[`customValues[${index}].value`] = true
         })
@@ -213,7 +228,6 @@ export default defineComponent({
     }
 
     const handlePhoneInput = (phoneResult: { number: string; valid: boolean; country: { dialCode: string } }) => {
-      // Asegurar que el código de país se guarde correctamente
       if (phoneResult.country?.dialCode) {
         form.countryCode.value = phoneResult.country.dialCode
       }
@@ -240,20 +254,20 @@ export default defineComponent({
 </script>
 
 <template>
-  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.new_contact')" :icon="IconTypes.CONTACTS"
+  <AppHeader :text="contactId ? $t('contact.edit_contact') : $t('contact.create_contact')" :icon="IconTypes.CONTACTS"
     :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full pt-4">
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <AppInput v-model="form.name.value" type="text" class="w-full rounded-md mt-3" :error-message="errors.name"
-        :label="$t('general.name')">
+        :label="$t('contact.general.name')">
         <template #icon>
           <CredentialIcon class="w-4 h-4 dark:fill-white" />
         </template>
       </AppInput>
 
       <AppInput v-model="form.lastName.value" type="text" class="w-full rounded-md mt-3"
-        :error-message="errors.lastName" :label="$t('general.last_name')">
+        :error-message="errors.lastName" :label="$t('contact.general.last_name')">
         <template #icon>
           <CredentialIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -263,8 +277,8 @@ export default defineComponent({
         v-model="form.phone.value"
         v-model:countryCode="form.countryCode.value"
         class="w-full mt-3"
-        :label="$t('general.phone')"
-        :placeholder="$t('general.phone_placeholder')"
+        :label="$t('contact.general.phone')"
+        :placeholder="$t('contact.general.phone_placeholder')"
         :error-message="errors.phone || errors.countryCode"
         default-country="CO"
         :preferred-countries="['CO', 'US', 'MX', 'ES', 'PE', 'AR', 'CL', 'EC']"
@@ -272,7 +286,7 @@ export default defineComponent({
       />
 
       <AppInput v-model="form.email.value" type="email" class="w-full rounded-md mt-3" :error-message="errors.email"
-        :label="$t('general.email')">
+        :label="$t('contact.general.email')">
         <template #icon>
           <EmailIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -281,7 +295,7 @@ export default defineComponent({
 
 
       <AppDatePicker v-model="form.birthDate.value" class="w-full mt-3"
-        :error-message="errors.birthDate" :label="$t('general.birth_date')">
+        :error-message="errors.birthDate" :label="$t('contact.general.birth_date')">
         <template #icon>
           <BirthdayIcon class="w-4 h-4 dark:fill-white" />
         </template>
@@ -292,13 +306,24 @@ export default defineComponent({
         status-type="contact"
         class="w-full mt-3"
         :error-message="errors.status"
-        :label="$t('general.status')"
+        :label="$t('contact.general.status')"
         :show-colors="true"
       >
         <template #icon>
           <StatusIcon class="w-4 h-4 dark:fill-white" />
         </template>
       </AppStatusSelect>
+
+      <TagManagerPrime
+        v-model="form.tagIds.value"
+        :label="$t('contact.general.tags')"
+        :placeholder="$t('contact.general.select_tags')"
+        :allow-create="true"
+        :allow-manage="true"
+        :error-message="errors.tagIds"
+        :show-error-message="!!errors.tagIds"
+        class="w-full mt-3"
+      />
     </div>
 
     <CustomFieldsForm
@@ -310,8 +335,8 @@ export default defineComponent({
       @date-change="handleCustomDateChange"
     />
     <div class="flex justify-center flex-col lg:flex-row gap-5 mt-7">
-      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('general.save')" />
-      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('general.cancel')" @click="goBack" />
+      <AppButton class="w-full sm:w-auto" type="submit" severity="primary" :label="$t('contact.general.save')" />
+      <AppButton class="w-full sm:w-auto" severity="secondary" :label="$t('contact.general.cancel')" @click="goBack" />
     </div>
   </form>
 </template>

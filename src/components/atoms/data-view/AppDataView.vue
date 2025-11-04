@@ -34,14 +34,14 @@
               <!-- Estado y botón de vista -->
               <div class="flex items-center gap-2 flex-shrink-0">
                 <AppTag
-                  :label="$t(`status.message.${item.status}`)"
+                  :label="$t(`reports.message_status.${item.status.toLowerCase()}`)"
                   :severity="getStatusSeverity(item.status, 'message')"
                   size="small"
                 />
                 <button
                   @click="$emit('view-content', item.content)"
                   class="p-1 bg-transparent border-none rounded text-primary-color hover:bg-primary-50 hover:text-primary-600 cursor-pointer transition-all duration-200 active:scale-95"
-                  :title="$t('general.view_content')"
+                  :title="t('general.view_content')"
                 >
                   <i class="pi pi-eye text-xs"></i>
                 </button>
@@ -54,7 +54,7 @@
       <template #empty>
         <div class="flex flex-col items-center justify-center py-6 text-neutral-400">
           <i class="pi pi-inbox text-xl"></i>
-          <p class="text-sm text-neutral-500 mt-2">{{ emptyMessage?? t('general.no_data') }}</p>
+          <p class="text-sm text-neutral-500 mt-2">{{ emptyMessage?? t('common.general.no_results') }}</p>
         </div>
       </template>
     </DataView>
@@ -73,7 +73,7 @@ import { useStatusColors } from '@/composables/useStatusColors'
 
 interface Props {
   data: Array<{
-    id: number
+    id:string
     status: string
     createdAt: string
     campaignName: string

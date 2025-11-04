@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { nextTick,onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 
-// Usar AppButton en lugar de PrimeButton
 import { useToast } from 'primevue/usetoast'
 
 import { useI18n } from 'vue-i18n'
@@ -13,6 +12,7 @@ import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 import { useCustomFieldForm } from './composables/useCustomFieldsForm'
 
@@ -30,13 +30,15 @@ const {
   resetForm,
 } = useCustomFieldForm()
 
-const customFieldIds = ref<Record<number, number>>({})
+const customFieldIds = ref<Record<number, string>>({})
 const editingFieldIndices = ref<number[]>([])
 
+const { user } = useAuthStore()
+
 const dataTypes = [
-  { name: t('customFields.data_types.text'), value: 'string' },
-  { name: t('customFields.data_types.number'), value: 'number' },
-  { name: t('customFields.data_types.date'), value: 'date' },
+  { name: t('settings.custom_fields.data_types.text'), value: 'STRING' },
+  { name: t('settings.custom_fields.data_types.number'), value: 'NUMBER' },
+  { name: t('settings.custom_fields.data_types.date'), value: 'DATE' },
 ]
 
 const getError = (idx: number, field: keyof typeof customFields.value[0]['value']) => {
@@ -53,9 +55,9 @@ const loadCustomFields = async () => {
     fields.forEach((field, index) => {
       addCustomField({
         fieldName: field.fieldName,
-        dataType: field.dataType as 'string' | 'number' | 'date'
+        dataType: field.dataType as 'STRING' | 'NUMBER' | 'DATE'
       })
-      customFieldIds.value[index] = field.id
+      customFieldIds.value[index] = field.id.toString()
     })
 
     await nextTick()
@@ -66,8 +68,8 @@ const loadCustomFields = async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('customFields.error_loading'),
+      summary: t('settings.common.error'),
+      detail: t('settings.custom_fields.error_loading'),
       life: 3000
     })
   }
@@ -88,7 +90,7 @@ const handleRemoveField = async (idx: number) => {
       await deleteCustomField(customFieldIds.value[idx])
       delete customFieldIds.value[idx]
 
-      const newIds: Record<number, number> = {}
+      const newIds: Record<number, string> = {}
       Object.entries(customFieldIds.value).forEach(([key, value]) => {
         const numKey = Number(key)
         if (numKey > idx) {
@@ -101,8 +103,8 @@ const handleRemoveField = async (idx: number) => {
 
       toast.add({
         severity: 'success',
-        summary: t('general.success'),
-        detail: t('customFields.field_deleted'),
+        summary: t('settings.common.success'),
+        detail: t('settings.custom_fields.field_deleted'),
         life: 3000
       })
     }
@@ -115,8 +117,8 @@ const handleRemoveField = async (idx: number) => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('customFields.error_deleting'),
+      summary: t('settings.common.error'),
+      detail: t('settings.custom_fields.error_deleting'),
       life: 3000
     })
   }
@@ -132,8 +134,8 @@ const validateForm = () => {
   if (hasEmptyFields) {
     toast.add({
       severity: 'error',
-      summary: t('general.error'),
-      detail: t('customFields.error_saving'),
+      summary: t('settings.common.error'),
+      detail: t('settings.custom_fields.error_saving'),
       life: 3000
     })
     return false
@@ -159,15 +161,15 @@ const onSubmit = () => {
             await updateCustomField(existingFieldId, {
               fieldName: field.fieldName,
               dataType: field.dataType,
-              elementType: 'input',
-              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || 1
+              elementType: 'INPUT',
+              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || user?.organizationId || '1'
             })
           } else {
             await createCustomField({
               fieldName: field.fieldName,
               dataType: field.dataType,
-              elementType: 'input',
-              organizationId: 1
+              elementType: 'INPUT',
+              organizationId: user?.organizationId as string
             })
           }
         }
@@ -178,15 +180,15 @@ const onSubmit = () => {
 
         toast.add({
           severity: 'success',
-          summary: t('general.success'),
-          detail: t('customFields.field_updated'),
+          summary: t('settings.common.success'),
+          detail: t('settings.custom_fields.field_updated'),
           life: 3000
         })
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
-          detail: t('customFields.error_saving'),
+          summary: t('settings.common.error'),
+          detail: t('settings.custom_fields.error_saving'),
           life: 3000
         })
       }
@@ -194,8 +196,8 @@ const onSubmit = () => {
     (_formErrors) => {
       toast.add({
         severity: 'error',
-        summary: t('general.error'),
-        detail: t('customFields.error_saving'),
+        summary: t('settings.common.error'),
+        detail: t('settings.custom_fields.error_saving'),
         life: 3000
       })
     },
@@ -220,14 +222,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.CUSTOM_FIELDS" :text="$t('customFields.title')" :actions="[]" />
+  <AppHeader :icon="IconTypes.CUSTOM_FIELDS" :text="$t('settings.custom_fields.title')" :actions="[]" />
   <div class="">
     <AppCard class="h-full max-h-[calc(100vh-140px-4rem)]">
       <template #content>
         <div class="h-full flex flex-col">
           <div class="flex-none">
             <p class="text-center text-neutral-600 dark:text-neutral-300">
-              {{ $t('customFields.max_fields') }}
+              {{ $t('settings.custom_fields.max_fields') }}
             </p>
           </div>
 
@@ -264,25 +266,25 @@ onMounted(() => {
                     <template v-if="editingFieldIndices.includes(idx)">
                       <AppInput
                         v-model="field.value.fieldName"
-                        :label="$t('customFields.field_label')"
+                        :label="$t('settings.custom_fields.field_label')"
                         :errorMessage="getError(idx, 'fieldName')"
                         class="w-full" />
 
                       <AppSelect
                         v-model="field.value.dataType"
                         :options="dataTypes"
-                        :label="$t('customFields.field_type')"
+                        :label="$t('settings.custom_fields.field_type')"
                         :errorMessage="getError(idx, 'dataType')"
                         class="w-full" />
                     </template>
                     <template v-else>
                       <div class="flex flex-col gap-2">
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_label') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.custom_fields.field_label') }}</small>
                           <p class="font-medium">{{ field.value.fieldName }}</p>
                         </div>
                         <div class="flex flex-col">
-                          <small class="text-gray-500 dark:text-gray-400">{{ $t('customFields.field_type') }}</small>
+                          <small class="text-gray-500 dark:text-gray-400">{{ $t('settings.custom_fields.field_type') }}</small>
                           <p class="font-medium">{{ dataTypes.find(type => type.value === field.value.dataType)?.name }}</p>
                         </div>
                       </div>
@@ -297,14 +299,14 @@ onMounted(() => {
             <AppButton
               type="button"
               class="!w-fit"
-              :label="$t('customFields.add_field')"
+              :label="$t('settings.custom_fields.add_field')"
               @click="handleAddField"
               icon="pi pi-plus" />
             <AppButton
               v-if="editingFieldIndices.length > 0"
               type="button"
               class="!w-fit"
-              :label="$t('general.save')"
+              :label="$t('settings.common.save')"
               @click="onSubmit"
               icon="pi pi-save" />
           </div>

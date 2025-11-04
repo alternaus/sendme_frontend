@@ -3,11 +3,11 @@ import { ref } from 'vue'
 import { useApiClient } from '@/composables/useApiClient'
 
 export interface IOrganizationSettings {
-  id: number
+  id:string
   dateFormat: string
   timeFormat: string
   timezone: string
-  organizationId: number
+  organizationId:string
   createdAt: string
   updatedAt: string
 }
@@ -18,7 +18,7 @@ export const useOrganizationSettingsService = () => {
   const isLoading = ref(false)
   const error = ref<Error | null>(null)
 
-  const getOrganizationSettings = async (organizationId: number): Promise<IOrganizationSettings | null> => {
+  const getOrganizationSettings = async (organizationId:string): Promise<IOrganizationSettings | null> => {
     isLoading.value = true
     error.value = null
 

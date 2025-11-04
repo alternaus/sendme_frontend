@@ -1,0 +1,43 @@
+{
+  "common": {
+    "warning": "Advertencia",
+    "success": "Éxito",
+    "error": "Error"
+  },
+  "page": {
+    "title": "Comprar mensajes",
+    "header_title": "Selecciona el valor de tu recarga",
+    "header_description": "Elige un monto predefinido o ingresa el valor que necesites"
+  },
+  "recharge": {
+    "title": "Valor de Recarga",
+    "predefined_amounts": "Montos predefinidos",
+    "custom_value": "Valor personalizado",
+    "range_info": "Rango: $10.000 - $500.000 COP",
+    "minimum_amount": "El monto mínimo es $10.000 COP",
+    "maximum_amount": "El monto máximo es $500.000 COP",
+    "enter_amount": "Ingresa el monto",
+    "invalid_amount": "Monto inválido"
+  },
+  "payment": {
+    "pay": "Pagar",
+    "pay_amount": "Pagar {amount}",
+    "select_amount": "Selecciona un valor de recarga válido",
+    "processing": "Procesando pago...",
+    "success": "Pago completado exitosamente",
+    "error": "Error al procesar el pago",
+    "organization_required": "ID de organización requerido"
+  },
+  "messages": {
+    "important_note": "Importante",
+    "recharge_info": "Recuerda que mientras tengas activo el plan tus mensajes no vencen, la recarga se aplicará de forma inmediata a tu cuenta.",
+    "amount_warning": "Selecciona un valor de recarga válido",
+    "minimum_warning": "El monto mínimo es $10.000 COP"
+  },
+  "validation": {
+    "amount_required": "El monto es requerido",
+    "amount_minimum": "El monto debe ser mayor a {min}",
+    "amount_maximum": "El monto debe ser menor a {max}",
+    "valid_range": "El monto debe estar entre {min} y {max}"
+  }
+}

@@ -1,7 +1,7 @@
 import { type RouteRecordRaw } from 'vue-router'
 
 const baseBreadcrumb = {
-  text: 'report.reports',
+  text: 'reports.reports',
   to: { name: 'report.index' },
   active: false
 }
@@ -22,14 +22,14 @@ const sendRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'reports'
+    title: 'common.titles.reports'
   },
   children: [
     {
       path: '',
       name: 'report.index',
       component: () => import('@/pages/reports/ReportsPage.vue'),
-      meta: { title: 'reports_list' }
+      meta: { title: 'common.titles.reports_list' }
     },
     {
       path: 'audit',
@@ -37,7 +37,7 @@ const sendRoutes: RouteRecordRaw = {
       component: () => import('@/pages/reports/pages/audit/AuditPage.vue'),
       meta: {
         breadcrumb: generateBreadcrumb('report.audit', 'report.audit'),
-        title: 'audit_report'
+        title: 'common.titles.audit_report'
       },
     },
     {
@@ -46,7 +46,7 @@ const sendRoutes: RouteRecordRaw = {
       component: () => import('@/pages/reports/pages/message/MessagePage.vue'),
       meta: {
         breadcrumb: generateBreadcrumb('general.messages', 'report.message'),
-        title: 'messages_report'
+        title: 'common.titles.messages_report'
       },
     },
     {
@@ -55,7 +55,7 @@ const sendRoutes: RouteRecordRaw = {
       component: () => import('@/pages/reports/pages/dispatches/DispatchesPage.vue'),
       meta: {
         breadcrumb: generateBreadcrumb('general.dispatches', 'report.dispatches'),
-        title: 'dispatches_report'
+        title: 'common.titles.dispatches_report'
       },
     },
   ],

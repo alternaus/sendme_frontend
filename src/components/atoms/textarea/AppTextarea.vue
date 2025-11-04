@@ -144,7 +144,7 @@ const handleAiInsert = (aiText: string) => {
     <!-- Con FloatLabel -->
     <template v-if="useFloatLabel">
       <!-- Con label y icono/AI -->
-      <FloatLabel v-if="label && hasIcon">
+      <FloatLabel variant="on" v-if="label && hasIcon">
         <IconField>
           <InputIcon>
             <slot v-if="!aiAttach" name="icon" />
@@ -182,7 +182,7 @@ const handleAiInsert = (aiText: string) => {
       </FloatLabel>
 
       <!-- Con label sin icono -->
-      <FloatLabel v-else-if="label">
+      <FloatLabel variant="on" v-else-if="label">
         <PrimeTextarea
           v-bind="forwardedAttrs"
           v-model="internalValue"
@@ -244,7 +244,7 @@ const handleAiInsert = (aiText: string) => {
       </IconField>
 
       <!-- Sin label sin icono pero con FloatLabel -->
-      <FloatLabel v-else>
+      <FloatLabel variant="on" v-else>
         <PrimeTextarea
           v-bind="forwardedAttrs"
           v-model="internalValue"

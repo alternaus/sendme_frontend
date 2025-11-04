@@ -11,7 +11,9 @@ const themeStore = useThemeStore()
 
 const buttonIcon = computed(() => (themeStore.isDark ? 'pi pi-sun' : 'pi pi-moon'))
 const buttonSeverity = computed(() => (themeStore.isDark ? 'primary' : 'secondary'))
-const tooltipText = computed(() => (themeStore.isDark ? t('theme.light') : t('theme.dark')))
+const tooltipText = computed(() =>
+  themeStore.isDark ? t('common.theme.lightMode') : t('common.theme.darkMode')
+)
 
 function toggleTheme() {
   themeStore.toggleDark()

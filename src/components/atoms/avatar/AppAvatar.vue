@@ -5,7 +5,7 @@ interface Props {
   image?: string
   imageAlt?: string
   shape?: 'circle' | 'square'
-  size?: 'normal' | 'large' | 'xlarge'
+  size?: 'normal' | 'large' | 'xlarge'|'small'
   label?: string
   icon?: string
   pt?: object

@@ -1,6 +1,6 @@
 export interface IUpdateUser {
-  roleId?: number;
-  organizationId?: number;
+  roleId?:string;
+  organizationId?:string;
   name?: string;
   email?: string;
   password?: string;

@@ -75,3 +75,9 @@ watch(locale, () => {
     <div ref="chartRef" class="absolute inset-0"></div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+:deep(canvas){
+  border-radius: 1rem !important;
+}
+</style>

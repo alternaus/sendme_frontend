@@ -33,45 +33,45 @@ const contactRoutes: RouteRecordRaw = {
     layout: 'DashboardLayout',
     requiresAuth: true,
     breadcrumb: [baseBreadcrumb],
-    title: 'contacts'
+    title: 'common.titles.contacts'
   },
   children: [
     {
       path: '',
       name: 'contacts.index',
       component: () => import('@/pages/contacts/ContactsPage.vue'),
-      meta: { title: 'contacts_list' }
+      meta: { title: 'common.titles.contacts_list' }
     },
     {
       path: 'create',
       name: 'contacts.create',
       component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.create', 'contacts.create'),
-        title: 'create_contact'
+        breadcrumb: generateBreadcrumb('common.actions.create', 'contacts.create'),
+        title: 'common.titles.create_contact'
       },
     },
     {
       path: 'edit/:id',
       name: 'contacts.edit',
       component: () => import('@/pages/contacts/form/ContactFormPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.edit', 'contacts.edit'),
-      meta: { title: 'edit_contact' }
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.edit', 'contacts.edit'),
+      meta: { title: 'common.titles.edit_contact' }
     },
     {
       path: 'view/:id',
       name: 'contacts.view',
       component: () => import('@/pages/contacts/view/ContactViewPage.vue'),
-      beforeEnter: beforeEnterWithBreadcrumb('actions.view', 'contacts.view'),
-      meta: { title: 'view_contact' }
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.view', 'contacts.view'),
+      meta: { title: 'common.titles.view_contact' }
     },
     {
       path: 'import',
       name: 'contacts.import',
       component: () => import('@/pages/contacts/import/ContactImportPage.vue'),
       meta: {
-        breadcrumb: generateBreadcrumb('actions.import', 'contacts.import'),
-        title: 'import_contacts'
+        breadcrumb: generateBreadcrumb('common.actions.import', 'contacts.import'),
+        title: 'common.titles.import_contacts'
       },
     },
   ],

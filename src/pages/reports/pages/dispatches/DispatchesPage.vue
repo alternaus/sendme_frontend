@@ -7,17 +7,22 @@ import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
 
 import CampaignRouteIcon from '@/assets/svg/campaign_route.svg?component'
+import DateIcon from '@/assets/svg/date.svg?component'
 import DateSendIcon from '@/assets/svg/date_send.svg?component'
 import NumberIcon from '@/assets/svg/number.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { ICampaignDispatch } from '@/services/report/interfaces/dispatch.interface'
 import { useReportService } from '@/services/report/useReportServices'
 
-import CardFilterDispatches from './components/CardFilterDispatches.vue'
 import { useDispatchFilter } from './composables/useDispatchFilter'
 import { DispatchStatusTypes } from './enums/dispatch-status.enum'
 
@@ -26,17 +31,24 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    AppFilterPanel,
+    AppInput,
+    AppDateRangePicker,
     NumberIcon,
     DateSendIcon,
     CampaignRouteIcon,
-    CardFilterDispatches,
+    SearchIcon,
+    DateIcon,
   },
   setup() {
     const { t } = useI18n()
     const toast = useToast()
     const router = useRouter()
     const { getDispatches, exportDispatches } = useReportService()
-    const { search, campaignId, startDate, endDate } = useDispatchFilter()
+    const { search, startDate, endDate } = useDispatchFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ search, startDate, endDate })
+
+    const showMobileModal = ref(false)
 
     const page = ref(1)
     const limit = ref(10)
@@ -51,7 +63,7 @@ export default defineComponent({
     })
     const loading = ref(false)
 
-    watch([search, campaignId, startDate, endDate], () => {
+    watch([search, startDate, endDate], () => {
       fetchDispatches()
     })
 
@@ -64,7 +76,6 @@ export default defineComponent({
           page: pageSize,
           limit: limitSize,
           search: search.value,
-          campaignId: campaignId.value,
           startDate: startDate.value?.toISOString(),
           endDate: endDate.value?.toISOString(),
         })
@@ -82,8 +93,8 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
-          detail: t('report.error_getting_dispatches'),
+          summary: t('reports.common.error'),
+          detail: t('reports.error_getting_dispatches'),
         })
       } finally {
         loading.value = false
@@ -92,12 +103,17 @@ export default defineComponent({
 
     const headerActions = computed(() => [
       {
-        label: t('actions.export'),
+        label: t('common.actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => { showMobileModal.value = !showMobileModal.value },
+      },
+      {
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
           exportDispatches({
             search: search.value,
-            campaignId: campaignId.value,
             startDate: startDate.value?.toISOString(),
             endDate: endDate.value?.toISOString(),
           })
@@ -153,31 +169,55 @@ export default defineComponent({
       dispatches,
       fetchDispatches,
       search,
-      campaignId,
       startDateString,
       endDateString,
       getStatusTranslation,
       getStatusBadgeClass,
       formatDate,
       loading,
+      showMobileModal,
     }
   },
 })
 </script>
 <template>
-  <AppHeader :icon="IconTypes.CAMPAIGNS" :text="$t('report.sending_by_campaign')" :actions="headerActions" />
-  <CardFilterDispatches
-    v-model:search="search"
-    v-model:campaignId="campaignId"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-  />
+  <AppHeader :icon="IconTypes.CAMPAIGNS" :text="$t('reports.sending_by_campaign')" :actions="headerActions" />
+
+  <AppFilterPanel
+    :header-actions="headerActions"
+    v-model:showMobileModal="showMobileModal"
+  >
+    <AppInput
+      :modelValue="search"
+      type="text"
+      class="w-full"
+      :label="$t('reports.common.search')"
+      @input="search = $event.target.value"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppDateRangePicker
+      class="w-full"
+      :startDate="startDateString"
+      :endDate="endDateString"
+      :startLabel="$t('reports.common.start_date')"
+      :endLabel="$t('reports.common.end_date')"
+      @update:startDate="startDateString = $event"
+      @update:endDate="endDateString = $event"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
+  </AppFilterPanel>
   <AppTable
     class="w-full mt-4"
     :data="dispatches"
     :headers="[
       { field: 'campaignName', header: 'Campaign' },
-      { field: 'providerName', header: 'Provider' },
       { field: 'totalSent', header: 'Total Sent' },
       { field: 'totalDelivered', header: 'Total Delivered' },
       { field: 'totalFailed', header: 'Total Failed' },
@@ -188,43 +228,53 @@ export default defineComponent({
     :totalItems="dispatchMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    textTotalItems="general.dispatches"
+    textTotalItems="reports.common.dispatches"
+    :mobile-config="{
+      title: { field: 'campaignName' },
+      subtitle: { field: 'providerName' },
+      metadata: [
+        { field: 'totalSent', position: 'left', label: 'Enviados' },
+        { field: 'sentAt', position: 'right' }
+      ],
+      status: { field: 'totalDelivered' },
+      showAvatar: false
+    }"
     @page-change="fetchDispatches"
   >
     <template #header-campaignName>
       <div class="flex items-center">
         <CampaignRouteIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.campaign') }} </span>
+        <span> {{ $t('reports.common.campaign') }} </span>
       </div>
     </template>
     <template #header-providerName>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.provider') }} </span>
+        <span> {{ $t('reports.common.provider') }} </span>
       </div>
     </template>
     <template #header-totalSent>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.total_sent') }} </span>
+        <span> {{ $t('reports.common.total_sent') }} </span>
       </div>
     </template>
     <template #header-totalDelivered>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.total_delivered') }} </span>
+        <span> {{ $t('reports.common.total_delivered') }} </span>
       </div>
     </template>
     <template #header-totalFailed>
       <div class="flex items-center">
         <NumberIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.total_failed') }} </span>
+        <span> {{ $t('reports.common.total_failed') }} </span>
       </div>
     </template>
     <template #header-sentAt>
       <div class="flex items-center">
         <DateSendIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.shipment_date') }} </span>
+        <span> {{ $t('reports.common.shipment_date') }} </span>
       </div>
     </template>
 

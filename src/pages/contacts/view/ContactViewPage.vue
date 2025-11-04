@@ -1,7 +1,7 @@
 <template>
   <AppHeader
-    :icon="IconTypes.CONTACTS"
     :text="$t('contact.contact_information') + ': ' + fullName"
+    :icon="IconTypes.CONTACTS"
     :actions="headerActions"
   />
 
@@ -26,7 +26,7 @@
         class="flex items-center gap-2 bg-[var(--p-primary-color)] px-3 py-1 rounded-lg text-sm text-black"
       >
         <StatusIcon class="w-4 h-4" />
-        {{ contact.status === 'active' ? $t('general.active') : $t('general.inactive') }}
+        {{ contact.status === 'ACTIVE' ? $t('contact.general.active') : $t('contact.general.inactive') }}
       </span>
     </div>
   </div>
@@ -36,7 +36,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
         <div class="flex flex-col items-center gap-2">
           <InformationIcon class="w-8 h-8 fill-current" />
-          <span class="text-lg font-semibold">{{ $t('general.personalized_information') }}</span>
+          <span class="text-lg font-semibold">{{ $t('contact.general.personalized_information') }}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -102,7 +102,7 @@ export default defineComponent({
     const { getCustomFields } = useCustomFieldService()
 
     const contact = ref<IContact | null>(null)
-    const customFields = ref<{ id: number; fieldName: string }[]>([])
+    const customFields = ref<{ id:string; fieldName: string }[]>([])
     const toast = useToast()
 
     const breadcrumbData = computed(() => [
@@ -129,7 +129,7 @@ export default defineComponent({
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('general.error'),
+          summary: t('contact.general.error'),
           detail: t('contact.custom_fields_not_loaded'),
           life: 3000,
         })
@@ -147,8 +147,8 @@ export default defineComponent({
       return contact.value.customValues.map((customValue) => {
         const field = customFields.value.find((f) => f.id === customValue.customFieldId)
         return {
-          name: field ? field.fieldName : t('general.unknown_field'),
-          value: customValue.value || t('general.not_defined'),
+          name: field ? field.fieldName : t('contact.general.unknown_field'),
+          value: customValue.value || t('contact.general.not_defined'),
         }
       })
     })
@@ -164,7 +164,7 @@ export default defineComponent({
         type: ActionTypes.DELETE,
         onClick: async () => {
           try {
-            await deleteContact(Number(contactId))
+            await deleteContact((contactId))
             toast.add({
               severity: 'success',
               summary: t('contact.contact_deleted'),
@@ -175,7 +175,7 @@ export default defineComponent({
           } catch {
             toast.add({
               severity: 'error',
-              summary: t('general.error'),
+              summary: t('contact.general.error'),
               detail: t('contact.error_removed'),
               life: 3000,
             })
@@ -183,7 +183,7 @@ export default defineComponent({
         },
       },
       {
-        label: t('actions.export'),
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => console.log('Exportar contacto'),
       },

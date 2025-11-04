@@ -174,7 +174,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
 <template>
   <div :class="containerClasses">
     <!-- Con label y icono -->
-    <FloatLabel v-if="label && $slots.icon">
+    <FloatLabel variant="on" v-if="label && $slots.icon">
       <IconField class="w-full">
         <InputIcon>
           <slot name="icon" />
@@ -225,7 +225,7 @@ const handleChange = (event: MultiSelectChangeEvent) => {
     </FloatLabel>
 
     <!-- Con label sin icono -->
-    <FloatLabel v-else-if="label">
+    <FloatLabel variant="on" v-else-if="label">
       <MultiSelect
         v-bind="forwardedAttrs"
         :inputId="inputId"

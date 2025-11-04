@@ -1,31 +1,39 @@
+import type { ITag } from '../../tag/interfaces'
+import type { CampaignConditionType } from '../enums/campaign-condition-type.enum'
+import type { CampaignFrequency } from '../enums/campaign-frequency.enum'
+import type { CampaignStatus } from '../enums/campaign-status.enum'
+import type { ContentType } from '../enums/content-type.enum'
+import type { CampaignDays } from '../enums/days.enum'
+
 export interface ICampaignRule {
-  id: number;
-  conditionType: string;
-  value: string|number;
-  campaignId: number;
-  customFieldId: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+  id: string
+  conditionType: CampaignConditionType
+  value: string | number
+  campaignId: string
+  customFieldId: string
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
 }
 
 export interface ICampaign {
-  id: number;
-  name: string;
-  description: string;
-  content: string;
-  contentType: 'plain_text';
-  status: 'active' | 'inactive';
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
-  days: string[];
-  startDate: string;
-  endDate: string;
-  time: string;
-  rrule: string;
-  channelId: number;
-  organizationId: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  campaignRules: ICampaignRule[];
+  id: string
+  name: string
+  description: string
+  content: string
+  contentType: ContentType
+  status: CampaignStatus
+  frequency: CampaignFrequency
+  days: CampaignDays[]
+  startDate: string
+  endDate: string
+  time: string
+  rrule: string
+  channelId: string
+  organizationId: string
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
+  campaignRules: ICampaignRule[]
+  tags?: ITag[]
 }

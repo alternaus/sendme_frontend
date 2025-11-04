@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 
 import FloatLabel from 'primevue/floatlabel'
 import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 
@@ -124,12 +125,11 @@ const fullPhoneNumber = computed(() => {
 })
 
 watch(rawPhoneNumber, (newValue) => {
-  // Emitir solo el número local sin código de país
   emit('update:modelValue', newValue)
 
   if (selectedCountry.value && rawPhoneNumber.value) {
     emit('input', {
-      number: fullPhoneNumber.value, // Número completo para el evento input
+      number: fullPhoneNumber.value,
       valid: isCurrentNumberValid.value,
       country: {
         dialCode: selectedCountry.value.dialCode
@@ -187,9 +187,9 @@ initializeDefaultCountry()
 
 <template>
   <div class="w-full">
-    <FloatLabel>
+    <FloatLabel variant="on">
       <InputGroup class="!w-full">
-        <InputGroupAddon>
+        <InputGroupAddon unstyled>
           <Select v-model="selectedCountry" :options="countries" option-label="name" :size="size" :disabled="disabled"
             :invalid="invalid || !!errorMessage" class="!w-min !rounded-l-xl !h-full" :class="selectClasses"
             :show-clear="false" filter filter-placeholder="Buscar país...">
@@ -198,7 +198,6 @@ initializeDefaultCountry()
                 <span :class="['country-flag', toLowerCase(value.iso2), 'text-sm']"></span>
                 <span class="text-sm">+{{ value.dialCode }}</span>
               </div>
-              <span v-else class="text-xs">🌍</span>
             </template>
 
             <template #option="{ option }">
@@ -267,5 +266,8 @@ initializeDefaultCountry()
   width: auto !important;
   min-width: fit-content !important;
 
+}
+:deep(label){
+  z-index: 1;
 }
 </style>

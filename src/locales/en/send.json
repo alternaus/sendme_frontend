@@ -1,0 +1,56 @@
+{
+  "title": "Send Instant Message",
+  "instant_message": "Instant Message",
+  "whatsapp_instant_message": "WhatsApp instant message",
+  "email_instant_message": "Email instant message",
+  "send_instant_message": "Send instant message",
+  "message_type": "Message type",
+  "select_message_type": "Select message type",
+  "email_subject": "Email subject",
+  "enter_numbers_separated_by_commas": "Enter numbers separated by commas",
+  "enter_emails_separated_by_commas": "Enter emails separated by commas",
+  "required_field": "This field is required",
+  "contacts_required": "Contacts are required",
+  "message_send_success": "Message sent successfully",
+  "error_sending_message": "Error sending message",
+  "channels": {
+    "SMS": "SMS",
+    "EMAIL": "Email",
+    "WHATSAPP": "WhatsApp"
+  },
+  "message_types": {
+    "SMS": "Standard",
+    "OTP": "OTP",
+    "FLASH": "Flash"
+  },
+  "editor": {
+    "sms_placeholder": "Write your SMS message here...",
+    "whatsapp_placeholder": "Write your WhatsApp message here...",
+    "email_placeholder": "Write your email message here..."
+  },
+  "send_to": {
+    "contacts": "Contact list",
+    "all": "All",
+    "tags": "Tags"
+  },
+  "select_tags": "Select tags",
+  "tags_required": "Tags are required",
+  "tooltip_send_to_contacts": "Send to specific contact list",
+  "tooltip_send_to_all": "Send to all contacts",
+  "tooltip_send_to_tags": "Send to contacts with specific tags",
+  "tooltip_phone_mode": "Phone mode - For SMS messages",
+  "tooltip_email_mode": "Desktop mode - For email messages",
+  "contact_chips": {
+    "search_placeholder": "Search contacts...",
+    "add_manually_help": "Search existing contacts or press Enter/comma to add {type} manually",
+    "emails": "emails",
+    "numbers": "numbers",
+    "no_name": "No name",
+    "search_min_chars": "Type at least 2 characters to search",
+    "no_contacts_found": "No contacts found",
+    "more_count": "+{count} more",
+    "view_all": "View all",
+    "selected_contacts": "Selected contacts ({count})",
+    "close": "Close"
+  }
+}

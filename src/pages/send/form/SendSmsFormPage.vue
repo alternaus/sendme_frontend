@@ -1,33 +1,56 @@
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from 'vue'
+import { computed, defineComponent, ref, watchEffect } from 'vue'
+
+import { useI18n } from 'vue-i18n'
 
 import BtnSend from '@/assets/svg/btn_send.svg?component'
+import CredentialIcon from '@/assets/svg/credential.svg?component'
 import ContactsIcon from '@/assets/svg/header/contacts.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
 import AppEditor from '@/components/atoms/editor/AppEditor.vue'
-import AppTextarea from '@/components/atoms/textarea/AppTextarea.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
+import ContactChips from '@/components/molecules/ContactChips.vue'
+import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
-import { MessageChannel } from '@/services/send/interfaces/message.interface'
-import { useSendService } from '@/services/send/useSendService'
+import { MESSAGE_LIMITS, MessageChannel } from '@/services/send/constants'
+import { useSmsService } from '@/services/send/useSmsService'
 
-import { useFormSendMessage } from '../composables/useSendForm'
+import { createSmsMessageTypeOptions } from '../../../services/send/helpers/message-options.helper'
+import { type SendMessageForm, SendType, useFormSendMessage } from '../../send/composables/useSendForm'
 
 export default defineComponent({
   name: 'SendSmsFormPage',
   components: {
-    AppTextarea,
     AppEditor,
+    AppSelect,
     PhoneIcon,
     BtnSend,
     ContactsIcon,
+    CredentialIcon,
+    TagManager,
+    ContactChips,
   },
   setup() {
-    const contactsInput = ref('')
+    const { t } = useI18n()
     const contactsCount = ref<number | null>(null)
-    const sendService = useSendService()
+    const sendType = ref<SendType>(SendType.CONTACTS) // Nueva variable para tipo de envío
+    const smsService = useSmsService()
     const contactService = useContactService()
     const { form, handleSubmit, resetForm, errors, setValues } = useFormSendMessage(MessageChannel.SMS)
-    const MAX_CHARACTERS = 459
+    const MAX_CHARACTERS = MESSAGE_LIMITS.SMS
+
+    const messageTypeOptions = createSmsMessageTypeOptions(t)
+
+    // Computed para mostrar el editor de mensaje progresivamente
+    const shouldShowMessageEditor = computed(() => {
+      if (!form.messageType.value) return false
+
+      if (sendType.value === SendType.ALL) return true
+      if (sendType.value === SendType.CONTACTS) return (form.contacts.value?.length ?? 0) > 0
+      if (sendType.value === SendType.TAGS) return (form.tagIds.value?.length ?? 0) > 0
+
+      return false
+    })
 
     const fetchContactsCount = async () => {
       try {
@@ -44,26 +67,32 @@ export default defineComponent({
       }
     })
 
+    // Sincronizar sendType con los campos del formulario
     watchEffect(() => {
-      form.contacts.value = contactsInput.value
-        .split(',')
-        .map((num) => num.trim())
-        .filter((num) => num.length > 0)
+      form.sendToAll.value = sendType.value === SendType.ALL
+      form.sendToTags.value = sendType.value === SendType.TAGS
     })
 
-    const sendMessage = handleSubmit(async (values) => {
-      const batchMessage = {
-        channel: MessageChannel.SMS,
+    const sendMessage = handleSubmit(async (values: SendMessageForm) => {
+      const basePayload = {
         message: values.message,
-        sendToAll: values.sendToAll,
-        contacts: values.sendToAll ? [] : values.contacts,
-        country: values.country,
+        type: values.messageType,
+        ...(values.country ? { country: values.country } : {}),
       }
 
-      const response = await sendService.sendBatchMessage(batchMessage)
+      let response
+
+      if (values.sendToAll) {
+        response = await smsService.sendSmsToAll(basePayload)
+      } else if (values.sendToTags) {
+        response = await smsService.sendSmsToTags({ ...basePayload, tagIds: values.tagIds || [] })
+      } else {
+        response = await smsService.sendSmsToContacts({ ...basePayload, contacts: values.contacts })
+      }
+
       if (response) {
         resetForm()
-        contactsInput.value = ''
+        sendType.value = SendType.CONTACTS
       }
     })
 
@@ -72,66 +101,100 @@ export default defineComponent({
       sendMessage,
       errors,
       setValues,
-      contactsInput,
       MAX_CHARACTERS,
       contactsCount,
+      messageTypeOptions,
+      sendType,
+      SendType,
+      shouldShowMessageEditor,
     }
   },
 })
 </script>
 
 <template>
-  <div>
-    <div class="flex justify-center items-center flex-wrap my-2 mb-4">
+  <div class="space-y-4">
+    <div class="flex justify-center items-center gap-3">
       <div
-        class="p-2 mx-2 cursor-pointer"
-        :class="
-          !form.sendToAll.value
-            ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300'
-            : ''
-        "
-        @click="form.sendToAll.value = false"
+        v-tooltip.bottom="$t('send.tooltip_send_to_contacts')"
+        class="p-2 cursor-pointer rounded-lg transition-colors"
+        :class="sendType === SendType.CONTACTS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.CONTACTS"
       >
-        <PhoneIcon class="w-6 h-6 fill-current" />
+        <PhoneIcon class="w-5 h-5 fill-current" />
       </div>
       <div
-        class="p-2 mx-2 cursor-pointer"
-        :class="form.sendToAll.value ? 'bg-white dark:bg-zinc-700 dark:border-zinc-600 border rounded-lg border-slate-300' : ''"
-        @click="form.sendToAll.value = true"
+        v-tooltip.bottom="$t('send.tooltip_send_to_all')"
+        class="p-2 cursor-pointer rounded-lg transition-colors"
+        :class="sendType === SendType.ALL ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.ALL"
       >
-        <ContactsIcon class="w-6 h-6 fill-current" />
+        <ContactsIcon class="w-5 h-5 fill-current" />
+      </div>
+      <div
+       v-tooltip.bottom="$t('send.tooltip_send_to_tags')"
+        class="p-2 cursor-pointer rounded-lg transition-colors"
+        :class="sendType === SendType.TAGS ? 'bg-white dark:bg-zinc-700 border border-slate-300 dark:border-zinc-600' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'"
+        @click="sendType = SendType.TAGS"
+      >
+        <CredentialIcon class="w-5 h-5 fill-current" />
       </div>
     </div>
-    <div class="flex flex-col mb-2" v-if="form.sendToAll.value">
-      <small class="text-center text-sm text-gray-500 dark:text-gray-100">
+
+    <div v-show="sendType === SendType.ALL" class="text-center">
+      <small class="text-xs text-gray-500 dark:text-gray-400">
         {{ (contactsCount ?? 0) + ' ' + $t('contact.contacts') }}
       </small>
     </div>
 
-    <AppTextarea
-      v-if="!form.sendToAll.value"
-      v-model="contactsInput"
-      :rows="2"
-      :placeholder="$t('general.enter_numbers_separated_by_commas')"
 
-      class="w-full mb-4"
-    >
-      <template #icon><PhoneIcon class="w-4 h-4 dark:fill-white" /></template>
-    </AppTextarea>
+    <div v-if="sendType !== null">
+      <AppSelect
+        v-model="form.messageType.value"
+        :options="messageTypeOptions"
+        :label="$t('send.message_type')"
+        :placeholder="$t('send.select_message_type')"
+        class="w-full"
+      />
+    </div>
 
-    <AppEditor
-      v-model="form.message.value"
-      content-type="text"
-      :ai-attach="true"
-      :placeholder="$t('general.editor.sms_placeholder')"
-      :maxlength="MAX_CHARACTERS"
-      :rows="12"
-      class="w-full mb-2"
-    />
+    <div v-if="sendType === SendType.CONTACTS && form.messageType.value">
+      <ContactChips
+        v-model="form.contacts.value"
+        type="phone"
+        :placeholder="$t('send.enter_numbers_separated_by_commas')"
+        class="w-full"
+      />
+    </div>
 
-    <div class="flex justify-center my-4">
-      <button type="button" @click="sendMessage">
-        <BtnSend class="w-14 h-14 cursor-pointer" />
+
+    <div v-if="sendType === SendType.TAGS && form.messageType.value">
+      <TagManager
+        v-model="form.tagIds.value"
+        :placeholder="$t('send.select_tags')"
+        :allow-create="false"
+        :allow-manage="false"
+        :error-message="errors.tagIds"
+        :show-error-message="!!errors.tagIds"
+        class="w-full"
+      />
+    </div>
+
+    <div v-if="shouldShowMessageEditor">
+      <AppEditor
+        v-model="form.message.value"
+        content-type="text"
+        :ai-attach="true"
+        :placeholder="$t('send.editor.sms_placeholder')"
+        :maxlength="MAX_CHARACTERS"
+        :rows="10"
+        class="w-full text-sm"
+      />
+    </div>
+
+    <div v-if="form.message.value" class="flex justify-center pt-2">
+      <button type="button" @click="sendMessage" class="transition-transform hover:scale-105">
+        <BtnSend class="w-10 h-10 cursor-pointer" />
       </button>
     </div>
   </div>

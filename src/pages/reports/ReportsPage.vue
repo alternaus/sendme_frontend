@@ -7,24 +7,24 @@ import { IconTypesReports } from './components/enums/icon-types-reports.enum'
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.REPORTS" :text="$t('report.reports')" :actions="[]" />
+  <AppHeader :icon="IconTypes.REPORTS" :text="$t('reports.reports')" :actions="[]" />
 
   <div class="flex flex-wrap justify-center lg:justify-start gap-6 p-6 w-fit mx-auto lg:mx-8">
     <AppLinkCard
       :icon="IconTypesReports.MESSAGES"
-      :text="$t('general.messages')"
+      :text="$t('reports.common.messages')"
       :to="{ name: 'report.message' }"
     />
 
     <AppLinkCard
       :icon="IconTypesReports.SENDING"
-      :text="$t('report.sending_by_campaign')"
+      :text="$t('reports.sending_by_campaign')"
       :to="{ name: 'report.dispatches' }"
     />
 
     <AppLinkCard
       :icon="IconTypesReports.AUDIT"
-      :text="$t('report.audit')"
+      :text="$t('reports.audit')"
       :to="{ name: 'report.audit' }"
     />
   </div>

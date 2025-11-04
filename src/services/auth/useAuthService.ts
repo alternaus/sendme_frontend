@@ -39,7 +39,7 @@ export const useAuthService = () => {
   }
 
   // OAuth generic methods
-  const getOAuthUrl = async (provider: OAuthProviderType, userId?: number) => {
+  const getOAuthUrl = async (provider: OAuthProviderType, userId?:string) => {
     return oauthService.getAuthUrl(provider, userId)
   }
 

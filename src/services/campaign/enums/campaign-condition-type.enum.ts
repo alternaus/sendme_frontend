@@ -1,0 +1,30 @@
+export enum CampaignConditionType {
+  // Empty/Not Empty conditions
+  IS_EMPTY = 'IS_EMPTY',
+  NOT_EMPTY = 'NOT_EMPTY',
+
+  // Equality conditions
+  EQUALS = 'EQUALS',
+  NOT_EQUALS = 'NOT_EQUALS',
+
+  // String conditions
+  CONTAINS = 'CONTAINS',
+  STARTS_WITH = 'STARTS_WITH',
+  ENDS_WITH = 'ENDS_WITH',
+
+  // Numeric conditions
+  GREATER_THAN = 'GREATER_THAN',
+  LESS_THAN = 'LESS_THAN',
+  GREATER_OR_EQUAL = 'GREATER_OR_EQUAL',
+  LESS_OR_EQUAL = 'LESS_OR_EQUAL',
+  BETWEEN = 'BETWEEN',
+
+  // Date conditions
+  BETWEEN_DATES = 'BETWEEN_DATES',
+  BIRTHDAY_TODAY = 'BIRTHDAY_TODAY',
+  BIRTHDAY_IN_X_DAYS = 'BIRTHDAY_IN_X_DAYS',
+  IS_TODAY = 'IS_TODAY',
+  WAS_YESTERDAY = 'WAS_YESTERDAY',
+  IS_TOMORROW = 'IS_TOMORROW',
+  IN_X_DAYS = 'IN_X_DAYS',
+}

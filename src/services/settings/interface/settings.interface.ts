@@ -5,8 +5,8 @@ export interface ISettingsPayload {
 }
 
 export interface ISettingsResponse extends ISettingsPayload {
-  id: number
-  organizationId: number
+  id:string
+  organizationId:string
   createdAt: string
   updatedAt: string
   deletedAt: string | null

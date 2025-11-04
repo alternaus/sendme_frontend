@@ -28,49 +28,9 @@
 
 :root {
   --p-tooltip-padding: 0.2rem 0.75rem !important;
-  --scrollbar-thumb: var(--color-primary-400);
-  --scrollbar-thumb-hover: var(--color-primary-500);
-  --scrollbar-track: #f1f1f1;
-  --scrollbar-width: 8px;
 }
 
-/* Estilos para el scrollbar */
-::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-  height: var(--scrollbar-width);
-}
 
-::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-canvas{
-  border-radius: 0.75rem;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-}
-
-/* Estilos para el scrollbar en modo oscuro */
-.dark ::-webkit-scrollbar-track {
-  background: #2d2d2d;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #505050;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #636363;
-}
 
 .p-tooltip-text {
   font-size: 14px !important;
@@ -79,3 +39,49 @@ canvas{
   font-size: 12.5px;
 }
 
+/* global-scrollbar.css — aplica a TODO el sitio */
+/* global-scrollbar.css — usa --p-primary-color en todo el sitio */
+:root{
+  --sb-size:6px;
+  --sb-radius:999px;
+  --sb-track:transparent;
+  --sb-thumb: color-mix(in srgb, var(--p-primary-color) 60%, transparent);
+  --sb-thumb-hover: color-mix(in srgb, var(--p-primary-color) 80%, transparent);
+}
+
+/* Firefox */
+*{
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) var(--sb-track);
+}
+
+/* WebKit */
+*::-webkit-scrollbar{
+  width:var(--sb-size);
+  height:var(--sb-size);
+}
+*::-webkit-scrollbar-thumb{
+  background:var(--sb-thumb);
+  border-radius:var(--sb-radius);
+}
+*:hover::-webkit-scrollbar-thumb{
+  background:var(--sb-thumb-hover);
+}
+*::-webkit-scrollbar-track{
+  background:var(--sb-track);
+}
+
+html{ scrollbar-gutter: auto; }
+
+/* Fallback si el navegador no soporta color-mix */
+@supports not (color: color-mix(in srgb, #000 50%, transparent)){
+  :root{
+    --sb-thumb: var(--p-primary-color);
+    --sb-thumb-hover: var(--p-primary-color);
+  }
+}
+
+/* Accesibilidad alto contraste */
+@media (forced-colors: active){
+  *{ scrollbar-color: auto; }
+}

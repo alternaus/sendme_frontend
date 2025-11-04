@@ -15,7 +15,7 @@ export const useApiKeysService = () => {
     return await api.post<IApiKey>('/api-keys', payload)
   }
 
-  const remove = async (id: number | string): Promise<void> => {
+  const remove = async (id:string | string): Promise<void> => {
     await api.delete<void>(`/api-keys/${id}`)
   }
 

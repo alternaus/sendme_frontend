@@ -1,6 +1,6 @@
 {
   "name": "sendme-frontend",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,6 +17,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@novu/js": "^3.10.1",
     "@primeuix/themes": "^1.2.3",
     "@tailwindcss/vite": "^4.0.0",
     "@types/socket.io-client": "^1.4.36",
@@ -27,27 +28,32 @@
     "axios": "^1.7.9",
     "chart.js": "^4.5.0",
     "dayjs": "^1.11.13",
+    "dompurify": "^3.2.6",
     "echarts": "^6.0.0",
     "libphonenumber-js": "^1.12.15",
+    "lucide-vue-next": "^0.552.0",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.7",
     "quill": "^2.0.3",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.0.0",
+    "uuid": "^12.0.0",
     "vee-validate": "^4.15.0",
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.5.13",
-    "vue-i18n": "10",
+    "vue-i18n": "11.1.12",
     "vue-router": "^4.5.0",
     "vue3-google-login": "^2.0.34",
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
     "@playwright/test": "^1.49.1",
     "@tsconfig/node22": "^22.0.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitest/eslint-plugin": "1.1.20",
     "@vue/eslint-config-prettier": "^10.1.0",
@@ -58,8 +64,10 @@
     "eslint-plugin-playwright": "^2.1.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-vue": "^9.30.0",
+    "eslint-plugin-vue-i18n": "^0.3.0",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
+    "jsonc-eslint-parser": "^2.4.0",
     "lint-staged": "^15.5.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.3.3",
@@ -68,7 +76,8 @@
     "vite": "^6.0.5",
     "vite-plugin-vue-devtools": "^7.6.8",
     "vitest": "^2.1.8",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^2.1.10",
+    "yaml-eslint-parser": "^1.3.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [

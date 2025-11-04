@@ -20,7 +20,7 @@
           :modelValue="(form.content.value as string)"
           :errorMessage="errors.content"
           :aiAttach="true"
-          :placeholder="isEmailChannel ? $t('general.write_email_message') : $t('general.editor.sms_placeholder')"
+          :placeholder="isEmailChannel ? $t('campaign.common.write_email_message') : $t('campaign.common.editor.sms_placeholder')"
           @update:modelValue="updateContent"
         />
       </div>
@@ -28,13 +28,13 @@
       <!-- Campos dinámicos -->
       <div class="flex flex-col items-center justify-center gap-2 col-span-12 lg:col-span-2">
         <p class="text-gray-700 dark:text-neutral-300 font-medium">
-          {{ t('campaign.dynamic_data') }}
+          {{ t('campaign.triggers.dynamic_data') }}
         </p>
 
         <AppSelect v-model="selectedField" :options="availableFields" class="w-full" />
 
         <AppButton
-          :label="t('campaign.insert_in_message')"
+          :label="t('campaign.triggers.insert_in_message')"
           @click="insertPlaceholder"
         />
       </div>
@@ -99,12 +99,12 @@ const channelIcon = computed(() => {
 
 // Nombre del canal
 const channelName = computed(() => {
-  return isEmailChannel.value ? t('general.email') : t('general.sms')
+  return isEmailChannel.value ? t('campaign.common.email') : t('campaign.common.sms')
 })
 
 // Actualizar el tipo de contenido cuando cambie el canal
 const updateContentType = () => {
-  const newContentType = isEmailChannel.value ? 'html' : 'plain_text'
+  const newContentType = isEmailChannel.value ? 'HTML' : 'PLAIN_TEXT'
   emit('update:form', 'contentType', newContentType)
 
   // NO borrar el contenido al cambiar de canal - solo actualizar el tipo
@@ -151,13 +151,13 @@ onMounted(async () => {
   try {
     const response = await getCustomFields()
     const contactFields = [
-      { name: t('general.name'), value: '{name}' },
-      { name: t('general.last_name'), value: '{lastName}' },
-      { name: t('general.email'), value: '{email}' },
-      { name: t('general.phone'), value: '{phone}' },
-      { name: t('general.country_code'), value: '{countryCode}' },
-      { name: t('general.birth_date'), value: '{birthDate}' },
-      { name: t('general.status'), value: '{status}' },
+      { name: t('campaign.common.name'), value: '{name}' },
+      { name: t('campaign.common.last_name'), value: '{lastName}' },
+      { name: t('campaign.common.email'), value: '{email}' },
+      { name: t('campaign.common.phone'), value: '{phone}' },
+      { name: t('campaign.common.country_code'), value: '{countryCode}' },
+      { name: t('campaign.common.birth_date'), value: '{birthDate}' },
+      { name: t('campaign.common.status'), value: '{status}' },
     ]
 
     const customFields = response.map((field) => ({

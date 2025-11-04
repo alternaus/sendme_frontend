@@ -8,12 +8,17 @@ import ActionIcon from '@/assets/svg/action.svg?component'
 import ChangeIcon from '@/assets/svg/change.svg?component'
 import DateIcon from '@/assets/svg/date.svg?component'
 import ModuleIcon from '@/assets/svg/module.svg?component'
+import SearchIcon from '@/assets/svg/search.svg?component'
 import UserIcon from '@/assets/svg/user.svg?component'
+import AppDateRangePicker from '@/components/atoms/datepickers/AppDateRangePicker.vue'
+import AppInput from '@/components/atoms/inputs/AppInput.vue'
+import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppTable from '@/components/atoms/tables/AppTable.vue'
+import AppFilterPanel from '@/components/molecules/filter-panel/AppFilterPanel.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
-import CardFilterAudit from '@/pages/reports/pages/audit/components/CardFilterAudit.vue'
+import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
 import type { IAudit } from '@/services/report/interfaces/audit.interface'
 import { useReportService } from '@/services/report/useReportServices'
@@ -27,12 +32,16 @@ export default defineComponent({
   components: {
     AppHeader,
     AppTable,
+    AppFilterPanel,
+    AppInput,
+    AppSelect,
+    AppDateRangePicker,
     DateIcon,
     UserIcon,
     ActionIcon,
     ModuleIcon,
     ChangeIcon,
-    CardFilterAudit,
+    SearchIcon,
     DialogChangesAudit,
   },
   setup() {
@@ -41,6 +50,9 @@ export default defineComponent({
     const { getAudits, exportAudits } = useReportService()
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
+    const { activeFiltersCount } = useActiveFiltersCount({ action, table, startDate, endDate, search })
+
+    const showMobileModal = ref(false)
 
     const dataChanges = ref<Record<string, unknown>>({})
     const isDialogVisible = ref(false)
@@ -57,9 +69,21 @@ export default defineComponent({
       totalRecords: 0,
     })
 
-    watch([startDate, endDate, action, table], () => {
+    watch([startDate, endDate, action, table, search], () => {
       fetchAudits()
     })
+
+    const dateRange = computed(() => {
+      const dates: Date[] = []
+      if (startDate.value) dates.push(startDate.value)
+      if (endDate.value) dates.push(endDate.value)
+      return dates
+    })
+
+    const handleDateRangeChange = (dates: Date[]) => {
+      startDate.value = dates[0] || null
+      endDate.value = dates[1] || null
+    }
 
     const fetchAudits = async ({ pageSize = 1, limitSize = 10 } = {}) => {
       page.value = pageSize
@@ -73,7 +97,7 @@ export default defineComponent({
           table: table.value,
           startDate: startDate.value?.toISOString(),
           endDate: endDate.value?.toISOString(),
-          //search: search.value,
+          search: search.value,
         })
         if (response?.data && response?.meta) {
           audits.value = response.data
@@ -96,7 +120,13 @@ export default defineComponent({
 
     const headerActions = computed(() => [
       {
-        label: t('actions.export'),
+        label: t('common.actions.filter'),
+        type: ActionTypes.FILTER,
+        badge: activeFiltersCount.value > 0 ? activeFiltersCount.value : undefined,
+        onClick: () => { showMobileModal.value = !showMobileModal.value },
+      },
+      {
+        label: t('common.actions.export'),
         type: ActionTypes.EXPORT,
         onClick: () => {
           exportAudits({
@@ -104,6 +134,7 @@ export default defineComponent({
             table: table.value,
             startDate: startDate.value?.toISOString(),
             endDate: endDate.value?.toISOString(),
+            search: search.value,
             page: page.value,
             limit: limit.value,
           })
@@ -135,20 +166,6 @@ export default defineComponent({
       return translationKey ? t(translationKey) : moduleString
     }
 
-    const startDateString = computed({
-      get: () => startDate.value?.toISOString() || '',
-      set: (value: string) => {
-        startDate.value = value ? new Date(value) : new Date()
-      }
-    })
-
-    const endDateString = computed({
-      get: () => endDate.value?.toISOString() || '',
-      set: (value: string) => {
-        endDate.value = value ? new Date(value) : new Date()
-      }
-    })
-
     return {
       router,
       IconTypes,
@@ -161,27 +178,81 @@ export default defineComponent({
       headerActions,
       action,
       table,
+      startDate,
+      endDate,
+      dateRange,
+      handleDateRangeChange,
       formatDate,
       dataChanges,
       handleViewChanges,
       isDialogVisible,
-      startDateString,
-      endDateString,
       loading,
       formatTableValue,
+      ActionAuditTypes,
+      ModuleTypes,
+      showMobileModal,
     }
   },
 })
 </script>
 <template>
-  <AppHeader :icon="IconTypes.AUDIT" :text="$t('report.audit')" :actions="headerActions" />
-  <CardFilterAudit
-    v-model:action="action"
-    v-model:table="table"
-    v-model:startDate="startDateString"
-    v-model:endDate="endDateString"
-    v-model:search="search"
-  />
+  <AppHeader :icon="IconTypes.AUDIT" :text="$t('reports.audit')" :actions="headerActions" />
+
+  <AppFilterPanel
+    :header-actions="headerActions"
+    v-model:showMobileModal="showMobileModal"
+  >
+    <AppInput
+      :modelValue="search"
+      type="text"
+      class="w-full"
+      :label="$t('reports.common.search')"
+      @input="search = $event.target.value"
+    >
+      <template #icon>
+        <SearchIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppInput>
+
+    <AppSelect
+      class="w-full"
+      :modelValue="action"
+      :options="
+        Object.entries(ActionAuditTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+      "
+      :label="$t('reports.common.action')"
+      @update:modelValue="action = $event as string"
+    >
+      <template #icon>
+        <ActionIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppSelect
+      class="w-full"
+      :modelValue="table"
+      :options="
+        Object.entries(ModuleTypes).map(([key, value]) => ({ value: key, name: $t(value) }))
+      "
+      :label="$t('reports.common.module')"
+      @update:modelValue="table = $event as string"
+    >
+      <template #icon>
+        <ModuleIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppSelect>
+
+    <AppDateRangePicker
+      class="w-full col-span-1 sm:col-span-2"
+      :modelValue="dateRange"
+      :label="$t('reports.common.date_range')"
+      @update:modelValue="handleDateRangeChange"
+    >
+      <template #icon>
+        <DateIcon class="w-4 h-4 dark:fill-white" />
+      </template>
+    </AppDateRangePicker>
+  </AppFilterPanel>
   <DialogChangesAudit
     :changesData="dataChanges"
     :visible="isDialogVisible"
@@ -192,7 +263,7 @@ export default defineComponent({
     :data="audits"
     :headers="[
       { field: 'createdAt', header: 'Date' },
-      { field: 'userId', header: 'User' },
+      { field: 'userName', header: 'User' },
       { field: 'table', header: 'Module' },
       { field: 'changes', header: 'Changes' },
       { field: 'action', header: 'Action' },
@@ -202,38 +273,47 @@ export default defineComponent({
     :totalItems="auditMeta.totalRecords"
     :multipleSelection="false"
     :loading="loading"
-    :emptyMessage="'report.error_getting_audit'"
-    textTotalItems="report.audits"
+    :emptyMessage="'reports.error_getting_audit'"
+    textTotalItems="reports.audits"
+    :mobile-config="{
+      title: { field: 'table' },
+      subtitle: { field: 'action' },
+      metadata: [
+        { field: 'userId', position: 'left', label: 'Usuario' },
+        { field: 'createdAt', position: 'right' }
+      ],
+      showAvatar: false
+    }"
     @page-change="fetchAudits"
   >
     <template #header-createdAt>
       <div class="flex items-center">
         <DateIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.date') }} </span>
+        <span> {{ $t('reports.common.date') }} </span>
       </div>
     </template>
     <template #header-userId>
       <div class="flex items-center">
         <UserIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('user.user') }} </span>
+        <span> {{ $t('common.user.user') }} </span>
       </div>
     </template>
     <template #header-table>
       <div class="flex items-center">
         <ModuleIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.module') }} </span>
+        <span> {{ $t('reports.common.module') }} </span>
       </div>
     </template>
     <template #header-changes>
       <div class="flex items-center">
         <ChangeIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.changes') }} </span>
+        <span> {{ $t('reports.common.changes') }} </span>
       </div>
     </template>
     <template #header-action>
       <div class="flex items-center">
         <ActionIcon class="w-5 h-5 mr-2 fill-current" />
-        <span> {{ $t('general.action') }} </span>
+        <span> {{ $t('reports.common.action') }} </span>
       </div>
     </template>
     <template #custom-table="{ data }">

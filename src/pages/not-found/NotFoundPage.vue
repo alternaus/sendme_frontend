@@ -20,10 +20,10 @@ const goToHome = () => {
       <div class="flex justify-center items-center mb-8">
         <Logo class="w-[120px] h-auto dark:fill-[var(--p-primary-color)]" />
       </div>
-      <h1 class="text-4xl font-bold mb-4 ">{{ t('notFound.title') }}</h1>
-      <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">{{ t('notFound.description') }}</p>
+      <h1 class="text-4xl font-bold mb-4 ">{{ t('common.notFound.title') }}</h1>
+      <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">{{ t('common.notFound.description') }}</p>
       <AppButton
-        :label="t('notFound.backToHome')"
+        :label="t('common.notFound.backToHome')"
         severity="primary"
         @click="goToHome"
         class="!w-fit mx-auto"

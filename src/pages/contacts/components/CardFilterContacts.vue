@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import CredentialIcon from '@/assets/svg/credential.svg?component'
 import DataOriginIcon from '@/assets/svg/data_origin.svg?component'
 import PhoneIcon from '@/assets/svg/phone.svg?component'
@@ -8,8 +10,8 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppStatusSelect from '@/components/atoms/selects/AppStatusSelect.vue'
-
-import { ContactOriginTypes } from '../enums/contact-origin.enum'
+import { useEnumValues } from '@/composables/useEnumValues'
+import { ContactOrigin } from '@/services/contact/enums/contact-origin.enum'
 
 interface Props {
   search?: string
@@ -27,6 +29,7 @@ interface Emits {
   'update:origin': [value: string]
 }
 
+const { t } = useI18n()
 const _props = withDefaults(defineProps<Props>(), {
   search: '',
   name: '',
@@ -58,17 +61,18 @@ const updateField = (field: string, value: string) => {
   }
 }
 
+const { enumOptions:originOptions } = useEnumValues(ContactOrigin)
+
 const countryCodeOptions = [
-  { value: '1', name: '+1 (US/CA)' },
-  { value: '52', name: '+52 (MX)' },
-  { value: '34', name: '+34 (ES)' },
-  { value: '33', name: '+33 (FR)' },
-  { value: '44', name: '+44 (UK)' },
-  { value: '49', name: '+49 (DE)' },
-  { value: '39', name: '+39 (IT)' },
-  { value: '55', name: '+55 (BR)' },
-  { value: '54', name: '+54 (AR)' },
-  { value: '57', name: '+57 (CO)' },
+  { name: 'US', value: '1' },
+  { name: 'UK', value: '44' },
+  { name: 'CA', value: '1' },
+  { name: 'AU', value: '61' },
+  { name: 'FR', value: '33' },
+  { name: 'DE', value: '49' },
+  { name: 'IN', value: '91' },
+  { name: 'JP', value: '81' },
+  { name: 'CN', value: '86' },
 ]
 </script>
 
@@ -80,7 +84,7 @@ const countryCodeOptions = [
           :modelValue="_props.search"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.search')"
+          :label="t('contact.general.search')"
           @input="updateField('search', $event.target.value)"
         >
           <template #icon>
@@ -92,7 +96,7 @@ const countryCodeOptions = [
           :modelValue="_props.name"
           type="text"
           class="w-full rounded-md mt-3"
-          :label="$t('general.name')"
+          :label="t('contact.general.name')"
           @input="updateField('name', $event.target.value)"
         >
           <template #icon>
@@ -104,7 +108,7 @@ const countryCodeOptions = [
           class="w-full mt-3"
           :modelValue="_props.countryCode"
           :options="countryCodeOptions"
-          :label="$t('general.country_code')"
+          :label="t('contact.general.country_code')"
           @update:modelValue="updateField('countryCode', $event !== null ? String($event) : '')"
         >
           <template #icon>
@@ -116,7 +120,7 @@ const countryCodeOptions = [
           class="w-full mt-3"
           :modelValue="_props.status"
           status-type="contact"
-          :label="$t('general.status')"
+          :label="t('contact.general.status')"
           :show-colors="true"
           @update:modelValue="updateField('status', $event !== null ? String($event) : '')"
         >
@@ -128,13 +132,8 @@ const countryCodeOptions = [
         <AppSelect
           class="w-full mt-3"
           :modelValue="_props.origin"
-          :options="
-            Object.entries(ContactOriginTypes).map(([key, value]) => ({
-              value: key,
-              name: $t(value),
-            }))
-          "
-          :label="$t('general.origin')"
+          :options="originOptions"
+          :label="t('contact.general.origin')"
           @update:modelValue="updateField('origin', $event !== null ? String($event) : '')"
         >
           <template #icon>

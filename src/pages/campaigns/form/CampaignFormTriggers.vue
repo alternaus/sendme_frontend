@@ -10,6 +10,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 import { useCampaignTriggerInputs } from '@/pages/campaigns/composables/useCampaignTriggerInputs'
+import type { CampaignConditionType } from '@/services/campaign/enums/campaign-condition-type.enum'
 import type { ICustomField } from '@/services/custom-field/interfaces/custom-field.interface'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 
@@ -42,7 +43,6 @@ const {
   isDateInput,
   isBetweenInput,
   isDateBetweenInput,
-  getPlaceholderText,
   updateBetweenValue,
   getBetweenValue,
   initializeBetweenValues,
@@ -147,7 +147,7 @@ const handleRemoveRule = (index: number) => {
 const handleConditionChange = (index: number, conditionType: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
-    rule.conditionType = typeof conditionType === 'string' ? conditionType : String(conditionType)
+    rule.conditionType = typeof conditionType === 'string' ? conditionType as CampaignConditionType : null
     rule.value = ''
   }
   clearBetweenValues(index)
@@ -157,8 +157,8 @@ const handleConditionChange = (index: number, conditionType: string | number | b
 const handleCustomFieldChange = (index: number, customFieldId: string | number | boolean | null) => {
   const rule = campaignRules.value[index]
   if (rule) {
-    rule.customFieldId = typeof customFieldId === 'number' ? customFieldId : Number(customFieldId) || 0
-    rule.conditionType = ''
+    rule.customFieldId = typeof customFieldId === 'string' ? customFieldId : String(customFieldId) || ''
+    rule.conditionType = null
     rule.value = ''
   }
   clearBetweenValues(index)
@@ -177,7 +177,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
   <div class="flex flex-col h-full">
         <div class="flex-none mb-4">
           <p class="text-center text-neutral-600 dark:text-neutral-300">
-            {{ t('campaign.configure_triggers') }}
+            {{ t('campaign.triggers.configure_triggers') }}
           </p>
         </div>
 
@@ -206,7 +206,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-model="rule.customFieldId"
                     :options="customFieldsOptions"
                     :errorMessage="getError(index, 'customFieldId')"
-                    :label="t('campaign.select_field')"
+                    :label="t('campaign.triggers.select_field')"
                     class="w-full"
                     @update:modelValue="handleCustomFieldChange(index, $event)" />
 
@@ -214,7 +214,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-model="rule.conditionType"
                     :options="getFilteredConditionOptions(rule.customFieldId)"
                     :errorMessage="getError(index, 'conditionType')"
-                    :label="t('campaign.select_condition')"
+                    :label="t('campaign.triggers.select_condition')"
                     class="w-full"
                     :disabled="!rule.customFieldId"
                     @update:modelValue="handleConditionChange(index, $event)" />
@@ -223,7 +223,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                   <!-- Input para condiciones que no necesitan valor -->
                   <div v-if="!needsValueInput(rule.conditionType) && rule.conditionType"
                        class="text-sm text-neutral-500 dark:text-neutral-400 p-2 bg-neutral-100 dark:bg-neutral-800 rounded">
-                    {{ t('campaign.no_value_needed') }}
+                    {{ t('campaign.triggers.no_value_needed') }}
                   </div>
 
                   <!-- Input numérico para condiciones que necesitan días -->
@@ -231,7 +231,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="isNumericInput(rule.conditionType, rule.customFieldId)"
                     v-model="rule.value"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.triggers.numeric_value')"
                     type="number"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
@@ -241,7 +241,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="isDateInput(rule.conditionType, rule.customFieldId)"
                     :modelValue="rule.value ? new Date(rule.value) : undefined"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.triggers.select_date')"
                     class="w-full"
                     @update:modelValue="(date) => { rule.value = date ? date.toISOString().split('T')[0] : ''; handleFieldChange(index); }" />
 
@@ -254,13 +254,13 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                         <AppDatePicker
                           :modelValue="getBetweenValue(index, 'min') ? new Date(getBetweenValue(index, 'min')) : undefined"
                           :errorMessage="getError(index, 'value')"
-                          :placeholder="t('campaign.range_start_date')"
+                          :placeholder="t('campaign.triggers.range_start_date')"
                           class="w-full"
                           @update:modelValue="(val) => handleUpdateBetweenValue(index, 'min', val ? val.toISOString().split('T')[0] : '')" />
                         <AppDatePicker
                           :modelValue="getBetweenValue(index, 'max') ? new Date(getBetweenValue(index, 'max')) : undefined"
                           :errorMessage="getError(index, 'value')"
-                          :placeholder="t('campaign.range_end_date')"
+                          :placeholder="t('campaign.triggers.range_end_date')"
                           class="w-full"
                           @update:modelValue="(val) => handleUpdateBetweenValue(index, 'max', val ? val.toISOString().split('T')[0] : '')" />
                       </template>
@@ -269,14 +269,14 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                         <AppInput
                           :modelValue="getBetweenValue(index, 'min')"
                           :errorMessage="getError(index, 'value')"
-                          :placeholder="t('campaign.min_value')"
+                          :placeholder="t('campaign.triggers.min_value')"
                           :type="isNumericInput(rule.conditionType) ? 'number' : 'text'"
                           class="w-full"
                           @update:modelValue="(val) => handleUpdateBetweenValue(index, 'min', val)" />
                         <AppInput
                           :modelValue="getBetweenValue(index, 'max')"
                           :errorMessage="getError(index, 'value')"
-                          :placeholder="t('campaign.max_value')"
+                          :placeholder="t('campaign.triggers.max_value')"
                           :type="isNumericInput(rule.conditionType) ? 'number' : 'text'"
                           class="w-full"
                           @update:modelValue="(val) => handleUpdateBetweenValue(index, 'max', val)" />
@@ -290,7 +290,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
                     v-else-if="needsValueInput(rule.conditionType)"
                     v-model="rule.value"
                     :errorMessage="getError(index, 'value')"
-                    :placeholder="getPlaceholderText(rule.conditionType, t)"
+                    :placeholder="t('campaign.triggers.value')"
                     class="w-full"
                     @update:modelValue="handleFieldChange(index)" />
                 </div>
@@ -303,7 +303,7 @@ const handleUpdateBetweenValue = (index: number, type: 'min' | 'max', value: str
           <AppButton
             type="button"
             class="!w-fit"
-            :label="t('campaign.add_trigger')"
+            :label="t('campaign.triggers.add_trigger')"
             @click="handleAddRule"
             icon="pi pi-plus" />
         </div>

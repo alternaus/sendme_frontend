@@ -42,7 +42,7 @@ const emit = defineEmits<Emits>()
 const { t } = useI18n()
 
 const effectiveSubmitLabel = computed(() =>
-  props.submitLabel || t('general.save')
+  props.submitLabel || t('common.general.save')
 )
 
 const handleStepClick = (stepId: string) => {
@@ -116,7 +116,7 @@ const handleCancel = () => {
             <div>
               <AppButton
                 v-if="!isFirstStep"
-                :label="t('general.previous')"
+                :label="t('common.general.previous')"
                 severity="secondary"
                 size="small"
                 outlined
@@ -129,7 +129,7 @@ const handleCancel = () => {
             <div class="flex gap-3">
               <AppButton
                 v-if="!isLastStep"
-                :label="t('general.next')"
+                :label="t('common.general.next')"
                 icon="pi pi-arrow-right"
                 icon-pos="right"
                 size="small"
@@ -148,7 +148,7 @@ const handleCancel = () => {
               />
 
               <AppButton
-                :label="t('general.cancel')"
+                :label="t('common.general.cancel')"
                 severity="secondary"
                 outlined
                 size="small"

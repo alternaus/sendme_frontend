@@ -1,0 +1,56 @@
+{
+  "title": "Enviar Mensaje Instantáneo",
+  "instant_message": "Mensaje Instantáneo",
+  "whatsapp_instant_message": "Mensaje Instantáneo de WhatsApp",
+  "email_instant_message": "Mensaje instantáneo de correo",
+  "send_instant_message": "Enviar mensaje instantáneo",
+  "message_type": "Tipo de mensaje",
+  "select_message_type": "Selecciona el tipo de mensaje",
+  "email_subject": "Asunto del correo",
+  "enter_numbers_separated_by_commas": "Ingresa números separados por comas",
+  "enter_emails_separated_by_commas": "Ingresa correos separados por comas",
+  "required_field": "Este campo es requerido",
+  "contacts_required": "Los contactos son requeridos",
+  "message_send_success": "Mensaje enviado exitosamente",
+  "error_sending_message": "Error al enviar el mensaje",
+  "channels": {
+    "SMS": "SMS",
+    "EMAIL": "Correo Electrónico",
+    "WHATSAPP": "WhatsApp"
+  },
+  "message_types": {
+    "SMS": "Estándar",
+    "OTP": "OTP", 
+    "FLASH": "Flash"
+  },
+  "editor": {
+    "sms_placeholder": "Escribe tu mensaje SMS aquí...",
+    "whatsapp_placeholder": "Escribe tu mensaje de WhatsApp aquí...",
+    "email_placeholder": "Escribe tu mensaje de correo aquí..."
+  },
+  "send_to": {
+    "contacts": "Lista de contactos",
+    "all": "Todos",
+    "tags": "Tags"
+  },
+  "select_tags": "Seleccionar etiquetas",
+  "tags_required": "Las etiquetas son requeridas",
+  "tooltip_send_to_contacts": "Enviar a lista específica de contactos",
+  "tooltip_send_to_all": "Enviar a todos los contactos",
+  "tooltip_send_to_tags": "Enviar a contactos con tags específicos",
+  "tooltip_phone_mode": "Modo teléfono - Para mensajes SMS",
+  "tooltip_email_mode": "Modo escritorio - Para mensajes de correo",
+  "contact_chips": {
+    "search_placeholder": "Buscar contactos...",
+    "add_manually_help": "Busca contactos existentes o presiona Enter/coma para agregar {type} manualmente",
+    "emails": "emails",
+    "numbers": "números",
+    "no_name": "Sin nombre",
+    "search_min_chars": "Escribe al menos 2 caracteres para buscar",
+    "no_contacts_found": "No se encontraron contactos",
+    "more_count": "+{count} más",
+    "view_all": "Ver todos",
+    "selected_contacts": "Contactos seleccionados ({count})",
+    "close": "Cerrar"
+  }
+}

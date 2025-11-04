@@ -32,7 +32,7 @@ export const useContactService = () => {
     return privateApi.patch<IUpdateContact>(`/contacts/${id}`, contact)
   }
 
-  const deleteContact = async (id: number) => {
+  const deleteContact = async (id:string) => {
     return privateApi.delete(`/contacts/${id}`)
   }
 
@@ -68,10 +68,13 @@ export const useContactService = () => {
     })
   }
 
-  const importContacts = async (file: File, fieldMapping: Record<string, string>) => {
+  const importContacts = async (file: File, fieldMapping: Record<string, string>, tagIds?: string[]) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('fieldMapping', JSON.stringify(fieldMapping))
+    if (tagIds && tagIds.length > 0) {
+      formData.append('tagIds', JSON.stringify(tagIds))
+    }
     return privateApi.post<{ jobId: string }>('/contacts/import', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -81,15 +84,25 @@ export const useContactService = () => {
 
   const getImportStatus = async (jobId: string) => {
     return privateApi.get<{
-      status: 'processing' | 'completed' | 'error'
+      status: 'PROCESSING' | 'COMPLETED' | 'ERROR'
       progress: number
       total: number
       errors?: string[]
     }>(`/contacts/import/${jobId}/status`)
   }
 
-  const syncGoogleContacts = async () => {
-    return privateApi.post<ISyncGoogleContact>('/contacts/google/sync')
+  const syncGoogleContacts = async (tagIds?: string[]) => {
+    return privateApi.post<ISyncGoogleContact>('/contacts/google/sync', { tagIds })
+  }
+
+  const searchContacts = async (query: string, limit: number = 10) => {
+    const response = await privateApi.get<IPaginationResponse<IContact>>('/contacts', {
+      params: {
+        search: query,
+        limit
+      },
+    })
+    return response.data || []
   }
 
   return {
@@ -103,6 +116,7 @@ export const useContactService = () => {
     getImportPreview,
     importContacts,
     getImportStatus,
-    syncGoogleContacts
+    syncGoogleContacts,
+    searchContacts
   }
 }
