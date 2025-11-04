@@ -5,6 +5,8 @@ import { useDark } from '@vueuse/core'
 
 import Drawer from 'primevue/drawer'
 
+import { ChevronDown } from 'lucide-vue-next'
+
 import Alterna from '@/assets/svg/alterna.svg?component'
 import Logo from '@/assets/svg/sidebar/logo.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
@@ -113,17 +115,15 @@ const isChildActive = (childPath: string) => {
               >
                 <component
                   :is="route.icon"
-                  :size="20"
-                  :stroke-width="2"
-                  class="flex-shrink-0 transition-colors duration-200"
+                  class="w-5 h-5 flex-shrink-0 transition-colors duration-200"
                   :class="
                     isRouteActive(route)
                       ? isDark
-                        ? 'text-[var(--p-surface-900)]'
-                        : 'text-[var(--p-primary-color)]'
+                        ? 'fill-[var(--p-surface-900)]'
+                        : 'fill-[var(--p-primary-color)]'
                       : isDark
-                        ? 'text-[var(--p-primary-color)] group-hover:text-[var(--p-primary-color)]'
-                        : 'text-white/90 group-hover:text-white'
+                        ? 'fill-[var(--p-primary-color)] group-hover:fill-[var(--p-primary-color)]'
+                        : 'fill-white/90 group-hover:fill-white'
                   "
                 />
                 <span
@@ -159,17 +159,15 @@ const isChildActive = (childPath: string) => {
                 >
                   <component
                     :is="route.icon"
-                    :size="20"
-                    :stroke-width="2"
-                    class="flex-shrink-0 transition-colors duration-200"
+                    class="w-5 h-5 flex-shrink-0 transition-colors duration-200"
                     :class="
                       isRouteActive(route)
                         ? isDark
-                          ? 'text-[var(--p-surface-900)]'
-                          : 'text-[var(--p-primary-color)]'
+                          ? 'fill-[var(--p-surface-900)]'
+                          : 'fill-[var(--p-primary-color)]'
                         : isDark
-                          ? 'text-[var(--p-primary-color)] group-hover:text-[var(--p-primary-color)]'
-                          : 'text-white/90 group-hover:text-white'
+                          ? 'fill-[var(--p-primary-color)] group-hover:fill-[var(--p-primary-color)]'
+                          : 'fill-white/90 group-hover:fill-white'
                     "
                   />
                   <span
