@@ -24,7 +24,7 @@ const config = {
         },
          primary: {
           color: '{primary.500}',
-          contrastColor: '{surface.900}',
+          contrastColor: '{surface.950}',
           hoverColor: '{primary.600}',
           activeColor: '{primary.700}',
         },
