@@ -1,7 +1,3 @@
-import { useToast } from 'primevue/usetoast'
-
-import { useI18n } from 'vue-i18n'
-
 import { useApiClient } from '@/composables/useApiClient'
 
 import { MessageChannel, SmsMessageType } from './constants/message.constants'
@@ -25,31 +21,11 @@ interface SendBatchMessageInput {
 
 export const useSendService = () => {
   const privateApi = useApiClient(true)
-  const toast = useToast()
-  const { t } = useI18n()
 
   const { sendEmailToContacts, sendEmailToAll, sendEmailToTags } = useEmailService()
   const { sendSmsToContacts, sendSmsToAll, sendSmsToTags } = useSmsService()
 
-  const notifySuccess = () => {
-    toast.add({
-      severity: 'success',
-      summary: t('common.general.success'),
-      detail: t('send.message_send_success'),
-      life: 3000,
-    })
-  }
-
-  const notifyError = () => {
-    toast.add({
-      severity: 'error',
-      summary: t('common.general.error'),
-      detail: t('send.error_sending_message'),
-      life: 3000,
-    })
-  }
-
-  const sendBatchMessage = async (payload: SendBatchMessageInput): Promise<MessageEnqueueResult | null> => {
+  const sendBatchMessage = async (payload: SendBatchMessageInput): Promise<MessageEnqueueResult> => {
     if (payload.channel === MessageChannel.EMAIL) {
       const base = {
         subject: payload.subject ?? '',
@@ -85,18 +61,10 @@ export const useSendService = () => {
       return sendSmsToContacts({ ...base, contacts: payload.contacts ?? [] })
     }
 
-    // Legacy fallback for unsupported channels (e.g., WhatsApp)
-    try {
-      const response = await privateApi.post<MessageEnqueueResult, SendBatchMessageInput>(
-        '/messages/send',
-        payload,
-      )
-      notifySuccess()
-      return response
-    } catch {
-      notifyError()
-      return null
-    }
+    return privateApi.post<MessageEnqueueResult, SendBatchMessageInput>(
+      '/messages/send',
+      payload,
+    )
   }
 
   return { sendBatchMessage }

@@ -1,4 +1,5 @@
 import { useApiClient } from '@/composables/useApiClient'
+import { downloadFile, EXCEL_MIME_TYPE, generateFileName } from '@/utils/download.helper'
 
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
 import type { IContact } from './interfaces/contact.interface'
@@ -10,7 +11,7 @@ import type { IUpdateContact } from './interfaces/update-contact.interface'
 export const useContactService = () => {
   const privateApi = useApiClient(true)
 
-  const getContacts = async (query?: IFilterContact) => {
+  const listContacts = async (query?: IFilterContact) => {
     return privateApi.get<IPaginationResponse<IContact>>('/contacts', {
       params: { ...query },
     })
@@ -32,7 +33,7 @@ export const useContactService = () => {
     return privateApi.patch<IUpdateContact>(`/contacts/${id}`, contact)
   }
 
-  const deleteContact = async (id:string) => {
+  const deleteContact = async (id: string) => {
     return privateApi.delete(`/contacts/${id}`)
   }
 
@@ -42,20 +43,7 @@ export const useContactService = () => {
       params: { ...query },
     })
 
-    if (!response) {
-      return
-    }
-
-    const blob = new Blob([response], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    })
-
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.setAttribute('download', 'contacts.xlsx')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    downloadFile(response, generateFileName('contacts'), EXCEL_MIME_TYPE)
   }
 
   const getImportPreview = async (file: File) => {
@@ -106,7 +94,7 @@ export const useContactService = () => {
   }
 
   return {
-    getContacts,
+    listContacts,
     getContact,
     getContactCount,
     createContact,

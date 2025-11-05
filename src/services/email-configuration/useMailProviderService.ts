@@ -4,7 +4,7 @@ import type { CreateEmailConfigurationDto, EmailConfigurationResponseDto,UpdateE
 export const useMailProviderService = () => {
   const privateApi = useApiClient(true)
 
-  const getEmailConfigurations = async () => {
+  const listEmailConfigurations = async () => {
     return privateApi.get<EmailConfigurationResponseDto[]>('/email-configurations')
   }
 
@@ -12,16 +12,16 @@ export const useMailProviderService = () => {
     return privateApi.post<EmailConfigurationResponseDto>('/email-configurations', data)
   }
 
-  const updateEmailConfiguration = async (id:string, data: UpdateEmailConfigurationDto) => {
+  const updateEmailConfiguration = async (id: string, data: UpdateEmailConfigurationDto) => {
     return privateApi.patch<EmailConfigurationResponseDto>(`/email-configurations/${id}`, data)
   }
 
-  const deleteEmailConfiguration = async (id:string) => {
+  const deleteEmailConfiguration = async (id: string) => {
     return privateApi.delete<void>(`/email-configurations/${id}`)
   }
 
   return {
-    getEmailConfigurations,
+    listEmailConfigurations,
     createEmailConfiguration,
     updateEmailConfiguration,
     deleteEmailConfiguration,

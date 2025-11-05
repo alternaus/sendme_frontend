@@ -9,7 +9,7 @@ import type { IUser } from './interfaces/user.interface'
 export const useUserService = () => {
   const privateApi = useApiClient(true)
 
-  const getUsers = async (filters: IFilterUser = {}) => {
+  const listUsers = async (filters: IFilterUser = {}) => {
     return privateApi.get<IPaginationResponse<IUser>>('/users', { params: filters })
   }
 
@@ -17,7 +17,7 @@ export const useUserService = () => {
     return privateApi.get<number>('/users/count')
   }
 
-  const getUser = async (id:string) => {
+  const getUser = async (id: string) => {
     return privateApi.get<IUser>(`/users/${id}`)
   }
 
@@ -25,11 +25,11 @@ export const useUserService = () => {
     return privateApi.post<IUser, ICreateUser>('/users', user)
   }
 
-  const updateUser = async (id:string, user: IUpdateUser) => {
+  const updateUser = async (id: string, user: IUpdateUser) => {
     return privateApi.patch<IUser, IUpdateUser>(`/users/${id}`, user)
   }
 
-  const deleteUser = async (id:string) => {
+  const deleteUser = async (id: string) => {
     return privateApi.delete<IUser>(`/users/${id}`)
   }
 
@@ -38,7 +38,7 @@ export const useUserService = () => {
   }
 
   return {
-    getUsers,
+    listUsers,
     getUserCount,
     getUser,
     createUser,

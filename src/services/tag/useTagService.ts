@@ -5,11 +5,11 @@ import type { ICreateTag, ITag, ITagWithCounts, IUpdateTag } from './interfaces'
 export const useTagService = () => {
   const privateApi = useApiClient(true)
 
-  const getTags = async (): Promise<ITag[]> => {
+  const listTags = async (): Promise<ITag[]> => {
     return privateApi.get<ITag[]>('/tags')
   }
 
-  const getTagsWithCounts = async (): Promise<ITagWithCounts[]> => {
+  const listTagsWithCounts = async (): Promise<ITagWithCounts[]> => {
     return privateApi.get<ITagWithCounts[]>('/tags/with-counts')
   }
 
@@ -30,8 +30,8 @@ export const useTagService = () => {
   }
 
   return {
-    getTags,
-    getTagsWithCounts,
+    listTags,
+    listTagsWithCounts,
     getTag,
     createTag,
     updateTag,

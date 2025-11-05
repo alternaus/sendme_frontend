@@ -128,19 +128,31 @@ const sendBulkMessage = async () => {
     })
     return
   }
-  if (selectedChannel.value === MessageChannel.SMS && countryCode.value) {
-    country.value = countryCode.value
-  }
-  const response = await send()
-  if (response) {
-    emit('message-sent')
-    dialogVisible.value = false
-    const count = contactNumbers.value.length
+  
+  try {
+    if (selectedChannel.value === MessageChannel.SMS && countryCode.value) {
+      country.value = countryCode.value
+    }
+    
+    const response = await send()
+    
+    if (response) {
+      emit('message-sent')
+      dialogVisible.value = false
+      const count = contactNumbers.value.length
+      toast.add({
+        severity: 'success',
+        summary: t('contact.general.success'),
+        detail: t('contact.bulk_sms.messages_sent_successfully', { count }),
+        life: 4000,
+      })
+    }
+  } catch {
     toast.add({
-      severity: 'success',
-      summary: t('contact.general.success'),
-      detail: t('contact.bulk_sms.messages_sent_successfully', { count }),
-      life: 4000,
+      severity: 'error',
+      summary: t('contact.general.error'),
+      detail: t('contact.bulk_sms.error_sending_messages'),
+      life: 3000,
     })
   }
 }

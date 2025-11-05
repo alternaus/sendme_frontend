@@ -10,41 +10,36 @@ import type {
 export const useWebhookService = () => {
   const apiClient = useApiClient(true)
 
-  const list = async (): Promise<WebhookEndpoint[]> => {
-    const response = await apiClient.get<WebhookEndpoint[]>('/webhook-endpoints')
-    return response
+  const listWebhooks = async (): Promise<WebhookEndpoint[]> => {
+    return apiClient.get<WebhookEndpoint[]>('/webhook-endpoints')
   }
 
-  const create = async (data: CreateWebhookEndpointDto): Promise<WebhookEndpoint> => {
-    const response = await apiClient.post<WebhookEndpoint, CreateWebhookEndpointDto>('/webhook-endpoints', data)
-    return response
+  const createWebhook = async (data: CreateWebhookEndpointDto): Promise<WebhookEndpoint> => {
+    return apiClient.post<WebhookEndpoint, CreateWebhookEndpointDto>('/webhook-endpoints', data)
   }
 
-  const update = async (id:string, data: UpdateWebhookEndpointDto): Promise<WebhookEndpoint> => {
-    const response = await apiClient.put<WebhookEndpoint, UpdateWebhookEndpointDto>(`/webhook-endpoints/${id}`, data)
-    return response
+  const updateWebhook = async (id: string, data: UpdateWebhookEndpointDto): Promise<WebhookEndpoint> => {
+    return apiClient.put<WebhookEndpoint, UpdateWebhookEndpointDto>(`/webhook-endpoints/${id}`, data)
   }
 
-  const remove = async (id:string): Promise<void> => {
+  const deleteWebhook = async (id: string): Promise<void> => {
     await apiClient.delete(`/webhook-endpoint/${id}`)
   }
 
-  const toggleStatus = async (id:string, isActive: boolean): Promise<WebhookEndpoint> => {
-    const response = await apiClient.patch<WebhookEndpoint, { isActive: boolean }>(`/webhook-endpoints/${id}`, { isActive })
-    return response
+  const toggleWebhookStatus = async (id: string, isActive: boolean): Promise<WebhookEndpoint> => {
+    return apiClient.patch<WebhookEndpoint, { isActive: boolean }>(`/webhook-endpoints/${id}`, { isActive })
   }
 
-  const getEvents = async (): Promise<WebhookEvent[]> => {
-    const response = await apiClient.get<WebhookEvent[]>('/webhook-events')
-    return response
+  const listWebhookEvents = async (): Promise<WebhookEvent[]> => {
+    return apiClient.get<WebhookEvent[]>('/webhook-events')
   }
 
   return {
-    list,
-    create,
-    update,
-    remove,
-    toggleStatus,
-    getEvents
+    listWebhooks,
+    createWebhook,
+    updateWebhook,
+    deleteWebhook,
+    toggleWebhookStatus,
+    listWebhookEvents
   }
 }

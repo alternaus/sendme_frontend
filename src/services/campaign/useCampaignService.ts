@@ -12,7 +12,7 @@ import type { IUpdateCampaign } from './interfaces/update-campaign.interface'
 export const useCampaignService = () => {
   const privateApi = useApiClient(true)
 
-  const getCampaigns = async (query?: IFilterCampaign) => {
+  const listCampaigns = async (query?: IFilterCampaign) => {
     return privateApi.get<IPaginationResponse<ICampaign>>('/campaigns', {
       params: { ...query },
     })
@@ -30,7 +30,7 @@ export const useCampaignService = () => {
     return privateApi.patch<IUpdateCampaign>(`/campaigns/${id}`, campaign)
   }
 
-  const deleteCampaign = async (id:string) => {
+  const deleteCampaign = async (id: string) => {
     return privateApi.delete(`/campaigns/${id}`)
   }
 
@@ -47,7 +47,7 @@ export const useCampaignService = () => {
   }
 
   return {
-    getCampaigns,
+    listCampaigns,
     getCampaign,
     createCampaign,
     updateCampaign,

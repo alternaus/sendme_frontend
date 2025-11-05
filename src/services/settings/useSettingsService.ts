@@ -7,24 +7,21 @@ import type { ISettingsPayload, ISettingsResponse } from './interface/settings.i
 export const useSettingsService = () => {
   const api = useApiClient(true)
 
-  const getSettings = async (orgId:string | string): Promise<ISettingsResponse | null> => {
-    try {
-      const res = await api.get<ISettingsResponse>(`/settings/${orgId}`)
-      return res
-    } catch (e) {
-      throw e
-    }
+  const getSettings = async (orgId: string): Promise<ISettingsResponse> => {
+    return api.get<ISettingsResponse>(`/settings/${orgId}`)
   }
 
-  const createSettings = async (orgId:string | string, payload: ISettingsPayload) => {
-    const res = await api.post<ISettingsResponse>(`/settings/${orgId}`, payload)
-    return res
+  const createSettings = async (orgId: string, payload: ISettingsPayload) => {
+    return api.post<ISettingsResponse>(`/settings/${orgId}`, payload)
   }
 
-  const updateSettings = async (orgId:string | string, payload: ISettingsPayload) => {
-    const res = await api.patch<ISettingsResponse>(`/settings/${orgId}`, payload)
-    return res
+  const updateSettings = async (orgId: string, payload: ISettingsPayload) => {
+    return api.patch<ISettingsResponse>(`/settings/${orgId}`, payload)
   }
 
-  return { getSettings, createSettings, updateSettings }
+  return {
+    getSettings,
+    createSettings,
+    updateSettings
+  }
 }

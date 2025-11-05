@@ -101,31 +101,34 @@ privateApi.interceptors.response.use(
         }
       }
 
-      if (status === 403) {
-      }
-
-      // Manejar error de términos no aceptados
-      if (data?.code === '1022') {
-        // El error será manejado por el composable useTermsAcceptance
-        // No necesitamos hacer nada especial aquí, solo pasar el error
-      }
-
-      if (status >= 500) {
-      }
+      // Manejar error de términos no aceptados (código 1022)
+      // El error será manejado por el composable useTermsAcceptance
     }
 
     return Promise.reject(error)
   },
 )
 
+const cleanQueryParams = (params?: Record<string, unknown>): Record<string, unknown> | undefined => {
+  if (!params) return undefined
+
+  return Object.fromEntries(
+    Object.entries(params).filter(([_, v]) => v != null && v !== '')
+  )
+}
+
 const useApiClient = (isAuthenticated = false) => {
   const api = isAuthenticated ? privateApi : publicApi
   const { handleError } = useErrorHandler()
 
   return {
-    get: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+    get: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = false): Promise<T> => {
       try {
-        const response: AxiosResponse<T> = await api.get(url, config)
+        const cleanedConfig = config?.params
+          ? { ...config, params: cleanQueryParams(config.params) }
+          : config
+
+        const response: AxiosResponse<T> = await api.get(url, cleanedConfig)
         return response.data
       } catch (error) {
         const errorMessage = handleError(error, customErrorMessage, showToast)
@@ -138,7 +141,7 @@ const useApiClient = (isAuthenticated = false) => {
       data?: R,
       config?: AxiosRequestConfig,
       customErrorMessage?: string,
-      showToast = true,
+      showToast = false,
     ): Promise<T> => {
       try {
         const response: AxiosResponse<T> = await api.post(url, data, config)
@@ -149,7 +152,7 @@ const useApiClient = (isAuthenticated = false) => {
       }
     },
 
-    put: async <T, R = unknown>(url: string, data?: R, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+    put: async <T, R = unknown>(url: string, data?: R, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = false): Promise<T> => {
       try {
         const response: AxiosResponse<T> = await api.put(url, data, config)
         return response.data
@@ -164,7 +167,7 @@ const useApiClient = (isAuthenticated = false) => {
       data?: R,
       config?: AxiosRequestConfig,
       customErrorMessage?: string,
-      showToast = true,
+      showToast = false,
     ): Promise<T> => {
       try {
         const response: AxiosResponse<T> = await api.patch(url, data, config)
@@ -175,7 +178,7 @@ const useApiClient = (isAuthenticated = false) => {
       }
     },
 
-    delete: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = true): Promise<T> => {
+    delete: async <T>(url: string, config?: AxiosRequestConfig, customErrorMessage?: string, showToast = false): Promise<T> => {
       try {
         const response: AxiosResponse<T> = await api.delete(url, config)
         return response.data

@@ -1,9 +1,5 @@
 import { computed, type Ref, ref } from 'vue'
 
-import { useToast } from 'primevue/usetoast'
-
-import { useI18n } from 'vue-i18n'
-
 import { MESSAGE_LIMITS, MessageChannel } from '@/services/send/constants'
 import type { MessageEnqueueResult } from '@/services/send/interfaces/message.interface'
 import { useSendService } from '@/services/send/useSendService'
@@ -30,8 +26,6 @@ export interface UseSendMessageReturn {
 
 export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMessageReturn => {
   const { initialChannel = MessageChannel.SMS, preselectedContacts = [], sendToAllDefault = false } = options
-  const { t } = useI18n()
-  const toast = useToast()
   const { sendBatchMessage } = useSendService()
 
   const channel = ref<MessageChannel>(initialChannel)
@@ -83,14 +77,9 @@ export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMess
 
   const send = async (): Promise<MessageEnqueueResult | null> => {
     if (!canSend.value) {
-      toast.add({
-        severity: 'warn',
-        summary: t('common.general.warning'),
-        detail: t('send.validation_fill_required'),
-        life: 3000,
-      })
-      return null
+      throw new Error('Validation failed: missing required fields')
     }
+    
     isSending.value = true
     try {
       const payload = buildPayload()

@@ -1,180 +1,66 @@
-import { useToast } from 'primevue/usetoast'
-
-import { useI18n } from 'vue-i18n'
-
 import { useApiClient } from '@/composables/useApiClient'
-import type { IAudit } from '@/services/report/interfaces/audit.interface'
-import type { ICampaignDispatch } from '@/services/report/interfaces/dispatch.interface'
-import type { IFilterAudit } from '@/services/report/interfaces/filter-audit.interface'
-import type { ICampaignDispatchFilter } from '@/services/report/interfaces/filter-dispatch.interface'
-import type { IFilterMessage } from '@/services/report/interfaces/filter-message.interface'
-import type { IMessage } from '@/services/report/interfaces/message.interface'
+import { downloadFile, EXCEL_MIME_TYPE, generateFileName } from '@/utils/download.helper'
 
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
+import type { IAudit } from './interfaces/audit.interface'
+import type { ICampaignDispatch } from './interfaces/dispatch.interface'
+import type { IFilterAudit } from './interfaces/filter-audit.interface'
+import type { ICampaignDispatchFilter } from './interfaces/filter-dispatch.interface'
+import type { IFilterMessage } from './interfaces/filter-message.interface'
+import type { IMessage } from './interfaces/message.interface'
 
 export const useReportService = () => {
   const privateApi = useApiClient(true)
-  const toast = useToast()
-  const { t } = useI18n()
 
-  const showToast = (type: 'success' | 'error', messageKey: string) => {
-    toast.add({
-      severity: type,
-      summary: t(type === 'success' ? 'general.success' : 'general.error'),
-      detail: t(messageKey),
-      life: 3000,
-    })
-  }
-
-  const handleError = (error: unknown, messageKey: string) => {
-    showToast('error', messageKey)
-  }
-
-  const generateFileName = (prefix: string) => {
-    const now = new Date()
-    const day = String(now.getDate()).padStart(2, '0')
-    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-    const month = monthNames[now.getMonth()]
-    const year = now.getFullYear()
-    let hours = now.getHours()
-    const minutes = String(now.getMinutes()).padStart(2, '0')
-    const ampm = hours >= 12 ? 'PM' : 'AM'
-    hours = hours % 12 || 12
-
-    return `${prefix}_${day}${month}${year}_${hours}.${minutes}${ampm}.xlsx`
-  }
-
-
-  //Auditoría 🔍
-  const getAudits = async (query?: IFilterAudit) => {
-    try {
-      return await privateApi.get<IPaginationResponse<IAudit>>('/audit', { params: { ...query } })
-    } catch (error) {
-      handleError(error, 'report.error_getting_audit')
-      return null
-    }
+  const listAudits = async (query?: IFilterAudit) => {
+    return privateApi.get<IPaginationResponse<IAudit>>('/audit', { params: query })
   }
 
   const exportAudits = async (query?: IFilterAudit) => {
-    try {
-      const response: Blob = await privateApi.get('/audit/export', {
-        responseType: 'blob',
-        params: { ...query },
-      })
+    const response: Blob = await privateApi.get('/audit/export', {
+      responseType: 'blob',
+      params: query,
+    })
 
-      if (!response) throw new Error('No response data received')
-
-      const blob = new Blob([response], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.setAttribute('download', generateFileName('audit_report'))
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      showToast('success', 'report.audit_success_exported')
-    } catch (error) {
-      handleError(error, 'report.audit_error_exported')
-    }
+    downloadFile(response, generateFileName('audit_report'), EXCEL_MIME_TYPE)
   }
 
-  //Mensajes ✉️
-  const getMessages = async (query?: IFilterMessage) => {
-    try {
-      const filteredQuery = Object.fromEntries(
-        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
-      )
-      return await privateApi.get<IPaginationResponse<IMessage>>('/messages', {
-        params: filteredQuery,
-      })
-    } catch (error) {
-      handleError(error, 'report.error_getting_messages')
-      return null
-    }
+  const listMessages = async (query?: IFilterMessage) => {
+    return privateApi.get<IPaginationResponse<IMessage>>('/messages', {
+      params: query,
+    })
   }
 
   const exportMessages = async (query?: IFilterMessage) => {
-    try {
-      const filteredQuery = Object.fromEntries(
-        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
-      )
-      const response: Blob = await privateApi.get('/messages/export', {
-        responseType: 'blob',
-        params: filteredQuery,
-      })
+    const response: Blob = await privateApi.get('/messages/export', {
+      responseType: 'blob',
+      params: query,
+    })
 
-      if (!response) throw new Error('No response data received')
-
-      const blob = new Blob([response], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.setAttribute('download', generateFileName('messages_report'))
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      showToast('success', 'report.messages_success_exported')
-    } catch (error) {
-      handleError(error, 'report.error_exporting_messages')
-    }
+    downloadFile(response, generateFileName('messages_report'), EXCEL_MIME_TYPE)
   }
 
-  //Campaign Dispatches 📤
-  const getDispatches = async (query?: ICampaignDispatchFilter) => {
-    try {
-      const filteredQuery = Object.fromEntries(
-        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
-      )
-      return await privateApi.get<IPaginationResponse<ICampaignDispatch>>('/campaign-dispatches', {
-        params: filteredQuery,
-      })
-    } catch (error) {
-      handleError(error, 'report.error_getting_dispatches')
-      return null
-    }
+  const listDispatches = async (query?: ICampaignDispatchFilter) => {
+    return privateApi.get<IPaginationResponse<ICampaignDispatch>>('/campaign-dispatches', {
+      params: query,
+    })
   }
 
   const exportDispatches = async (query?: ICampaignDispatchFilter) => {
-    try {
-      const filteredQuery = Object.fromEntries(
-        Object.entries(query || {}).filter(([_, v]) => v != null && v !== '')
-      )
-      const response: Blob = await privateApi.get('/campaign-dispatches/export', {
-        responseType: 'blob',
-        params: filteredQuery,
-      })
+    const response: Blob = await privateApi.get('/campaign-dispatches/export', {
+      responseType: 'blob',
+      params: query,
+    })
 
-      if (!response) throw new Error('No response data received')
-
-      const blob = new Blob([response], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.setAttribute('download', generateFileName('dispatches_report'))
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      showToast('success', 'report.dispatches_success_exported')
-    } catch (error) {
-      handleError(error, 'report.error_exporting_dispatches')
-    }
+    downloadFile(response, generateFileName('dispatches_report'), EXCEL_MIME_TYPE)
   }
 
   return {
-    getAudits,
+    listAudits,
     exportAudits,
-    getMessages,
+    listMessages,
     exportMessages,
-    getDispatches,
+    listDispatches,
     exportDispatches,
   }
 }
