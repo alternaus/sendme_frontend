@@ -128,14 +128,14 @@ const sendBulkMessage = async () => {
     })
     return
   }
-  
+
   try {
     if (selectedChannel.value === MessageChannel.SMS && countryCode.value) {
       country.value = countryCode.value
     }
-    
+
     const response = await send()
-    
+
     if (response) {
       emit('message-sent')
       dialogVisible.value = false

@@ -79,7 +79,7 @@ export const useSendMessage = (options: UseSendMessageOptions = {}): UseSendMess
     if (!canSend.value) {
       throw new Error('Validation failed: missing required fields')
     }
-    
+
     isSending.value = true
     try {
       const payload = buildPayload()
