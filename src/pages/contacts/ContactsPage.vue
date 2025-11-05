@@ -46,7 +46,7 @@ const { push } = useRouter()
 const toast = useToast()
 const confirm = useConfirm()
 
-const { getContacts, deleteContact, exportContacts } = useContactService()
+const { listContacts, deleteContact, exportContacts } = useContactService()
 const { getTableValueWithDefault, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
 
@@ -111,7 +111,7 @@ const fetchContacts = async ({ pageSize = 1, limitSize = 10 } = {}) => {
   limit.value = limitSize
   loading.value = true
   try {
-    const { data, meta } = await getContacts(buildQuery())
+    const { data, meta } = await listContacts(buildQuery())
     contacts.value = data ?? []
     contactsMeta.value = meta ?? contactsMeta.value
   } catch {

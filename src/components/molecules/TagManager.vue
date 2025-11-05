@@ -395,7 +395,7 @@ const getTagColor = (tagId: string): string => {
 // Métodos principales
 const loadTags = async () => {
   try {
-    const response = await tagService.getTags()
+    const response = await tagService.listTags()
     tags.value = response.map(normalizeTag)
   } catch (error) {
     console.error('Error loading tags:', error)

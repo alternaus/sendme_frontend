@@ -143,7 +143,7 @@ const fetchPlansData = async () => {
   try {
     loading.value = true
     error.value = null
-    apiPlans.value = await planService.fetchPlans()
+    apiPlans.value = await planService.listPlans()
   } catch {
     error.value = 'enrollment.plans.error_loading_plans'
     toast.add({

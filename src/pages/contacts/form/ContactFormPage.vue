@@ -51,7 +51,7 @@ export default defineComponent({
 
     const contactId = route.params?.id ? String(route.params.id) : ''
     const { form, handleSubmit, resetForm, errors, addCustomField, setValues } = useFormContact()
-    const { getCustomFields } = useCustomFieldService()
+    const { listCustomFields } = useCustomFieldService()
     const { getContact, createContact, updateContact } = useContactService()
 
     const customFields = ref<{ id: string; fieldName: string; dataType: string }[]>([])
@@ -73,7 +73,7 @@ export default defineComponent({
     })
     onMounted(async () => {
       try {
-        const response = await getCustomFields()
+        const response = await listCustomFields()
         customFields.value = response
 
 

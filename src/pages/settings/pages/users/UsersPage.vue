@@ -15,7 +15,7 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 const { t } = useI18n()
 const toast = useToast()
-const { getUsers, createUser, updateUser, deleteUser } = useUserService()
+const { listUsers, createUser, updateUser, deleteUser } = useUserService()
 const authStore = useAuthStore()
 
 const MAX_USERS = 3
@@ -29,7 +29,7 @@ const users = ref<Array<{
 
 const loadUsers = async () => {
   try {
-    const response = await getUsers({ page: 1, limit: MAX_USERS })
+    const response = await listUsers({ page: 1, limit: MAX_USERS })
 
     users.value = response.data.slice(0, MAX_USERS).map(user => ({
       id: user.id,

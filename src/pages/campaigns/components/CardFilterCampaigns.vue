@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const { getChannels } = useChannelService()
+const { listChannels } = useChannelService()
 const channels = ref<IChannel[]>([])
 const loadingChannels = ref(false)
 const updateField = (field: string, value: string | Date[] | null) => {
@@ -67,7 +67,7 @@ const updateField = (field: string, value: string | Date[] | null) => {
 const fetchChannels = async () => {
   loadingChannels.value = true
   try {
-    const response = await getChannels()
+    const response = await listChannels()
     if (response) {
       channels.value = response
     }

@@ -21,7 +21,7 @@ import { useApiKeysForm } from './composables/useApiKeyForm'
 const { t } = useI18n()
 const toast = useToast()
 const confirm = useConfirm()
-const { list, create, remove } = useApiKeysService()
+const { listApiKeys, createApiKey, deleteApiKey } = useApiKeysService()
 const { form, handleSubmit, resetForm, errors } = useApiKeysForm()
 const { formatDate } = useDateFormat()
 
@@ -31,7 +31,7 @@ const creating = ref(false)
 
 onMounted(async () => {
   loading.value = true
-  try { rows.value = await list() } finally { loading.value = false }
+  try { rows.value = await listApiKeys() } finally { loading.value = false }
 })
 
 const mask = (k: string) => (k?.length > 10 ? `${k.slice(0, 4)}••••${k.slice(-4)}` : k ?? '')
@@ -50,7 +50,7 @@ const copyNow = async (k?: string | null) => {
 const onCreate = handleSubmit(async (values) => {
   creating.value = true
   try {
-    const created = await create({ name: values.name })
+    const created = await createApiKey({ name: values.name })
 
     createdKey.value = created.key
     showKeyDialog.value = true
@@ -74,7 +74,7 @@ const confirmDelete = (row: IApiKey) => {
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
       try {
-        await remove(row.id)
+        await deleteApiKey(row.id)
         rows.value = rows.value.filter(r => r.id !== row.id)
         toast.add({ severity: 'success', summary: t('settings.api_keys.delete_success'), detail: t('settings.api_keys.delete_success'), life: 1600 })
       } catch {

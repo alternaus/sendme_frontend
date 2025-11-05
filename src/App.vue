@@ -1,7 +1,7 @@
 <template>
   <main class="w-screen h-screen flex justify-center items-center transition-all">
     <component :is="layout">
-      <Toast position="top-right" />
+      <Toast position="bottom-right" class="toast-custom-zindex" />
       <router-view />
     </component>
   </main>

@@ -73,7 +73,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const { getCustomFields } = useCustomFieldService()
+const { listCustomFields } = useCustomFieldService()
 
 const availableFields = ref<SelectOption[]>([])
 const selectedField = ref<string | null>(null)
@@ -149,7 +149,7 @@ const insertPlaceholder = () => {
 // Cargar campos personalizados
 onMounted(async () => {
   try {
-    const response = await getCustomFields()
+    const response = await listCustomFields()
     const contactFields = [
       { name: t('campaign.common.name'), value: '{name}' },
       { name: t('campaign.common.last_name'), value: '{lastName}' },

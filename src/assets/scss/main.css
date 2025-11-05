@@ -85,3 +85,12 @@ html{ scrollbar-gutter: auto; }
 @media (forced-colors: active){
   *{ scrollbar-color: auto; }
 }
+
+/* Toast custom z-index */
+.toast-custom-zindex {
+  z-index: 9999 !important;
+}
+
+.toast-custom-zindex .p-toast-message-content {
+  z-index: 9999 !important;
+}

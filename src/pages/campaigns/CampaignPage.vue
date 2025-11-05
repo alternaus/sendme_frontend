@@ -46,13 +46,13 @@ import { useCampaignFilter } from './composables/useCampaignFilter'
 
 const { t } = useI18n()
 const { push } = useRouter()
-const { getCampaigns, deleteCampaign, testCampaign, duplicateCampaign } = useCampaignService()
+const { listCampaigns, deleteCampaign, testCampaign, duplicateCampaign } = useCampaignService()
 const { search, name, status, channelId, dateRange, tagIds } = useCampaignFilter()
 const { getTableValueWithDefault, getNestedTableValue, hasTableValue } = useTableTypes()
 const { getStatusSeverity } = useStatusColors()
 const { formatDate } = useDateFormat()
 const { activeFiltersCount } = useActiveFiltersCount({ search, name, status, channelId, dateRange, tagIds })
-const { getChannels } = useChannelService()
+const { listChannels } = useChannelService()
 
 const showMobileModal = ref(false)
 const showTagsModal = ref(false)
@@ -145,7 +145,7 @@ const fetchCampaigns = async (
       filters.endDate = dateRange.value[1].toISOString()
     }
 
-    const response = await getCampaigns(filters)
+    const response = await listCampaigns(filters)
     if (response && response.data && response.meta) {
       campaigns.value = response.data
       campaignMeta.value = response.meta
@@ -169,7 +169,7 @@ onMounted(() => {
 const fetchChannels = async () => {
   loadingChannels.value = true
   try {
-    const response = await getChannels()
+    const response = await listChannels()
     if (response) {
       channels.value = response
     }

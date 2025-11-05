@@ -104,7 +104,7 @@ export const useRechargeForm = () => {
   const loadOrganizations = async () => {
     isLoadingOrganizations.value = true
     try {
-      const response = await organizationService.getOrganizations()
+      const response = await organizationService.listOrganizations()
       if (response) {
         organizations.value = response
       }

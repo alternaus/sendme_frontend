@@ -59,7 +59,7 @@ export default defineComponent({
       hasStepErrors,
     } = useCampaignForm()
 
-    const { getChannels } = useChannelService()
+    const { listChannels } = useChannelService()
     const { createCampaign, updateCampaign, getCampaign } = useCampaignService()
     const { getStatusOptions } = useStatusColors()
 
@@ -100,7 +100,7 @@ export default defineComponent({
 
     onMounted(async () => {
       try {
-        const response = await getChannels()
+        const response = await listChannels()
         channels.value = response.map((channel) => ({
           name: channel.name,
           value: channel.id,

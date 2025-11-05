@@ -27,7 +27,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const { t } = useI18n()
-const { getCustomFields } = useCustomFieldService()
+const { listCustomFields } = useCustomFieldService()
 const customFieldsOptions = ref<SelectOption[]>([])
 const customFieldsData = ref<ICustomField[]>([])
 const touchedFields = ref<Record<number, boolean>>({})
@@ -52,7 +52,7 @@ const {
 
 onMounted(async () => {
   try {
-    const response = await getCustomFields()
+    const response = await listCustomFields()
     customFieldsData.value = response
     customFieldsOptions.value = response.map((customField) => ({
       name: customField.fieldName,

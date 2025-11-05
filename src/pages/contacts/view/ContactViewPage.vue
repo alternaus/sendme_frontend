@@ -99,7 +99,7 @@ export default defineComponent({
     const contactId = route.params?.id ? String(route.params.id) : ''
 
     const { getContact, deleteContact } = useContactService()
-    const { getCustomFields } = useCustomFieldService()
+    const { listCustomFields } = useCustomFieldService()
 
     const contact = ref<IContact | null>(null)
     const customFields = ref<{ id:string; fieldName: string }[]>([])
@@ -125,7 +125,7 @@ export default defineComponent({
         if (contactId) {
           contact.value = await getContact(contactId)
         }
-        customFields.value = await getCustomFields()
+        customFields.value = await listCustomFields()
       } catch {
         toast.add({
           severity: 'error',

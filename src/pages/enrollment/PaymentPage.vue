@@ -143,7 +143,7 @@ const fetchPlanDetails = async (id: string): Promise<EnhancedPlan | null> => {
   loading.value = true
   error.value = null
   try {
-  const plan = await planService.getPlanById(id)
+  const plan = await planService.getPlan(id)
 
     if (!plan) {
       error.value = 'enrollment.plans.plan_not_found'

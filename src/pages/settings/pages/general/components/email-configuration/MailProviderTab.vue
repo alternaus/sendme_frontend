@@ -22,7 +22,7 @@ import { useMailProviderForm } from './composables/useMailProviderForm'
 const { t } = useI18n()
 const toast = useToast()
 const { form, handleSubmit, setValues, resetForm, errors } = useMailProviderForm()
-const { getEmailConfigurations, createEmailConfiguration, updateEmailConfiguration } = useMailProviderService()
+const { listEmailConfigurations, createEmailConfiguration, updateEmailConfiguration } = useMailProviderService()
 const { sendBatchMessage } = useSendService()
 
 const loading = ref(false)
@@ -46,7 +46,7 @@ const portOptions = [
 onMounted(async () => {
   loading.value = true
   try {
-    const res = await getEmailConfigurations()
+    const res = await listEmailConfigurations()
     const list: EmailConfigurationResponseDto[] = Array.isArray(res) ? res : []
     const item = list?.[0]
     if (item) {

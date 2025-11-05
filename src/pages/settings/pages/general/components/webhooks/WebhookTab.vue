@@ -20,7 +20,7 @@ import WebhookForm from './components/WebhookForm.vue'
 const { t } = useI18n()
 const toast = useToast()
 const confirm = useConfirm()
-const { list, create, remove, toggleStatus } = useWebhookService()
+const { listWebhooks, createWebhook, deleteWebhook, toggleWebhookStatus } = useWebhookService()
 const { formatDate } = useDateFormat()
 
 const rows = ref<WebhookEndpoint[]>([])
@@ -31,7 +31,7 @@ const showForm = ref(false)
 onMounted(async () => {
   loading.value = true
   try {
-    rows.value = await list()
+    rows.value = await listWebhooks()
   } finally {
     loading.value = false
   }
@@ -40,7 +40,7 @@ onMounted(async () => {
 const onCreate = async (webhookData: CreateWebhookEndpointDto) => {
   creating.value = true
   try {
-    const created = await create(webhookData)
+    const created = await createWebhook(webhookData)
     rows.value.unshift(created)
     showForm.value = false
     toast.add({
@@ -63,7 +63,7 @@ const onCreate = async (webhookData: CreateWebhookEndpointDto) => {
 
 const onToggleStatus = async (webhook: WebhookEndpoint) => {
   try {
-    const updated = await toggleStatus(webhook.id, !webhook.isActive)
+    const updated = await toggleWebhookStatus(webhook.id, !webhook.isActive)
     const index = rows.value.findIndex(r => r.id === webhook.id)
     if (index !== -1) {
       rows.value[index] = updated
@@ -91,7 +91,7 @@ const confirmDelete = (webhook: WebhookEndpoint) => {
     icon: 'pi pi-exclamation-triangle',
     accept: async () => {
       try {
-        await remove(webhook.id)
+        await deleteWebhook(webhook.id)
         rows.value = rows.value.filter(r => r.id !== webhook.id)
         toast.add({
           severity: 'success',

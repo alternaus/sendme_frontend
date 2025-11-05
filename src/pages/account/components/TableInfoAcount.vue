@@ -27,7 +27,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { getRecharges } = useOrganizationService()
+    const { listRecharges } = useOrganizationService()
     const { startDate, endDate } = useRechargesFilter()
     const { getStatusSeverity } = useStatusColors()
 
@@ -54,7 +54,7 @@ export default defineComponent({
       limit.value = limitSize
       loading.value = true
       try {
-        const response = await getRecharges({
+        const response = await listRecharges({
           page: page.value,
           limit: limit.value,
           organizationId: props.idOrganization,
