@@ -52,15 +52,52 @@ export function useCustomClientForm() {
   }).shape({}) as yup.ObjectSchema<Partial<CustomClientFormData>>
 
   const customPlanSchema = yup.object({
-    planName: yup.string().required().label(t('custom_clients.form.custom_plan.plan_name')),
-    subscriptionPrice: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.subscription_price')),
-    includedMessages: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.included_messages')),
-    messagePrice: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.message_price')),
-    resetDay: yup.number().min(1).max(31).required().label(t('custom_clients.form.custom_plan.reset_day')),
-    campaignLimit: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.campaign_limit')),
-    contactLimit: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.contact_limit')),
-    tagLimit: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.tag_limit')),
-    customFieldLimit: yup.number().min(0).required().label(t('custom_clients.form.custom_plan.custom_field_limit')),
+    planName: yup.string().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.required().label(t('custom_clients.form.custom_plan.plan_name')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    subscriptionPrice: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.subscription_price')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    includedMessages: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.included_messages')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    messagePrice: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.message_price')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    resetDay: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(1).max(31).required().label(t('custom_clients.form.custom_plan.reset_day')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    campaignLimit: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.campaign_limit')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    contactLimit: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.contact_limit')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    tagLimit: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.tag_limit')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    customFieldLimit: yup.number().when('planType', {
+      is: 'custom',
+      then: (schema) => schema.min(0).required().label(t('custom_clients.form.custom_plan.custom_field_limit')),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    planType: yup.string(),
   }).shape({}) as yup.ObjectSchema<Partial<CustomClientFormData>>
 
   const managersSchema = yup.object({
@@ -175,6 +212,22 @@ export function useCustomClientForm() {
     })
   })
 
+  const nextStep = async () => {
+    const result = await stepper.nextStep()
+    if (result && stepper.currentStep.value === '3' && planType.value !== 'custom') {
+      await stepper.nextStep()
+    }
+    return result
+  }
+
+  const prevStep = async () => {
+    const result = await stepper.prevStep()
+    if (result && stepper.currentStep.value === '3' && planType.value !== 'custom') {
+      await stepper.prevStep()
+    }
+    return result
+  }
+
   const form = {
     planType,
     selectedPlanId,
@@ -202,6 +255,8 @@ export function useCustomClientForm() {
     form,
     ...stepper,
     steps,
+    nextStep,
+    prevStep,
   }
 }
 

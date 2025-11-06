@@ -47,7 +47,7 @@ export default defineComponent({
   setup() {
     const { t } = useI18n()
     const router = useRouter()
-    const { getAudits, exportAudits } = useReportService()
+    const { listAudits, exportAudits } = useReportService()
 
     const { action, table, startDate, endDate, search } = useAuditFilter()
     const { activeFiltersCount } = useActiveFiltersCount({ action, table, startDate, endDate, search })
@@ -90,7 +90,7 @@ export default defineComponent({
       limit.value = limitSize
       loading.value = true
       try {
-        const response = await getAudits({
+        const response = await listAudits({
           page: page.value,
           limit: limit.value,
           action: action.value,

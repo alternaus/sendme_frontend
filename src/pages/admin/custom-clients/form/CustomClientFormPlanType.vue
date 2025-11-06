@@ -6,6 +6,7 @@ import RadioButton from 'primevue/radiobutton'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import type { SelectOption } from '@/components/atoms/selects/types/select-option.types'
 import type { CustomClientFormData } from '@/composables/useCustomClientForm'
+import { usePlanService } from '@/services/organization/usePlanService'
 
 interface Props {
   form: Record<keyof CustomClientFormData, { value: unknown }>
@@ -18,6 +19,8 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const { listPlans } = usePlanService()
 
 const availablePlans = ref<SelectOption[]>([])
 const isLoadingPlans = ref(false)
@@ -35,11 +38,14 @@ const selectedPlanId = computed({
 const loadPlans = async () => {
   isLoadingPlans.value = true
   try {
-    availablePlans.value = [
-      { name: 'Plan Básico', value: '1' },
-      { name: 'Plan Profesional', value: '2' },
-      { name: 'Plan Enterprise', value: '3' },
-    ]
+    const plans = await listPlans()
+    availablePlans.value = plans.map(plan => ({
+      name: plan.name,
+      value: plan.id,
+    }))
+  } catch (error) {
+    console.error('Error loading plans:', error)
+    availablePlans.value = []
   } finally {
     isLoadingPlans.value = false
   }

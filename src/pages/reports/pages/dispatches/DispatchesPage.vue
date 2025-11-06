@@ -44,7 +44,7 @@ export default defineComponent({
     const { t } = useI18n()
     const toast = useToast()
     const router = useRouter()
-    const { getDispatches, exportDispatches } = useReportService()
+    const { listDispatches, exportDispatches } = useReportService()
     const { search, startDate, endDate } = useDispatchFilter()
     const { activeFiltersCount } = useActiveFiltersCount({ search, startDate, endDate })
 
@@ -72,7 +72,7 @@ export default defineComponent({
       limit.value = limitSize
       loading.value = true
       try {
-        const response = await getDispatches({
+        const response = await listDispatches({
           page: pageSize,
           limit: limitSize,
           search: search.value,
@@ -82,7 +82,7 @@ export default defineComponent({
 
         if (response?.data && response?.meta) {
           // Agregar campos calculados para mostrar en la tabla
-          dispatches.value = response.data.map(dispatch => ({
+          dispatches.value = response.data.map((dispatch: ICampaignDispatch) => ({
             ...dispatch,
             campaignName: dispatch.campaign.name,
             providerName: dispatch.provider.name,

@@ -65,7 +65,7 @@ export default defineComponent({
     const { t } = useI18n()
     const toast = useToast()
     const router = useRouter()
-    const { getMessages, exportMessages } = useReportService()
+    const { listMessages, exportMessages } = useReportService()
     const { content, status, messageType, startDate, endDate } = useMessageFilter()
     const { activeFiltersCount } = useActiveFiltersCount({ content, status, messageType, startDate, endDate })
     const { getStatusSeverity } = useStatusColors()
@@ -95,7 +95,7 @@ export default defineComponent({
       limit.value = limitSize
       loading.value = true
       try {
-        const response = await getMessages({
+        const response = await listMessages({
           page: pageSize,
           limit: limitSize,
           content: content.value,
