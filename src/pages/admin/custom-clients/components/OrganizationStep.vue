@@ -73,7 +73,7 @@ import { reactive, watch } from 'vue'
 
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
-import type { IOrganizationFormData } from '@/services/custom-client/interfaces/create-client.interface'
+import type { IOrganizationFormData } from '@/services/organization/interfaces/create-client.interface'
 
 interface Props {
   modelValue: IOrganizationFormData

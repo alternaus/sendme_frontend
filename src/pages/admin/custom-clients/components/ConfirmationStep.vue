@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ICustomPlanFormData, IManagerFormData, IOrganizationFormData } from '@/services/custom-client/interfaces/create-client.interface'
+import type { ICustomPlanFormData, IManagerFormData, IOrganizationFormData } from '@/services/organization/interfaces/create-client.interface'
 
 defineProps<{
   organization: IOrganizationFormData

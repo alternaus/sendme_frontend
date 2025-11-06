@@ -16,19 +16,17 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { ActionTypes } from '@/components/molecules/header/enums/action-types.enum'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import { useActiveFiltersCount } from '@/composables/useActiveFiltersCount'
-import { useDateFormat } from '@/composables/useDateFormat'
 import { useTableTypes } from '@/composables/useTableTypes'
-import type { ICustomClient } from '@/services/custom-client/interfaces/custom-client.interface'
-import { useCustomClientService } from '@/services/custom-client/useCustomClientService'
 import type { IPaginationMeta } from '@/services/interfaces/pagination-response.interface'
+import type { IOrganization } from '@/services/organization/interfaces/organization.interface'
+import { useOrganizationService } from '@/services/organization/useOrganizationService'
 
 const { t } = useI18n()
 const router = useRouter()
 const toast = useToast()
 const confirm = useConfirm()
-const { listCustomClients } = useCustomClientService()
+const { listOrganizations } = useOrganizationService()
 const { getNestedTableValue, getTableValueWithDefault } = useTableTypes()
-const { formatDate } = useDateFormat()
 
 const search = ref('')
 const showMobileModal = ref(false)
@@ -36,8 +34,8 @@ const { activeFiltersCount } = useActiveFiltersCount({ search })
 
 const page = ref(1)
 const limit = ref(10)
-const clients = ref<ICustomClient[]>([])
-const selected = ref<ICustomClient[]>([])
+const clients = ref<IOrganization[]>([])
+const selected = ref<IOrganization[]>([])
 const loading = ref(false)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -89,7 +87,7 @@ const fetchClients = async (
   loading.value = true
 
   try {
-    const response = await listCustomClients()
+    const response = await listOrganizations()
     clients.value = response
     clientMeta.value = {
       currentPage: pageSize,
@@ -131,9 +129,9 @@ const handleSelectionChange = (
   if (selection === null || selection === undefined) {
     selected.value = []
   } else if (Array.isArray(selection)) {
-    selected.value = selection as unknown as ICustomClient[]
+    selected.value = selection as unknown as IOrganization[]
   } else {
-    selected.value = [selection as unknown as ICustomClient]
+    selected.value = [selection as unknown as IOrganization]
   }
 }
 
@@ -167,7 +165,7 @@ async function handleDelete() {
 }
 
 const handleRowDoubleClick = (client: Record<string, unknown>) => {
-  const clientId = client._id as string
+  const clientId = client.id as string
   if (clientId) {
     router.push({ name: 'custom-clients.view', params: { id: clientId } })
   }
@@ -198,7 +196,6 @@ const handleRowDoubleClick = (client: Record<string, unknown>) => {
       { field: 'planName', header: $t('custom_clients.list.columns.plan') },
       { field: 'messages', header: $t('custom_clients.list.columns.messages') },
       { field: 'status', header: $t('custom_clients.list.columns.status') },
-      { field: 'nextBilling', header: $t('custom_clients.list.columns.next_billing') },
     ]"
     :pageSize="clientMeta.limit"
     :pageCurrent="clientMeta.currentPage"
@@ -221,39 +218,24 @@ const handleRowDoubleClick = (client: Record<string, unknown>) => {
     @row-double-click="handleRowDoubleClick"
   >
     <template #custom-name="{ data }">
-      <div class="flex flex-col">
-        <span class="font-medium">{{ getTableValueWithDefault(data, 'name', '') }}</span>
-        <span class="text-sm text-gray-500">{{ getTableValueWithDefault(data, 'document', '') }}</span>
-      </div>
+      <span class="font-medium">{{ getTableValueWithDefault(data, 'name', '') }}</span>
     </template>
 
     <template #custom-planName="{ data }">
-      <div class="flex flex-col">
-        <span>{{ getNestedTableValue<string>(data, 'plan.name') || '-' }}</span>
-        <span class="text-sm text-gray-500">${{ getNestedTableValue<number>(data, 'plan.subscriptionPrice') || 0 }}/mes</span>
-      </div>
+      <span>{{ getNestedTableValue<string>(data, 'plan.name') || '-' }} - ${{ getNestedTableValue<number>(data, 'plan.cost') || 0 }}/mes</span>
     </template>
 
     <template #custom-messages="{ data }">
-      <div class="flex flex-col">
-        <span>{{ getNestedTableValue<number>(data, 'recharge.currentMessages') || 0 }}/{{ getNestedTableValue<number>(data, 'plan.includedMessages') || 0 }}</span>
-        <span class="text-sm text-gray-500">${{ getNestedTableValue<number>(data, 'plan.messagePrice') || 0 }}/msg</span>
-      </div>
+      <span>${{ getNestedTableValue<number>(data, 'plan.pricePerMessage') || 0 }}/msg</span>
     </template>
 
-    <template #custom-status="{ data }">
+    <template #custom-status>
       <div class="flex justify-center">
         <AppTag
-          :label="$t(`custom_clients.list.status.${getNestedTableValue<string>(data, 'subscription.status') || 'active'}`)"
+          :label="$t('custom_clients.list.status.active')"
           severity="success"
           size="small"
         />
-      </div>
-    </template>
-
-    <template #custom-nextBilling="{ data }">
-      <div>
-        {{ formatDate(getNestedTableValue<string>(data, 'subscription.nextBillingDate') || '') }}
       </div>
     </template>
   </AppTable>

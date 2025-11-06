@@ -30,7 +30,7 @@ import { ref, watch } from 'vue'
 
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
-import type { IManagerFormData } from '@/services/custom-client/interfaces/create-client.interface'
+import type { IManagerFormData } from '@/services/organization/interfaces/create-client.interface'
 
 const props = defineProps<{ modelValue: IManagerFormData[] }>()
 const emit = defineEmits<{ (e: 'update:modelValue', value: IManagerFormData[]): void }>()

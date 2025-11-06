@@ -25,7 +25,7 @@ import { reactive, watch } from 'vue'
 
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppInputNumber from '@/components/atoms/inputs/AppInputNumber.vue'
-import type { ICustomPlanFormData } from '@/services/custom-client/interfaces/create-client.interface'
+import type { ICustomPlanFormData } from '@/services/organization/interfaces/create-client.interface'
 
 const props = defineProps<{ modelValue: ICustomPlanFormData }>()
 const emit = defineEmits<{ (e: 'update:modelValue', value: ICustomPlanFormData): void }>()

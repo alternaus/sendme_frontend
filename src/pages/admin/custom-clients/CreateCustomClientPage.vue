@@ -10,7 +10,7 @@ import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
 import AppFormStepper from '@/components/molecules/stepper/AppFormStepper.vue'
 import { useCustomClientForm } from '@/composables/useCustomClientForm'
-import { useCustomClientService } from '@/services/custom-client/useCustomClientService'
+import { useOrganizationService } from '@/services/organization/useOrganizationService'
 
 import CustomClientFormConfirmation from './form/CustomClientFormConfirmation.vue'
 import CustomClientFormCustomPlan from './form/CustomClientFormCustomPlan.vue'
@@ -49,7 +49,7 @@ export default defineComponent({
       hasStepErrors,
     } = useCustomClientForm()
 
-    const { createWithExistingPlan, createWithCustomPlan } = useCustomClientService()
+    const { createClientWithExistingPlan, createClientWithCustomPlan } = useOrganizationService()
 
     const isLoading = ref(false)
 
@@ -102,12 +102,12 @@ export default defineComponent({
         const data = formatClientData()
 
         if (form.planType.value === 'existing' && form.selectedPlanId.value) {
-          await createWithExistingPlan(form.selectedPlanId.value as string, {
+          await createClientWithExistingPlan(form.selectedPlanId.value as string, {
             organization: data.organization,
             managers: data.managers,
           })
         } else if (data.customPlan) {
-          await createWithCustomPlan({
+          await createClientWithCustomPlan({
             organization: data.organization,
             managers: data.managers,
             customPlan: data.customPlan,
