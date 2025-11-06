@@ -19,7 +19,7 @@ import { useOrganizationService } from '@/services/organization/useOrganizationS
 import { useRechargeForm } from './composables/useRechargeForm'
 
 const { t } = useI18n()
-const { getRecharges } = useOrganizationService()
+const { listRecharges } = useOrganizationService()
 const { formatDate } = useDateFormat()
 
 const {
@@ -83,7 +83,7 @@ const getStatusClasses = (status: RechargeStatus) => {
 const loadRecharges = async (page = 1) => {
   loading.value = true
   try {
-    const response = await getRecharges({
+    const response = await listRecharges({
       page,
       limit: 10,
     })

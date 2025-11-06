@@ -29,7 +29,7 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 const { formatDate } = useDateFormat()
-const { getCustomFields } = useCustomFieldService()
+const { listCustomFields } = useCustomFieldService()
 
 const customFields = ref<ICustomField[]>([])
 const isLoadingCustomFields = ref(false)
@@ -56,7 +56,7 @@ const loadCustomFields = async () => {
 
   isLoadingCustomFields.value = true
   try {
-    const response = await getCustomFields()
+    const response = await listCustomFields()
     customFields.value = response
   } catch {
     customFields.value = []

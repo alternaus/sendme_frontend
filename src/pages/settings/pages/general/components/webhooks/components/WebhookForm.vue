@@ -30,7 +30,7 @@ const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 const { form, handleSubmit, resetForm, errors } = useWebhookForm()
-const { getEvents } = useWebhookService()
+const { listWebhookEvents } = useWebhookService()
 
 const newHeader = ref({ name: '', value: '' })
 const availableEvents = ref<WebhookEvent[]>([])
@@ -75,7 +75,7 @@ const timeoutOptions = [
 const loadEvents = async () => {
   loadingEvents.value = true
   try {
-    availableEvents.value = await getEvents()
+    availableEvents.value = await listWebhookEvents()
   } catch {
     availableEvents.value = [
     ]

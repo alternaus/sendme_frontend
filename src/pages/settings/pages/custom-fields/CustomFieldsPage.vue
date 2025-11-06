@@ -11,6 +11,7 @@ import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppSelect from '@/components/atoms/selects/AppSelect.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import type { ICustomField } from '@/services/custom-field/interfaces/custom-field.interface'
 import { useCustomFieldService } from '@/services/custom-field/useCustomFieldService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -18,7 +19,7 @@ import { useCustomFieldForm } from './composables/useCustomFieldsForm'
 
 const { t } = useI18n()
 const toast = useToast()
-const { getCustomFields, createCustomField, updateCustomField, deleteCustomField } = useCustomFieldService()
+const { listCustomFields, createCustomField, updateCustomField, deleteCustomField } = useCustomFieldService()
 
 const {
   customFields,
@@ -48,11 +49,11 @@ const getError = (idx: number, field: keyof typeof customFields.value[0]['value'
 
 const loadCustomFields = async () => {
   try {
-    const fields = await getCustomFields()
+    const fields = await listCustomFields()
     resetForm()
     customFieldIds.value = {}
 
-    fields.forEach((field, index) => {
+    fields.forEach((field: ICustomField, index: number) => {
       addCustomField({
         fieldName: field.fieldName,
         dataType: field.dataType as 'STRING' | 'NUMBER' | 'DATE'
@@ -152,7 +153,7 @@ const onSubmit = () => {
   handleSubmit(
     async (values) => {
       try {
-        const existingFields = await getCustomFields()
+        const existingFields = await listCustomFields()
 
         for (const [index, field] of values.customFields.entries()) {
           const existingFieldId = customFieldIds.value[index]
@@ -162,7 +163,7 @@ const onSubmit = () => {
               fieldName: field.fieldName,
               dataType: field.dataType,
               elementType: 'INPUT',
-              organizationId: existingFields.find(ef => ef.id === existingFieldId)?.organizationId || user?.organizationId || '1'
+              organizationId: existingFields.find((ef: ICustomField) => ef.id === existingFieldId)?.organizationId || user?.organizationId || '1'
             })
           } else {
             await createCustomField({
