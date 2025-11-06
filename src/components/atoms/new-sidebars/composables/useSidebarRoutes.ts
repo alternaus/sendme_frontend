@@ -9,49 +9,65 @@ import Reports from '@/assets/svg/sidebar/reports.svg?component'
 import Send from '@/assets/svg/sidebar/send.svg?component'
 import Settings from '@/assets/svg/sidebar/settings.svg?component'
 import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 import type { IRoute } from '../interfaces/route.interface'
 
 export const useSidebarRoutes = () => {
   const { t } = useI18n()
+  const authStore = useAuthStore()
 
-  const routes = computed<IRoute[]>(() => [
-    {
-      path: '/contacts',
-      icon: Contacts,
-      title: t('contact.contacts'),
-    },
-    {
-      path: '/campaigns',
-      icon: Campaigns,
-      title: t('campaign.general.campaigns'),
-    },
-    {
-      path: '/whatsapp/signup',
-      icon: Whatsapp,
-      title: 'Whatsapp',
-    },
-    {
-      path: '/send',
-      icon: Send,
-      title: t('common.general.send'),
-    },
-    {
-      path: '/report',
-      icon: Reports,
-      title: t('reports.reports'),
-    },
-    {
-      path: '/buy',
-      icon: Buy,
-      title: t('common.general.buy'),
-    },
-    {
-      path: '/settings',
-      icon: Settings,
-      title: t('common.general.settings'),
-    },
-  ])
+  const isAdmin = computed(() => authStore.user?.role?.name === 'admin')
+
+  const routes = computed<IRoute[]>(() => {
+    const baseRoutes: IRoute[] = [
+      {
+        path: '/contacts',
+        icon: Contacts,
+        title: t('contact.contacts'),
+      },
+      {
+        path: '/campaigns',
+        icon: Campaigns,
+        title: t('campaign.general.campaigns'),
+      },
+      {
+        path: '/whatsapp/signup',
+        icon: Whatsapp,
+        title: 'Whatsapp',
+      },
+      {
+        path: '/send',
+        icon: Send,
+        title: t('common.general.send'),
+      },
+      {
+        path: '/report',
+        icon: Reports,
+        title: t('reports.reports'),
+      },
+      {
+        path: '/buy',
+        icon: Buy,
+        title: t('common.general.buy'),
+      },
+      {
+        path: '/settings',
+        icon: Settings,
+        title: t('common.general.settings'),
+      },
+    ]
+
+    if (isAdmin.value) {
+      baseRoutes.push({
+        path: '/admin/clients',
+        icon: Settings,
+        title: t('custom_clients.title'),
+      })
+    }
+
+    return baseRoutes
+  })
 
   return {
     routes,

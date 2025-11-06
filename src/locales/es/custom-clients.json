@@ -1,0 +1,236 @@
+{
+  "title": "Gestión de Clientes",
+  "clients": "Clientes",
+  "client": "Cliente",
+  "list": {
+    "title": "Lista de Clientes",
+    "empty": "No hay clientes registrados",
+    "loading": "Cargando clientes...",
+    "search_placeholder": "Buscar por nombre, email o documento",
+    "create_button": "Crear Cliente",
+    "columns": {
+      "organization": "Organización",
+      "plan": "Plan",
+      "messages": "Mensajes",
+      "status": "Estado",
+      "next_billing": "Próxima Facturación",
+      "actions": "Acciones"
+    },
+    "status": {
+      "active": "Activo",
+      "suspended": "Suspendido",
+      "cancelled": "Cancelado"
+    },
+    "actions": {
+      "view": "Ver Detalle"
+    }
+  },
+  "detail": {
+    "title": "Detalle del Cliente",
+    "organization_info": "Información de la Organización",
+    "plan_info": "Información del Plan",
+    "subscription_info": "Información de la Suscripción",
+    "recharge_info": "Información de Recarga",
+    "managers": "Usuarios Managers",
+    "statistics": "Estadísticas de Uso",
+    "back_to_list": "Volver a la lista",
+    "fields": {
+      "name": "Nombre",
+      "document": "Documento",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "country": "País",
+      "city": "Ciudad",
+      "address": "Dirección",
+      "plan_name": "Nombre del Plan",
+      "subscription_price": "Precio de Suscripción",
+      "included_messages": "Mensajes Incluidos",
+      "message_price": "Precio por Mensaje",
+      "reset_day": "Día de Reinicio",
+      "campaign_limit": "Límite de Campañas",
+      "contact_limit": "Límite de Contactos",
+      "tag_limit": "Límite de Etiquetas",
+      "custom_field_limit": "Límite de Campos Personalizados",
+      "status": "Estado",
+      "start_date": "Fecha de Inicio",
+      "next_billing": "Próxima Facturación",
+      "cancelled_at": "Cancelado el",
+      "current_messages": "Mensajes Actuales",
+      "last_reset": "Última Recarga",
+      "next_reset": "Próxima Recarga",
+      "manager_name": "Nombre",
+      "manager_email": "Correo"
+    }
+  },
+  "form": {
+    "title": "Crear Nuevo Cliente",
+    "subtitle": "Completa el formulario para registrar un nuevo cliente personalizado en el sistema",
+    "create_title": "Crear Nuevo Cliente",
+    "edit_title": "Editar Cliente",
+    "steps": {
+      "plan_type": "Tipo de Plan",
+      "organization": "Organización",
+      "custom_plan": "Plan Personalizado",
+      "managers": "Managers",
+      "confirmation": "Confirmación"
+    },
+    "plan_type": {
+      "title": "Selecciona el tipo de plan",
+      "subtitle": "¿Qué tipo de plan deseas usar para este cliente?",
+      "existing": "Usar un plan existente",
+      "existing_description": "Selecciona un plan ya configurado en el sistema",
+      "custom": "Crear un plan personalizado",
+      "custom_description": "Configura un plan completamente nuevo y específico",
+      "select_plan": "Seleccionar Plan",
+      "select_plan_placeholder": "Selecciona un plan"
+    },
+    "organization": {
+      "title": "Datos de la Organización",
+      "subtitle": "Información comercial y de contacto del cliente",
+      "name": "Nombre Comercial",
+      "name_placeholder": "Ej: Empresa XYZ S.A.S",
+      "document": "Número de Documento",
+      "document_placeholder": "Ej: 900123456",
+      "document_type": "Tipo de Documento",
+      "document_type_placeholder": "Selecciona el tipo",
+      "email": "Email Institucional",
+      "email_placeholder": "contacto{'@'}empresa.com",
+      "phone": "Teléfono",
+      "phone_placeholder": "+573001234567",
+      "country": "País",
+      "country_placeholder": "Selecciona el país",
+      "city": "Ciudad",
+      "city_placeholder": "Ej: Medellín",
+      "address": "Dirección",
+      "address_placeholder": "Calle 50 #45-30 (Opcional)"
+    },
+    "custom_plan": {
+      "title": "Configuración del Plan Personalizado",
+      "subtitle": "Define los límites y precios para este cliente",
+      "plan_name": "Nombre del Plan",
+      "plan_name_placeholder": "Ej: Plan Corporativo Premium",
+      "subscription_price": "Precio Mensual (COP)",
+      "subscription_price_placeholder": "0",
+      "included_messages": "Mensajes Incluidos (Calculado)",
+      "included_messages_placeholder": "0",
+      "message_price": "Precio por SMS (COP)",
+      "message_price_placeholder": "50",
+      "reset_day": "Día de Recarga Mensual",
+      "reset_day_placeholder": "1-31",
+      "reset_day_help": "Día del mes en que se renovarán los mensajes",
+      "limits_section": "Límites del Plan",
+      "campaign_limit": "Límite de Campañas",
+      "campaign_limit_placeholder": "100",
+      "contact_limit": "Límite de Contactos",
+      "contact_limit_placeholder": "50000",
+      "tag_limit": "Límite de Tags",
+      "tag_limit_placeholder": "50",
+      "custom_field_limit": "Límite de Campos Personalizados",
+      "custom_field_limit_placeholder": "20"
+    },
+    "managers": {
+      "title": "Usuarios Managers",
+      "subtitle": "Agrega al menos un usuario administrador para el cliente",
+      "add_manager": "Agregar Manager",
+      "remove_manager": "Eliminar",
+      "manager_number": "Manager {number}",
+      "name": "Nombre Completo",
+      "name_placeholder": "Ej: Carlos Pérez",
+      "email": "Email",
+      "email_placeholder": "carlos.perez{'@'}empresa.com",
+      "password": "Contraseña",
+      "password_placeholder": "Mínimo 6 caracteres",
+      "password_help": "La contraseña será hasheada con Argon2",
+      "min_managers": "Debe haber al menos un manager"
+    },
+    "confirmation": {
+      "title": "Confirmación",
+      "subtitle": "Revisa los datos antes de crear el cliente",
+      "organization_section": "Datos de la Organización",
+      "plan_section": "Configuración del Plan",
+      "managers_section": "Managers",
+      "plan_type_label": "Tipo de Plan",
+      "plan_existing": "Plan Existente",
+      "plan_custom": "Plan Personalizado",
+      "selected_plan": "Plan Seleccionado",
+      "manager_count": "{count} manager(s)",
+      "create_button": "Crear Cliente",
+      "creating_button": "Creando...",
+      "cancel_button": "Cancelar"
+    },
+    "buttons": {
+      "next": "Siguiente",
+      "previous": "Anterior",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "create": "Crear Cliente"
+    },
+    "validation": {
+      "required": "Este campo es requerido",
+      "email": "Email inválido",
+      "phone": "Teléfono inválido",
+      "positive": "Debe ser un número positivo",
+      "integer": "Debe ser un número entero",
+      "min": "El valor mínimo es {min}",
+      "max": "El valor máximo es {max}",
+      "min_managers": "Debe agregar al menos un manager"
+    }
+  },
+  "messages": {
+    "create_success": "Cliente creado exitosamente",
+    "create_error": "Error al crear el cliente",
+    "load_error": "Error al cargar los datos",
+    "loading": "Cargando...",
+    "creating": "Creando cliente...",
+    "credentials_sent": "Las credenciales han sido enviadas a los managers",
+    "delete_success": "Cliente(s) eliminado(s) correctamente"
+  },
+  "common": {
+    "filters": "Filtros"
+  },
+  "delete_confirmation": {
+    "title": "Confirmar Eliminación",
+    "message_single": "¿Estás seguro de que deseas eliminar el cliente {name}?",
+    "message_multiple": "¿Estás seguro de que deseas eliminar {count} clientes?"
+  },
+  "fields": {
+    "name": "Nombre",
+    "document": "Documento",
+    "email": "Email",
+    "phone": "Teléfono",
+    "country": "País",
+    "city": "Ciudad",
+    "status": "Estado",
+    "plan": "Plan",
+    "created_at": "Fecha de Creación",
+    "actions": "Acciones"
+  },
+  "actions": {
+    "view": "Ver Detalle",
+    "edit": "Editar",
+    "edit_plan": "Editar Plan",
+    "delete": "Eliminar",
+    "activate": "Activar",
+    "deactivate": "Desactivar"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "suspended": "Suspendido",
+    "cancelled": "Cancelado"
+  },
+  "document_types": {
+    "nit": "NIT",
+    "rut": "RUT",
+    "cc": "Cédula de Ciudadanía",
+    "ce": "Cédula de Extranjería",
+    "passport": "Pasaporte"
+  },
+  "countries": {
+    "colombia": "Colombia",
+    "argentina": "Argentina",
+    "chile": "Chile",
+    "peru": "Perú",
+    "mexico": "México"
+  }
+}

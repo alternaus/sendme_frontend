@@ -7,6 +7,7 @@ import authRoutes from './authRoutes'
 import buyRoutes from './buyRoutes'
 import campaignRoutes from './campaignRoutes'
 import contactRoutes from './contactRoutes'
+import customClientRoutes from './customClientRoutes'
 import enrollmentRoutes from './enrollmentRoutes'
 import reportRoutes from './reportRoutes'
 import sendRoutes from './sendRoutes'
@@ -27,6 +28,7 @@ const routes: RouteRecordRaw[] = [
   reportRoutes,
   accountRoutes,
   buyRoutes,
+  customClientRoutes,
   authRoutes,
   enrollmentRoutes,
   whatsappRoutes,
@@ -45,6 +47,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
   const breadcrumbStore = useBreadcrumbStore();
   const breadcrumbs = Array.isArray(to.meta.breadcrumb) ? to.meta.breadcrumb : [];
 
@@ -61,6 +64,10 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !token) {
     return next('/auth/sign-in')
+  }
+
+  if (to.meta.requiresAdmin && user?.role?.name !== 'admin') {
+    return next('/')
   }
 
   // Permitir acceso a rutas de enrollment y callback de OAuth incluso si el usuario está autenticado

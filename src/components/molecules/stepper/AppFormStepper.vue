@@ -106,7 +106,7 @@ const handleCancel = () => {
           :key="step.id"
           :value="step.id"
           v-slot="{ activateCallback }"
-          class="p-2 rounded-xl shadow-md"
+          class="p-6 rounded-xl shadow-md"
         >
           <div>
             <slot :name="`step-${step.id}`" :activateCallback="activateCallback" />
@@ -121,6 +121,7 @@ const handleCancel = () => {
                 size="small"
                 outlined
                 icon="pi pi-arrow-left"
+                class="w-auto!"
                 @click="handlePrev"
                 :disabled="isLoading"
               />
@@ -133,6 +134,7 @@ const handleCancel = () => {
                 icon="pi pi-arrow-right"
                 icon-pos="right"
                 size="small"
+                class="w-auto!"
                 @click="handleNext"
                 :disabled="isLoading"
               />
@@ -143,6 +145,7 @@ const handleCancel = () => {
                 severity="primary"
                 size="small"
                 icon="pi pi-check"
+                class="w-auto!"
                 @click="handleSubmit"
                 :loading="isLoading"
               />
@@ -152,6 +155,7 @@ const handleCancel = () => {
                 severity="secondary"
                 outlined
                 size="small"
+                class="w-auto!"
                 @click="handleCancel"
                 :disabled="isLoading"
               />

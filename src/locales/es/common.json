@@ -116,7 +116,11 @@
     "sign_in": "Iniciar sesión",
     "sign_up": "Crear cuenta",
     "users": "Usuarios",
-    "view_contact": "Ver contacto"
+    "view_contact": "Ver contacto",
+    "custom_clients": "Clientes Personalizados",
+    "custom_clients_list": "Lista de Clientes Personalizados",
+    "create_custom_client": "Crear Cliente Personalizado",
+    "view_custom_client": "Ver Cliente Personalizado"
   },
   "contact": {
     "contacts": "Contactos",

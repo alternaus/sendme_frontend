@@ -6,6 +6,7 @@ import enBuy from '../locales/en/buy.json'
 import enCampaigns from '../locales/en/campaign.json'
 import enCommon from '../locales/en/common.json'
 import enContacts from '../locales/en/contact.json'
+import enCustomClients from '../locales/en/custom-clients.json'
 import enEnrollment from '../locales/en/enrollment.json'
 import enHome from '../locales/en/home.json'
 import enReports from '../locales/en/report.json'
@@ -19,6 +20,7 @@ import esBuy from '../locales/es/buy.json'
 import esCampaigns from '../locales/es/campaign.json'
 import esCommon from '../locales/es/common.json'
 import esContacts from '../locales/es/contact.json'
+import esCustomClients from '../locales/es/custom-clients.json'
 import esEnrollment from '../locales/es/enrollment.json'
 import esHome from '../locales/es/home.json'
 import esReports from '../locales/es/report.json'
@@ -34,6 +36,7 @@ export type MessageSchema = {
   campaign: typeof esCampaigns
   common: typeof esCommon
   contact: typeof esContacts
+  custom_clients: typeof esCustomClients
   enrollment: typeof esEnrollment
   home: typeof esHome
   reports: typeof esReports
@@ -51,6 +54,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     campaign: esCampaigns,
     common: esCommon,
     contact: esContacts,
+    custom_clients: esCustomClients,
     enrollment: esEnrollment,
     home: esHome,
     reports: esReports,
@@ -66,6 +70,7 @@ const messages: Record<'es' | 'en', MessageSchema> = {
     campaign: enCampaigns,
     common: enCommon,
     contact: enContacts,
+    custom_clients: enCustomClients,
     enrollment: enEnrollment,
     home: enHome,
     reports: enReports,

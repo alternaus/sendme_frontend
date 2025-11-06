@@ -1,0 +1,236 @@
+{
+  "title": "Client Management",
+  "clients": "Clients",
+  "client": "Client",
+  "list": {
+    "title": "Clients List",
+    "empty": "No clients registered",
+    "loading": "Loading clients...",
+    "search_placeholder": "Search by name, email or document",
+    "create_button": "Create Client",
+    "columns": {
+      "organization": "Organization",
+      "plan": "Plan",
+      "messages": "Messages",
+      "status": "Status",
+      "next_billing": "Next Billing",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "cancelled": "Cancelled"
+    },
+    "actions": {
+      "view": "View Detail"
+    }
+  },
+  "detail": {
+    "title": "Client Detail",
+    "organization_info": "Organization Information",
+    "plan_info": "Plan Information",
+    "subscription_info": "Subscription Information",
+    "recharge_info": "Recharge Information",
+    "managers": "Managers Users",
+    "statistics": "Usage Statistics",
+    "back_to_list": "Back to list",
+    "fields": {
+      "name": "Name",
+      "document": "Document",
+      "email": "Email",
+      "phone": "Phone",
+      "country": "Country",
+      "city": "City",
+      "address": "Address",
+      "plan_name": "Plan Name",
+      "subscription_price": "Subscription Price",
+      "included_messages": "Included Messages",
+      "message_price": "Message Price",
+      "reset_day": "Reset Day",
+      "campaign_limit": "Campaign Limit",
+      "contact_limit": "Contact Limit",
+      "tag_limit": "Tag Limit",
+      "custom_field_limit": "Custom Field Limit",
+      "status": "Status",
+      "start_date": "Start Date",
+      "next_billing": "Next Billing",
+      "cancelled_at": "Cancelled At",
+      "current_messages": "Current Messages",
+      "last_reset": "Last Reset",
+      "next_reset": "Next Reset",
+      "manager_name": "Name",
+      "manager_email": "Email"
+    }
+  },
+  "form": {
+    "title": "Create New Client",
+    "subtitle": "Complete the form to register a new custom client in the system",
+    "create_title": "Create New Client",
+    "edit_title": "Edit Client",
+    "steps": {
+      "plan_type": "Plan Type",
+      "organization": "Organization",
+      "custom_plan": "Custom Plan",
+      "managers": "Managers",
+      "confirmation": "Confirmation"
+    },
+    "plan_type": {
+      "title": "Select plan type",
+      "subtitle": "What type of plan do you want to use for this client?",
+      "existing": "Use an existing plan",
+      "existing_description": "Select a plan already configured in the system",
+      "custom": "Create a custom plan",
+      "custom_description": "Configure a completely new and specific plan",
+      "select_plan": "Select Plan",
+      "select_plan_placeholder": "Select a plan"
+    },
+    "organization": {
+      "title": "Organization Data",
+      "subtitle": "Commercial and contact information of the client",
+      "name": "Business Name",
+      "name_placeholder": "E.g: Company XYZ Inc.",
+      "document": "Document Number",
+      "document_placeholder": "E.g: 900123456",
+      "document_type": "Document Type",
+      "document_type_placeholder": "Select type",
+      "email": "Institutional Email",
+      "email_placeholder": "contact{'@'}company.com",
+      "phone": "Phone",
+      "phone_placeholder": "+573001234567",
+      "country": "Country",
+      "country_placeholder": "Select country",
+      "city": "City",
+      "city_placeholder": "E.g: Medellín",
+      "address": "Address",
+      "address_placeholder": "Street 50 #45-30 (Optional)"
+    },
+    "custom_plan": {
+      "title": "Custom Plan Configuration",
+      "subtitle": "Define limits and prices for this client",
+      "plan_name": "Plan Name",
+      "plan_name_placeholder": "E.g: Premium Corporate Plan",
+      "subscription_price": "Monthly Price (COP)",
+      "subscription_price_placeholder": "0",
+      "included_messages": "Included Messages (Calculated)",
+      "included_messages_placeholder": "0",
+      "message_price": "SMS Price (COP)",
+      "message_price_placeholder": "50",
+      "reset_day": "Monthly Reset Day",
+      "reset_day_placeholder": "1-31",
+      "reset_day_help": "Day of the month when messages will be renewed",
+      "limits_section": "Plan Limits",
+      "campaign_limit": "Campaign Limit",
+      "campaign_limit_placeholder": "100",
+      "contact_limit": "Contact Limit",
+      "contact_limit_placeholder": "50000",
+      "tag_limit": "Tag Limit",
+      "tag_limit_placeholder": "50",
+      "custom_field_limit": "Custom Field Limit",
+      "custom_field_limit_placeholder": "20"
+    },
+    "managers": {
+      "title": "Manager Users",
+      "subtitle": "Add at least one administrator user for the client",
+      "add_manager": "Add Manager",
+      "remove_manager": "Remove",
+      "manager_number": "Manager {number}",
+      "name": "Full Name",
+      "name_placeholder": "e.g.: Carlos Pérez",
+      "email": "Email",
+      "email_placeholder": "carlos.perez{'@'}company.com",
+      "password": "Password",
+      "password_placeholder": "Minimum 6 characters",
+      "password_help": "Password will be hashed with Argon2",
+      "min_managers": "There must be at least one manager"
+    },
+    "confirmation": {
+      "title": "Confirmation",
+      "subtitle": "Review the data before creating the client",
+      "organization_section": "Organization Data",
+      "plan_section": "Plan Configuration",
+      "managers_section": "Managers",
+      "plan_type_label": "Plan Type",
+      "plan_existing": "Existing Plan",
+      "plan_custom": "Custom Plan",
+      "selected_plan": "Selected Plan",
+      "manager_count": "{count} manager(s)",
+      "create_button": "Create Client",
+      "creating_button": "Creating...",
+      "cancel_button": "Cancel"
+    },
+    "buttons": {
+      "next": "Next",
+      "previous": "Previous",
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create Client"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Invalid email",
+      "phone": "Invalid phone",
+      "positive": "Must be a positive number",
+      "integer": "Must be an integer",
+      "min": "Minimum value is {min}",
+      "max": "Maximum value is {max}",
+      "min_managers": "You must add at least one manager"
+    }
+  },
+  "messages": {
+    "create_success": "Client created successfully",
+    "create_error": "Error creating client",
+    "load_error": "Error loading data",
+    "loading": "Loading...",
+    "creating": "Creating client...",
+    "credentials_sent": "Credentials have been sent to managers",
+    "delete_success": "Client(s) successfully deleted"
+  },
+  "common": {
+    "filters": "Filters"
+  },
+  "delete_confirmation": {
+    "title": "Confirm Deletion",
+    "message_single": "Are you sure you want to delete client {name}?",
+    "message_multiple": "Are you sure you want to delete {count} clients?"
+  },
+  "fields": {
+    "name": "Name",
+    "document": "Document",
+    "email": "Email",
+    "phone": "Phone",
+    "country": "Country",
+    "city": "City",
+    "status": "Status",
+    "plan": "Plan",
+    "created_at": "Creation Date",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view": "View Detail",
+    "edit": "Edit",
+    "edit_plan": "Edit Plan",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "cancelled": "Cancelled"
+  },
+  "document_types": {
+    "nit": "NIT",
+    "rut": "RUT",
+    "cc": "National ID",
+    "ce": "Foreign ID",
+    "passport": "Passport"
+  },
+  "countries": {
+    "colombia": "Colombia",
+    "argentina": "Argentina",
+    "chile": "Chile",
+    "peru": "Peru",
+    "mexico": "Mexico"
+  }
+}
