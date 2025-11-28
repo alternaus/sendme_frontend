@@ -50,8 +50,8 @@ const importProgress = ref<{ progress: number; total: number; percentage: number
 const selectedTags = ref<string[]>([])
 
 const importModeOptions = [
-  { label: t('contact.import.mode.update'), value: ImportMode.UPDATE },
-  { label: t('contact.import.mode.delete_all'), value: ImportMode.DELETE_ALL }
+  { label: t('contact.import.mode.update'), value: ImportMode.UPDATE, name: 'update' },
+  { label: t('contact.import.mode.delete_all'), value: ImportMode.DELETE_ALL, name: 'delete_all' }
 ]
 
 const requiredFields = ['phone']

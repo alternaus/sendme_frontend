@@ -69,10 +69,10 @@ const headerActions = computed(() => {
     if (selected.value.length === 1) {
       baseActions.push({
         label: t('common.actions.edit'),
-        onClick: () => {
+        onClick: async () => {
           const clientId = selected.value[0].id
           if (clientId) {
-            router.push({ name: 'custom-clients.edit', params: { id: clientId } })
+            await router.push({ name: 'custom-clients.edit', params: { id: clientId } })
           }
         },
         type: ActionTypes.EDIT,
