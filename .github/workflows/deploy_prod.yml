@@ -2,7 +2,7 @@ name: Deploy sendme frontend
 
 on:
   push:
-    branches: [design/adjusting-space]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -43,11 +43,6 @@ jobs:
           else
             npm run build
           fi
-        env:
-          NODE_ENV: production
-
-      - name: Build
-        run: npm run build
         env:
           NODE_ENV: production
 
