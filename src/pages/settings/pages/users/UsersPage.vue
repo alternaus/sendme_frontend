@@ -10,15 +10,18 @@ import AppCard from '@/components/atoms/cards/AppCard.vue'
 import AppInput from '@/components/atoms/inputs/AppInput.vue'
 import AppHeader from '@/components/molecules/header/AppHeader.vue'
 import { IconTypes } from '@/components/molecules/header/enums/icon-types.enum'
+import { useRoleService } from '@/services/role/useRoleService'
 import { useUserService } from '@/services/user/useUserService'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const { t } = useI18n()
 const toast = useToast()
 const { listUsers, createUser, updateUser, deleteUser } = useUserService()
+const { listRoles } = useRoleService()
 const authStore = useAuthStore()
 
-const MAX_USERS = 3
+const MAX_USERS = 5
+const managerRoleId = ref('')
 
 const users = ref<Array<{
   id?:string;
@@ -59,6 +62,18 @@ const loadUsers = async () => {
       email: '',
       isEditing: true
     }))
+  }
+}
+
+const loadRoles = async () => {
+  try {
+    const roles = await listRoles()
+    const role = roles.find(r => r.name === 'manager')
+    if (role) {
+      managerRoleId.value = role.id
+    }
+  } catch (error) {
+    console.error('Error loading roles', error)
   }
 }
 
@@ -142,7 +157,7 @@ const saveUsers = async () => {
         await createUser({
           name: user.name,
           email: user.email,
-          roleId: 'user',
+          roleId: managerRoleId.value,
           organizationId,
           password: generateRandomPassword(),
         })
@@ -202,6 +217,7 @@ const hasEditingUsers = () => {
 
 onMounted(() => {
   loadUsers()
+  loadRoles()
 })
 </script>
 

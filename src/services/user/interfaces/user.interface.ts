@@ -6,6 +6,14 @@ export interface IRole {
   updatedAt: string
 }
 
+export interface IPlanLimits {
+  planName: string
+  contactLimit: number
+  campaignLimit: number
+  tagLimit: number
+  customFieldLimit: number
+}
+
 export interface IUser {
   id:string
   roleId:string
@@ -14,6 +22,7 @@ export interface IUser {
   name: string
   email: string
   role: IRole
+  planLimits: IPlanLimits
   createdAt: string
   updatedAt: string
   deletedAt: string | null
