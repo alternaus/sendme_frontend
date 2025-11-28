@@ -28,8 +28,10 @@ export interface CustomClientFormData {
   managers: Array<{ name: string; email: string; password: string }>
 }
 
-export function useCustomClientForm() {
+export function useCustomClientForm(options: { isEditing?: boolean } = {}) {
   const { t } = useI18n()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { isEditing = false } = options
 
   const planTypeSchema = yup.object({
     planType: yup.string().oneOf(['existing', 'custom']).required().label(t('custom_clients.form.plan_type.label')),
@@ -214,6 +216,7 @@ export function useCustomClientForm() {
 
   const nextStep = async () => {
     const result = await stepper.nextStep()
+    // Skip step 3 if not custom plan
     if (result && stepper.currentStep.value === '3' && planType.value !== 'custom') {
       await stepper.nextStep()
     }
@@ -222,6 +225,7 @@ export function useCustomClientForm() {
 
   const prevStep = async () => {
     const result = await stepper.prevStep()
+    // Skip step 3 if not custom plan
     if (result && stepper.currentStep.value === '3' && planType.value !== 'custom') {
       await stepper.prevStep()
     }

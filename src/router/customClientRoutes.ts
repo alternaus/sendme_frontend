@@ -54,6 +54,13 @@ const customClientRoutes: RouteRecordRaw = {
       },
     },
     {
+      path: 'edit/:id',
+      name: 'custom-clients.edit',
+      component: () => import('@/pages/admin/custom-clients/CreateCustomClientPage.vue'),
+      beforeEnter: beforeEnterWithBreadcrumb('common.actions.edit', 'custom-clients.edit'),
+      meta: { title: 'common.titles.edit_custom_client' },
+    },
+    {
       path: 'view/:id',
       name: 'custom-clients.view',
       component: () => import('@/pages/admin/custom-clients/CustomClientDetailPage.vue'),

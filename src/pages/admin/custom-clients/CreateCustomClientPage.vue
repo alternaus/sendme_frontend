@@ -1,6 +1,6 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, defineComponent, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useToast } from 'primevue/usetoast'
 
@@ -31,8 +31,11 @@ export default defineComponent({
 
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const { t } = useI18n()
     const toast = useToast()
+
+    const isEditing = computed(() => !!route.params.id)
 
     const {
       form,
@@ -47,11 +50,60 @@ export default defineComponent({
       goToStep,
       canNavigateToStep,
       hasStepErrors,
-    } = useCustomClientForm()
+    } = useCustomClientForm({ isEditing: isEditing.value })
 
-    const { createClientWithExistingPlan, createClientWithCustomPlan } = useOrganizationService()
+    const { createClientWithExistingPlan, createClientWithCustomPlan, getClientDetails, updateClient } = useOrganizationService()
 
     const isLoading = ref(false)
+
+    onMounted(async () => {
+      if (isEditing.value) {
+        isLoading.value = true
+        try {
+          const client = await getClientDetails(route.params.id as string)
+
+          // Populate form
+          form.orgName.value = client.organization.name
+          form.orgDocument.value = client.organization.document || ''
+          form.orgDocumentType.value = client.organization.documentType || 'NIT'
+          form.orgEmail.value = client.organization.email || ''
+          form.orgPhone.value = client.organization.phone
+          form.orgCountry.value = client.organization.country
+          form.orgCity.value = client.organization.city || ''
+          form.orgAddress.value = client.organization.address || ''
+
+          // Default to custom plan for editing to show current values
+          form.planType.value = 'custom'
+
+          form.planName.value = client.plan.planName
+          form.subscriptionPrice.value = client.plan.subscriptionPrice
+          form.includedMessages.value = client.plan.includedMessages
+          form.messagePrice.value = client.plan.messagePrice
+          form.resetDay.value = client.plan.resetDay
+          form.campaignLimit.value = client.plan.campaignLimit
+          form.contactLimit.value = client.plan.contactLimit
+          form.tagLimit.value = client.plan.tagLimit
+          form.customFieldLimit.value = client.plan.customFieldLimit
+
+          if (client.managers && client.managers.length > 0) {
+            form.managers.value = client.managers.map(m => ({
+              name: m.name,
+              email: m.email,
+              password: '' // Password not returned
+            }))
+          }
+
+          // Ensure we start at step 1
+          await goToStep('1')
+
+        } catch {
+          toast.add({ severity: 'error', summary: t('common.general.error'), detail: t('custom_clients.messages.load_error'), life: 3000 })
+          router.push({ name: 'custom-clients.index' })
+        } finally {
+          isLoading.value = false
+        }
+      }
+    })
 
     const handleNext = async () => {
       await nextStep()
@@ -101,31 +153,45 @@ export default defineComponent({
       try {
         const data = formatClientData()
 
-        if (form.planType.value === 'existing' && form.selectedPlanId.value) {
-          await createClientWithExistingPlan(form.selectedPlanId.value as string, {
-            organization: data.organization,
-            managers: data.managers,
+        if (isEditing.value) {
+           await updateClient(route.params.id as string, {
+             organization: data.organization,
+             plan: form.planType.value === 'custom' ? data.customPlan : undefined,
+             planId: form.planType.value === 'existing' ? form.selectedPlanId.value as string : undefined
+           })
+           toast.add({
+            severity: 'success',
+            summary: t('common.general.success'),
+            detail: t('custom_clients.messages.update_success'),
+            life: 3000,
           })
-        } else if (data.customPlan) {
-          await createClientWithCustomPlan({
-            organization: data.organization,
-            managers: data.managers,
-            customPlan: data.customPlan,
+        } else {
+          if (form.planType.value === 'existing' && form.selectedPlanId.value) {
+            await createClientWithExistingPlan(form.selectedPlanId.value as string, {
+              organization: data.organization,
+              managers: data.managers,
+            })
+          } else if (data.customPlan) {
+            await createClientWithCustomPlan({
+              organization: data.organization,
+              managers: data.managers,
+              customPlan: data.customPlan,
+            })
+          }
+          toast.add({
+            severity: 'success',
+            summary: t('common.general.success'),
+            detail: t('custom_clients.messages.create_success'),
+            life: 3000,
           })
         }
 
-        toast.add({
-          severity: 'success',
-          summary: t('common.general.success'),
-          detail: t('custom_clients.messages.create_success'),
-          life: 3000,
-        })
         router.push({ name: 'custom-clients.index' })
       } catch {
         toast.add({
           severity: 'error',
           summary: t('common.general.error'),
-          detail: t('custom_clients.messages.create_error'),
+          detail: isEditing.value ? t('custom_clients.messages.update_error') : t('custom_clients.messages.create_error'),
           life: 3000,
         })
       } finally {
@@ -138,6 +204,7 @@ export default defineComponent({
     }
 
     const save = computed(() => t('common.general.save'))
+    const title = computed(() => isEditing.value ? t('custom_clients.form.edit_title') : t('custom_clients.form.title'))
 
     return {
       form,
@@ -156,14 +223,16 @@ export default defineComponent({
       onSubmitForm,
       updateFormContent,
       save,
+      title,
       IconTypes,
+      isEditing,
     }
   },
 })
 </script>
 
 <template>
-  <AppHeader :icon="IconTypes.SETTINGS" :title="$t('custom_clients.form.title')" :actions="[]" />
+  <AppHeader :icon="IconTypes.SETTINGS" :title="title" :actions="[]" />
 
   <form @submit.prevent="onSubmitForm" class="w-full flex flex-col gap-4 pt-4" autocomplete="off">
     <AppFormStepper
@@ -209,6 +278,7 @@ export default defineComponent({
         <CustomClientFormManagers
           :form="form"
           :errors="errors"
+          :readonly="isEditing"
           @update:form="updateFormContent"
         />
       </template>

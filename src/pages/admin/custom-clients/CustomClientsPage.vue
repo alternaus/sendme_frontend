@@ -66,6 +66,19 @@ const headerActions = computed(() => {
   ]
 
   if (selected.value.length > 0) {
+    if (selected.value.length === 1) {
+      baseActions.push({
+        label: t('common.actions.edit'),
+        onClick: () => {
+          const clientId = selected.value[0].id
+          if (clientId) {
+            router.push({ name: 'custom-clients.edit', params: { id: clientId } })
+          }
+        },
+        type: ActionTypes.EDIT,
+      })
+    }
+
     baseActions.push({
       label: t('common.actions.delete'),
       onClick: handleDelete,

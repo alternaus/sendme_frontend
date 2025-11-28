@@ -8,13 +8,16 @@ import type { CustomClientFormData } from '@/composables/useCustomClientForm'
 interface Props {
   form: Record<keyof CustomClientFormData, { value: unknown }>
   errors: Record<string, string | undefined>
+  readonly?: boolean
 }
 
 interface Emits {
   (e: 'update:form', field: keyof CustomClientFormData, value: unknown): void
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false
+})
 const emit = defineEmits<Emits>()
 
 const managers = computed({
@@ -23,14 +26,17 @@ const managers = computed({
 })
 
 const addManager = () => {
+  if (props.readonly) return
   managers.value = [...managers.value, { name: '', email: '', password: '' }]
 }
 
 const removeManager = (index: number) => {
+  if (props.readonly) return
   managers.value = managers.value.filter((_, i) => i !== index)
 }
 
 const updateManager = (index: number, field: 'name' | 'email' | 'password', value: string | number | null) => {
+  if (props.readonly) return
   const updated = [...managers.value]
   updated[index] = { ...updated[index], [field]: value || '' }
   managers.value = updated
@@ -59,7 +65,7 @@ const updateManager = (index: number, field: 'name' | 'email' | 'password', valu
             {{ $t('custom_clients.form.managers.manager_number', { number: index + 1 }) }}
           </h4>
           <AppButton
-            v-if="managers.length > 1"
+            v-if="managers.length > 1 && !readonly"
             icon="pi pi-trash"
             severity="danger"
             outlined
@@ -75,6 +81,7 @@ const updateManager = (index: number, field: 'name' | 'email' | 'password', valu
             :label="$t('custom_clients.form.managers.name')"
             :placeholder="$t('custom_clients.form.managers.name_placeholder')"
             :errorMessage="errors[`managers.${index}.name`]"
+            :disabled="readonly"
             required
             @update:model-value="(value) => updateManager(index, 'name', value)"
           />
@@ -85,11 +92,13 @@ const updateManager = (index: number, field: 'name' | 'email' | 'password', valu
             :label="$t('custom_clients.form.managers.email')"
             :placeholder="$t('custom_clients.form.managers.email_placeholder')"
             :errorMessage="errors[`managers.${index}.email`]"
+            :disabled="readonly"
             required
             @update:model-value="(value) => updateManager(index, 'email', value)"
           />
 
           <AppInput
+            v-if="!readonly"
             :model-value="manager.password"
             type="password"
             :label="$t('custom_clients.form.managers.password')"
@@ -102,6 +111,7 @@ const updateManager = (index: number, field: 'name' | 'email' | 'password', valu
       </div>
 
       <AppButton
+        v-if="!readonly"
         :label="$t('custom_clients.form.managers.add_manager')"
         icon="pi pi-plus"
         outlined

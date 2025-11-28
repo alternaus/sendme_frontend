@@ -1,6 +1,7 @@
 import { useApiClient } from '@/composables/useApiClient'
 
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
+import type { IClientDetailsResponse } from './interfaces/client-details.interface'
 import type { ICreateClientResponse } from './interfaces/client-response.interface'
 import type {
   ICreateClientWithCustomPlanDto,
@@ -10,6 +11,7 @@ import type { ICreateManualRecharge } from './interfaces/create-manual-recharge.
 import type { IFilterRecharge } from './interfaces/filter-recharge.interface'
 import type { IOrganization } from './interfaces/organization.interface'
 import type { IRecharge } from './interfaces/recharge.interface'
+import type { IUpdateClientDto } from './interfaces/update-client.interface'
 
 export const useOrganizationService = () => {
   const privateApi = useApiClient(true)
@@ -20,6 +22,14 @@ export const useOrganizationService = () => {
 
   const listOrganizations = async () => {
     return privateApi.get<IOrganization[]>('/organizations')
+  }
+
+  const getClientDetails = async (id: string) => {
+    return privateApi.get<IClientDetailsResponse>(`/organizations/clients/${id}/details`)
+  }
+
+  const updateClient = async (id: string, data: IUpdateClientDto) => {
+    return privateApi.patch<void>(`/organizations/clients/${id}`, data)
   }
 
   const listRecharges = async (query?: IFilterRecharge) => {
@@ -56,5 +66,7 @@ export const useOrganizationService = () => {
     createManualRecharge,
     createClientWithExistingPlan,
     createClientWithCustomPlan,
+    getClientDetails,
+    updateClient
   }
 }
