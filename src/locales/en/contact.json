@@ -46,7 +46,14 @@
     "cancel": "Cancel",
     "tags_section_title": "Tags (optional)",
     "select_tags_placeholder": "Select tags for imported contacts",
-    "tags_description": "Imported contacts will be automatically associated with the selected tags"
+    "tags_description": "Imported contacts will be automatically associated with the selected tags",
+    "mode": {
+      "title": "Import Mode",
+      "description": "Choose how to import contacts",
+      "update": "Update existing",
+      "delete_all": "Delete all and import",
+      "delete_all_warning": "Warning: This will delete all existing contacts before importing"
+    }
   },
   "general": {
     "search": "Search",

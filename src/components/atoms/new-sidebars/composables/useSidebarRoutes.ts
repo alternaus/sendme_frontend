@@ -8,7 +8,6 @@ import Contacts from '@/assets/svg/sidebar/contacts.svg?component'
 import Reports from '@/assets/svg/sidebar/reports.svg?component'
 import Send from '@/assets/svg/sidebar/send.svg?component'
 import Settings from '@/assets/svg/sidebar/settings.svg?component'
-import Whatsapp from '@/assets/svg/sidebar/whatsapp.svg?component'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 import type { IRoute } from '../interfaces/route.interface'
@@ -30,11 +29,6 @@ export const useSidebarRoutes = () => {
         path: '/campaigns',
         icon: Campaigns,
         title: t('campaign.general.campaigns'),
-      },
-      {
-        path: '/whatsapp/signup',
-        icon: Whatsapp,
-        title: 'Whatsapp',
       },
       {
         path: '/send',

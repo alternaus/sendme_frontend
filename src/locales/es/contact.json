@@ -44,7 +44,14 @@
     "cancel": "Cancelar",
     "tags_section_title": "Etiquetas (opcional)",
     "select_tags_placeholder": "Selecciona etiquetas para los contactos importados",
-    "tags_description": "Los contactos importados se asociarán automáticamente con las etiquetas seleccionadas"
+    "tags_description": "Los contactos importados se asociarán automáticamente con las etiquetas seleccionadas",
+    "mode": {
+      "title": "Modo de importación",
+      "description": "Elige cómo importar los contactos",
+      "update": "Actualizar existentes",
+      "delete_all": "Eliminar todos e importar",
+      "delete_all_warning": "Advertencia: Esto eliminará todos los contactos existentes antes de importar"
+    }
   },
   "general": {
     "search": "Buscar",

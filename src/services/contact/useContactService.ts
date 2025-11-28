@@ -2,6 +2,7 @@ import { useApiClient } from '@/composables/useApiClient'
 import { downloadFile, EXCEL_MIME_TYPE, generateFileName } from '@/utils/download.helper'
 
 import type { IPaginationResponse } from '../interfaces/pagination-response.interface'
+import { ImportMode } from './enums/import-mode.enum'
 import type { IContact } from './interfaces/contact.interface'
 import type { ICreateContact } from './interfaces/create-contact.interface'
 import type { IFilterContact } from './interfaces/filter-contact.interface'
@@ -56,12 +57,20 @@ export const useContactService = () => {
     })
   }
 
-  const importContacts = async (file: File, fieldMapping: Record<string, string>, tagIds?: string[]) => {
+  const importContacts = async (
+    file: File,
+    fieldMapping: Record<string, string>,
+    tagIds?: string[],
+    importMode?: ImportMode
+  ) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('fieldMapping', JSON.stringify(fieldMapping))
     if (tagIds && tagIds.length > 0) {
       formData.append('tagIds', JSON.stringify(tagIds))
+    }
+    if (importMode) {
+      formData.append('importMode', importMode)
     }
     return privateApi.post<{ jobId: string }>('/contacts/import', formData, {
       headers: {
@@ -105,6 +114,7 @@ export const useContactService = () => {
     importContacts,
     getImportStatus,
     syncGoogleContacts,
-    searchContacts
+    searchContacts,
+    ImportMode
   }
 }

@@ -11,6 +11,7 @@ import { useI18n } from 'vue-i18n'
 import CloudUploadIcon from '@/assets/svg/cloud-upload.svg?component'
 import ImportIcon from '@/assets/svg/table-actions/import.svg?component'
 import AppButton from '@/components/atoms/buttons/AppButton.vue'
+import AppSelectButton from '@/components/atoms/buttons/AppSelectButton.vue'
 import TagManager from '@/components/molecules/TagManager.vue'
 import { useContactService } from '@/services/contact/useContactService'
 
@@ -37,7 +38,8 @@ const availableFields = ref<Record<string, string>>({})
 const { t } = useI18n()
 const toast = useToast()
 const router = useRouter()
-const { getImportPreview, importContacts } = useContactService()
+const { getImportPreview, importContacts, ImportMode } = useContactService()
+const selectedImportMode = ref(ImportMode.UPDATE)
 
 const fileName = ref('')
 const fileSize = ref(0)
@@ -46,6 +48,11 @@ const loading = ref(false)
 const currentFile = ref<File | null>(null)
 const importProgress = ref<{ progress: number; total: number; percentage: number } | null>(null)
 const selectedTags = ref<string[]>([])
+
+const importModeOptions = [
+  { label: t('contact.import.mode.update'), value: ImportMode.UPDATE },
+  { label: t('contact.import.mode.delete_all'), value: ImportMode.DELETE_ALL }
+]
 
 const requiredFields = ['phone']
 
@@ -147,7 +154,7 @@ const handleFinalUpload = async () => {
       }
     })
 
-    await importContacts(currentFile.value, fieldMapping, selectedTags.value)
+    await importContacts(currentFile.value, fieldMapping, selectedTags.value, selectedImportMode.value)
 
     toast.add({
       severity: 'success',
@@ -196,6 +203,7 @@ const handleCancel = () => {
   totalRows.value = 0
   importProgress.value = null
   selectedTags.value = []
+  selectedImportMode.value = ImportMode.UPDATE
 }
 </script>
 
@@ -287,21 +295,45 @@ const handleCancel = () => {
             </div>
           </div>
 
-          <!-- Selector de etiquetas -->
+          <!-- Configuración de importación -->
           <div class="bg-white dark:bg-neutral-900 rounded-2xl shadow-sm p-4">
-            <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-3">
-              {{ $t('contact.import.tags_section_title') }}
-            </h3>
-            <TagManager
-              v-model="selectedTags"
-              :placeholder="$t('contact.import.select_tags_placeholder')"
-              :allow-create="true"
-              :allow-manage="false"
-              size="small"
-            />
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-2">
-              {{ $t('contact.import.tags_description') }}
-            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Selector de modo de importación -->
+              <div>
+                <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-2">
+                  {{ $t('contact.import.mode.title') }}
+                </h3>
+                <AppSelectButton
+                  v-model="selectedImportMode"
+                  :options="importModeOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  :allowEmpty="false"
+                  class="w-full"
+                />
+              </div>
+
+              <!-- Selector de etiquetas -->
+              <div>
+                <h3 class="text-sm font-medium text-neutral-800 dark:text-neutral-100 mb-2">
+                  {{ $t('contact.import.tags_section_title') }}
+                </h3>
+                <TagManager
+                  v-model="selectedTags"
+                  :placeholder="$t('contact.import.select_tags_placeholder')"
+                  :allow-create="true"
+                  :allow-manage="false"
+                  size="small"
+                />
+              </div>
+            </div>
+
+            <div v-if="selectedImportMode === ImportMode.DELETE_ALL" class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
+              <i class="pi pi-exclamation-triangle text-red-600 dark:text-red-400 mt-0.5 text-sm"></i>
+              <p class="text-xs text-red-600 dark:text-red-400 font-medium leading-5">
+                {{ $t('contact.import.mode.delete_all_warning') }}
+              </p>
+            </div>
           </div>
 
           <div class="flex justify-center space-x-2">
